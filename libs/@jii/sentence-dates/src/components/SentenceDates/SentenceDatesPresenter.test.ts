@@ -17,6 +17,8 @@
 
 import { TFunction } from "i18next";
 
+import type { ResidentsStore, SegmentClient } from "~@jii/data";
+
 import { SentenceDatesData } from "../../data/types";
 import {
   copyFixtureEnglishWithCustomHeading,
@@ -168,6 +170,39 @@ describe("SentenceDatesPresenter", () => {
       } = new SentenceDatesPresenter(sentenceDatesFixture, t);
 
       expect(dates).toEqual(sentenceDatesFixture.dates);
+    });
+  });
+
+  describe("show/hide setting", () => {
+    const trackSentenceDatesToggled = vi.fn();
+    const setHideSentenceDates = vi.fn();
+
+    function presenterWithSetting(hideSentenceDates?: boolean) {
+      return new SentenceDatesPresenter(
+        sentenceDatesFixture,
+        i18n.getFixedT("en", ["US_OZ", "common"]),
+        undefined,
+        {
+          userProperties: { hideSentenceDates },
+          setHideSentenceDates,
+        } as unknown as ResidentsStore,
+        { trackSentenceDatesToggled } as unknown as SegmentClient,
+      );
+    }
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it("returns the saved value as hidden", () => {
+      const presenter = presenterWithSetting(true);
+      expect(presenter.hidden).toEqual(true);
+    });
+
+    it("saves and tracks the new value when setHidden is called", () => {
+      presenterWithSetting(true).setHidden(false);
+      expect(setHideSentenceDates).toHaveBeenCalledWith(false);
+      expect(trackSentenceDatesToggled).toHaveBeenCalledWith({ hidden: false });
     });
   });
 });

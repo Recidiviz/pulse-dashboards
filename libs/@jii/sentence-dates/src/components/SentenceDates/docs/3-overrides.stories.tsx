@@ -23,6 +23,8 @@ import renderAddLinksToCards from "./componentOverrides/addLinksToCards";
 import addLinksToCardsSource from "./componentOverrides/addLinksToCards?raw";
 import renderAddLinkToSection from "./componentOverrides/addLinkToSection";
 import addLinkToSectionSource from "./componentOverrides/addLinkToSection?raw";
+import renderCustomizeHiddenDatesCard from "./componentOverrides/customizeHiddenDatesCard";
+import customizeHiddenDatesCardSource from "./componentOverrides/customizeHiddenDatesCard?raw";
 import renderDescriptionReflectsData from "./componentOverrides/descriptionReflectsData";
 import descriptionReflectsDataSource from "./componentOverrides/descriptionReflectsData?raw";
 import { baseMeta, SecondaryStoryPage, SentenceDatesMeta } from "./utils";
@@ -102,6 +104,32 @@ export const AddLinkToSection: SentenceDateStory = storyWithSource(
   renderAddLinkToSection,
   addLinkToSectionSource,
 );
+
+/**
+ * When adding an additional link, the link will display below the toggle.
+ */
+export const AddLinkToSectionWithToggle: SentenceDateStory = {
+  ...storyWithSource(renderAddLinkToSection, addLinkToSectionSource),
+  args: {
+    showToggle: true,
+  },
+};
+
+/**
+ * When a resident hides their dates, a placeholder card replaces the date cards.
+ *
+ * To show different text, override the hidden dates card and render your own text in
+ * place of children.
+ */
+export const CustomizeHiddenDatesCard: SentenceDateStory = {
+  ...storyWithSource(
+    renderCustomizeHiddenDatesCard,
+    customizeHiddenDatesCardSource,
+  ),
+  args: {
+    showToggle: true,
+  },
+};
 
 /**
  * Descriptions are static, but in some cases it may be useful to tailor the cards' content

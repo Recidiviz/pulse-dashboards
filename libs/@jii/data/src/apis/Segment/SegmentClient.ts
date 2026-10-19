@@ -211,6 +211,11 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_program_detail_opened", metadata);
   }
 
+  /* Sentence Dates events */
+  trackSentenceDatesToggled(metadata: { hidden: boolean }) {
+    this.track("frontend_sentence_dates_toggled", metadata);
+  }
+
   /* Edovo events */
   trackEdovoReferralSent(metadata: { type: EdovoReferralType }) {
     this.track("frontend_edovo_referral_sent", metadata);

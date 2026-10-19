@@ -30,6 +30,7 @@ import { DateDescriptionProps } from "../defaultComponents/DateDescription";
 import { DateLabelProps } from "../defaultComponents/DateLabel";
 import { DateValueProps } from "../defaultComponents/DateValue";
 import { DateValueSupplementalProps } from "../defaultComponents/DateValueSupplemental";
+import { HiddenDatesCardProps } from "../defaultComponents/HiddenDatesCard";
 import { SectionHeadingProps } from "../defaultComponents/SectionHeading";
 import { WrapperProps } from "../defaultComponents/Wrapper";
 
@@ -50,6 +51,7 @@ export type SentenceDatesComponents = {
   DateValueSupplemental: ComponentType<DateValueSupplementalProps>;
   DateCardBodyWrapper: ComponentType<DateCardBodyWrapperProps>;
   DateAdjustment: ComponentType<DateAdjustmentProps>;
+  HiddenDatesCard: ComponentType<HiddenDatesCardProps>;
 };
 
 export type TFn = TFunction<[StateCodeWithSentenceDates, "common"]>;

@@ -21,7 +21,7 @@ import mapObject from "map-obj";
 import { shiftFixtureDate } from "./fixtureDates";
 
 export function shiftAllDates<T extends Record<string, unknown>>(target: T): T {
-  return <T>mapObject(
+  return mapObject(
     target,
     (sourceKey, sourceValue) => {
       if (isDate(sourceValue)) {
@@ -37,5 +37,5 @@ export function shiftAllDates<T extends Record<string, unknown>>(target: T): T {
       return [sourceKey as string, sourceValue];
     },
     { deep: true },
-  );
+  ) as T;
 }

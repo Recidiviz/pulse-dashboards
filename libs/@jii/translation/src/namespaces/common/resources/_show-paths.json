@@ -28,7 +28,12 @@
     },
     "general": {
       "dateReductionLabel": "[common]sentenceDates.general.dateReductionLabel",
-      "heading": "[common]sentenceDates.general.heading"
+      "heading": "[common]sentenceDates.general.heading",
+      "hiddenMessage": "[common]sentenceDates.general.hiddenMessage"
+    },
+    "toggle": {
+      "hideLabel": "[common]sentenceDates.toggle.hideLabel",
+      "showLabel": "[common]sentenceDates.toggle.showLabel"
     }
   },
   "backLinks": {

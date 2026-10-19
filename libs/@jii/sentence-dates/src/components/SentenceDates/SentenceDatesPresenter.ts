@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { ResidentsStore, SegmentClient } from "~@jii/data";
+
 import { SentenceDatesData } from "../../data/types";
 import { defaultComponents } from "../defaultComponents";
 import { DatePresenter } from "./DatePresenter";
@@ -27,6 +29,8 @@ export class SentenceDatesPresenter {
     private inputData: SentenceDatesData,
     private t: TFn,
     private componentOverrides?: Partial<SentenceDatesComponents>,
+    private residentsStore?: ResidentsStore,
+    private segmentClient?: SegmentClient,
   ) {
     this.data = {
       ...inputData,
@@ -71,5 +75,22 @@ export class SentenceDatesPresenter {
 
   get sectionHeadingText() {
     return this.t(($) => $.sentenceDates.general.heading);
+  }
+  get hideToggleText() {
+    return this.t(($) => $.sentenceDates.toggle.hideLabel);
+  }
+  get showToggleText() {
+    return this.t(($) => $.sentenceDates.toggle.showLabel);
+  }
+  get hiddenMessageText() {
+    return this.t(($) => $.sentenceDates.general.hiddenMessage);
+  }
+  get hidden() {
+    return this.residentsStore?.userProperties?.hideSentenceDates;
+  }
+
+  setHidden(nextHidden: boolean) {
+    this.segmentClient?.trackSentenceDatesToggled({ hidden: nextHidden });
+    this.residentsStore?.setHideSentenceDates(nextHidden);
   }
 }

@@ -27,6 +27,7 @@ import {
   TranslationsFixture,
 } from "../../../fixtures/copy";
 import { getSentenceDatesFixtureData } from "../../../fixtures/data";
+import { FakeStoreProvider } from "../../../fixtures/store";
 import { SentenceDates } from "../SentenceDates";
 
 export type SentenceDatesMeta = Meta<
@@ -57,12 +58,13 @@ export const baseMeta: SentenceDatesMeta = {
     language: { options: ["en", "es"], control: "select" },
   },
   // prevents extra args from being passed to the component itself and causing errors
-  render: ({ data, componentOverrides, stateCode }) => {
+  render: ({ data, componentOverrides, stateCode, showToggle }) => {
     return (
       <SentenceDates
         data={data}
         componentOverrides={componentOverrides}
         stateCode={stateCode}
+        showToggle={showToggle}
       />
     );
   },
@@ -74,7 +76,9 @@ export const baseMeta: SentenceDatesMeta = {
       return (
         <Suspense>
           <I18nextProvider i18n={i18n}>
-            <Story />
+            <FakeStoreProvider>
+              <Story />
+            </FakeStoreProvider>
           </I18nextProvider>
         </Suspense>
       );

@@ -77,3 +77,17 @@ export const CustomizeSharedCopy: SentenceDateStory = {
     },
   },
 };
+
+/**
+ * A show/hide toggle (by default not included) allows residents to hide their dates. When
+ * dates are hidden, a placeholder message replaces the date cards and the switch stays
+ * visible.
+ *
+ * There are default labels and placeholder messages which can be overridden for your
+ * state.
+ */
+export const ShowHideToggle: SentenceDateStory = {
+  args: {
+    showToggle: true,
+  },
+};

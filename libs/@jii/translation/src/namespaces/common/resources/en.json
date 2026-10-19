@@ -28,7 +28,12 @@
     },
     "general": {
       "dateReductionLabel": "Total reduction",
-      "heading": "Important dates"
+      "heading": "Important dates",
+      "hiddenMessage": "Your dates are currently hidden"
+    },
+    "toggle": {
+      "hideLabel": "Hide my sentence dates",
+      "showLabel": "Show my sentence dates"
     }
   },
   "backLinks": {

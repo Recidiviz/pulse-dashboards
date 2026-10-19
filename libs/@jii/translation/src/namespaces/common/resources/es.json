@@ -28,7 +28,12 @@
     },
     "general": {
       "dateReductionLabel": "Reducción total",
-      "heading": "Fechas importantes"
+      "heading": "Fechas importantes",
+      "hiddenMessage": "Tus fechas están ocultas por ahora"
+    },
+    "toggle": {
+      "hideLabel": "Ocultar mis fechas",
+      "showLabel": "Mostrar mis fechas"
     }
   },
   "backLinks": {

@@ -46,7 +46,7 @@ const CustomSectionWrapper: SentenceDatesComponents["SectionWrapper"] = ({
   );
 };
 
-const render = ({ data, stateCode }: SentenceDatesProps) => {
+const render = ({ data, stateCode, showToggle }: SentenceDatesProps) => {
   return (
     <SentenceDates
       data={data}
@@ -54,6 +54,7 @@ const render = ({ data, stateCode }: SentenceDatesProps) => {
         SectionWrapper: CustomSectionWrapper,
       }}
       stateCode={stateCode}
+      showToggle={showToggle}
     />
   );
 };

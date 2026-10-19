@@ -24,7 +24,7 @@ import { spacing } from "~design-system";
 import { DefaultProps } from "./types";
 import { Wrapper } from "./Wrapper";
 
-export type CardsWrapperProps = DefaultProps;
+export type CardsWrapperProps = DefaultProps & { hidden?: boolean };
 
 const StyledWrapper = styled(Wrapper)`
   display: grid;

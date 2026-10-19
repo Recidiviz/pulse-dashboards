@@ -24,6 +24,7 @@ export const commonSentenceDatesResourceContentsSchema = z.object({
   general: z.object({
     heading: z.string(),
     dateReductionLabel: z.string(),
+    hiddenMessage: z.string(),
   }),
   dateFormats: z.object({
     dateFormatted: z.string(),
@@ -34,6 +35,10 @@ export const commonSentenceDatesResourceContentsSchema = z.object({
     }),
     missingDateMessage: z.string(),
     differenceInDays: z.string(),
+  }),
+  toggle: z.object({
+    hideLabel: z.string(),
+    showLabel: z.string(),
   }),
 });
 

@@ -15,26 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
+import { useRootStore } from "~@jii/data";
+import { spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import type { SentenceDatesData } from "../../data/types";
+import { Switch } from "../Switch/Switch";
 import { SentenceDatesPresenter } from "./SentenceDatesPresenter";
 import { SentenceDatesComponents, StateCodeWithSentenceDates } from "./types";
+
+const ToggleWrapper = styled.div`
+  margin-bottom: ${rem(spacing.lg)};
+`;
 
 export type SentenceDatesProps = {
   data: SentenceDatesData;
   stateCode: StateCodeWithSentenceDates;
   componentOverrides?: Partial<SentenceDatesComponents>;
+  showToggle?: boolean;
 };
 
-const ManagedComponent = ({
+const ManagedComponent = observer(function ManagedComponent({
   presenter,
-}: {
-  presenter: SentenceDatesPresenter;
-}) => {
+  showToggle,
+}: { presenter: SentenceDatesPresenter } & Pick<
+  SentenceDatesProps,
+  "showToggle"
+>) {
   const {
     components: {
       SectionWrapper,
@@ -48,42 +61,61 @@ const ManagedComponent = ({
       DateCardHeadingWrapper,
       DateCardBodyWrapper,
       DateAdjustment,
+      HiddenDatesCard,
     },
     datePresenters,
     sectionHeadingText,
+    hiddenMessageText,
+    showToggleText,
+    hideToggleText,
+    hidden,
   } = presenter;
 
   return (
     <SectionWrapper>
       <SectionHeading>{sectionHeadingText}</SectionHeading>
-      <CardsWrapper>
-        {datePresenters.map((datePresenter) => (
-          <DateCard key={datePresenter.id} datePresenter={datePresenter}>
-            <DateCardHeadingWrapper datePresenter={datePresenter}>
-              <DateLabel datePresenter={datePresenter}>
-                {datePresenter.cardLabelText}
-              </DateLabel>
-              <DateValue datePresenter={datePresenter}>
-                {datePresenter.cardValueText.primary}
-              </DateValue>
-              <DateValueSupplemental datePresenter={datePresenter}>
-                {datePresenter.cardValueText.supplemental}
-              </DateValueSupplemental>
-            </DateCardHeadingWrapper>
-            <DateCardBodyWrapper datePresenter={datePresenter}>
-              {datePresenter.cardDescriptionText && (
-                <DateDescription datePresenter={datePresenter}>
-                  {datePresenter.cardDescriptionText}
-                </DateDescription>
-              )}
-              <DateAdjustment datePresenter={datePresenter} />
-            </DateCardBodyWrapper>
-          </DateCard>
-        ))}
+      <CardsWrapper hidden={showToggle && hidden}>
+        {showToggle && hidden ? (
+          <HiddenDatesCard>{hiddenMessageText}</HiddenDatesCard>
+        ) : (
+          datePresenters.map((datePresenter) => (
+            <DateCard key={datePresenter.id} datePresenter={datePresenter}>
+              <DateCardHeadingWrapper datePresenter={datePresenter}>
+                <DateLabel datePresenter={datePresenter}>
+                  {datePresenter.cardLabelText}
+                </DateLabel>
+                <DateValue datePresenter={datePresenter}>
+                  {datePresenter.cardValueText.primary}
+                </DateValue>
+                <DateValueSupplemental datePresenter={datePresenter}>
+                  {datePresenter.cardValueText.supplemental}
+                </DateValueSupplemental>
+              </DateCardHeadingWrapper>
+              <DateCardBodyWrapper datePresenter={datePresenter}>
+                {datePresenter.cardDescriptionText && (
+                  <DateDescription datePresenter={datePresenter}>
+                    {datePresenter.cardDescriptionText}
+                  </DateDescription>
+                )}
+                <DateAdjustment datePresenter={datePresenter} />
+              </DateCardBodyWrapper>
+            </DateCard>
+          ))
+        )}
       </CardsWrapper>
+      {showToggle && (
+        <ToggleWrapper>
+          <Switch
+            checked={!hidden}
+            onChange={(checked) => presenter.setHidden(!checked)}
+          >
+            {hidden ? showToggleText : hideToggleText}
+          </Switch>
+        </ToggleWrapper>
+      )}
     </SectionWrapper>
   );
-};
+});
 
 function usePresenter({
   stateCode,
@@ -91,8 +123,18 @@ function usePresenter({
   componentOverrides,
 }: SentenceDatesProps) {
   const { t } = useTranslation([stateCode, "common"]);
+  const {
+    residentsStore,
+    userStore: { segmentClient },
+  } = useRootStore();
 
-  return new SentenceDatesPresenter(data, t, componentOverrides);
+  return new SentenceDatesPresenter(
+    data,
+    t,
+    componentOverrides,
+    residentsStore,
+    segmentClient,
+  );
 }
 
 /**

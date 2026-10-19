@@ -25,6 +25,7 @@ import { DateDescription } from "./DateDescription";
 import { DateLabel } from "./DateLabel";
 import { DateValue } from "./DateValue";
 import { DateValueSupplemental } from "./DateValueSupplemental";
+import { HiddenDatesCard } from "./HiddenDatesCard";
 import { SectionHeading } from "./SectionHeading";
 import { Wrapper } from "./Wrapper";
 
@@ -40,4 +41,5 @@ export const defaultComponents: SentenceDatesComponents = {
   DateCardHeadingWrapper,
   DateCardBodyWrapper,
   DateAdjustment,
+  HiddenDatesCard,
 };
