@@ -23,9 +23,7 @@ import { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import { ParoleHearing } from "~datatypes";
-import { palette } from "~design-system";
 
-import SearchIconComponent from "../../../assets/static/images/search.svg?react";
 import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDocketPresenter";
 import { formatDocId } from "../../../ParoleStore/utils";
 import { CaseloadTable } from "../../CaseloadTable";
@@ -34,6 +32,12 @@ import { Pagination } from "../../Pagination/Pagination";
 import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
+import {
+  SearchIcon,
+  SearchInput,
+  SearchInputWrapper,
+  Summary,
+} from "../components/ParoleListTableParts";
 import { formatMonth, parseIsoDate } from "../components/shared";
 
 type HearingDatePrecision = "month" | "date";
@@ -45,40 +49,6 @@ const FilterBar = styled.div`
   align-items: center;
   justify-content: flex-end;
   margin-bottom: ${rem(spacing.md)};
-`;
-
-const SearchInputWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: ${rem(280)};
-  margin-right: auto;
-  border: 1px solid ${palette.slate10};
-  border-radius: ${rem(spacing.sm)};
-  padding: 0 ${rem(spacing.md)};
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: ${rem(spacing.sm)};
-  border-radius: ${rem(spacing.sm)};
-  border: 0;
-  outline: 0;
-
-  &::placeholder {
-    color: ${palette.slate60};
-  }
-`;
-
-const SearchIcon = styled(SearchIconComponent)`
-  width: ${rem(18)};
-  height: ${rem(18)};
-  flex-shrink: 0;
-`;
-
-const Summary = styled.div`
-  margin-top: ${rem(spacing.md)};
-  color: ${palette.slate70};
 `;
 
 const PaginationBar = styled.div`

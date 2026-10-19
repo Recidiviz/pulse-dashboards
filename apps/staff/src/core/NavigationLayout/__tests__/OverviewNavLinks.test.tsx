@@ -144,6 +144,27 @@ describe("OverviewNavLinks tests", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("Should render a link for Parole residents if that subpage is enabled", () => {
+    rootStoreMock.userStore.userAllowedNavigation.parole = [
+      "docket",
+      "residents",
+    ];
+    renderLinks();
+
+    expect(
+      screen.getByRole("menuitem", { name: "Residents" }),
+    ).toBeInTheDocument();
+  });
+
+  it("Should not render a link for Parole residents with only the docket enabled", () => {
+    rootStoreMock.userStore.userAllowedNavigation.parole = ["docket"];
+    renderLinks();
+
+    expect(
+      screen.queryByRole("menuitem", { name: "Residents" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("Should render a link for Tasks page if enabled", async () => {
     rootStoreMock.workflowsStore.isSupervisionTasksLinkEnabled = true;
     renderLinks();

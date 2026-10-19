@@ -240,7 +240,7 @@ export const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   );
 };
 
-const ClearAll = (props: ClearIndicatorProps<SelectOption, true>) => {
+export const ClearAll = (props: ClearIndicatorProps<SelectOption, true>) => {
   return (
     <components.ClearIndicator {...props}>Clear all</components.ClearIndicator>
   );

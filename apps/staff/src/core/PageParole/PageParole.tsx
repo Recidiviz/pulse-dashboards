@@ -38,6 +38,7 @@ import { MaxWidth } from "../sharedComponents";
 import { PAROLE_PATHS, paroleRoute } from "../views";
 import { ParoleCaseProfile } from "./ParoleCaseProfile";
 import { ParoleDocketView } from "./ParoleDocketView";
+import { ParoleResidentsView } from "./ParoleResidentsView";
 
 const Wrapper = styled.div<{ $backgroundColor: string }>`
   ${typography.Sans14};
@@ -111,6 +112,10 @@ const PageParole: React.FC = observer(function PageParole() {
             <Route
               path={paroleRoute({ routeName: "docket" })}
               element={<ParoleDocketView />}
+            />
+            <Route
+              path={paroleRoute({ routeName: "residents" })}
+              element={<ParoleResidentsView />}
             />
             <Route
               path={paroleRoute({ routeName: "caseProfile" })}

@@ -117,6 +117,7 @@ describe("ParoleResidentsPresenter", () => {
   test.each([
     ["name", "brooks"],
     ["DOC ID", "92"],
+    ["prefixed DOC ID", "DOC-92"],
   ])("search matches by %s", async (_field, query) => {
     await presenter.hydrate();
     presenter.setSelectedFacilityIds(["FAC_A", "FAC_B"]);

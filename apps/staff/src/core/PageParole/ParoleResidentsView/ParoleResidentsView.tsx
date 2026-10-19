@@ -1,0 +1,79 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { observer } from "mobx-react-lite";
+import styled from "styled-components";
+
+import { withPresenterManager } from "~hydration-utils";
+
+import { useRootStore } from "../../../components/StoreProvider";
+import { ParoleResidentsPresenter } from "../../../ParoleStore/presenters/ParoleResidentsPresenter";
+import ModelHydrator from "../../ModelHydrator";
+import WorkflowsResults, {
+  WorkflowsResultsHeader,
+} from "../../WorkflowsResults";
+import { ParoleFacilitySelect } from "./ParoleFacilitySelect";
+import { ParoleResidentsTable } from "./ParoleResidentsTable";
+
+const CALL_TO_ACTION_TEXT =
+  "Search for facilities above to view their residents.";
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+// Laid out like the Workflows caseload page: before a selection, the header
+// and call to action fill the space below the select; after, the header
+// carries the resident count above the table.
+const ParoleResidentsList = observer(function ParoleResidentsList({
+  presenter,
+}: {
+  presenter: ParoleResidentsPresenter;
+}) {
+  return (
+    <Wrapper>
+      <ParoleFacilitySelect presenter={presenter} />
+
+      {presenter.hasSelectedFacilities ? (
+        <ModelHydrator hydratable={presenter.residentsHydrator}>
+          <WorkflowsResults headerText={presenter.headerText}>
+            <ParoleResidentsTable presenter={presenter} />
+          </WorkflowsResults>
+        </ModelHydrator>
+      ) : (
+        <WorkflowsResultsHeader
+          headerText={presenter.headerText}
+          callToActionText={CALL_TO_ACTION_TEXT}
+          verticallyCentered
+        />
+      )}
+    </Wrapper>
+  );
+});
+
+function usePresenter() {
+  const { paroleStore } = useRootStore();
+  return new ParoleResidentsPresenter(paroleStore);
+}
+
+export const ParoleResidentsView = withPresenterManager({
+  usePresenter,
+  ManagedComponent: ParoleResidentsList,
+  managerIsObserver: false,
+  HydratorComponent: ModelHydrator,
+});

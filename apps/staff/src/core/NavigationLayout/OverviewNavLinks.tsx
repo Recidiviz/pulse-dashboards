@@ -69,6 +69,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   );
   const enabledInsights = (userAllowedNavigation?.insights || []).length > 0;
   const enabledParole = !!userAllowedNavigation?.parole;
+  const enabledParoleResidents = (userAllowedNavigation?.parole || []).includes(
+    "residents",
+  );
   const enabledDirectorDashboard =
     (userAllowedNavigation?.directorDashboard || []).length > 0;
   const enableSystems = !supportsMultipleSystems || !isMobile;
@@ -95,6 +98,11 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enabledParole && (
         <NavLink to={paroleUrl("docket")} role="menuitem">
           Parole
+        </NavLink>
+      )}
+      {enabledParoleResidents && (
+        <NavLink to={paroleUrl("residents")} role="menuitem">
+          Residents
         </NavLink>
       )}
       {enableWorkflows && (

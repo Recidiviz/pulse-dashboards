@@ -320,11 +320,13 @@ export type ParolePage = keyof typeof PAROLE_PAGES;
 
 export const PAROLE_PAGES = {
   docket: "docket",
+  residents: "residents",
   caseProfile: "caseProfile",
 } as const;
 
 export const PAROLE_PATHS: Record<ParolePage, string> = {
   docket: `/${DASHBOARD_VIEWS.parole}/${PAROLE_PAGES.docket}`,
+  residents: `/${DASHBOARD_VIEWS.parole}/${PAROLE_PAGES.residents}`,
   caseProfile: `/${DASHBOARD_VIEWS.parole}/case/:pseudonymizedId`,
 };
 
@@ -335,7 +337,7 @@ export function paroleRoute({ routeName }: { routeName: ParolePage }): string {
   return getRelativePath(PAROLE_PATHS[routeName]);
 }
 
-export function paroleUrl(routeName: "docket"): string;
+export function paroleUrl(routeName: "docket" | "residents"): string;
 export function paroleUrl(
   routeName: "caseProfile",
   params: { pseudonymizedId: string },

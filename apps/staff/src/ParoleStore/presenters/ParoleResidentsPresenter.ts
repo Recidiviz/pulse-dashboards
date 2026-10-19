@@ -21,6 +21,7 @@ import { ParoleFacility, ParoleResident } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { ParoleStore } from "../ParoleStore";
+import { formatDocId } from "../utils";
 
 const ALL_RESIDENTS_HEADER_TEXT = "All Residents";
 
@@ -126,7 +127,10 @@ export class ParoleResidentsPresenter implements Hydratable {
     );
   }
 
-  /** The residents that match the search, by name or DOC ID. */
+  /**
+   * The residents that match the search, by name or by the "DOC-"-prefixed DOC
+   * ID shown in the table.
+   */
   get filteredResidents(): Array<ParoleResidentRow> {
     const query = this.searchQuery.trim().toLowerCase();
     if (!query) return this.residents;
@@ -134,7 +138,7 @@ export class ParoleResidentsPresenter implements Hydratable {
     return this.residents.filter(
       (resident) =>
         resident.individualName.toLowerCase().includes(query) ||
-        resident.displayId.toLowerCase().includes(query),
+        formatDocId(resident.displayId).toLowerCase().includes(query),
     );
   }
 

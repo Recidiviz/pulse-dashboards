@@ -25,7 +25,7 @@ const US_CO_CONFIG = {
   availableStateCodes: [dashboard.US_CO],
   enableUserRestrictions: false,
   navigation: {
-    parole: ["docket"],
+    parole: ["docket", "residents"],
   },
   paroleConfig: {
     docketConfig: {
