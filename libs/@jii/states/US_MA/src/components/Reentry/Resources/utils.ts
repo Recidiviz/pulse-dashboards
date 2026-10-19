@@ -17,6 +17,9 @@
 
 import { UsMaTFunction } from "~@jii/translation";
 
+import { ACCEPTS_OPTIONS, GENDER_OPTIONS } from "./filters/filterConfig";
+import { NO_TIME_LIMIT_MONTHS } from "./filters/matching";
+import { FilterOption } from "./filters/types";
 import { HousingAttributes, ResourceSummary } from "./types";
 
 /**
@@ -87,41 +90,29 @@ export function getLengthOfStayChip(
     return t(($) => $.reentry.resources.list.lengthOfStay.notListed);
   }
   const { min, max } = programLengthMonths;
+  if (max === NO_TIME_LIMIT_MONTHS) {
+    return min > 0
+      ? t(($) => $.reentry.resources.list.lengthOfStay.atLeast, { min })
+      : t(($) => $.reentry.resources.list.lengthOfStay.noTimeLimit);
+  }
   return min === max
     ? t(($) => $.reentry.resources.list.lengthOfStay.single, { count: min })
     : t(($) => $.reentry.resources.list.lengthOfStay.range, { min, max });
 }
 
-// Keys are the Resource API tags as they are stored, e.g. "Sex Offenders Accepted".
-function tagLabels(t: UsMaTFunction) {
-  const { gender, accepts } = t(($) => $.reentry.resources.list, {
-    returnObjects: true,
-  });
-  return {
-    gender: new Map([
-      ["Male", gender.male],
-      ["Female", gender.female],
-      ["Co-ed", gender.coed],
-    ]),
-    accepts: new Map([
-      ["Sex Offenders Accepted", accepts.sexOffenses],
-      ["Arson Offenders Accepted", accepts.arsonOffenses],
-      ["Parolees Accepted", accepts.parolees],
-    ]),
-  };
-}
-
 /**
  * Returns the chip labels for a resource card in display order: gender, rent,
- * length of stay, then the Accepts tags. Tags without a known label are left out.
+ * length of stay, then the Accepts tags. Tags without a filter option are left
+ * out.
  */
 export function getResourceChips(
   resource: ResourceSummary,
   t: UsMaTFunction,
 ): string[] {
-  const labels = tagLabels(t);
-  const labelsFor = (lookup: Map<string, string>) =>
-    resource.tags.flatMap((tag) => lookup.get(tag) ?? []);
+  const labelsFor = (options: FilterOption<string>[]) =>
+    options
+      .filter((option) => resource.tags.includes(option.match))
+      .map((option) => option.label(t));
 
   const housingChips =
     resource.categoryAttributes?.category === "Housing"
@@ -132,8 +123,8 @@ export function getResourceChips(
       : [];
 
   return [
-    ...labelsFor(labels.gender),
+    ...labelsFor(GENDER_OPTIONS),
     ...housingChips,
-    ...labelsFor(labels.accepts),
+    ...labelsFor(ACCEPTS_OPTIONS),
   ];
 }

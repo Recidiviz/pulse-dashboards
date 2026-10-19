@@ -17,8 +17,13 @@
 
 import { createI18nInstance, UsMaTFunction } from "~@jii/translation";
 
-import { RENT_OPTIONS } from "../filters/filterConfig";
-import { SelectedFilters } from "../filters/types";
+import {
+  NO_SELECTION,
+  parseSelectedFilters,
+  RENT_OPTIONS,
+  toSearchParams,
+} from "../filters/filterConfig";
+import { FilterGroup, FilterParam, SelectedFilters } from "../filters/types";
 import { ResourceSummary } from "../types";
 
 /** Returns an i18n instance with the real US_MA English copy loaded. */
@@ -38,12 +43,27 @@ export async function loadUsMaTranslations(): Promise<UsMaTFunction> {
 /** Returns filters that select the rent options with ids, in that order. */
 export function rentFilters(...ids: string[]): SelectedFilters {
   return {
+    ...NO_SELECTION,
     rent: ids.map((id) => {
       const option = RENT_OPTIONS.find((rentOption) => rentOption.id === id);
       if (!option) throw new Error(`No rent option ${id}`);
       return option;
     }),
   };
+}
+
+/**
+ * Returns filters that select the options with the given IDs in each param, in
+ * the order groups lists them.
+ */
+export function selectFilters(
+  groups: FilterGroup[],
+  selection: Partial<Record<FilterParam, string[]>>,
+): SelectedFilters {
+  return parseSelectedFilters(groups, {
+    ...toSearchParams(NO_SELECTION),
+    ...selection,
+  });
 }
 
 export function makeResource(

@@ -16,9 +16,18 @@
 // =============================================================================
 
 import { HousingAttributes, ResourceSummary } from "../types";
-import { RangeBand, RentOption, SelectedFilters } from "./types";
+import {
+  FilterOption,
+  LengthOfStayOption,
+  RangeBand,
+  RentOption,
+  SelectedFilters,
+} from "./types";
 
 type Range = { min: number; max: number };
+
+/** The Resource API stores a program length max of 999 for no time limit. */
+export const NO_TIME_LIMIT_MONTHS = 999;
 
 /**
  * Returns whether range overlaps band, meaning min <= lte and max > gt. For
@@ -50,18 +59,60 @@ export function matchesRentOption(
   }
 }
 
+/**
+ * Returns whether housing matches option. A program with no time limit still
+ * matches every band its range overlaps, so {min: 6, max: 999} matches
+ * "More than 1 year" as well as "No time limit". A resource without housing
+ * attributes passes undefined and matches only "Not listed".
+ */
+export function matchesLengthOfStayOption(
+  housing: HousingAttributes | undefined,
+  option: LengthOfStayOption,
+): boolean {
+  const { programLengthMonths } = housing ?? {};
+  switch (option.kind) {
+    case "band":
+      return (
+        !!programLengthMonths &&
+        bandMatchesRange(option.band, programLengthMonths)
+      );
+    case "noTimeLimit":
+      return programLengthMonths?.max === NO_TIME_LIMIT_MONTHS;
+    case "notListed":
+      return !programLengthMonths;
+  }
+}
+
+/** Returns whether matches is true for any option, or true if options is empty. */
+function matchesAny<Match>(
+  options: FilterOption<Match>[],
+  matches: (match: Match) => boolean,
+): boolean {
+  return options.length === 0 || options.some(({ match }) => matches(match));
+}
+
 /** Returns whether resource matches every group in filters that has a selection. */
 export function matchesFilters(
   resource: ResourceSummary,
   filters: SelectedFilters,
 ): boolean {
-  const housing =
+  const housingAttrs =
     resource.categoryAttributes?.category === "Housing"
       ? resource.categoryAttributes
       : undefined;
 
   return (
-    filters.rent.length === 0 ||
-    filters.rent.some((option) => matchesRentOption(housing, option.match))
+    matchesAny(filters.subcategories, (subcategory) =>
+      resource.categories.some((cat) => cat.subcategory === subcategory),
+    ) &&
+    matchesAny(filters.counties, (county) => resource.county === county) &&
+    matchesAny(filters.gender, (tag) => resource.tags.includes(tag)) &&
+    matchesAny(filters.lengthOfStay, (option) =>
+      matchesLengthOfStayOption(housingAttrs, option),
+    ) &&
+    matchesAny(filters.rent, (option) =>
+      matchesRentOption(housingAttrs, option),
+    ) &&
+    matchesAny(filters.accepts, (tag) => resource.tags.includes(tag))
   );
 }

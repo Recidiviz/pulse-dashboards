@@ -139,8 +139,12 @@ export const ResourceExplorer = route(
       {
         searchParams: {
           subcategories: string().defined().array(),
-          tags: string().defined().array(),
+          tags: string().defined().array(), // Only US_NYC reads tags; US_MA filters on the other params.
+          counties: string().defined().array(),
+          gender: string().defined().array(),
+          lengthOfStay: string().defined().array(),
           rent: string().defined().array(),
+          accepts: string().defined().array(),
         },
       },
       {

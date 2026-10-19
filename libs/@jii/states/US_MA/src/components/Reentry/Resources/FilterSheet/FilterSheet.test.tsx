@@ -21,7 +21,12 @@ import { I18nextProvider } from "react-i18next";
 
 import { BottomSheet } from "~@jii/common-ui";
 
-import { loadUsMaI18n, rentFilters } from "../__tests__/testUtils";
+import {
+  loadUsMaI18n,
+  makeResource,
+  rentFilters,
+} from "../__tests__/testUtils";
+import { getFilterGroups } from "../filters/filterConfig";
 import { SelectedFilters } from "../filters/types";
 import { FilterSheet } from "./FilterSheet";
 
@@ -34,8 +39,16 @@ beforeAll(async () => {
 const onApply = vi.fn();
 const onClose = vi.fn();
 
+const GROUPS = getFilterGroups(
+  [makeResource(1, { county: "Suffolk" })],
+  "Housing",
+);
+
 // Renders the sheet inside a BottomSheet, as ResourceList does.
-function renderSheet(appliedFilters: SelectedFilters = rentFilters()) {
+function renderSheet(
+  appliedFilters: SelectedFilters = rentFilters(),
+  groups = GROUPS,
+) {
   const sheet = (isOpen: boolean) => (
     <I18nextProvider i18n={i18n}>
       <BottomSheet
@@ -45,6 +58,7 @@ function renderSheet(appliedFilters: SelectedFilters = rentFilters()) {
         hideCloseButton
       >
         <FilterSheet
+          groups={groups}
           appliedFilters={appliedFilters}
           onApply={onApply}
           onClose={onClose}
@@ -76,6 +90,35 @@ test("shows each rent option, with Apply disabled until something changes", () =
   expect(applyButton()).toHaveTextContent("Apply selected (0)");
   expect(applyButton()).toBeDisabled();
   expect(screen.queryByRole("button", { name: "Clear all" })).toBeNull();
+});
+
+test("shows the groups in order", () => {
+  renderSheet();
+
+  expect(
+    screen
+      .getAllByRole("region")
+      .map((section) => section.firstChild?.textContent),
+  ).toEqual([
+    "Type of Housing",
+    "County",
+    "Gender Served",
+    "Length of Stay",
+    "Rent (Weekly)",
+    "Accepts",
+  ]);
+  expect(chip("Sober house")).toBeInTheDocument();
+  expect(chip("Suffolk")).toBeInTheDocument();
+  expect(chip("Sex Offenders Accepted")).toBeInTheDocument();
+  expect(chip("No time limit")).toBeInTheDocument();
+});
+
+test("leaves out groups without options", () => {
+  renderSheet(rentFilters(), getFilterGroups([makeResource(1)], "Housing"));
+
+  expect(screen.getByText("Type of Housing")).toBeInTheDocument();
+  expect(screen.queryByText("County")).toBeNull();
+  expect(screen.getByText("Gender Served")).toBeInTheDocument();
 });
 
 test("applies the selected options and closes", () => {

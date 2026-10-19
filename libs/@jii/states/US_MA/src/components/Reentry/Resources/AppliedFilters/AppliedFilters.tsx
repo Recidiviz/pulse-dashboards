@@ -26,7 +26,7 @@ import {
   NO_SELECTION,
   toggleOption,
 } from "../filters/filterConfig";
-import { SelectedFilters } from "../filters/types";
+import { FilterGroup, SelectedFilters } from "../filters/types";
 import {
   ChipRow,
   ClearAllButton,
@@ -39,6 +39,7 @@ import {
 export const MAX_VISIBLE_CHIPS = 4;
 
 type AppliedFiltersProps = {
+  groups: FilterGroup[];
   appliedFilters: SelectedFilters;
   onChange: (filters: SelectedFilters) => void;
   onOpenSheet: () => void;
@@ -49,6 +50,7 @@ type AppliedFiltersProps = {
  * below it. Past MAX_VISIBLE_CHIPS, the rest collapse behind a "+N more" toggle.
  */
 export const AppliedFilters = ({
+  groups,
   appliedFilters,
   onChange,
   onOpenSheet,
@@ -59,7 +61,7 @@ export const AppliedFilters = ({
   const filtersButtonRef = useRef<HTMLButtonElement>(null);
   const chipRefs = useRef(new Map<string, HTMLButtonElement>());
 
-  const appliedOptions = getAppliedOptions(appliedFilters);
+  const appliedOptions = getAppliedOptions(groups, appliedFilters);
   const count = appliedOptions.length;
   const hiddenCount = Math.max(count - MAX_VISIBLE_CHIPS, 0);
   const visibleOptions = expanded

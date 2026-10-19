@@ -696,13 +696,14 @@
           "range": "Rent: {{min, currency(USD)}}–{{max, currency(USD)}}/week",
           "single": "Rent: {{amount, currency(USD)}}/week",
           "incomePercent": "Rent: {{percent}}% of income",
-          "varies": "Rent: Varies",
           "notListed": "No rent info listed"
         },
         "lengthOfStay": {
           "range": "{{min}}–{{max}} months",
           "single_one": "{{count}} month",
           "single_other": "{{count}} months",
+          "atLeast": "{{min}}+ months",
+          "noTimeLimit": "No time limit",
           "notListed": "No program length info listed"
         },
         "gender": {
@@ -711,9 +712,9 @@
           "coed": "Co-ed"
         },
         "accepts": {
-          "sexOffenses": "Sex offenses",
-          "arsonOffenses": "Arson offenses",
-          "parolees": "Parolees"
+          "sexOffenses": "Sex Offenders Accepted",
+          "arsonOffenses": "Arson Offenders Accepted",
+          "parolees": "Parolees Accepted"
         }
       },
       "filters": {
@@ -726,6 +727,14 @@
           "clearAll": "Clear all",
           "remove": "Remove {{label}} filter"
         },
+        "groups": {
+          "subcategory": "Type of Housing",
+          "county": "County",
+          "gender": "Gender Served",
+          "lengthOfStay": "Length of Stay",
+          "accepts": "Accepts",
+          "rent": "Rent (Weekly)"
+        },
         "sheet": {
           "title": "Filters",
           "subtitle": "All results are shown until you select a filter. Tap options below to narrow the list. Selected filters apply together.",
@@ -734,8 +743,13 @@
           "apply": "Apply selected ({{count}})",
           "ariaLabel": "Filter housing resources"
         },
-        "groups": {
-          "rent": "Rent (Weekly)"
+        "lengthOfStay": {
+          "upTo3": "Up to 3 months",
+          "from4To6": "4–6 months",
+          "from7To12": "7–12 months",
+          "over12": "More than 1 year",
+          "noTimeLimit": "No time limit",
+          "notListed": "Program length not listed"
         },
         "rent": {
           "free": "Free",

@@ -25,6 +25,7 @@ import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 
 import {
+  getFilterGroups,
   parseSelectedFilters,
   toSearchParams,
 } from "../components/Reentry/Resources/filters/filterConfig";
@@ -33,11 +34,6 @@ import { SelectedFilters } from "../components/Reentry/Resources/filters/types";
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
-/**
- * Returns the MA resources in the route's category that match the filters in
- * the URL, those filters, and applyFilters to replace them. MA has few enough
- * resources that the page fetches them all once and filters them in memory.
- */
 export function useResources() {
   const {
     apiClient: { trpcQuerier },
@@ -50,18 +46,22 @@ export function useResources() {
   const route = State.Resident.UsMaReentry.Resources.CategoryResults;
   const { category } = useTypedParams(route);
   const [searchParams, setSearchParams] = useTypedSearchParams(route);
-  const appliedFilters = parseSelectedFilters(searchParams);
+
+  const categoryResources = data.filter((resource) =>
+    resource.categories.some(
+      (cat) => cat.category.toLowerCase() === category.toLowerCase(),
+    ),
+  );
+  const filterGroups = getFilterGroups(categoryResources, category);
+  const appliedFilters = parseSelectedFilters(filterGroups, searchParams);
 
   return {
-    // The route uses "housing" while the Resource API uses "Housing".
-    resources: data.filter(
-      (resource) =>
-        resource.categories.some(
-          (cat) => cat.category.toLowerCase() === category.toLowerCase(),
-        ) && matchesFilters(resource, appliedFilters),
+    resources: categoryResources.filter((resource) =>
+      matchesFilters(resource, appliedFilters),
     ),
     appliedFilters,
-    // Keeps search params that the filters don't use, such as subcategories.
+    filterGroups,
+    // Keeps search params that the filters don't use, such as tags.
     applyFilters: (filters: SelectedFilters) =>
       setSearchParams((current) => ({
         ...current,

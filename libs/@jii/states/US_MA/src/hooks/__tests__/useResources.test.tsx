@@ -143,6 +143,11 @@ test.each([
   ["?rent=free&rent=basedOnIncome", [1, 3]],
   ["?rent=from151To175", [2]],
   ["?rent=over200", []],
+  ["?subcategories=Transitional", [2, 3]],
+  ["?counties=Hampden&counties=Suffolk", [1, 3]],
+  ["?gender=coed", [2]],
+  ["?lengthOfStay=upTo3", [1]],
+  ["?accepts=parolees&gender=female", [3]],
 ])("%s returns only the matching resources", (search, expectedIds) => {
   expect(
     renderResources(search).resources.map(
@@ -161,13 +166,30 @@ test("appliedFilters holds the known rent options from the URL", () => {
   );
 });
 
-test("applyFilters replaces the rent IDs and keeps other params", () => {
-  const { result } = renderResourcesHook("?subcategories=Shelter&rent=over200");
+test("filterGroups lists the category's subcategories and counties", () => {
+  const optionIds = (param: string) =>
+    renderResources()
+      .filterGroups.find((group) => group.param === param)
+      ?.options.map((option) => option.id);
+
+  expect(optionIds("subcategories")).toEqual([
+    "Shelter",
+    "Sober house",
+    "Transitional",
+  ]);
+  expect(optionIds("counties")).toEqual(["Hampden", "Suffolk", "Worcester"]);
+});
+
+test("applyFilters replaces the filter IDs and keeps other params", () => {
+  const { result } = renderResourcesHook(
+    "?tags=Spanish&subcategories=Shelter&rent=over200",
+  );
 
   act(() => result.current.applyFilters(rentFilters("free", "basedOnIncome")));
 
   const params = new URLSearchParams(result.current.search);
-  expect(params.getAll("subcategories")).toEqual(["Shelter"]);
+  expect(params.getAll("tags")).toEqual(["Spanish"]);
+  expect(params.getAll("subcategories")).toEqual([]);
   expect(params.getAll("rent")).toEqual(["free", "basedOnIncome"]);
   expect(result.current.appliedFilters).toEqual(
     rentFilters("free", "basedOnIncome"),

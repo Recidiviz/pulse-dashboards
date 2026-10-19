@@ -696,13 +696,14 @@
           "range": "[US_MA]reentry.resources.list.rent.range",
           "single": "[US_MA]reentry.resources.list.rent.single",
           "incomePercent": "[US_MA]reentry.resources.list.rent.incomePercent",
-          "varies": "[US_MA]reentry.resources.list.rent.varies",
           "notListed": "[US_MA]reentry.resources.list.rent.notListed"
         },
         "lengthOfStay": {
           "range": "[US_MA]reentry.resources.list.lengthOfStay.range",
           "single_one": "[US_MA]reentry.resources.list.lengthOfStay.single_one",
           "single_other": "[US_MA]reentry.resources.list.lengthOfStay.single_other",
+          "atLeast": "[US_MA]reentry.resources.list.lengthOfStay.atLeast",
+          "noTimeLimit": "[US_MA]reentry.resources.list.lengthOfStay.noTimeLimit",
           "notListed": "[US_MA]reentry.resources.list.lengthOfStay.notListed"
         },
         "gender": {
@@ -726,6 +727,14 @@
           "clearAll": "[US_MA]reentry.resources.filters.applied.clearAll",
           "remove": "[US_MA]reentry.resources.filters.applied.remove"
         },
+        "groups": {
+          "subcategory": "[US_MA]reentry.resources.filters.groups.subcategory",
+          "county": "[US_MA]reentry.resources.filters.groups.county",
+          "gender": "[US_MA]reentry.resources.filters.groups.gender",
+          "lengthOfStay": "[US_MA]reentry.resources.filters.groups.lengthOfStay",
+          "accepts": "[US_MA]reentry.resources.filters.groups.accepts",
+          "rent": "[US_MA]reentry.resources.filters.groups.rent"
+        },
         "sheet": {
           "title": "[US_MA]reentry.resources.filters.sheet.title",
           "subtitle": "[US_MA]reentry.resources.filters.sheet.subtitle",
@@ -734,8 +743,13 @@
           "apply": "[US_MA]reentry.resources.filters.sheet.apply",
           "ariaLabel": "[US_MA]reentry.resources.filters.sheet.ariaLabel"
         },
-        "groups": {
-          "rent": "[US_MA]reentry.resources.filters.groups.rent"
+        "lengthOfStay": {
+          "upTo3": "[US_MA]reentry.resources.filters.lengthOfStay.upTo3",
+          "from4To6": "[US_MA]reentry.resources.filters.lengthOfStay.from4To6",
+          "from7To12": "[US_MA]reentry.resources.filters.lengthOfStay.from7To12",
+          "over12": "[US_MA]reentry.resources.filters.lengthOfStay.over12",
+          "noTimeLimit": "[US_MA]reentry.resources.filters.lengthOfStay.noTimeLimit",
+          "notListed": "[US_MA]reentry.resources.filters.lengthOfStay.notListed"
         },
         "rent": {
           "free": "[US_MA]reentry.resources.filters.rent.free",

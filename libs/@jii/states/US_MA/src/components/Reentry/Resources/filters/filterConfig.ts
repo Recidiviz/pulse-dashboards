@@ -15,9 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMaTFunction } from "~@jii/translation";
-
-import { FilterOption, RentOption, SelectedFilters } from "./types";
+import { ResourceSummary } from "../types";
+import {
+  FilterGroup,
+  FilterOption,
+  FilterParam,
+  LengthOfStayOption,
+  RentOption,
+  SelectedFilters,
+} from "./types";
 
 // TODO(REE-25): Confirm the rent bands once the content
 // review finishes.
@@ -59,34 +65,155 @@ export const RENT_OPTIONS: FilterOption<RentOption>[] = [
   },
 ];
 
-/** The filter groups in display order. */
-export const FILTER_GROUPS: {
-  id: string;
-  param: keyof SelectedFilters;
-  label: (t: UsMaTFunction) => string;
-  options: FilterOption<unknown>[];
-}[] = [
+const LENGTH_OF_STAY_OPTIONS: FilterOption<LengthOfStayOption>[] = [
   {
-    id: "rent",
-    param: "rent",
-    label: (t) => t(($) => $.reentry.resources.filters.groups.rent),
-    options: RENT_OPTIONS,
+    id: "upTo3",
+    label: (t) => t(($) => $.reentry.resources.filters.lengthOfStay.upTo3),
+    match: { kind: "band", band: { lte: 3 } },
+  },
+  {
+    id: "from4To6",
+    label: (t) => t(($) => $.reentry.resources.filters.lengthOfStay.from4To6),
+    match: { kind: "band", band: { gt: 3, lte: 6 } },
+  },
+  {
+    id: "from7To12",
+    label: (t) => t(($) => $.reentry.resources.filters.lengthOfStay.from7To12),
+    match: { kind: "band", band: { gt: 6, lte: 12 } },
+  },
+  {
+    id: "over12",
+    label: (t) => t(($) => $.reentry.resources.filters.lengthOfStay.over12),
+    match: { kind: "band", band: { gt: 12 } },
+  },
+  {
+    id: "noTimeLimit",
+    label: (t) =>
+      t(($) => $.reentry.resources.filters.lengthOfStay.noTimeLimit),
+    match: { kind: "noTimeLimit" },
+  },
+  {
+    id: "notListed",
+    label: (t) => t(($) => $.reentry.resources.filters.lengthOfStay.notListed),
+    match: { kind: "notListed" },
   },
 ];
 
-export const NO_SELECTION: SelectedFilters = { rent: [] };
+// Matches are the Resource API tags as they are stored.
+// TODO(REE-202): Match on stable tag identifiers once the Resource API stores them.
+export const GENDER_OPTIONS: FilterOption<string>[] = [
+  {
+    id: "male",
+    label: (t) => t(($) => $.reentry.resources.list.gender.male),
+    match: "Male",
+  },
+  {
+    id: "female",
+    label: (t) => t(($) => $.reentry.resources.list.gender.female),
+    match: "Female",
+  },
+  {
+    id: "coed",
+    label: (t) => t(($) => $.reentry.resources.list.gender.coed),
+    match: "Co-ed",
+  },
+];
+
+// Matches are the Resource API tags as they are stored.
+// TODO(REE-202): Match on stable tag identifiers once the Resource API stores them.
+export const ACCEPTS_OPTIONS: FilterOption<string>[] = [
+  {
+    id: "parolees",
+    label: (t) => t(($) => $.reentry.resources.list.accepts.parolees),
+    match: "Parolees Accepted",
+  },
+  {
+    id: "sexOffenses",
+    label: (t) => t(($) => $.reentry.resources.list.accepts.sexOffenses),
+    match: "Sex Offenders Accepted",
+  },
+  {
+    id: "arsonOffenses",
+    label: (t) => t(($) => $.reentry.resources.list.accepts.arsonOffenses),
+    match: "Arson Offenders Accepted",
+  },
+];
 
 /**
- * Returns the options the search params select, in config order. Option IDs
- * that aren't in the config are dropped, so a stale or hand-edited URL can't
- * break the page. For example, ?rent=over200&rent=cheap&rent=free selects the
- * "free" and "over200" rent options.
+ * Derive options from the Resource API response
+ */
+function valueOptions(values: (string | undefined)[]): FilterOption<string>[] {
+  return [...new Set(values.filter((value) => value !== undefined))]
+    .sort((a, b) => a.localeCompare(b))
+    .map((value) => ({ id: value, label: () => value, match: value }));
+}
+
+/**
+ * Returns the groups in display order.
+ */
+export function getFilterGroups(
+  resources: ResourceSummary[],
+  category: string,
+): FilterGroup[] {
+  const subcategories = resources.flatMap((resource) =>
+    resource.categories
+      .filter((cat) => cat.category.toLowerCase() === category.toLowerCase())
+      .map((cat) => cat.subcategory),
+  );
+
+  return [
+    {
+      param: "subcategories",
+      label: (t) => t(($) => $.reentry.resources.filters.groups.subcategory),
+      options: valueOptions(subcategories),
+    },
+    {
+      param: "counties",
+      label: (t) => t(($) => $.reentry.resources.filters.groups.county),
+      options: valueOptions(resources.map((resource) => resource.county)),
+    },
+    {
+      param: "gender",
+      label: (t) => t(($) => $.reentry.resources.filters.groups.gender),
+      options: GENDER_OPTIONS,
+    },
+    {
+      param: "lengthOfStay",
+      label: (t) => t(($) => $.reentry.resources.filters.groups.lengthOfStay),
+      options: LENGTH_OF_STAY_OPTIONS,
+    },
+    {
+      param: "rent",
+      label: (t) => t(($) => $.reentry.resources.filters.groups.rent),
+      options: RENT_OPTIONS,
+    },
+    {
+      param: "accepts",
+      label: (t) => t(($) => $.reentry.resources.filters.groups.accepts),
+      options: ACCEPTS_OPTIONS,
+    },
+  ];
+}
+
+export const NO_SELECTION: SelectedFilters = {
+  subcategories: [],
+  counties: [],
+  gender: [],
+  lengthOfStay: [],
+  rent: [],
+  accepts: [],
+};
+
+/**
+ * Returns the options the search params select, in the order groups lists
+ * them.
  */
 export function parseSelectedFilters(
-  params: Record<keyof SelectedFilters, string[]>,
+  groups: FilterGroup[],
+  params: Record<FilterParam, string[]>,
 ): SelectedFilters {
   return Object.fromEntries(
-    FILTER_GROUPS.map(({ param, options }) => [
+    groups.map(({ param, options }) => [
       param,
       options.filter((option) => params[param].includes(option.id)),
     ]),
@@ -96,30 +223,35 @@ export function parseSelectedFilters(
 /** Returns the search params that select filters. */
 export function toSearchParams(
   filters: SelectedFilters,
-): Record<keyof SelectedFilters, string[]> {
+): Record<FilterParam, string[]> {
   return Object.fromEntries(
-    FILTER_GROUPS.map(({ param }) => [
+    Object.entries(filters).map(([param, options]) => [
       param,
-      filters[param].map((option) => option.id),
+      options.map((option) => option.id),
     ]),
-  ) as Record<keyof SelectedFilters, string[]>;
+  ) as Record<FilterParam, string[]>;
 }
 
 export function isOptionSelected(
   filters: SelectedFilters,
-  param: keyof SelectedFilters,
+  param: FilterParam,
   option: FilterOption<unknown>,
 ): boolean {
   return filters[param].some((selected) => selected.id === option.id);
 }
 
-/** Returns the options selected in filters with a unique key. */
-export function getAppliedOptions(filters: SelectedFilters): {
+/**
+ * Returns the options selected in filters with a unique key and ordered
+ */
+export function getAppliedOptions(
+  groups: FilterGroup[],
+  filters: SelectedFilters,
+): {
   key: string;
-  param: keyof SelectedFilters;
+  param: FilterParam;
   option: FilterOption<unknown>;
 }[] {
-  return FILTER_GROUPS.flatMap(({ param, options }) =>
+  return groups.flatMap(({ param, options }) =>
     options
       .filter((option) => isOptionSelected(filters, param, option))
       .map((option) => ({ key: `${param}:${option.id}`, param, option })),
@@ -129,7 +261,7 @@ export function getAppliedOptions(filters: SelectedFilters): {
 /** Returns filters with option added to or removed from param's selection. */
 export function toggleOption(
   filters: SelectedFilters,
-  param: keyof SelectedFilters,
+  param: FilterParam,
   option: FilterOption<unknown>,
 ): SelectedFilters {
   const selected = filters[param];
@@ -142,8 +274,8 @@ export function toggleOption(
 }
 
 export function countSelectedOptions(filters: SelectedFilters): number {
-  return FILTER_GROUPS.reduce(
-    (count, { param }) => count + filters[param].length,
+  return Object.values(filters).reduce(
+    (count, options) => count + options.length,
     0,
   );
 }
@@ -153,8 +285,8 @@ export function isSameSelection(
   a: SelectedFilters,
   b: SelectedFilters,
 ): boolean {
-  return FILTER_GROUPS.every(
-    ({ param }) =>
+  return (Object.keys(a) as FilterParam[]).every(
+    (param) =>
       a[param].length === b[param].length &&
       a[param].every((option) => isOptionSelected(b, param, option)),
   );

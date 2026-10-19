@@ -23,13 +23,12 @@ import { Button } from "~design-system";
 import { Chip } from "../Chip/Chip";
 import {
   countSelectedOptions,
-  FILTER_GROUPS,
   isOptionSelected,
   isSameSelection,
   NO_SELECTION,
   toggleOption,
 } from "../filters/filterConfig";
-import { SelectedFilters } from "../filters/types";
+import { FilterGroup, SelectedFilters } from "../filters/types";
 import {
   Divider,
   GroupLabel,
@@ -41,6 +40,7 @@ import {
 } from "./FilterSheet.styles";
 
 type FilterSheetProps = {
+  groups: FilterGroup[];
   appliedFilters: SelectedFilters;
   onApply: (filters: SelectedFilters) => void;
   onClose: () => void;
@@ -50,9 +50,11 @@ type FilterSheetProps = {
  * The content of the filter BottomSheet. Selections stay in a draft until
  * Apply, and Cancel or tapping outside the sheet discards them. BottomSheet
  * mounts its content only while open, so each opening starts a new draft from
- * appliedFilters.
+ * appliedFilters. Groups without options, such as County when no resource
+ * has a county, are left out.
  */
 export const FilterSheet = ({
+  groups,
   appliedFilters,
   onApply,
   onClose,
@@ -93,24 +95,28 @@ export const FilterSheet = ({
         {t(($) => $.reentry.resources.filters.sheet.subtitle)}
       </Subtitle>
 
-      {FILTER_GROUPS.map(({ id, param, label, options }) => (
-        <section key={id} aria-labelledby={`filter-group-${id}`}>
-          <GroupLabel id={`filter-group-${id}`}>{label(t)}</GroupLabel>
-          <GroupOptions>
-            {options.map((option) => (
-              <Chip
-                key={option.id}
-                selected={isOptionSelected(pendingFilters, param, option)}
-                onClick={() =>
-                  setPendingFilters(toggleOption(pendingFilters, param, option))
-                }
-              >
-                {option.label(t)}
-              </Chip>
-            ))}
-          </GroupOptions>
-        </section>
-      ))}
+      {groups
+        .filter(({ options }) => options.length > 0)
+        .map(({ param, label, options }) => (
+          <section key={param} aria-labelledby={`filter-group-${param}`}>
+            <GroupLabel id={`filter-group-${param}`}>{label(t)}</GroupLabel>
+            <GroupOptions>
+              {options.map((option) => (
+                <Chip
+                  key={option.id}
+                  selected={isOptionSelected(pendingFilters, param, option)}
+                  onClick={() =>
+                    setPendingFilters(
+                      toggleOption(pendingFilters, param, option),
+                    )
+                  }
+                >
+                  {option.label(t)}
+                </Chip>
+              ))}
+            </GroupOptions>
+          </section>
+        ))}
     </>
   );
 };

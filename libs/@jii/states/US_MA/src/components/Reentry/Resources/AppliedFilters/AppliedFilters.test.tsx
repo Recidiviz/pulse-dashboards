@@ -20,8 +20,12 @@ import { i18n as I18n } from "i18next";
 import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
 
-import { loadUsMaI18n, rentFilters } from "../__tests__/testUtils";
-import { NO_SELECTION } from "../filters/filterConfig";
+import {
+  loadUsMaI18n,
+  rentFilters,
+  selectFilters,
+} from "../__tests__/testUtils";
+import { getFilterGroups, NO_SELECTION } from "../filters/filterConfig";
 import { SelectedFilters } from "../filters/types";
 import { AppliedFilters } from "./AppliedFilters";
 
@@ -30,6 +34,8 @@ let i18n: I18n;
 beforeAll(async () => {
   i18n = await loadUsMaI18n();
 });
+
+const GROUPS = getFilterGroups([], "Housing");
 
 const onChange = vi.fn();
 const onOpenSheet = vi.fn();
@@ -50,6 +56,7 @@ function renderFilters(initial: SelectedFilters) {
     const [applied, setApplied] = useState(initial);
     return (
       <AppliedFilters
+        groups={GROUPS}
         appliedFilters={applied}
         onChange={(filters) => {
           onChange(filters);
@@ -88,6 +95,22 @@ test("counts applied filters and shows a chip for each, without Clear all for on
   expect(button("Filters (1)")).toBeInTheDocument();
   expect(button("Remove Over $200 filter")).toHaveTextContent("Over $200");
   expect(queryButton("Clear all")).toBeNull();
+});
+
+test("orders chips by group and labels Accepts chips with the stored tag", () => {
+  renderFilters(
+    selectFilters(GROUPS, {
+      accepts: ["parolees"],
+      rent: ["free"],
+      gender: ["coed"],
+    }),
+  );
+
+  expect(removeButtons().map((chip) => chip.textContent)).toEqual([
+    "Co-ed",
+    "Free",
+    "Parolees Accepted",
+  ]);
 });
 
 test("removing a chip drops its filter and focuses the next chip", () => {

@@ -83,6 +83,8 @@ describe("getLengthOfStayChip", () => {
   test.each([
     [{ programLengthMonths: { min: 6, max: 12 } }, "6–12 months"],
     [{ programLengthMonths: { min: 6, max: 6 } }, "6 months"],
+    [{ programLengthMonths: { min: 6, max: 999 } }, "6+ months"],
+    [{ programLengthMonths: { min: 0, max: 999 } }, "No time limit"],
     [{}, "No program length info listed"],
   ])("%j → %s", (attributes, expected) => {
     expect(getLengthOfStayChip({ category: "Housing", ...attributes }, t)).toBe(
@@ -105,8 +107,8 @@ describe("getResourceChips", () => {
       "Co-ed",
       "Rent: $150–$200/week",
       "No program length info listed",
-      "Parolees",
-      "Sex offenses",
+      "Parolees Accepted",
+      "Sex Offenders Accepted",
     ]);
   });
 

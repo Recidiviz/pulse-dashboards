@@ -29,6 +29,10 @@ export type FilterOption<Match> = {
 
 /**
  * A (gt, lte] band. Omit gt for no lower bound or lte for no upper bound.
+ *
+ * Bands use gt rather than gte so there is no gap for fractional values, e.g.
+ * rent can have cents, so with {gte: 151, lte: 175} a rent
+ * of $150.50 wouldn't match the "Up to $150" nor "$151–$175" bands.
  */
 export type RangeBand = { gt?: number; lte?: number };
 
@@ -38,11 +42,31 @@ export type RentOption =
   | { kind: "basedOnIncome" }
   | { kind: "notListed" };
 
+export type LengthOfStayOption =
+  | { kind: "band"; band: RangeBand }
+  | { kind: "noTimeLimit" }
+  | { kind: "notListed" };
+
 /**
  * The selected options in each filter group. An empty group doesn't filter
- * anything, and a resource has to match every group that isn't empty.
+ * anything, and a resource has to match every group that isn't empty. Within
+ * a group, a resource matches if it matches any of the selected options.
  */
 export type SelectedFilters = {
-  // A resource matches if it matches any of these.
+  subcategories: FilterOption<string>[];
+  counties: FilterOption<string>[];
+  gender: FilterOption<string>[];
+  lengthOfStay: FilterOption<LengthOfStayOption>[];
   rent: FilterOption<RentOption>[];
+  accepts: FilterOption<string>[];
+};
+
+/** The search params that store filter selections. */
+export type FilterParam = keyof SelectedFilters;
+
+/** A section of the filter sheet. */
+export type FilterGroup = {
+  param: FilterParam;
+  label: (t: UsMaTFunction) => string;
+  options: FilterOption<unknown>[];
 };

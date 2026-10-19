@@ -48,6 +48,7 @@ export const ResourceList = () => {
   const {
     resources: matchingResources,
     appliedFilters,
+    filterGroups,
     applyFilters,
   } = useResources();
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
@@ -93,6 +94,7 @@ export const ResourceList = () => {
       </PageHeader>
 
       <AppliedFilters
+        groups={filterGroups}
         appliedFilters={appliedFilters}
         onChange={applyFilters}
         onOpenSheet={() => setFilterSheetOpen(true)}
@@ -142,6 +144,7 @@ export const ResourceList = () => {
         hideCloseButton
       >
         <FilterSheet
+          groups={filterGroups}
           appliedFilters={appliedFilters}
           onApply={applyFilters}
           onClose={() => setFilterSheetOpen(false)}
