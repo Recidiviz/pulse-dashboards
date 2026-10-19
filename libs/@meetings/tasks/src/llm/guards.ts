@@ -129,12 +129,21 @@ function hasInjectionPattern(text: string): RegExp | null {
 // VALIDATORS
 // ==========================================
 
+const DEFAULT_MIN_TRANSCRIPT_WORDS = 50;
+
+function getMinTranscriptWords(): number {
+  const override = Number(process.env["MIN_TRANSCRIPT_WORDS"]);
+  return Number.isInteger(override) && override > 0
+    ? override
+    : DEFAULT_MIN_TRANSCRIPT_WORDS;
+}
+
 /**
  * Validates that transcript has minimum word count
  */
 export const validateWordCount: Validator<TranscriptInput> = (data) => {
   const wordCount = countWords(data.rawText);
-  const minWords = 50;
+  const minWords = getMinTranscriptWords();
 
   if (wordCount < minWords) {
     return {

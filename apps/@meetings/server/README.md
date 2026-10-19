@@ -51,6 +51,8 @@ When running locally via `nx dev @meetings/server`, local mode is enabled automa
 
 The `LOCAL_STORAGE_DIR` environment variable can optionally be set to control where local audio files are stored (default: `{system-temp}/meetings-local`). To disable local mode and connect to GCS instead, set `IS_LOCAL_MODE=false` in your `.env.dev` file.
 
+Transcripts under 50 words fail with a "too short" error. To test with shorter recordings, set `MIN_TRANSCRIPT_WORDS` in your `.env.dev` file (for example, `MIN_TRANSCRIPT_WORDS=3`).
+
 ### Updating the prisma schema
 
 Instructions for updating the prisma schema are in the [prisma README](../../libs/@meetings/prisma/README.md).

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 import {
   createGuard,
@@ -62,6 +62,33 @@ describe("Guards - Validators", () => {
       expect(result.valid).toBe(false);
       expect(result.errorKind).toBe("Length");
       expect(result.message).toContain("Transcript too short");
+    });
+
+    describe("with MIN_TRANSCRIPT_WORDS set", () => {
+      afterEach(() => {
+        vi.unstubAllEnvs();
+      });
+
+      const transcript = {
+        rawText: "Checking in on the job search",
+        startTime: "2025-01-15T15:00:00.000Z",
+        durationSeconds: 300,
+        poNotes: "",
+      };
+
+      test("should use the override as the minimum", () => {
+        vi.stubEnv("MIN_TRANSCRIPT_WORDS", "3");
+
+        expect(validateWordCount(transcript).valid).toBe(true);
+      });
+
+      test("should fall back to 50 for an invalid override", () => {
+        vi.stubEnv("MIN_TRANSCRIPT_WORDS", "abc");
+
+        const result = validateWordCount(transcript);
+        expect(result.valid).toBe(false);
+        expect(result.message).toContain("minimum 50");
+      });
     });
   });
 
