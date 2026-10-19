@@ -35,6 +35,16 @@ export abstract class UsTxArsErsV2OpportunityBase<
   ReferralRecord extends DocumentData,
   UpdateRecord extends OpportunityUpdateWithForm<any>,
 > extends OpportunityBase<Client, ReferralRecord, UpdateRecord> {
+  // The record's opportunityId gives each eligibility cycle its own updates
+  // document. Existing updates live under the ID without it, so this waits on
+  // usTxArsErsV2OpportunityId until those documents have been moved.
+  get opportunityId(): string | undefined {
+    return this.rootStore.userStore.activeFeatureVariants
+      .usTxArsErsV2OpportunityId
+      ? this.record.opportunityId
+      : undefined;
+  }
+
   get submittedForReviewDate(): string | undefined {
     if (!this.isInSupervisorReview && !this.isInRevisionsRequested) {
       return undefined;

@@ -166,6 +166,7 @@ export type FeatureVariant =
   | "usTxEnablePoFormSection"
   | "usTxEnableSupervisorFormSection"
   | "usTxAllowSingleFormSectionEdit"
+  | "usTxArsErsV2OpportunityId"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -334,6 +335,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTxEnablePoFormSection: {},
   usTxEnableSupervisorFormSection: {},
   usTxAllowSingleFormSectionEdit: {},
+  usTxArsErsV2OpportunityId: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
@@ -438,6 +440,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         // Off for Recidiviz users during build-out — opt in per-user
         // via the admin panel to see the reworked Trustee checklist.
         trusteeChecklistRework: undefined,
+        // Off until the TX ARS/ERS v2 updates documents are migrated, so
+        // Recidiviz users read the same documents as TX staff.
+        usTxArsErsV2OpportunityId: undefined,
 
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
