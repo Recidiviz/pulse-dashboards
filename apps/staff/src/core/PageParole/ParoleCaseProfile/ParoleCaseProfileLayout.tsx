@@ -51,7 +51,10 @@ const SidebarColumn = styled.div`
   flex-direction: column;
 `;
 
-const MainColumn = styled.div`
+// Every section in the main column describes the person on the case, so
+// FullStory excludes the whole column. A section added here inherits the
+// exclusion and needs no fs-exclude of its own.
+const MainColumn = styled.div.attrs({ className: "fs-exclude" })`
   flex: 1;
   min-width: 0;
   display: flex;

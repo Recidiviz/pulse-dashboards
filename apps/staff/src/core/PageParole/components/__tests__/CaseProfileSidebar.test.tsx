@@ -77,6 +77,17 @@ describe("CaseProfileSidebar", () => {
     expect(screen.getByText(BODY_MARKER)).toBeInTheDocument();
   });
 
+  it("excludes the info card from FullStory but records the section nav", () => {
+    renderSidebar();
+
+    expect(screen.getByText(BODY_MARKER).closest(".fs-exclude")).not.toBeNull();
+    expect(
+      screen
+        .getByRole("button", { name: "Alpha Section" })
+        .closest(".fs-exclude"),
+    ).toBeNull();
+  });
+
   it("does not render the parole return banner by default", () => {
     renderSidebar();
 

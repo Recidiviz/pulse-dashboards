@@ -63,7 +63,10 @@ const cardOverrideStyles = ({
 `;
 
 // With a banner, the card stops clipping so the banner can cover its border.
-const InfoCard = styled(SectionCard)<{
+// The info card, banner included, shows the person's name, IDs and case
+// details, so FullStory excludes the whole card. The section nav card below
+// holds only fixed labels and stays recorded.
+const InfoCard = styled(SectionCard).attrs({ className: "fs-exclude" })<{
   $isNavStuck: boolean;
   $hasBanner: boolean;
   $cornerRadius?: string;

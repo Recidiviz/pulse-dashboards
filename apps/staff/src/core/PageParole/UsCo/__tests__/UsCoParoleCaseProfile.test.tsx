@@ -22,6 +22,7 @@ import { MemoryRouter } from "react-router-dom";
 import { paroleCasesFixtureByState } from "~datatypes";
 
 import US_CO_CONFIG from "../../../../tenants/US_CO";
+import { PAROLE_REPORT_CAPTURE_ID } from "../../components/shared";
 import { UsCoParoleCaseProfile } from "../UsCoParoleCaseProfile";
 
 const CASE = paroleCasesFixtureByState.US_CO["45821"];
@@ -65,5 +66,20 @@ describe("UsCoParoleCaseProfile", () => {
     await user.click(screen.getByRole("button", { name: label }));
 
     expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the person's details out of FullStory recordings", () => {
+    for (const nameElement of screen.getAllByText(CASE.name)) {
+      expect(nameElement.closest(".fs-exclude")).not.toBeNull();
+    }
+    expect(
+      document.getElementById(PAROLE_REPORT_CAPTURE_ID)?.closest(".fs-exclude"),
+    ).not.toBeNull();
+  });
+
+  it.each(NAV_LABELS)("records the %s nav entry in FullStory", (label) => {
+    expect(
+      screen.getByRole("button", { name: label }).closest(".fs-exclude"),
+    ).toBeNull();
   });
 });
