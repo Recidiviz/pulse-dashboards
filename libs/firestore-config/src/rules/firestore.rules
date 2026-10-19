@@ -247,8 +247,13 @@ service cloud.firestore {
     // evaluator can't resolve path-structure checks like an ancestor DEMO_ prefix when that's the
     // branch needed to prove a collectionGroup query is allowed), so unlike other demo collections,
     // Recidiviz staff read demo opportunity-update data under the same restrictions as real data.
+    //
+    // For the same reason, this rule denies demo-only accounts outright, since allowing them here
+    // would also allow real data. They lose collectionGroup queries (the reviewer views) but still
+    // read their demo opportunity updates one document at a time through the DEMO_clientUpdatesV2
+    // rule.
     match /{path=**}/clientOpportunityUpdates/{docId} {
-      allow read: if appIsStaff() && (
+      allow read: if appIsStaff() && !isDemoOnlyAccount() && (
         recidivizAllowedStatesIncludesTarget("clientOpportunityUpdates") || stateCodeMatchesTarget()
         );
     }

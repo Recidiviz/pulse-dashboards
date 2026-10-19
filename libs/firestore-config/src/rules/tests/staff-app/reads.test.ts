@@ -27,6 +27,7 @@ import {
   testAllQueriesUnrestricted,
   testAllReadsForState,
   testCollectionGroupOpportunityUpdateRead,
+  testGetOpportunityUpdate,
   testReadCustomTaskForState,
   testUserUpdateRead,
 } from "../utils";
@@ -265,6 +266,30 @@ describe("app = staff", () => {
         );
       },
     );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
+      "%s forceDemoData user cannot query clientOpportunityUpdates for their own state",
+      async (userState: string) => {
+        await testCollectionGroupOpportunityUpdateRead(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertFails,
+          userState,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
+      "%s forceDemoData user cannot read a clientOpportunityUpdates document for their own state",
+      async (userState: string) => {
+        await testGetOpportunityUpdate(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertFails,
+          userState,
+        );
+      },
+    );
   });
 
   // Demo mode prefixes the top-level clientUpdatesV2 collection with "DEMO_", but the
@@ -305,27 +330,45 @@ describe("app = staff", () => {
       );
     });
 
+    // A query can't be limited to demo documents, so the rule denies demo-only
+    // users every collectionGroup query, demo data included.
     // eslint-disable-next-line vitest/expect-expect
-    test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
-      "%s forceDemoData user can query demo clientOpportunityUpdates for their own state",
+    test.each([["US_TN"], ["US_CA"]])(
+      "%s forceDemoData user cannot query demo clientOpportunityUpdates for their own state",
       async (userState: string) => {
         await testCollectionGroupOpportunityUpdateRead(
           getDemoOnlyUser(testEnv, userState).firestore(),
-          assertSucceeds,
+          assertFails,
           userState,
         );
       },
     );
 
     // eslint-disable-next-line vitest/expect-expect
-    test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
-      "%s forceDemoData user cannot query demo clientOpportunityUpdates for other states",
+    test.each([["US_TN"], ["US_CA"]])(
+      "%s forceDemoData user can read a demo clientOpportunityUpdates document for their own state",
       async (userState: string) => {
-        const targetState = userState === "US_TN" ? "US_PA" : "US_TN";
-        await testCollectionGroupOpportunityUpdateRead(
+        await testGetOpportunityUpdate(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertSucceeds,
+          userState,
+          "DEMO_clientUpdatesV2",
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["US_TN", "US_CA"],
+      ["US_CA", "US_TN"],
+    ])(
+      "%s forceDemoData user cannot read a demo clientOpportunityUpdates document for %s",
+      async (userState: string, targetState: string) => {
+        await testGetOpportunityUpdate(
           getDemoOnlyUser(testEnv, userState).firestore(),
           assertFails,
           targetState,
+          "DEMO_clientUpdatesV2",
         );
       },
     );

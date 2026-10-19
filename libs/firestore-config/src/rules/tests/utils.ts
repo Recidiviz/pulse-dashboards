@@ -315,3 +315,25 @@ export async function testCollectionGroupOpportunityUpdateRead(
     ),
   );
 }
+
+/**
+ * Attempts a direct read of the document seedClientOpportunityUpdate writes.
+ */
+export async function testGetOpportunityUpdate(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+  parentCollectionName = "clientUpdatesV2",
+) {
+  await assertFn(
+    getDoc(
+      doc(
+        db,
+        parentCollectionName,
+        `${stateCode}_someClient`,
+        "clientOpportunityUpdates",
+        "someOpportunity",
+      ),
+    ),
+  );
+}

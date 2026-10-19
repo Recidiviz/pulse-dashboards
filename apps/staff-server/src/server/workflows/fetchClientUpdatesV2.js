@@ -19,6 +19,7 @@ import { getFirestore } from "firebase-admin/firestore";
 
 /**
  * Given a lowercase stateCode (for example, "us_tx"), makes 2 queries to the clientOpportunityUpdates firestore collection group.
+ * Only documents under clientUpdatesV2 are returned.
  * The first query grabs all documents where denial is not null. The second query grabs all documents where submitted is not null.
  * Iterates through both snapshots and constructs a results object that maps a client's external id to a nested object.
  * The nested object maps an opportunity name to another nested object containing the surfaced denial and submission details.
@@ -57,6 +58,9 @@ export async function fetchClientUpdatesV2(stateCode) {
   [denialSnapshot, submittedSnapshot].forEach((snapshot) => {
     snapshot.forEach((doc) => {
       const docPathSplit = doc.ref.path.split("/");
+      // The collection group also spans demo data under DEMO_clientUpdatesV2,
+      // which the query cannot exclude.
+      if (docPathSplit[0] !== "clientUpdatesV2") return;
       const externalId = docPathSplit[1].split("_")[2];
       const oppString = docPathSplit[3];
 
