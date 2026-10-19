@@ -24,26 +24,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import styled from "styled-components";
 
 import ChevronIcon from "../assets/chevron-left.svg?react";
-import * as Styled from "../CaseDetails/CaseDetails.styles";
-
-const ScrollControlsContainer = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const ScrollContainer = styled.div<{ isCursorGrab?: boolean }>`
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  cursor: ${({ isCursorGrab }) => (isCursorGrab ? "grab" : "default")};
-  display: flex;
-  user-select: none;
-  padding: 0 22px 0 22px;
-  margin-right: 40px;
-`;
+import * as Styled from "./DraggableScrollContainer.styles";
 
 const DEFAULT_SCROLL_OFFSET = 200;
 
@@ -172,7 +155,7 @@ const DraggableScrollContainer = forwardRef<
     }, [currentSlide, onSlideChange]);
 
     return (
-      <ScrollControlsContainer>
+      <Styled.ScrollControlsContainer>
         {!hideArrowButtons && (
           <Styled.CarouselButtons>
             <Styled.CarouselButton onClick={handleScrollLeft}>
@@ -183,14 +166,14 @@ const DraggableScrollContainer = forwardRef<
             </Styled.CarouselButton>
           </Styled.CarouselButtons>
         )}
-        <ScrollContainer
+        <Styled.ScrollContainer
           ref={scrollRef}
           isCursorGrab={!hideArrowButtons}
           onScroll={(e) => setCurrentScrollLeft(e.currentTarget.scrollLeft)}
         >
           {children}
-        </ScrollContainer>
-      </ScrollControlsContainer>
+        </Styled.ScrollContainer>
+      </Styled.ScrollControlsContainer>
     );
   },
 );

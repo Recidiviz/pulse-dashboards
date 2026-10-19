@@ -27,7 +27,7 @@ import styled from "styled-components";
 
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
-import * as CaseDetailsStyled from "../CaseDetails/CaseDetails.styles";
+import { DatePickerWrapper } from "../shared/SharedDatePicker.styles";
 
 /** Calendar icon as a data URI for use as input background-image */
 export const CALENDAR_BACKGROUND = iconToDataURI(
@@ -89,9 +89,7 @@ export const FieldContent = styled.div`
   gap: 1rem;
 `;
 
-export const BaseDatePickerWrapper = styled(
-  CaseDetailsStyled.DatePickerWrapper,
-)`
+export const BaseDatePickerWrapper = styled(DatePickerWrapper)`
   .react-datepicker__input-container input {
     background-repeat: no-repeat;
     background-image: ${CALENDAR_BACKGROUND};

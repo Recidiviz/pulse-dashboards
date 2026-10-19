@@ -20,7 +20,7 @@ import styled, { css } from "styled-components";
 
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
-import * as Styled from "../CaseDetails/CaseDetails.styles";
+import { DatePickerWrapper } from "../shared/SharedDatePicker.styles";
 import { hasErrorStyles } from "../shared/styles/ValidationStyles";
 
 export const EDIT_BACKGROUND = iconToDataURI(
@@ -101,7 +101,7 @@ export const HelperText = styled.div`
   font-style: italic;
 `;
 
-export const CustomDatePickerWrapper = styled(Styled.DatePickerWrapper)<{
+export const CustomDatePickerWrapper = styled(DatePickerWrapper)<{
   $hasError?: boolean;
 }>`
   /* Override the input styles to match InputBase but with calendar icon */

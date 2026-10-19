@@ -21,7 +21,7 @@ import DatePicker, { ReactDatePickerCustomHeaderProps } from "react-datepicker";
 import Arrow from "../assets/left-arrow-carot-icon.svg?react";
 import DownArrow from "../assets/sort-down-icon.svg?react";
 import UpArrow from "../assets/sort-up-icon.svg?react";
-import * as CaseDetailsStyled from "../CaseDetails/CaseDetails.styles";
+import * as Styled from "./SharedDatePicker.styles";
 
 const MONTHS = [
   "January",
@@ -44,39 +44,39 @@ const DatePickerHeader = ({
   decreaseMonth,
   increaseMonth,
 }: ReactDatePickerCustomHeaderProps) => (
-  <CaseDetailsStyled.CalendarHeader>
-    <CaseDetailsStyled.CalendarMonthIconButton
+  <Styled.CalendarHeader>
+    <Styled.CalendarMonthIconButton
       onClick={decreaseMonth}
       aria-label="Previous month"
     >
       <Arrow aria-hidden="true" />
-    </CaseDetailsStyled.CalendarMonthIconButton>
-    <CaseDetailsStyled.CalendarCenter>
+    </Styled.CalendarMonthIconButton>
+    <Styled.CalendarCenter>
       <span>
         {MONTHS[date.getMonth()]} {date.getFullYear()}
       </span>
-      <CaseDetailsStyled.CalendarYearStack>
-        <CaseDetailsStyled.CalendarYearIconButton
+      <Styled.CalendarYearStack>
+        <Styled.CalendarYearIconButton
           onClick={() => changeYear(date.getFullYear() + 1)}
           aria-label="Next year"
         >
           <UpArrow aria-hidden="true" />
-        </CaseDetailsStyled.CalendarYearIconButton>
-        <CaseDetailsStyled.CalendarYearIconButton
+        </Styled.CalendarYearIconButton>
+        <Styled.CalendarYearIconButton
           onClick={() => changeYear(date.getFullYear() - 1)}
           aria-label="Previous year"
         >
           <DownArrow aria-hidden="true" />
-        </CaseDetailsStyled.CalendarYearIconButton>
-      </CaseDetailsStyled.CalendarYearStack>
-    </CaseDetailsStyled.CalendarCenter>
-    <CaseDetailsStyled.CalendarMonthIconButton
+        </Styled.CalendarYearIconButton>
+      </Styled.CalendarYearStack>
+    </Styled.CalendarCenter>
+    <Styled.CalendarMonthIconButton
       onClick={increaseMonth}
       aria-label="Next month"
     >
       <Arrow aria-hidden="true" style={{ transform: "scaleX(-1)" }} />
-    </CaseDetailsStyled.CalendarMonthIconButton>
-  </CaseDetailsStyled.CalendarHeader>
+    </Styled.CalendarMonthIconButton>
+  </Styled.CalendarHeader>
 );
 
 const MonthYearPickerHeader = ({
@@ -84,21 +84,21 @@ const MonthYearPickerHeader = ({
   decreaseYear,
   increaseYear,
 }: ReactDatePickerCustomHeaderProps) => (
-  <CaseDetailsStyled.CalendarHeader>
-    <CaseDetailsStyled.CalendarMonthIconButton
+  <Styled.CalendarHeader>
+    <Styled.CalendarMonthIconButton
       onClick={decreaseYear}
       aria-label="Previous year"
     >
       <Arrow aria-hidden="true" />
-    </CaseDetailsStyled.CalendarMonthIconButton>
+    </Styled.CalendarMonthIconButton>
     <span>{date.getFullYear()}</span>
-    <CaseDetailsStyled.CalendarMonthIconButton
+    <Styled.CalendarMonthIconButton
       onClick={increaseYear}
       aria-label="Next year"
     >
       <Arrow aria-hidden="true" style={{ transform: "scaleX(-1)" }} />
-    </CaseDetailsStyled.CalendarMonthIconButton>
-  </CaseDetailsStyled.CalendarHeader>
+    </Styled.CalendarMonthIconButton>
+  </Styled.CalendarHeader>
 );
 
 interface SharedDatePickerProps {
@@ -130,7 +130,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
 }) => {
   return (
     <>
-      <CaseDetailsStyled.DatePickerWrapper>
+      <Styled.DatePickerWrapper>
         <DatePicker
           shouldCloseOnSelect={false}
           showPopperArrow={false}
@@ -151,7 +151,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
           maxDate={maxDate ?? undefined}
           disabled={disabled}
         />
-      </CaseDetailsStyled.DatePickerWrapper>
+      </Styled.DatePickerWrapper>
       {resetButton}
     </>
   );
