@@ -20,6 +20,16 @@ import { z } from "zod";
 
 import { insightImportSchema } from "~@sentencing/import/models";
 
+/** A fake name in the JSON shape the import files use for full_name. */
+export function createFakeFullNameForImport() {
+  return JSON.stringify({
+    given_names: faker.person.firstName(),
+    middle_names: faker.person.firstName(),
+    surname: faker.person.lastName(),
+    name_suffix: faker.person.suffix(),
+  });
+}
+
 export function createFakeRecidivismSeriesForImport(
   keys: {
     sentence_type?: string;

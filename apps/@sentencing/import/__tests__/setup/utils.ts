@@ -16,8 +16,11 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { z } from "zod";
 
-import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
+import { TEST_STATE_CODE } from "~@sentencing/import/test/setup/constants";
+import { Prisma, PrismaClient, StateCode } from "~@sentencing/prisma/client";
+import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
@@ -66,3 +69,31 @@ export function createFakeRecidivismSeries() {
     },
   ];
 }
+
+/**
+ * Imports rows as the given file, through the same handler and schema parsing
+ * the import job uses. The rows are read from and written to the test state's
+ * database; `loaderStateCode` only picks which state's loaders run, e.g.
+ * US_MO for the SAR loaders.
+ */
+export async function importFile(
+  fileName: string,
+  rows: unknown[],
+  loaderStateCode?: StateCode,
+) {
+  // Loaded here rather than at the top of the file: setup/index.ts imports this
+  // file, and loading the handler that early runs before its vi.mock of the
+  // import plugin is ready.
+  const { getImportHandler } = await import("~@sentencing/import/handler");
+  dataProviderSingleton.setData(`${TEST_STATE_CODE}/${fileName}`, rows);
+  await getImportHandler(loaderStateCode).import(TEST_STATE_CODE, [fileName]);
+}
+
+/**
+ * Overrides for a test's import row: any of the file's columns, with any value.
+ * Values stay loose so tests can send what the source data really sends (e.g.
+ * numbers as strings), while a misspelled column fails typecheck.
+ */
+export type ImportRowOverrides<Schema extends z.ZodTypeAny> = Partial<
+  Record<keyof z.input<Schema>, unknown>
+>;

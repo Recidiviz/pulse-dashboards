@@ -19,7 +19,6 @@ import { init } from "@sentry/node";
 import sentryTestkit from "sentry-testkit";
 import { beforeAll, beforeEach, vi } from "vitest";
 
-import { getImportHandler } from "~@sentencing/import/handler";
 import { seed } from "~@sentencing/import/test/setup/seed";
 import { resetDb } from "~@sentencing/import/test/setup/utils";
 import { getPrismaClientForStateCode } from "~@sentencing/prisma";
@@ -35,8 +34,6 @@ export { testkit };
 vi.mock("~data-import-plugin", () => ({
   ImportHandler: MockImportHandler,
 }));
-
-export let importHandler: ReturnType<typeof getImportHandler>;
 
 beforeAll(async () => {
   init({

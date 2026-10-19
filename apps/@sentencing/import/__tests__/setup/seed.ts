@@ -32,6 +32,7 @@ import {
   Gender,
   OnboardingTopic,
   Plea,
+  Prisma,
   PrismaClient,
   ProtectiveFactor,
   ReportType,
@@ -44,6 +45,7 @@ const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END = 20;
 // Make sure fake case LSIR score falls within the range of the fake insight
 const FAKE_CASE_LSIR_SCORE = 10;
 const FAKE_CLIENT_GENDER = Gender.FEMALE;
+export const SAR_EXTERNAL_ID = "sar-ext-1";
 
 export const fakeOffense = {
   stateCode: StateCode.US_ID,
@@ -267,6 +269,19 @@ export const fakeInsightPrismaInput = {
     },
   },
 } satisfies InsightCreateInput;
+
+export function createSAR(
+  prismaClient: PrismaClient,
+  data: Partial<Prisma.SentencingAssessmentReportCreateInput> = {},
+) {
+  return prismaClient.sentencingAssessmentReport.create({
+    data: {
+      externalId: SAR_EXTERNAL_ID,
+      client: { connect: { externalId: fakeClient.externalId } },
+      ...data,
+    },
+  });
+}
 
 export let fakeInsightId: string;
 

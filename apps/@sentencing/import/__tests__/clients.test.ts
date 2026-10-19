@@ -19,64 +19,58 @@ import { faker } from "@faker-js/faker";
 import { describe, expect, test } from "vitest";
 
 import { CLIENTS_FILE_NAME } from "~@sentencing/import/constants";
-import { getImportHandler } from "~@sentencing/import/handler";
+import { clientImportSchema } from "~@sentencing/import/models";
+import { createFakeFullNameForImport } from "~@sentencing/import/test/common/utils";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
 import {
-  TEST_CLIENTS_FILE_NAME,
-  TEST_STATE_CODE,
-} from "~@sentencing/import/test/setup/constants";
-import { fakeCase, fakeClient } from "~@sentencing/import/test/setup/seed";
+  fakeCase,
+  fakeClient,
+  fakeCounty,
+} from "~@sentencing/import/test/setup/seed";
+import {
+  importFile,
+  ImportRowOverrides,
+} from "~@sentencing/import/test/setup/utils";
 import { Gender, StateCode } from "~@sentencing/prisma/client";
-import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
-let importHandler: ReturnType<typeof getImportHandler>;
+/** A row for the seeded client. Tests pass the fields they care about. */
+function createClientImportRow(
+  overrides: ImportRowOverrides<typeof clientImportSchema> = {},
+) {
+  return {
+    external_id: fakeClient.externalId,
+    pseudonymized_id: fakeClient.pseudonymizedId,
+    case_ids: JSON.stringify([]),
+    state_code: StateCode.US_ID,
+    full_name: createFakeFullNameForImport(),
+    gender: fakeClient.gender,
+    birth_date: fakeClient.birthDate,
+    ...overrides,
+  };
+}
+
+function findClient(externalId = fakeClient.externalId) {
+  return testPrismaClient.client.findUnique({ where: { externalId } });
+}
 
 describe("import client data", () => {
-  beforeAll(async () => {
-    importHandler = getImportHandler();
-  });
-
   test("should upsert existing clients and insert new ones", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // New client
-      {
+      createClientImportRow({
         external_id: "new-client-ext-id",
         pseudonymized_id: "new-client-pid",
-        case_ids: JSON.stringify([]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
         county: faker.location.county(),
-        birth_date: faker.date.birthdate(),
-      },
+      }),
       // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
+      createClientImportRow({
         case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
         // Set a new county
         county: "my fake county",
         district: "my fake district",
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
 
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
-
-    // Check that the new case was created
     const dbClients = await testPrismaClient.client.findMany({
       include: {
         county: true,
@@ -99,27 +93,14 @@ describe("import client data", () => {
   });
 
   test("should keep both county and district when both are provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
+      createClientImportRow({
         case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
         county: "my fake county",
         district: "my fake district",
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({
       include: {
@@ -138,31 +119,18 @@ describe("import client data", () => {
   });
 
   test("should keep district if county is not provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
-      // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
-        case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
-        district: "my fake district",
-        birth_date: faker.date.birthdate(),
-      },
-    ]);
-
     await testPrismaClient.client.update({
       where: { externalId: fakeClient.externalId },
       data: { countyId: null },
     });
 
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
+    await importFile(CLIENTS_FILE_NAME, [
+      // existing client
+      createClientImportRow({
+        case_ids: JSON.stringify([fakeCase.externalId]),
+        district: "my fake district",
+      }),
+    ]);
 
     const dbClients = await testPrismaClient.client.findMany({
       include: {
@@ -181,43 +149,22 @@ describe("import client data", () => {
   });
 
   test("should set isGenderLocked if known gender is provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // New client
-      {
+      createClientImportRow({
         external_id: "new-client-ext-id",
         pseudonymized_id: "new-client-pid",
         case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
         gender: Gender.FEMALE,
         county: faker.location.county(),
-        birth_date: faker.date.birthdate(),
-      },
+      }),
       // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
+      createClientImportRow({
         case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
         // Set a new county
         county: "my fake county",
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({});
 
@@ -237,26 +184,16 @@ describe("import client data", () => {
   });
 
   test("should not set isGenderLocked if internal unknown gender is provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // New client
-      {
+      createClientImportRow({
         external_id: "new-client-ext-id",
         pseudonymized_id: "new-client-pid",
         case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
         gender: Gender.INTERNAL_UNKNOWN,
         county: faker.location.county(),
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({});
 
@@ -276,26 +213,16 @@ describe("import client data", () => {
   });
 
   test("should not set isGenderLocked if external unknown gender is provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // New client
-      {
+      createClientImportRow({
         external_id: "new-client-ext-id",
         pseudonymized_id: "new-client-pid",
         case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
         gender: Gender.EXTERNAL_UNKNOWN,
         county: faker.location.county(),
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({});
 
@@ -315,26 +242,14 @@ describe("import client data", () => {
   });
 
   test("should not override gender if updating with unknown gender", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
+      createClientImportRow({
         case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
         gender: Gender.EXTERNAL_UNKNOWN,
         county: "my fake county",
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({});
 
@@ -351,43 +266,22 @@ describe("import client data", () => {
   });
 
   test("should set isCountyLocked if county of residence is provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // New client
-      {
+      createClientImportRow({
         external_id: "new-client-ext-id",
         pseudonymized_id: "new-client-pid",
         case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
         gender: Gender.FEMALE,
         county: faker.location.county(),
-        birth_date: faker.date.birthdate(),
-      },
+      }),
       // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
+      createClientImportRow({
         case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
         // Set a new county
         county: "my fake county",
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({});
 
@@ -408,26 +302,16 @@ describe("import client data", () => {
   });
 
   test("should not set isCountyLocked if county of residence is provided", async () => {
-    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+    await importFile(CLIENTS_FILE_NAME, [
       // New client
-      {
+      createClientImportRow({
         external_id: "new-client-ext-id",
         pseudonymized_id: "new-client-pid",
         case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
         gender: Gender.INTERNAL_UNKNOWN,
         county: undefined,
-        birth_date: faker.date.birthdate(),
-      },
+      }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
 
     const dbClients = await testPrismaClient.client.findMany({});
 
@@ -445,5 +329,69 @@ describe("import client data", () => {
         }),
       ]),
     );
+  });
+
+  test("should keep the existing county and district when they are missing from the import", async () => {
+    const before = await testPrismaClient.client.update({
+      where: { externalId: fakeClient.externalId },
+      data: { district: { connect: { name: fakeCounty.district.name } } },
+    });
+
+    await importFile(CLIENTS_FILE_NAME, [createClientImportRow()]);
+
+    expect(before.countyId).not.toBeNull();
+    expect(before.districtId).not.toBeNull();
+    // Only the name (new each row) and the gender lock (the gender is known)
+    // change.
+    expect(await findClient()).toEqual({
+      ...before,
+      fullName: expect.any(String),
+      isGenderLocked: true,
+    });
+  });
+
+  test("should store a date-only birth date as that day in UTC midnight", async () => {
+    await importFile(CLIENTS_FILE_NAME, [
+      createClientImportRow({ birth_date: "1990-05-20" }),
+    ]);
+
+    expect((await findClient())?.birthDate).toEqual(
+      new Date("1990-05-20T00:00:00.000Z"),
+    );
+  });
+
+  test("should import every client in a large file", async () => {
+    const rowCount = 1001;
+
+    await importFile(
+      CLIENTS_FILE_NAME,
+      Array.from({ length: rowCount }, (_, i) =>
+        createClientImportRow({
+          external_id: `large-file-client-${i}`,
+          pseudonymized_id: `large-file-client-pid-${i}`,
+        }),
+      ),
+    );
+
+    expect(
+      await testPrismaClient.client.count({
+        where: { externalId: { startsWith: "large-file-client-" } },
+      }),
+    ).toBe(rowCount);
+  });
+
+  test("should link clients to existing cases and ignore unknown case ids", async () => {
+    await importFile(CLIENTS_FILE_NAME, [
+      createClientImportRow({
+        external_id: "new-client-ext-id",
+        pseudonymized_id: "new-client-pid",
+        case_ids: JSON.stringify([fakeCase.externalId, "unknown-case-ext-id"]),
+      }),
+    ]);
+
+    const dbCase = await testPrismaClient.case.findUnique({
+      where: { externalId: fakeCase.externalId },
+    });
+    expect(dbCase?.clientId).toEqual("new-client-ext-id");
   });
 });
