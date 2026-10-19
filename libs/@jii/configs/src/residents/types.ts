@@ -38,6 +38,7 @@ type ResidentFlag =
   | "usCoEdovoCredits"
   //TODO OBT-34689 remove after launch
   | "usArFslImprovements"
+  | "usArEdovoCredits"
   | "usNcRNAAutoEnablement"
   | "usMaReentry"
   | "usMaSentenceDatesV1"

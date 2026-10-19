@@ -59,6 +59,7 @@ enum ResidentFlagId {
     usCoMrdOverrideFullState
     usCoEdovoCredits
     usArFslImprovements
+    usArEdovoCredits
     usNcRNAAutoEnablement
     usMaReentry
     usMaSentenceDatesV1
