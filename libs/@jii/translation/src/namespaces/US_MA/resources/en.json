@@ -681,6 +681,11 @@
       }
     },
     "resources": {
+      "detail": {
+        "back": "Back",
+        "typeOfHousingHeading": "Type of housing",
+        "backToAllResources": "Back to all resources"
+      },
       "list": {
         "pageTitle": "Resource explorer – Housing",
         "subtitle": "Browse housing by type. Use filters to narrow the list.",

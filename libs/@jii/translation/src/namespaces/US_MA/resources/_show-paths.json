@@ -681,6 +681,11 @@
       }
     },
     "resources": {
+      "detail": {
+        "back": "[US_MA]reentry.resources.detail.back",
+        "typeOfHousingHeading": "[US_MA]reentry.resources.detail.typeOfHousingHeading",
+        "backToAllResources": "[US_MA]reentry.resources.detail.backToAllResources"
+      },
       "list": {
         "pageTitle": "[US_MA]reentry.resources.list.pageTitle",
         "subtitle": "[US_MA]reentry.resources.list.subtitle",

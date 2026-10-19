@@ -15,6 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  useTypedParams,
+  useTypedSearchParams,
+} from "react-router-typesafe-routes/dom";
+
+import { GoLink } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
+import { useUsMaTranslations } from "~@jii/translation";
+
+import { ResourceDetailContent } from "../Reentry/Resources/ResourceDetailContent/ResourceDetailContent";
+import { Wrapper } from "../Reentry/Resources/ResourceDetailContent/ResourceDetailContent.styles";
+import { sanitizeBackTarget } from "../Reentry/Resources/utils";
+import { SuspenseQueryBoundary } from "../Reentry/SuspenseQueryBoundary";
+
+const DetailRoute = State.Resident.UsMaReentry.Resources.CategoryResults.Detail;
+
 export const PageUsMaResourceDetail = () => {
-  return <div>PageUsMaResourceDetail</div>;
+  const { t } = useUsMaTranslations();
+  const { category, resourceId, ...residentParams } =
+    useTypedParams(DetailRoute);
+  const [{ backTarget }] = useTypedSearchParams(DetailRoute);
+
+  const categoryResultsPath =
+    State.Resident.UsMaReentry.Resources.CategoryResults.buildPath({
+      ...residentParams,
+      category,
+    });
+
+  const backPath = sanitizeBackTarget(backTarget) ?? categoryResultsPath;
+
+  return (
+    <Wrapper>
+      <GoLink back to={backPath}>
+        {t(($) => $.reentry.resources.detail.back)}
+      </GoLink>
+      <SuspenseQueryBoundary>
+        <ResourceDetailContent
+          resourceId={resourceId}
+          category={category}
+          backPath={backPath}
+        />
+      </SuspenseQueryBoundary>
+    </Wrapper>
+  );
 };

@@ -23,7 +23,8 @@ import { ResourceExplorer, State } from "~@jii/paths";
  * used, both for navigating there and for forwarding it to further pages.
  */
 export function sanitizeBackTarget(value: string | undefined): string | null {
-  if (!value?.startsWith("/") || value.startsWith("//")) return null;
+  if (!value?.startsWith("/") || value.startsWith("//") || value.includes("\\"))
+    return null;
   return value;
 }
 

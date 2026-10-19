@@ -34,6 +34,10 @@ describe("sanitizeBackTarget", () => {
     expect(sanitizeBackTarget("//evil.example.com")).toBeNull();
   });
 
+  it("rejects a path that a browser reads as protocol-relative", () => {
+    expect(sanitizeBackTarget("/\\evil.example.com")).toBeNull();
+  });
+
   it("rejects a javascript: URL", () => {
     // eslint-disable-next-line no-script-url -- this is the exact value being tested and not live code
     expect(sanitizeBackTarget("javascript:alert(1)")).toBeNull();

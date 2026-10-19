@@ -22,6 +22,7 @@ import {
   getRentChip,
   getResourceChips,
   groupResourcesBySubcategory,
+  sanitizeBackTarget,
 } from "../utils";
 import { loadUsMaTranslations, makeResource } from "./testUtils";
 
@@ -116,5 +117,34 @@ describe("getResourceChips", () => {
     expect(getResourceChips(makeResource(1, { tags: ["Female"] }), t)).toEqual([
       "Female",
     ]);
+  });
+});
+
+describe("sanitizeBackTarget", () => {
+  test("accepts an internal path", () => {
+    expect(sanitizeBackTarget("/massachusetts/abc/reentry/housing")).toBe(
+      "/massachusetts/abc/reentry/housing",
+    );
+  });
+
+  test("rejects an absolute external URL", () => {
+    expect(sanitizeBackTarget("https://evil.example.com")).toBeNull();
+  });
+
+  test("rejects a protocol-relative URL", () => {
+    expect(sanitizeBackTarget("//evil.example.com")).toBeNull();
+  });
+
+  test("rejects a path that a browser reads as protocol-relative", () => {
+    expect(sanitizeBackTarget("/\\evil.example.com")).toBeNull();
+  });
+
+  test("rejects a javascript: URL", () => {
+    // eslint-disable-next-line no-script-url -- this is the exact value being tested and not live code
+    expect(sanitizeBackTarget("javascript:alert(1)")).toBeNull();
+  });
+
+  test("returns null for undefined", () => {
+    expect(sanitizeBackTarget(undefined)).toBeNull();
   });
 });

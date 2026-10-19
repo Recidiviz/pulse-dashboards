@@ -128,3 +128,16 @@ export function getResourceChips(
     ...labelsFor(ACCEPTS_OPTIONS),
   ];
 }
+
+/**
+ * Validates a `backTarget` query-param value, rejecting anything that isn't
+ * an internal path - used to prevent malformed/malicious URLs from being
+ * used, both for navigating there and for forwarding it to further pages.
+ *
+ * As implemented in `libs/@jii/states/US_NYC/src/components/BackTarget/utils.ts`
+ */
+export function sanitizeBackTarget(value: string | undefined): string | null {
+  if (!value?.startsWith("/") || value.startsWith("//") || value.includes("\\"))
+    return null;
+  return value;
+}
