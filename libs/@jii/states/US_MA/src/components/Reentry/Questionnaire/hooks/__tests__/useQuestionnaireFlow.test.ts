@@ -310,7 +310,7 @@ describe("saving", () => {
     answerAndNext(result, ["NO"]);
     expect(save).toHaveBeenCalledWith(
       { answers: { needsCare: ["NO"] }, isCompleted: false },
-      { onSuccess: expect.any(Function) },
+      { onSuccess: expect.any(Function), onError: expect.any(Function) },
     );
   });
 
@@ -322,7 +322,7 @@ describe("saving", () => {
     act(() => firstTimeReviewOf(result).onSubmit());
     expect(save).toHaveBeenCalledWith(
       { answers: { needsCare: ["NO"], benefits: ["YES"] }, isCompleted: true },
-      { onSuccess: expect.any(Function) },
+      { onSuccess: expect.any(Function), onError: expect.any(Function) },
     );
   });
 
@@ -338,41 +338,44 @@ describe("saving", () => {
     expect(result.current.kind).toBe("review");
   });
 
-  test("a failed save on Next calls onError and stays on the question", () => {
+  test("a failed save on Next shows the error and stays on the question", () => {
     save.mockImplementation((_input, options) => options?.onError?.());
-    const onError = vi.fn();
     const { result } = render();
     act(() => screenOf(result, "intro").props.onStart());
     act(() => screenOf(result, "question").props.onChange(["NO"]));
-    act(() =>
-      screenOf(result, "question").props.onNext({ onSaveError: onError }),
-    );
-    expect(onError).toHaveBeenCalled();
+    act(() => screenOf(result, "question").props.onNext());
+    expect(screenOf(result, "question").props.saveError).toBe("next");
     expect(questionIdOf(result)).toBe("needsCare");
   });
 
-  test("a failed save at the end of an edit calls onError and stays on the question", () => {
+  test("a failed save at the end of an edit shows the error and stays on the question", () => {
     save.mockImplementation((_input, options) => options?.onError?.());
-    const onError = vi.fn();
     const { result } = startEditing("COMPLETED", "benefits");
     act(() => screenOf(result, "question").props.onChange(["NO"]));
-    act(() =>
-      screenOf(result, "question").props.onNext({ onSaveError: onError }),
-    );
-    expect(onError).toHaveBeenCalled();
+    act(() => screenOf(result, "question").props.onNext());
+    expect(screenOf(result, "question").props.saveError).toBe("saveAndUpdate");
     expect(questionIdOf(result)).toBe("benefits");
   });
 
-  test("a failed submit calls onError and stays on Review", () => {
+  test("the save error clears once Next succeeds", () => {
+    save.mockImplementationOnce((_input, options) => options?.onError?.());
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    act(() => screenOf(result, "question").props.onChange(["NO"]));
+    act(() => screenOf(result, "question").props.onNext());
+    act(() => screenOf(result, "question").props.onNext());
+    expect(questionIdOf(result)).toBe("benefits");
+    expect(screenOf(result, "question").props.saveError).toBeUndefined();
+  });
+
+  test("a failed submit shows the error and stays on Review", () => {
     save.mockImplementation((_input, options) => options?.onError?.());
-    const onError = vi.fn();
     const { result } = render("IN_PROGRESS", {
       needsCare: "NO",
       benefits: "YES",
     });
-    act(() => firstTimeReviewOf(result).onSubmit({ onSaveError: onError }));
-    expect(onError).toHaveBeenCalled();
-    expect(result.current.kind).toBe("review");
+    act(() => firstTimeReviewOf(result).onSubmit());
+    expect(firstTimeReviewOf(result).saveError).toBe("submit");
   });
 });
 
@@ -724,15 +727,25 @@ describe("header action", () => {
     act(() => result.current.headerAction?.onClick());
     expect(save).toHaveBeenCalledWith(
       { answers: { needsCare: ["NO"] }, isCompleted: false },
-      { onSuccess: expect.any(Function) },
+      { onSuccess: expect.any(Function), onError: expect.any(Function) },
     );
     expect(onExit).toHaveBeenCalled();
   });
 
-  test("Save and exit stays put if the save fails", () => {
-    save.mockImplementationOnce(() => undefined);
+  test("a failed Save and exit shows the error and stays on the question", () => {
+    save.mockImplementation((_input, options) => options?.onError?.());
     const { result } = render("IN_PROGRESS", { needsCare: "NO" });
     act(() => result.current.headerAction?.onClick());
     expect(onExit).not.toHaveBeenCalled();
+    expect(screenOf(result, "question").props.saveError).toBe("saveAndExit");
+  });
+
+  test("the save error clears when moving to another question", () => {
+    save.mockImplementation((_input, options) => options?.onError?.());
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    act(() => result.current.headerAction?.onClick());
+    act(() => screenOf(result, "question").props.onBack?.());
+    expect(questionIdOf(result)).toBe("needsCare");
+    expect(screenOf(result, "question").props.saveError).toBeUndefined();
   });
 });

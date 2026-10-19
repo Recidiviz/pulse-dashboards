@@ -15,14 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Markdown from "markdown-to-jsx";
-import { useState } from "react";
-
 import { useUsMaTranslations } from "~@jii/translation";
 import { Checkbox, CheckboxGroup, Radio, RadioGroup } from "~design-system";
 
 import { QuestionnaireFooter } from "../QuestionnaireFooter/QuestionnaireFooter";
-import { QuestionAnswerValue, QuestionDisplay, SaveOptions } from "../types";
+import { QuestionAnswerValue, QuestionDisplay, SaveErrorKind } from "../types";
 import {
   Heading,
   NextButton,
@@ -40,10 +37,11 @@ export type QuestionnaireFormProps = {
   question: QuestionDisplay;
   value: QuestionAnswerValue | undefined;
   onChange: (value: QuestionAnswerValue) => void;
-  onNext: (options?: SaveOptions) => void;
+  onNext: () => void;
   onBack?: () => void;
   canGoNext: boolean;
   isSaving?: boolean;
+  saveError?: SaveErrorKind;
   // Set when editing a completed profile via "Change" on Review.
   editing?: {
     onCancel: () => void;
@@ -60,10 +58,10 @@ export const QuestionnaireForm = ({
   onBack,
   canGoNext,
   isSaving,
+  saveError,
   editing,
 }: QuestionnaireFormProps) => {
   const { t } = useUsMaTranslations();
-  const [hasSaveError, setHasSaveError] = useState(false);
 
   const isSaveAndUpdate = !!editing?.isLastQuestionBeforeReview;
   const nextLabel = t(($) => $.reentry.questionnaire.form.next);
@@ -73,17 +71,6 @@ export const QuestionnaireForm = ({
   const buttonLabel = isSaving
     ? t(($) => $.reentry.questionnaire.form.saving)
     : primaryLabel;
-  const saveErrorMessage = isSaveAndUpdate
-    ? t(($) => $.reentry.questionnaire.form.saveAndUpdateError)
-    : t(($) => $.reentry.questionnaire.form.saveError);
-  const saveError = hasSaveError ? (
-    <Markdown options={{ forceInline: true }}>{saveErrorMessage}</Markdown>
-  ) : undefined;
-
-  const handleNext = () => {
-    setHasSaveError(false);
-    onNext({ onSaveError: () => setHasSaveError(true) });
-  };
 
   const isCheckbox = question.format === "CHECKBOX";
   const selected = value ?? [];
@@ -140,7 +127,7 @@ export const QuestionnaireForm = ({
       <QuestionnaireFooter
         onBack={onBack}
         onCancel={editing?.onCancel}
-        error={saveError}
+        saveError={saveError}
       >
         {!editing && (
           <SaveHint>
@@ -150,7 +137,7 @@ export const QuestionnaireForm = ({
         )}
         <NextButton
           kind="primary"
-          onClick={handleNext}
+          onClick={onNext}
           disabled={!canGoNext || isSaving}
           aria-busy={isSaving}
         >

@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 
-import { FlowStep, QuestionAnswerValue, SaveOptions } from "../types";
+import { FlowStep, QuestionAnswerValue, SaveErrorKind } from "../types";
 import {
   allAnswersMatch,
   answersMatch,
@@ -61,6 +61,8 @@ export function useQuestionnaireFlow({
   // changes against.
   const [initialAnswers] = useState(answers);
   const [isSavedBannerVisible, setIsSavedBannerVisible] = useState(false);
+  // The failed save to report on the current screen.
+  const [saveError, setSaveError] = useState<SaveErrorKind>();
 
   const edit = useEditSession();
   const editSession = edit.session;
@@ -76,22 +78,31 @@ export function useQuestionnaireFlow({
     kind: "close",
     onClick: onExit,
   };
-  // TODO(REE-197): Show an error when Save and exit fails, once design decides
-  // where it goes. Until then, a failure is only reported to Sentry, and the
-  // resident stays on the question with no way to close the questionnaire.
   const saveAndExitAction: QuestionnaireHeaderAction = {
     kind: "saveAndExit",
-    onClick: () => save({ answers, isCompleted: false }, { onSuccess: onExit }),
+    onClick: () => {
+      setSaveError(undefined);
+      save(
+        { answers, isCompleted: false },
+        { onSuccess: onExit, onError: () => setSaveError("saveAndExit") },
+      );
+    },
+  };
+
+  // Every screen change starts without a save error.
+  const goToStep = (nextStep: FlowStep) => {
+    setSaveError(undefined);
+    setStep(nextStep);
   };
 
   const goToQuestion = (questionId: string) => {
     setIsSectionListOpen(false);
-    setStep({ kind: "question", questionId });
+    goToStep({ kind: "question", questionId });
   };
 
   const goToReview = () => {
     edit.end();
-    setStep({ kind: "review" });
+    goToStep({ kind: "review" });
   };
 
   const backFromReview = () =>
@@ -99,14 +110,16 @@ export function useQuestionnaireFlow({
 
   const start = () => goToQuestion(visibleQuestions[0].id);
 
-  const submit = ({ onSaveError }: SaveOptions = {}) =>
+  const submit = () => {
+    setSaveError(undefined);
     save(
       { answers, isCompleted: true },
       {
-        onSuccess: () => setStep({ kind: "completion" }),
-        onError: onSaveError,
+        onSuccess: () => goToStep({ kind: "completion" }),
+        onError: () => setSaveError("submit"),
       },
     );
+  };
 
   const startEdit = (questionId: string) => {
     setIsSavedBannerVisible(false);
@@ -165,7 +178,8 @@ export function useQuestionnaireFlow({
         setAnswers(updatedAnswers);
       };
 
-      const next = ({ onSaveError }: SaveOptions = {}) => {
+      const next = () => {
+        setSaveError(undefined);
         const goToNextStep = () => {
           if (upcomingQuestion) {
             goToQuestion(upcomingQuestion.id);
@@ -188,13 +202,13 @@ export function useQuestionnaireFlow({
                 setIsSavedBannerVisible(true);
                 goToNextStep();
               },
-              onError: onSaveError,
+              onError: () => setSaveError("saveAndUpdate"),
             },
           );
         } else {
           save(
             { answers, isCompleted: false },
-            { onSuccess: goToNextStep, onError: onSaveError },
+            { onSuccess: goToNextStep, onError: () => setSaveError("next") },
           );
         }
       };
@@ -203,7 +217,7 @@ export function useQuestionnaireFlow({
         if (previousQuestion) {
           goToQuestion(previousQuestion.id);
         } else {
-          setStep({ kind: "intro" });
+          goToStep({ kind: "intro" });
         }
       };
 
@@ -235,6 +249,7 @@ export function useQuestionnaireFlow({
           onNext: next,
           onBack: isEditStartQuestion ? undefined : back,
           canGoNext: isAnswered(currentAnswer),
+          saveError,
           editing,
         },
       };
@@ -264,7 +279,12 @@ export function useQuestionnaireFlow({
       return {
         kind: "review",
         headerAction: closeAction,
-        props: { entries, onBack: backFromReview, onSubmit: submit },
+        props: {
+          entries,
+          onBack: backFromReview,
+          onSubmit: submit,
+          saveError,
+        },
       };
     }
 

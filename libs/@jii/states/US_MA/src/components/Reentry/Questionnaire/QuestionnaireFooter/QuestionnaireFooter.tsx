@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Markdown from "markdown-to-jsx";
 import { ReactNode } from "react";
 
 import { useUsMaTranslations } from "~@jii/translation";
@@ -24,6 +25,7 @@ import { Callout } from "../../Callout/Callout";
 import { QUESTIONNAIRE_FOOTER_ERROR_HEIGHT } from "../constants";
 import { useShouldShowScrollCue } from "../hooks/useShouldShowScrollCue";
 import { ScrollCue } from "../ScrollCue/ScrollCue";
+import { SaveErrorKind } from "../types";
 import {
   Actions,
   BackLinkButton,
@@ -36,17 +38,23 @@ import {
 type QuestionnaireFooterProps = {
   onBack?: () => void;
   onCancel?: () => void;
-  error?: ReactNode;
+  saveError?: SaveErrorKind;
   children: ReactNode;
 };
 
 export const QuestionnaireFooter = ({
   onBack,
   onCancel,
-  error,
+  saveError,
   children,
 }: QuestionnaireFooterProps) => {
   const { t } = useUsMaTranslations();
+  const saveErrorMessages: Record<SaveErrorKind, string> = {
+    next: t(($) => $.reentry.questionnaire.form.saveError),
+    saveAndUpdate: t(($) => $.reentry.questionnaire.form.saveAndUpdateError),
+    saveAndExit: t(($) => $.reentry.questionnaire.form.saveAndExitError),
+    submit: t(($) => $.reentry.questionnaire.review.submitError),
+  };
   // The layout reserves room for the error banner and a gap below the content.
   const shouldShowScrollCue = useShouldShowScrollCue({
     blankSpaceBelowContent: QUESTIONNAIRE_FOOTER_ERROR_HEIGHT + spacing.lg,
@@ -56,13 +64,17 @@ export const QuestionnaireFooter = ({
     <Wrapper>
       <Inner>
         {shouldShowScrollCue && <ScrollCue />}
-        {error && (
+        {saveError && (
           <Callout
             tone="error"
             variant="slim"
             role="alert"
             icon={<Icon kind="Error" size={20} />}
-            description={error}
+            description={
+              <Markdown options={{ forceInline: true }}>
+                {saveErrorMessages[saveError]}
+              </Markdown>
+            }
           />
         )}
         <Row>
