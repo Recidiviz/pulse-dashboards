@@ -134,6 +134,26 @@ export const paroleHearingSchema = z.object({
 });
 export type ParoleHearing = z.infer<typeof paroleHearingSchema>;
 
+/** A facility the Parole residents list can be filtered to. */
+export const paroleFacilitySchema = z.object({
+  // Matches the resident record's facilityId.
+  facilityId: z.string(),
+  name: z.string(),
+});
+export type ParoleFacility = z.infer<typeof paroleFacilitySchema>;
+
+/** One row of the Parole residents list. */
+export const paroleResidentSchema = z.object({
+  // Used for the case-profile route, as on ParoleHearing.
+  pseudonymizedId: z.string(),
+  displayId: z.string(),
+  individualName: z.string(),
+  facilityId: z.string(),
+  // The resident's docket hearing date, when one is set.
+  hearingDate: z.string().optional(),
+});
+export type ParoleResident = z.infer<typeof paroleResidentSchema>;
+
 export const paroleParolePlanDocumentSchema = z.object({
   url: z.string(),
   uploadDate: z.string(),

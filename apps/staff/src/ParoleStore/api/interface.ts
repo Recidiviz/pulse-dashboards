@@ -15,9 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleCase, ParoleHearing } from "~datatypes";
+import {
+  ParoleCase,
+  ParoleFacility,
+  ParoleHearing,
+  ParoleResident,
+} from "~datatypes";
 
 export interface ParoleAPI {
   hearings(): Promise<Array<ParoleHearing>>;
   caseDetail(pseudonymizedId: string): Promise<ParoleCase>;
+  facilities(): Promise<Array<ParoleFacility>>;
+  residentsInFacilities(
+    facilityIds: Array<string>,
+  ): Promise<Array<ParoleResident>>;
 }

@@ -1542,6 +1542,94 @@ describe("FirestoreStore", () => {
     });
   });
 
+  describe("getResidentsForFacilities", () => {
+    beforeEach(() => {
+      mockWhere.mockImplementation(
+        (field: string, op: string, value: unknown) => ({ field, op, value }),
+      );
+      mockQuery.mockImplementation((...args: unknown[]) => args);
+      mockGetDocs.mockResolvedValue({ docs: [] });
+    });
+
+    test("returns an empty array without querying Firestore when given no facility IDs", async () => {
+      const result = await store.getResidentsForFacilities([], "US_CO");
+
+      expect(result).toEqual([]);
+      expect(mockGetDocs).not.toHaveBeenCalled();
+    });
+
+    test("queries by facilityId in batches of at most 10", async () => {
+      const facilityIds = Array.from({ length: 25 }, (_, i) => `FAC_${i}`);
+
+      await store.getResidentsForFacilities(facilityIds, "US_CO");
+
+      const facilityBatches = mockWhere.mock.calls
+        .filter(([field, op]) => field === "facilityId" && op === "in")
+        .map(([, , batch]) => batch);
+      expect(facilityBatches.map((batch) => batch.length)).toEqual([10, 10, 5]);
+      expect(facilityBatches.flat()).toEqual(facilityIds);
+      expect(mockWhere).toHaveBeenCalledWith("stateCode", "==", "US_CO");
+    });
+  });
+
+  describe("getIncarcerationFacilities", () => {
+    beforeEach(() => {
+      mockWhere.mockImplementation(
+        (field: string, op: string, value: unknown) => ({ field, op, value }),
+      );
+      mockQuery.mockImplementation((...args: unknown[]) => args);
+    });
+
+    test("queries the state's facilityId locations and parses them", async () => {
+      const location = {
+        stateCode: "US_CO",
+        system: "INCARCERATION",
+        idType: "facilityId",
+        locationId: "SCF",
+        name: "Sterling Correctional Facility",
+      };
+      mockGetDocs.mockResolvedValue({
+        docs: [{ id: "US_CO_SCF", data: () => location }],
+      });
+
+      const result = await store.getIncarcerationFacilities("US_CO");
+
+      expect(mockWhere).toHaveBeenCalledWith("stateCode", "==", "US_CO");
+      expect(mockWhere).toHaveBeenCalledWith("idType", "==", "facilityId");
+      expect(result).toEqual([location]);
+    });
+
+    test("skips a doc that fails to parse instead of throwing", async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      const location = {
+        stateCode: "US_CO",
+        system: "INCARCERATION",
+        idType: "facilityId",
+        locationId: "SCF",
+        name: "Sterling Correctional Facility",
+      };
+      mockGetDocs.mockResolvedValue({
+        docs: [
+          { id: "US_CO_SCF", data: () => location },
+          // An idType outside the schema's enum fails validation.
+          {
+            id: "US_CO_MALFORMED",
+            data: () => ({ ...location, idType: "unknownIdType" }),
+          },
+        ],
+      });
+
+      const result = await store.getIncarcerationFacilities("US_CO");
+
+      expect(result).toEqual([location]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("US_CO_MALFORMED"),
+      );
+    });
+  });
+
   describe("updateSnoozeCompanions", () => {
     test("Should verify if a snooze triggers companion snoozes and update snooze companions with provided changes", async () => {
       const mockCompanionOpportunities = [

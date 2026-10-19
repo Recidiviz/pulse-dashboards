@@ -19,8 +19,11 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   ParoleCase,
   paroleCasesFixtureByState,
+  paroleFacilitiesFixtureByState,
   ParoleHearing,
   paroleHearingsFixtureByState,
+  ParoleResident,
+  paroleResidentsFixtureByState,
 } from "~datatypes";
 
 import { RootStore } from "../../RootStore";
@@ -293,6 +296,83 @@ describe("ParoleStore", () => {
 
       expect(paroleStore.hearings).toBeUndefined();
       expect(paroleStore.caseDetailsByPseudonymizedId.size).toBe(0);
+    });
+
+    it("fetches residents only for facilities not already cached", async () => {
+      const residentsSpy = vi.spyOn(
+        ParoleOfflineAPIClient.prototype,
+        "residentsInFacilities",
+      );
+      const paroleStore = storeForTenant("US_CO");
+      const [first, second, third] = paroleFacilitiesFixtureByState.US_CO.map(
+        (facility) => facility.facilityId,
+      );
+
+      await paroleStore.populateResidentsForFacilities([first, second]);
+      await paroleStore.populateResidentsForFacilities([second, third]);
+      await paroleStore.populateResidentsForFacilities([first, third]);
+
+      expect(residentsSpy.mock.calls).toEqual([[[first, second]], [[third]]]);
+    });
+
+    // A facility with no residents is a real result. Leaving it out of the
+    // cache would refetch it every time it stays selected.
+    it("caches a facility with no residents as empty", async () => {
+      const residentsSpy = vi
+        .spyOn(ParoleOfflineAPIClient.prototype, "residentsInFacilities")
+        .mockResolvedValue([]);
+      const paroleStore = storeForTenant("US_CO");
+
+      await paroleStore.populateResidentsForFacilities(["EMPTY"]);
+      await paroleStore.populateResidentsForFacilities(["EMPTY"]);
+
+      expect(residentsSpy).toHaveBeenCalledTimes(1);
+      expect(paroleStore.residentsByFacilityId.get("EMPTY")).toEqual([]);
+    });
+
+    // Facility ids are unique within a state only, so a selection that
+    // outlived a tenant switch would query the wrong state's facilities.
+    it("drops the facility selection and its caches when the tenant changes", async () => {
+      const paroleStore = storeForTenant("US_CO");
+      const [facility] = paroleFacilitiesFixtureByState.US_CO;
+
+      await paroleStore.populateFacilities();
+      paroleStore.setSelectedFacilityIds([facility.facilityId]);
+      await paroleStore.populateResidentsForFacilities([facility.facilityId]);
+
+      paroleStore.rootStore.tenantStore.currentTenantId = "US_ID";
+
+      expect(paroleStore.facilities).toBeUndefined();
+      expect(paroleStore.selectedFacilityIds).toEqual([]);
+      expect(paroleStore.residentsByFacilityId.size).toBe(0);
+    });
+
+    // A retry would run the previous tenant's facility ids against the new
+    // tenant and cache whatever came back under them.
+    it("drops a residents fetch that resolves after a tenant change, without retrying", async () => {
+      let resolveUsCo: (residents: Array<ParoleResident>) => void = () => {
+        throw new Error("residentsInFacilities() was never called");
+      };
+      const residentsSpy = vi
+        .spyOn(ParoleOfflineAPIClient.prototype, "residentsInFacilities")
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveUsCo = resolve;
+            }),
+        );
+      const paroleStore = storeForTenant("US_CO");
+      const [facility] = paroleFacilitiesFixtureByState.US_CO;
+
+      const populated = paroleStore.populateResidentsForFacilities([
+        facility.facilityId,
+      ]);
+      paroleStore.rootStore.tenantStore.currentTenantId = "US_ID";
+      resolveUsCo(paroleResidentsFixtureByState.US_CO);
+      await populated;
+
+      expect(residentsSpy).toHaveBeenCalledTimes(1);
+      expect(paroleStore.residentsByFacilityId.size).toBe(0);
     });
   });
 });

@@ -1749,4 +1749,96 @@ describe("ParoleAPIClient", () => {
       ]);
     });
   });
+
+  describe("facilities", () => {
+    it("returns the tenant's incarceration facilities sorted by name", async () => {
+      rootStore.tenantStore.currentTenantId = "US_CO";
+      const spy = vi
+        .spyOn(rootStore.firestoreStore, "getIncarcerationFacilities")
+        .mockResolvedValue([
+          {
+            stateCode: "US_CO",
+            system: "INCARCERATION",
+            idType: "facilityId",
+            locationId: "SCF",
+            name: "Sterling Correctional Facility",
+          },
+          {
+            stateCode: "US_CO",
+            system: "INCARCERATION",
+            idType: "facilityId",
+            locationId: "CCCF",
+            name: "Crowley County Correctional Facility",
+          },
+        ]);
+
+      const result = await client.facilities();
+
+      expect(spy).toHaveBeenCalledWith("US_CO");
+      expect(result).toEqual([
+        { facilityId: "CCCF", name: "Crowley County Correctional Facility" },
+        { facilityId: "SCF", name: "Sterling Correctional Facility" },
+      ]);
+    });
+
+    it("throws for an unsupported tenant", async () => {
+      rootStore.tenantStore.currentTenantId = "US_TN";
+
+      await expect(client.facilities()).rejects.toThrow(
+        /ParoleAPIClient\.facilities has no real data source for tenant \[US_TN\]/,
+      );
+    });
+  });
+
+  describe("residentsInFacilities", () => {
+    beforeEach(() => {
+      rootStore.tenantStore.currentTenantId = "US_CO";
+    });
+
+    it("builds one row per resident from the resident record alone", async () => {
+      const residentsSpy = vi
+        .spyOn(rootStore.firestoreStore, "getResidentsForFacilities")
+        .mockResolvedValue([
+          buildUsCoResident({
+            facilityId: "SCF",
+            metadata: {
+              stateCode: "US_CO",
+              incarcerationStartDate: null,
+              cohortLabel: "STANDARD",
+              docketHearingDate: "2026-11-01",
+            },
+          }),
+        ]);
+
+      const result = await client.residentsInFacilities(["SCF"]);
+
+      expect(residentsSpy).toHaveBeenCalledWith(["SCF"], "US_CO");
+      expect(result).toEqual([
+        {
+          pseudonymizedId: "anonres999",
+          displayId: "dRES999",
+          individualName: "Test Resident",
+          facilityId: "SCF",
+          hearingDate: "2026-11-01",
+        },
+      ]);
+      expect(
+        rootStore.firestoreStore.getParoleBoardClientProfilesByRecordIds,
+      ).not.toHaveBeenCalled();
+      expect(
+        rootStore.firestoreStore.getParoleBoardClientProfilesForState,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("leaves the hearing date unset for a resident with none", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForFacilities",
+      ).mockResolvedValue([buildUsCoResident({ facilityId: "SCF" })]);
+
+      const [row] = await client.residentsInFacilities(["SCF"]);
+
+      expect(row.hearingDate).toBeUndefined();
+    });
+  });
 });

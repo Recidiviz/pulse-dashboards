@@ -37,6 +37,7 @@ import {
   ParoleConviction,
   ParoleDocProgram,
   ParoleEdovoProgram,
+  ParoleFacility,
   ParoleHearing,
   ParoleHearingHistoryEntry,
   ParoleLifeSentence,
@@ -45,6 +46,7 @@ import {
   ParolePlan,
   ParoleProgramStatus,
   ParoleRecommendedStatus,
+  ParoleResident,
   ParoleRiskAssessment,
   ParoleRiskNeedFactor,
   ParoleRiskTool,
@@ -331,6 +333,56 @@ export class ParoleAPIClient implements ParoleAPI {
     return this.caseDetailForResident(resident, profile);
   }
 
+  /** The current tenant's incarceration facilities, sorted by name. */
+  async facilities(): Promise<Array<ParoleFacility>> {
+    const currentTenantId = this.requireSupportedTenant("facilities");
+    const locations =
+      await this.paroleStore.rootStore.firestoreStore.getIncarcerationFacilities(
+        currentTenantId,
+      );
+    return locations
+      .map((location) => ({
+        facilityId: location.locationId,
+        name: location.name,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  /**
+   * One row per resident in these facilities. Reads only resident records,
+   * not profiles, so a large facility costs one document read per resident.
+   *
+   * @param facilityIds - The facilities to list residents for.
+   */
+  async residentsInFacilities(
+    facilityIds: Array<string>,
+  ): Promise<Array<ParoleResident>> {
+    const currentTenantId = this.requireSupportedTenant(
+      "residentsInFacilities",
+    );
+    const residents =
+      await this.paroleStore.rootStore.firestoreStore.getResidentsForFacilities(
+        facilityIds,
+        currentTenantId,
+      );
+    return residents.map((resident) => {
+      // The query matches on facilityId, so every result has one.
+      if (!resident.facilityId) {
+        throw new Error(
+          `Resident [${resident.pseudonymizedId}] matched a facility query ` +
+            "but has no facilityId.",
+        );
+      }
+      return {
+        pseudonymizedId: resident.pseudonymizedId,
+        displayId: resident.displayId,
+        individualName: this.nameForResident(resident),
+        facilityId: resident.facilityId,
+        hearingDate: this.docketHearingDate(resident),
+      };
+    });
+  }
+
   /**
    * The current tenant. Throws when that tenant has no real data source, so
    * a caller never silently reads an empty profile.
@@ -509,7 +561,7 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
-   * The resident's name as the docket and case profile show it. US_ID puts the
+   * The resident's name as the Parole pages show it. US_ID puts the
    * surname first ("Last, First Middle"); other tenants read "First Middle
    * Last". A missing part is dropped along with its separator.
    *

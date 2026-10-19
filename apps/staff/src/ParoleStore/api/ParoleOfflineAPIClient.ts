@@ -18,9 +18,13 @@
 import {
   ParoleCase,
   paroleCasesFixtureByState,
+  paroleFacilitiesFixtureByState,
+  ParoleFacility,
   ParoleFixtureStateCode,
   ParoleHearing,
   paroleHearingsFixtureByState,
+  ParoleResident,
+  paroleResidentsFixtureByState,
 } from "~datatypes";
 
 import { ParoleStore } from "../ParoleStore";
@@ -33,14 +37,19 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
   // US_CO's carries anonymized records that US_ID's does not (see
   // CO_HEARINGS/CO_ANONYMIZED_CASE_PROFILES in fixture.ts).
   async hearings(): Promise<Array<ParoleHearing>> {
-    const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
-    if (!this.isParoleFixtureStateCode(currentTenantId)) {
-      throw new Error(
-        `No Parole fixture data for tenant [${currentTenantId}]. Add one ` +
-          "in libs/datatypes/src/parole/fixture.ts.",
-      );
-    }
-    return paroleHearingsFixtureByState[currentTenantId];
+    return paroleHearingsFixtureByState[this.fixtureStateCode];
+  }
+
+  async facilities(): Promise<Array<ParoleFacility>> {
+    return paroleFacilitiesFixtureByState[this.fixtureStateCode];
+  }
+
+  async residentsInFacilities(
+    facilityIds: Array<string>,
+  ): Promise<Array<ParoleResident>> {
+    return paroleResidentsFixtureByState[this.fixtureStateCode].filter(
+      (resident) => facilityIds.includes(resident.facilityId),
+    );
   }
 
   async caseDetail(pseudonymizedId: string): Promise<ParoleCase> {
@@ -57,6 +66,11 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
   // (see fixture.ts's ParoleFixtureStateCode) so `nx offline staff` can be
   // used to visually check both US_CO's and US_ID's config.
   private get casesFixture(): Record<string, ParoleCase> {
+    return paroleCasesFixtureByState[this.fixtureStateCode];
+  }
+
+  /** The current tenant. Throws when it has no Parole fixture data. */
+  private get fixtureStateCode(): ParoleFixtureStateCode {
     const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
     if (!this.isParoleFixtureStateCode(currentTenantId)) {
       throw new Error(
@@ -64,7 +78,7 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
           "in libs/datatypes/src/parole/fixture.ts.",
       );
     }
-    return paroleCasesFixtureByState[currentTenantId];
+    return currentTenantId;
   }
 
   private isParoleFixtureStateCode(

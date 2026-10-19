@@ -15,10 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { groupBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { ParoleCase, ParoleHearing } from "~datatypes";
+import {
+  ParoleCase,
+  ParoleFacility,
+  ParoleHearing,
+  ParoleResident,
+} from "~datatypes";
 
 import { ParoleConfig } from "../core/models/types";
 import { RootStore } from "../RootStore";
@@ -30,6 +36,15 @@ import { ParoleOfflineAPIClient } from "./api/ParoleOfflineAPIClient";
 export class ParoleStore {
   hearings?: Array<ParoleHearing>;
   caseDetailsByPseudonymizedId = new Map<string, ParoleCase>();
+  facilities?: Array<ParoleFacility>;
+  residentsByFacilityId = new Map<string, Array<ParoleResident>>();
+
+  /**
+   * The facilities picked on the residents list. Kept here, not on the
+   * page's presenter, so the selection is still there when the user comes
+   * back from a case profile.
+   */
+  selectedFacilityIds: Array<string> = [];
 
   constructor(public rootStore: RootStore) {
     makeAutoObservable(this);
@@ -46,7 +61,14 @@ export class ParoleStore {
   private clearCaches(): void {
     this.hearings = undefined;
     this.caseDetailsByPseudonymizedId.clear();
+    this.facilities = undefined;
+    this.residentsByFacilityId.clear();
+    this.selectedFacilityIds = [];
     this.cacheGeneration += 1;
+  }
+
+  setSelectedFacilityIds(facilityIds: Array<string>): void {
+    this.selectedFacilityIds = facilityIds;
   }
 
   /**
@@ -86,6 +108,57 @@ export class ParoleStore {
 
     runInAction(() => {
       this.caseDetailsByPseudonymizedId.set(pseudonymizedId, caseDetail);
+    });
+  }
+
+  /**
+   * Fetches the facilities the residents list can filter to, unless an
+   * earlier fetch already cached them.
+   */
+  async populateFacilities(): Promise<void> {
+    if (this.facilities !== undefined) return;
+
+    const generation = this.cacheGeneration;
+    const facilities = await this.apiClient.facilities();
+    if (generation !== this.cacheGeneration) {
+      return this.populateFacilities();
+    }
+
+    runInAction(() => {
+      this.facilities = facilities;
+    });
+  }
+
+  /**
+   * Fetches the residents of each of these facilities that an earlier fetch
+   * has not already cached. A facility with no residents is cached as empty.
+   *
+   * @param facilityIds - The facilities whose residents to fetch.
+   */
+  async populateResidentsForFacilities(
+    facilityIds: Array<string>,
+  ): Promise<void> {
+    const uncachedFacilityIds = facilityIds.filter(
+      (facilityId) => !this.residentsByFacilityId.has(facilityId),
+    );
+    if (uncachedFacilityIds.length === 0) return;
+
+    const generation = this.cacheGeneration;
+    const residents =
+      await this.apiClient.residentsInFacilities(uncachedFacilityIds);
+    // Unlike populateHearings, this does not retry: the facility ids belong
+    // to the previous tenant, and the cleared selection starts the new
+    // tenant's fetches over.
+    if (generation !== this.cacheGeneration) return;
+
+    const residentsByFacilityId = groupBy(residents, "facilityId");
+    runInAction(() => {
+      uncachedFacilityIds.forEach((facilityId) => {
+        this.residentsByFacilityId.set(
+          facilityId,
+          residentsByFacilityId[facilityId] ?? [],
+        );
+      });
     });
   }
 

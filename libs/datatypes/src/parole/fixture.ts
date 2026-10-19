@@ -33,9 +33,11 @@ import {
   paroleCaseSchema,
   ParoleConductRecord,
   paroleConductRecordSchema,
+  ParoleFacility,
   ParoleHearing,
   ParoleHearingHistoryEntry,
   paroleHearingSchema,
+  ParoleResident,
   ParoleRiskAssessment,
   ParoleRiskNeedFactor,
   ParoleRiskNeedScale,
@@ -248,6 +250,49 @@ export const paroleHearingsFixtureByState: Record<
 > = {
   US_ID: [...SHARED_HEARINGS, ...ID_HEARINGS],
   US_CO: [...SHARED_HEARINGS, ...CO_HEARINGS],
+};
+
+/**
+ * Returns the residents list fixture for a state, built from its docket so
+ * every row links to a case profile in paroleCasesFixtureByState. Facility
+ * names stand in for facility ids, since the docket fixture has no ids.
+ */
+function buildParoleResidentsFixture(
+  stateCode: ParoleFixtureStateCode,
+): Array<ParoleResident> {
+  return paroleHearingsFixtureByState[stateCode].map((hearing) => ({
+    pseudonymizedId: hearing.pseudonymizedId,
+    displayId: hearing.displayId,
+    individualName: hearing.individualName,
+    facilityId: hearing.facility,
+    hearingDate: hearing.hearingDate,
+  }));
+}
+
+export const paroleResidentsFixtureByState: Record<
+  ParoleFixtureStateCode,
+  Array<ParoleResident>
+> = {
+  US_CO: buildParoleResidentsFixture("US_CO"),
+  US_ID: buildParoleResidentsFixture("US_ID"),
+};
+
+/** Returns one facility per distinct facilityId on these residents. */
+function facilitiesForResidents(
+  residents: Array<ParoleResident>,
+): Array<ParoleFacility> {
+  return [...new Set(residents.map((r) => r.facilityId))].map((facilityId) => ({
+    facilityId,
+    name: facilityId,
+  }));
+}
+
+export const paroleFacilitiesFixtureByState: Record<
+  ParoleFixtureStateCode,
+  Array<ParoleFacility>
+> = {
+  US_CO: facilitiesForResidents(paroleResidentsFixtureByState.US_CO),
+  US_ID: facilitiesForResidents(paroleResidentsFixtureByState.US_ID),
 };
 
 // US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with

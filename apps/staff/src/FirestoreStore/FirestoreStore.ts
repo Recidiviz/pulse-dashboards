@@ -51,6 +51,8 @@ import { isOfflineMode } from "~client-env-utils";
 import {
   ClientRecord,
   clientRecordSchema,
+  LocationRecord,
+  locationRecordSchema,
   OpportunityType,
   ParoleBoardClientProfileRecord,
   paroleBoardClientProfileRecordSchema,
@@ -119,6 +121,28 @@ export type FirestoreDateRangeFilter = {
  */
 function profileParseErrorPaths(error: ZodError): string {
   return error.issues.map((issue) => issue.path.join(".")).join(", ");
+}
+
+/**
+ * Parses each resident document, skipping and logging a malformed one so it
+ * can't take down the whole result set.
+ */
+function parseResidentRecords(
+  docs: Array<QueryDocumentSnapshot>,
+): WorkflowsResidentRecord[] {
+  return docs.flatMap((result) => {
+    const parsed = workflowsResidentRecordSchema.safeParse({
+      ...result.data(),
+      recordId: result.id,
+    });
+    if (!parsed.success) {
+      console.error(
+        `Failed to parse resident record [${result.id}]: ${parsed.error}`,
+      );
+      return [];
+    }
+    return [parsed.data];
+  });
 }
 
 /**
@@ -404,14 +428,58 @@ export default class FirestoreStore {
       query(this.collection({ key: "residents" }), and(...constraints)),
     );
 
+    return parseResidentRecords(results.docs);
+  }
+
+  /**
+   * Returns every resident in these facilities. A malformed doc is skipped
+   * and logged, as in getResidentsForState.
+   *
+   * @param facilityIds - Facility ids, matched against each resident's
+   *   facilityId.
+   * @param stateCode - The residents' state code.
+   */
+  async getResidentsForFacilities(
+    facilityIds: string[],
+    stateCode: string,
+  ): Promise<WorkflowsResidentRecord[]> {
+    if (facilityIds.length === 0) return [];
+    const batches = await Promise.all(
+      chunk(facilityIds, FIRESTORE_IN_QUERY_BATCH_SIZE).map((batch) =>
+        getDocs(
+          query(
+            this.collection({ key: "residents" }),
+            where("stateCode", "==", stateCode),
+            where("facilityId", "in", batch),
+          ),
+        ),
+      ),
+    );
+    return batches.flatMap((results) => parseResidentRecords(results.docs));
+  }
+
+  /**
+   * Returns the incarceration facilities in a state, from the locations
+   * collection. A malformed doc is skipped and logged, as in
+   * getResidentsForState, so it can't empty the whole facility list.
+   *
+   * @param stateCode - The state whose facilities to return.
+   */
+  async getIncarcerationFacilities(
+    stateCode: string,
+  ): Promise<LocationRecord[]> {
+    const results = await getDocs(
+      query(
+        this.collection({ key: "locations" }),
+        where("stateCode", "==", stateCode),
+        where("idType", "==", "facilityId"),
+      ),
+    );
     return results.docs.flatMap((result) => {
-      const parsed = workflowsResidentRecordSchema.safeParse({
-        ...result.data(),
-        recordId: result.id,
-      });
+      const parsed = locationRecordSchema.safeParse(result.data());
       if (!parsed.success) {
         console.error(
-          `Failed to parse resident record [${result.id}]: ${parsed.error}`,
+          `Failed to parse location record [${result.id}]: ${parsed.error}`,
         );
         return [];
       }
