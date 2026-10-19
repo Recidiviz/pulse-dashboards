@@ -518,7 +518,7 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
-   * Hearings the Board already held, newest first, read from
+   * Hearings the Board already held, oldest first, read from
    * `parole_board_client_profile.parole_hearings`. A hearing without a date is
    * dropped, since the list cannot place it.
    *
@@ -540,7 +540,7 @@ export class ParoleAPIClient implements ParoleAPI {
             ]
           : [],
       )
-      .sort((a, b) => b.hearingDate.localeCompare(a.hearingDate));
+      .sort((a, b) => a.hearingDate.localeCompare(b.hearingDate));
   }
 
   /**

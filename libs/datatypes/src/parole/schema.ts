@@ -367,7 +367,7 @@ export const paroleCaseSchema = z.object({
   // the most recent snapshot is tracked (no history), unlike riskAssessments.
   riskAndNeedsFactors: z.array(paroleRiskNeedFactorSchema),
   caseNotes: z.array(paroleCaseNoteSchema).optional(),
-  // Held hearings, newest first. Only US_ID shows them.
+  // Held hearings, oldest first. Only US_ID shows them.
   hearingHistory: z.array(paroleHearingHistoryEntrySchema).optional(),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

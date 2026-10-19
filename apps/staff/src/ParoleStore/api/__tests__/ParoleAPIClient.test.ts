@@ -1605,15 +1605,15 @@ describe("ParoleAPIClient", () => {
 
       expect(result.hearingHistory).toEqual([
         {
-          hearingDate: "2019-11-20",
-          hearingType: PAROLE_UNKNOWN_TEXT,
-          hearingDecision: undefined,
-        },
-        {
           hearingDate: "2018-01-15",
           hearingType: "Regular Hearing",
           hearingSubtype: "Initial",
           hearingDecision: "Parole granted",
+        },
+        {
+          hearingDate: "2019-11-20",
+          hearingType: PAROLE_UNKNOWN_TEXT,
+          hearingDecision: undefined,
         },
       ]);
     });
