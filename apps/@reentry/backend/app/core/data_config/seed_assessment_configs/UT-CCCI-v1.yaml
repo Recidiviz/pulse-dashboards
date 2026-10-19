@@ -138,12 +138,10 @@ intake:
 
   transcription_post_processing_model:
     provider: openai
-    name: o4-mini
-    version: "2025-04-16"
+    name: gpt-5.6-terra
   chat_model:
     provider: openai
-    name: o4-mini
-    version: "2025-04-16"
+    name: gpt-5.6-terra
 
 outputs:
   codes:

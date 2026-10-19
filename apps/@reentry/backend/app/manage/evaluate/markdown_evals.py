@@ -10,7 +10,7 @@ from app.utils.llm_retry_config import DEFAULT_MAX_RETRIES, ERRORS_TO_RETRY_ON
 
 eval_llm = ChatOpenAI(
     api_key=settings.OPENAI_API_KEY,
-    model="o4-mini",
+    model="gpt-5.6-terra",
     base_url=settings.OPENAI_BASE_URL,
 )
 
@@ -84,6 +84,7 @@ async def addressed_to_client(run: Run, example: Example):
         "comment": score.explanation,
     }
 
+
 # Recommended steps should be actionable
 async def actionable(run: Run, example: Example):
     prediction = run.outputs["markdown"]
@@ -133,6 +134,7 @@ async def actionable(run: Run, example: Example):
         "comment": score.explanation,
     }
 
+
 # The report has the expected tone: kind, supportive, down-to-earth (not false friendly), but objective tone.
 async def tone(run: Run, example: Example):
     prediction = run.outputs["markdown"]
@@ -176,6 +178,7 @@ async def tone(run: Run, example: Example):
         "score": int(score.one_to_ten_score),
         "comment": score.explanation,
     }
+
 
 _SMART_QUOTE_TABLE = str.maketrans(
     {
@@ -257,13 +260,17 @@ async def grounded(run: Run, example: Example):
     messages = example.inputs.get("messages", [])
 
     context = (
-        "# Intake conversation\n"
-        + "\n".join(
-            f"{m.get('role', 'unknown')}: {m.get('content', '')}"
-            for m in messages
-            if m.get("content")
+        (
+            "# Intake conversation\n"
+            + "\n".join(
+                f"{m.get('role', 'unknown')}: {m.get('content', '')}"
+                for m in messages
+                if m.get("content")
+            )
         )
-    ) if messages else "(no conversation provided)"
+        if messages
+        else "(no conversation provided)"
+    )
 
     class GradeGrounded(BaseModel):
         """Score for how factually grounded the action plan is in the intake conversation."""

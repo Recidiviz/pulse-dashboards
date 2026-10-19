@@ -6,13 +6,11 @@ metadata:
 
 model:
   provider: openai
-  name: o4-mini
-  version: "2025-04-16"
+  name: gpt-5.6-terra
 
 small_model:
   provider: openai
-  name: o4-mini
-  version: "2025-04-16"
+  name: gpt-5.6-terra
 
 prompts:
   system: |

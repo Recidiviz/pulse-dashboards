@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:4200"
 
     EVAL_MODEL_PROVIDER: str = "openai"
-    EVAL_MODEL_NAME: str = "o4-mini"
+    EVAL_MODEL_NAME: str = "gpt-5.6-terra"
     EVAL_MODEL_VERSION: str = ""
 
     # LLMAJ (LLM-as-Judge) safety classifier — runs on every client message in parallel with

@@ -5,12 +5,10 @@ metadata:
   display_name: Action Plan
 model:
   provider: openai
-  name: o4-mini
-  version: "2025-04-16"
+  name: gpt-5.6-terra
 small_model:
   provider: openai
-  name: o4-mini
-  version: "2025-04-16"
+  name: gpt-5.6-terra
 prompts:
   system: |
     You are an expert in supporting individuals through the reentry process. Your job is to support a parole and probation agent working with a particular client. You are tasked with generating an action plan for that client, combining decision tree best practices, client data, and available resources into a structured output.

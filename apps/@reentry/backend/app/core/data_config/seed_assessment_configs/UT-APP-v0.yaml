@@ -139,12 +139,10 @@ intake:
                       - What type of support do they feel would be most effective for them now (e.g., group meetings like AA/NA, individual counseling, medication-assisted treatment, residential treatment, or something else)?
   transcription_post_processing_model:
     provider: openai
-    name: o4-mini
-    version: "2025-04-16"
+    name: gpt-5.6-terra
   chat_model:
     provider: openai
-    name: o4-mini
-    version: "2025-04-16"
+    name: gpt-5.6-terra
 outputs:
   codes:
     - intake_summary_default

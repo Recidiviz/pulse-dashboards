@@ -74,7 +74,7 @@ class ConversationEvaluator:
         self.evaluation_llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
             base_url=settings.OPENAI_BASE_URL,
-            model="o4-mini",
+            model="gpt-5.6-terra",
             reasoning_effort="high",
         )
         self.sections = sections
@@ -256,7 +256,7 @@ class HeadlessIntakeClient:
         self.llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
             base_url=settings.OPENAI_BASE_URL,
-            model="o4-mini",
+            model="gpt-5.6-terra",
             max_tokens=500,
             reasoning_effort="low",
         )
