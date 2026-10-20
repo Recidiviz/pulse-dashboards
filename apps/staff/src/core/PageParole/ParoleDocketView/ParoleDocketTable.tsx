@@ -29,7 +29,6 @@ import { formatDocId } from "../../../ParoleStore/utils";
 import { CaseloadTable } from "../../CaseloadTable";
 import { ParoleDocketColumn } from "../../models/types";
 import { Pagination } from "../../Pagination/Pagination";
-import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
 import {
@@ -207,23 +206,21 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
         <WorkflowsFilterDropdown presenter={presenter} />
       </FilterBar>
 
-      <SectionCard>
-        <CaseloadTable
-          data={presenter.filteredHearings}
-          columns={columns}
-          initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
-          pagination={
-            presenter.docketPaginationEnabled
-              ? { state: pagination, onChange: setPagination }
-              : undefined
-          }
-          rowLinkUrl={(hearing) =>
-            paroleUrl("caseProfile", {
-              pseudonymizedId: hearing.pseudonymizedId,
-            })
-          }
-        />
-      </SectionCard>
+      <CaseloadTable
+        data={presenter.filteredHearings}
+        columns={columns}
+        initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
+        pagination={
+          presenter.docketPaginationEnabled
+            ? { state: pagination, onChange: setPagination }
+            : undefined
+        }
+        rowLinkUrl={(hearing) =>
+          paroleUrl("caseProfile", {
+            pseudonymizedId: hearing.pseudonymizedId,
+          })
+        }
+      />
 
       {presenter.docketPaginationEnabled ? (
         hearingCount > DOCKET_PAGE_SIZE_OPTIONS[0] && (

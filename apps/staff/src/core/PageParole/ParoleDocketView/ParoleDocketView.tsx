@@ -35,7 +35,10 @@ const Wrapper = styled.div`
 `;
 
 const HeaderBlock = styled.div`
-  margin-bottom: ${rem(spacing.lg)};
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 /** Matches the Overview page title (InsightsSupervisorsListPage). */
@@ -47,7 +50,6 @@ const Title = styled.div<{ $isMobile: boolean }>`
 const Subheading = styled.div`
   ${typography.Body16}
   color: ${palette.slate80};
-  margin-top: ${rem(spacing.xs)};
 `;
 
 const ParoleDocketList = observer(function ParoleDocketList({

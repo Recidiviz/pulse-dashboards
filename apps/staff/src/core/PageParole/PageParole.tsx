@@ -27,7 +27,6 @@ import { palette } from "~design-system";
 
 import NotFound from "../../components/NotFound";
 import useIsMobile from "../../hooks/useIsMobile";
-import cssVars from "../CoreConstants.module.scss";
 import {
   NAV_BAR_HEIGHT,
   NavigationLayout,
@@ -46,42 +45,27 @@ const Wrapper = styled.div<{ $backgroundColor: string }>`
   width: 100%;
 `;
 
-const Main = styled.main<{ isMobile?: boolean }>`
+const Main = styled.main<{ isMobile?: boolean; $isFullWidth: boolean }>`
   display: flex;
   flex-direction: column;
   flex: auto;
 
-  padding: ${({ isMobile }) =>
-    isMobile
-      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : `${rem(spacing.xl)} ${rem(spacing.md)}`};
+  padding: 2rem 1.5rem 5rem;
 
-  /* leaving extra space for the Intercom button */
-  ${({ isMobile }) =>
+  height: ${({ isMobile }) =>
     isMobile
-      ? `
-      padding-bottom: ${rem(spacing.lg)};
-      height: calc(100% - ${rem(spacing.lg + NAV_BAR_HEIGHT)});
-  `
-      : `padding-bottom: ${rem(spacing.md * 5)};
-  height: calc(100% - ${rem(spacing.md * 5 + spacing.xl)});`}
+      ? `calc(100% - ${rem(spacing.lg + NAV_BAR_HEIGHT)})`
+      : `calc(100% - ${rem(spacing.md * 5 + spacing.xl)})`};
 
   margin: 0 auto;
-  ${MaxWidth}
-
-  /* Parole's sidebar layout needs more horizontal room than the shared
-  75vw cap gives the Workflows pages this mixin was designed for. */
-  max-width: 92vw;
-
-  @media screen and (max-width: ${cssVars.breakpointSm}) {
-    max-width: 95vw;
-  }
+  ${({ $isFullWidth }) => !$isFullWidth && MaxWidth}
 `;
 
 const PageParole: React.FC = observer(function PageParole() {
   const { isMobile } = useIsMobile(true);
   const { pathname } = useLocation();
   const isCaseProfile = useMatch(PAROLE_PATHS.caseProfile) !== null;
+  const isDocket = useMatch(PAROLE_PATHS.docket) !== null;
   const backgroundColor = isCaseProfile ? palette.marble3 : palette.marble1;
 
   useEffect(() => {
@@ -101,7 +85,7 @@ const PageParole: React.FC = observer(function PageParole() {
         <NavigationLayout>
           <OverviewNavLinks />
         </NavigationLayout>
-        <Main isMobile={isMobile}>
+        <Main isMobile={isMobile} $isFullWidth={isDocket}>
           <Routes>
             <Route
               path={paroleRoute({ routeName: "docket" })}
