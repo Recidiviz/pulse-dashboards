@@ -24,3 +24,6 @@ export type HousingAttributes = Extract<
   NonNullable<ResourceSummary["categoryAttributes"]>,
   { category: "Housing" }
 >;
+
+export type ResourceDetail =
+  JiiResidentAppRouterOutputs["resident"]["resources"]["getResource"];

@@ -694,6 +694,10 @@
         "typeOfHousingHeading": "[US_MA]reentry.resources.detail.typeOfHousingHeading",
         "backToAllResources": "[US_MA]reentry.resources.detail.backToAllResources",
         "keyDetails": {
+          "accepts": {
+            "yes": "[US_MA]reentry.resources.detail.keyDetails.accepts.yes",
+            "no": "[US_MA]reentry.resources.detail.keyDetails.accepts.no"
+          },
           "heading": "[US_MA]reentry.resources.detail.keyDetails.heading",
           "notListed": "[US_MA]reentry.resources.detail.keyDetails.notListed",
           "labels": {
@@ -704,18 +708,22 @@
             "acceptsParolees": "[US_MA]reentry.resources.detail.keyDetails.labels.acceptsParolees",
             "acceptsArsonOffenses": "[US_MA]reentry.resources.detail.keyDetails.labels.acceptsArsonOffenses"
           },
+          "weeklyRent": {
+            "rentOrIncome": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.rentOrIncome"
+          },
           "whoCanStay": {
             "withBeds_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_one",
             "withBeds_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_other",
             "bedsOnly_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_one",
             "bedsOnly_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_other"
-          },
-          "weeklyRent": {
-            "rentOrIncome": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.rentOrIncome"
-          },
-          "accepts": {
-            "yes": "[US_MA]reentry.resources.detail.keyDetails.accepts.yes",
-            "no": "[US_MA]reentry.resources.detail.keyDetails.accepts.no"
+          }
+        },
+        "contact": {
+          "heading": "[US_MA]reentry.resources.detail.contact.heading",
+          "notAvailable": "[US_MA]reentry.resources.detail.contact.notAvailable",
+          "labels": {
+            "address": "[US_MA]reentry.resources.detail.contact.labels.address",
+            "county": "[US_MA]reentry.resources.detail.contact.labels.county"
           }
         }
       },

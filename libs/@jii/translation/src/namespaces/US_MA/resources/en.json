@@ -694,6 +694,10 @@
         "typeOfHousingHeading": "Type of housing",
         "backToAllResources": "Back to all resources",
         "keyDetails": {
+          "accepts": {
+            "yes": "Yes",
+            "no": "No"
+          },
           "heading": "Key details",
           "notListed": "Not listed",
           "labels": {
@@ -704,18 +708,22 @@
             "acceptsParolees": "Accepts: parolees",
             "acceptsArsonOffenses": "Accepts: arson offenses"
           },
+          "weeklyRent": {
+            "rentOrIncome": "{{rent}} or {{income}}"
+          },
           "whoCanStay": {
             "withBeds_one": "{{gender}} ({{count}} bed)",
             "withBeds_other": "{{gender}} ({{count}} beds)",
             "bedsOnly_one": "{{count}} bed",
             "bedsOnly_other": "{{count}} beds"
-          },
-          "weeklyRent": {
-            "rentOrIncome": "{{rent}} or {{income}}"
-          },
-          "accepts": {
-            "yes": "Yes",
-            "no": "No"
+          }
+        },
+        "contact": {
+          "heading": "Address and contact details",
+          "notAvailable": "n/a",
+          "labels": {
+            "address": "Address",
+            "county": "County"
           }
         }
       },

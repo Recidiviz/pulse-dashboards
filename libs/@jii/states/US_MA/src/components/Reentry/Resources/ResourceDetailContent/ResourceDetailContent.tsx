@@ -24,6 +24,8 @@ import { Button } from "~design-system";
 
 import { useResource } from "../../../../hooks/useResource";
 import { Chip } from "../Chip/Chip";
+import { ContactInformation } from "../Contact/ContactInformation";
+import { buildContactInformation } from "../Contact/utils";
 import { KeyDetails } from "../KeyDetails/KeyDetails";
 import { getKeyDetails } from "../KeyDetails/utils";
 import {
@@ -47,8 +49,8 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
 }) => {
   const { t } = useUsMaTranslations();
   const navigate = useNavigate();
-  const { name, categories, tags, categoryAttributes } =
-    useResource(resourceId);
+  const resource = useResource(resourceId);
+  const { name, categories, tags, categoryAttributes } = resource;
   usePageTitle(name);
 
   const subcategories = categories
@@ -82,6 +84,13 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
           />
         </Section>
       )}
+
+      <Section aria-labelledby="contact-heading">
+        <SectionHeading id="contact-heading">
+          {t(($) => $.reentry.resources.detail.contact.heading)}
+        </SectionHeading>
+        <ContactInformation rows={buildContactInformation(resource, t)} />
+      </Section>
 
       <BackButtonWrapper>
         <Button kind="secondary" onClick={() => navigate(backPath)}>

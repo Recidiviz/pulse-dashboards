@@ -43,6 +43,9 @@ const resource = {
     { category: "Food", subcategory: "Pantry" },
   ],
   tags: [],
+  addresses: [],
+  phoneNumbers: [],
+  websites: [],
 };
 
 let i18n: I18n;
@@ -171,4 +174,22 @@ test("leaves out key details for a resource without housing attributes", async (
   expect(
     screen.queryByRole("heading", { name: "Key details" }),
   ).not.toBeInTheDocument();
+});
+
+test("shows the address and contact rows", async () => {
+  mockGetResource(async () => ({
+    ...resource,
+    addresses: [{ id: 1, address: "119 Example St, Hyannis, MA 02601" }],
+    county: "Barnstable",
+  }));
+  renderPage();
+
+  expect(
+    await screen.findByRole("heading", { name: "Address and contact details" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText("119 Example St, Hyannis, MA 02601"),
+  ).toBeInTheDocument();
+  expect(screen.getByText("Barnstable")).toBeInTheDocument();
+  expect(screen.queryByText(/Website/)).not.toBeInTheDocument();
 });
