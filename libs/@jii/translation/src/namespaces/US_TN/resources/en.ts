@@ -58,4 +58,8 @@ export default {
     maxReductionNote:
       "All credits you earn will show here, even if your sentence does not allow credits to reduce your dates.",
   },
+  maintenance: {
+    announcement:
+      "**Please note:** The Opportunities app will be down for updates starting this Friday, October 23. TDOC is moving to a new records system. The app should be back in early November with your latest dates and credits. The rest of the Edovo application will continue to work as normal during that time.",
+  },
 };
