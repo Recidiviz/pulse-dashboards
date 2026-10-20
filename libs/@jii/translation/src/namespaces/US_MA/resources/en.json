@@ -692,7 +692,50 @@
       "detail": {
         "back": "Back",
         "typeOfHousingHeading": "Type of housing",
-        "backToAllResources": "Back to all resources"
+        "backToAllResources": "Back to all resources",
+        "keyDetails": {
+          "heading": "Key details",
+          "notListed": "Not listed",
+          "labels": {
+            "whoCanStay": "Who can stay",
+            "lengthOfStay": "Length of stay",
+            "weeklyRent": "Weekly rent",
+            "acceptsSexOffenses": "Accepts: sex offenses",
+            "acceptsParolees": "Accepts: parolees",
+            "acceptsArsonOffenses": "Accepts: arson offenses"
+          },
+          "whoCanStay": {
+            "withBeds_one": "{{gender}} ({{count}} bed)",
+            "withBeds_other": "{{gender}} ({{count}} beds)",
+            "bedsOnly_one": "{{count}} bed",
+            "bedsOnly_other": "{{count}} beds"
+          },
+          "weeklyRent": {
+            "rentOrIncome": "{{rent}} or {{income}}"
+          },
+          "accepts": {
+            "yes": "Yes",
+            "no": "No"
+          }
+        }
+      },
+      "housing": {
+        "lengthOfStay": {
+          "upTo_one": "Up to {{count}} month",
+          "upTo_other": "Up to {{count}} months",
+          "single_one": "{{count}} month",
+          "single_other": "{{count}} months",
+          "range_one": "{{min}}–{{max}} month",
+          "range_other": "{{min}}–{{max}} months",
+          "atLeast": "{{min}}+ months",
+          "noTimeLimit": "No time limit"
+        },
+        "rent": {
+          "free": "Free",
+          "single": "{{amount, currency(USD)}}",
+          "range": "{{min, currency(USD)}}–{{max, currency(USD)}}",
+          "incomePercent": "{{percent}}% of income"
+        }
       },
       "list": {
         "pageTitle": "Resource explorer – Housing",
@@ -704,19 +747,12 @@
         "emptyState": "No housing resources found.",
         "contactLabel": "Address: {{address}}",
         "rent": {
-          "free": "Rent: Free",
           "varies": "Rent: Varies",
-          "range": "Rent: {{min, currency(USD)}}–{{max, currency(USD)}}/week",
-          "single": "Rent: {{amount, currency(USD)}}/week",
-          "incomePercent": "Rent: {{percent}}% of income",
-          "notListed": "No rent info listed"
+          "notListed": "No rent info listed",
+          "label": "Rent: {{rent}}",
+          "perWeek": "Rent: {{rent}}/week"
         },
         "lengthOfStay": {
-          "range": "{{min}}–{{max}} months",
-          "single_one": "{{count}} month",
-          "single_other": "{{count}} months",
-          "atLeast": "{{min}}+ months",
-          "noTimeLimit": "No time limit",
           "notListed": "No program length info listed"
         },
         "gender": {

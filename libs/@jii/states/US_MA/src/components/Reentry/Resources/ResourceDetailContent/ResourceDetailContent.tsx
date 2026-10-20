@@ -24,6 +24,8 @@ import { Button } from "~design-system";
 
 import { useResource } from "../../../../hooks/useResource";
 import { Chip } from "../Chip/Chip";
+import { KeyDetails } from "../KeyDetails/KeyDetails";
+import { getKeyDetails } from "../KeyDetails/utils";
 import {
   BackButtonWrapper,
   ChipList,
@@ -45,7 +47,8 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
 }) => {
   const { t } = useUsMaTranslations();
   const navigate = useNavigate();
-  const { name, categories } = useResource(resourceId);
+  const { name, categories, tags, categoryAttributes } =
+    useResource(resourceId);
   usePageTitle(name);
 
   const subcategories = categories
@@ -66,6 +69,17 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
               <Chip key={subcategory}>{subcategory}</Chip>
             ))}
           </ChipList>
+        </Section>
+      )}
+
+      {categoryAttributes?.category === "Housing" && (
+        <Section aria-labelledby="key-details-heading">
+          <SectionHeading id="key-details-heading">
+            {t(($) => $.reentry.resources.detail.keyDetails.heading)}
+          </SectionHeading>
+          <KeyDetails
+            details={getKeyDetails({ tags }, categoryAttributes, t)}
+          />
         </Section>
       )}
 

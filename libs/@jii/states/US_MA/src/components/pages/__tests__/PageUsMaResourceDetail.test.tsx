@@ -140,3 +140,35 @@ test("falls back to the unfiltered list for an external backTarget", async () =>
     LIST_PATH,
   );
 });
+
+test("shows key details for a housing resource", async () => {
+  mockGetResource(async () => ({
+    ...resource,
+    tags: ["Co-ed", "Parolees Accepted"],
+    categoryAttributes: {
+      category: "Housing",
+      numBeds: 50,
+      weeklyRent: { min: 150, max: 175 },
+    },
+  }));
+  renderPage();
+
+  expect(
+    await screen.findByRole("heading", { name: "Key details" }),
+  ).toBeInTheDocument();
+  expect(screen.getByText("Who can stay")).toBeInTheDocument();
+  expect(screen.getByText("Co-ed (50 beds)")).toBeInTheDocument();
+  expect(screen.getByText("$150–$175")).toBeInTheDocument();
+});
+
+test("leaves out key details for a resource without housing attributes", async () => {
+  mockGetResource(async () => resource);
+  renderPage();
+
+  await screen.findByRole("heading", {
+    name: "Cape Cod Transitional Residence",
+  });
+  expect(
+    screen.queryByRole("heading", { name: "Key details" }),
+  ).not.toBeInTheDocument();
+});

@@ -52,6 +52,63 @@ const US_DOLLAR_FORMAT = {
   trailingZeroDisplay: "stripIfInteger",
 } as const;
 
+/**
+ * Returns a rent range as a bare amount, e.g. "$120", "$150–$175" or "Free".
+ */
+export function formatRent(
+  { min, max }: { min: number; max: number },
+  t: UsMaTFunction,
+): string {
+  if (min === 0 && max === 0) {
+    return t(($) => $.reentry.resources.housing.rent.free);
+  }
+  return min === max
+    ? t(($) => $.reentry.resources.housing.rent.single, {
+        amount: min,
+        ...US_DOLLAR_FORMAT,
+      })
+    : t(($) => $.reentry.resources.housing.rent.range, {
+        min,
+        max,
+        ...US_DOLLAR_FORMAT,
+      });
+}
+
+export function formatIncomePercent(percent: number, t: UsMaTFunction) {
+  return t(($) => $.reentry.resources.housing.rent.incomePercent, { percent });
+}
+
+/**
+ * Returns the program length, e.g. "6 months", "3–6 months", "Up to 3 months",
+ * "6+ months" or "No time limit", or undefined when the resource doesn't list
+ * one.
+ */
+export function formatLengthOfStay(
+  { programLengthMonths }: HousingAttributes,
+  t: UsMaTFunction,
+): string | undefined {
+  if (!programLengthMonths) return undefined;
+  const { min, max } = programLengthMonths;
+  if (max === NO_TIME_LIMIT_MONTHS) {
+    return min > 0
+      ? t(($) => $.reentry.resources.housing.lengthOfStay.atLeast, { min })
+      : t(($) => $.reentry.resources.housing.lengthOfStay.noTimeLimit);
+  }
+
+  if (min === max) {
+    return t(($) => $.reentry.resources.housing.lengthOfStay.single, {
+      count: min,
+    });
+  }
+  return min === 0
+    ? t(($) => $.reentry.resources.housing.lengthOfStay.upTo, { count: max })
+    : t(($) => $.reentry.resources.housing.lengthOfStay.range, {
+        min,
+        max,
+        count: max,
+      });
+}
+
 export function getRentChip(
   { weeklyRent, rentAsIncomePercent }: HousingAttributes,
   t: UsMaTFunction,
@@ -60,44 +117,27 @@ export function getRentChip(
     return t(($) => $.reentry.resources.list.rent.varies);
   }
   if (weeklyRent) {
-    const { min, max } = weeklyRent;
-    if (min === 0 && max === 0)
-      return t(($) => $.reentry.resources.list.rent.free);
-    return min === max
-      ? t(($) => $.reentry.resources.list.rent.single, {
-          amount: min,
-          ...US_DOLLAR_FORMAT,
-        })
-      : t(($) => $.reentry.resources.list.rent.range, {
-          min,
-          max,
-          ...US_DOLLAR_FORMAT,
-        });
+    const rent = formatRent(weeklyRent, t);
+    return weeklyRent.max === 0
+      ? t(($) => $.reentry.resources.list.rent.label, { rent })
+      : t(($) => $.reentry.resources.list.rent.perWeek, { rent });
   }
   if (rentAsIncomePercent !== undefined) {
-    return t(($) => $.reentry.resources.list.rent.incomePercent, {
-      percent: rentAsIncomePercent,
+    return t(($) => $.reentry.resources.list.rent.label, {
+      rent: formatIncomePercent(rentAsIncomePercent, t),
     });
   }
   return t(($) => $.reentry.resources.list.rent.notListed);
 }
 
 export function getLengthOfStayChip(
-  { programLengthMonths }: HousingAttributes,
+  attributes: HousingAttributes,
   t: UsMaTFunction,
 ): string {
-  if (!programLengthMonths) {
-    return t(($) => $.reentry.resources.list.lengthOfStay.notListed);
-  }
-  const { min, max } = programLengthMonths;
-  if (max === NO_TIME_LIMIT_MONTHS) {
-    return min > 0
-      ? t(($) => $.reentry.resources.list.lengthOfStay.atLeast, { min })
-      : t(($) => $.reentry.resources.list.lengthOfStay.noTimeLimit);
-  }
-  return min === max
-    ? t(($) => $.reentry.resources.list.lengthOfStay.single, { count: min })
-    : t(($) => $.reentry.resources.list.lengthOfStay.range, { min, max });
+  return (
+    formatLengthOfStay(attributes, t) ??
+    t(($) => $.reentry.resources.list.lengthOfStay.notListed)
+  );
 }
 
 /**

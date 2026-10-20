@@ -692,7 +692,50 @@
       "detail": {
         "back": "[US_MA]reentry.resources.detail.back",
         "typeOfHousingHeading": "[US_MA]reentry.resources.detail.typeOfHousingHeading",
-        "backToAllResources": "[US_MA]reentry.resources.detail.backToAllResources"
+        "backToAllResources": "[US_MA]reentry.resources.detail.backToAllResources",
+        "keyDetails": {
+          "heading": "[US_MA]reentry.resources.detail.keyDetails.heading",
+          "notListed": "[US_MA]reentry.resources.detail.keyDetails.notListed",
+          "labels": {
+            "whoCanStay": "[US_MA]reentry.resources.detail.keyDetails.labels.whoCanStay",
+            "lengthOfStay": "[US_MA]reentry.resources.detail.keyDetails.labels.lengthOfStay",
+            "weeklyRent": "[US_MA]reentry.resources.detail.keyDetails.labels.weeklyRent",
+            "acceptsSexOffenses": "[US_MA]reentry.resources.detail.keyDetails.labels.acceptsSexOffenses",
+            "acceptsParolees": "[US_MA]reentry.resources.detail.keyDetails.labels.acceptsParolees",
+            "acceptsArsonOffenses": "[US_MA]reentry.resources.detail.keyDetails.labels.acceptsArsonOffenses"
+          },
+          "whoCanStay": {
+            "withBeds_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_one",
+            "withBeds_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_other",
+            "bedsOnly_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_one",
+            "bedsOnly_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_other"
+          },
+          "weeklyRent": {
+            "rentOrIncome": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.rentOrIncome"
+          },
+          "accepts": {
+            "yes": "[US_MA]reentry.resources.detail.keyDetails.accepts.yes",
+            "no": "[US_MA]reentry.resources.detail.keyDetails.accepts.no"
+          }
+        }
+      },
+      "housing": {
+        "lengthOfStay": {
+          "upTo_one": "[US_MA]reentry.resources.housing.lengthOfStay.upTo_one",
+          "upTo_other": "[US_MA]reentry.resources.housing.lengthOfStay.upTo_other",
+          "single_one": "[US_MA]reentry.resources.housing.lengthOfStay.single_one",
+          "single_other": "[US_MA]reentry.resources.housing.lengthOfStay.single_other",
+          "range_one": "[US_MA]reentry.resources.housing.lengthOfStay.range_one",
+          "range_other": "[US_MA]reentry.resources.housing.lengthOfStay.range_other",
+          "atLeast": "[US_MA]reentry.resources.housing.lengthOfStay.atLeast",
+          "noTimeLimit": "[US_MA]reentry.resources.housing.lengthOfStay.noTimeLimit"
+        },
+        "rent": {
+          "free": "[US_MA]reentry.resources.housing.rent.free",
+          "single": "[US_MA]reentry.resources.housing.rent.single",
+          "range": "[US_MA]reentry.resources.housing.rent.range",
+          "incomePercent": "[US_MA]reentry.resources.housing.rent.incomePercent"
+        }
       },
       "list": {
         "pageTitle": "[US_MA]reentry.resources.list.pageTitle",
@@ -704,19 +747,12 @@
         "emptyState": "[US_MA]reentry.resources.list.emptyState",
         "contactLabel": "[US_MA]reentry.resources.list.contactLabel",
         "rent": {
-          "free": "[US_MA]reentry.resources.list.rent.free",
           "varies": "[US_MA]reentry.resources.list.rent.varies",
-          "range": "[US_MA]reentry.resources.list.rent.range",
-          "single": "[US_MA]reentry.resources.list.rent.single",
-          "incomePercent": "[US_MA]reentry.resources.list.rent.incomePercent",
-          "notListed": "[US_MA]reentry.resources.list.rent.notListed"
+          "notListed": "[US_MA]reentry.resources.list.rent.notListed",
+          "label": "[US_MA]reentry.resources.list.rent.label",
+          "perWeek": "[US_MA]reentry.resources.list.rent.perWeek"
         },
         "lengthOfStay": {
-          "range": "[US_MA]reentry.resources.list.lengthOfStay.range",
-          "single_one": "[US_MA]reentry.resources.list.lengthOfStay.single_one",
-          "single_other": "[US_MA]reentry.resources.list.lengthOfStay.single_other",
-          "atLeast": "[US_MA]reentry.resources.list.lengthOfStay.atLeast",
-          "noTimeLimit": "[US_MA]reentry.resources.list.lengthOfStay.noTimeLimit",
           "notListed": "[US_MA]reentry.resources.list.lengthOfStay.notListed"
         },
         "gender": {
