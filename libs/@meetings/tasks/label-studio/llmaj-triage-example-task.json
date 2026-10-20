@@ -1,0 +1,44 @@
+{
+  "meeting_id": "demo-llmaj-triage-0001",
+  "state_code": "US_DEMO",
+  "recording_date": "2026-10-08",
+  "review_reason": "LLMAJ_BAD",
+  "pipeline_run_id": "demo-pipeline-run-0001",
+  "evaluation_run_id": "demo-evaluation-run-0001",
+  "evaluator_version": "4",
+  "exported_at": "2026-10-08T18:42:05.000Z",
+  "random_split": 0.4172,
+
+  "case_note_flagged": true,
+  "action_items_flagged": false,
+  "overall_flagged": true,
+
+  "judge_case_note_grade": "BAD",
+  "judge_case_note_rationale": "The note says the client starts at the warehouse on Monday, but the client only said they had an interview there. It also leaves out the missed curfew check, which the officer discussed at length.",
+  "judge_case_note_hallucinations": "- States the client starts work at the warehouse on Monday; the transcript only mentions an interview.",
+  "judge_case_note_omissions": "- Does not mention the missed curfew check on October 3 or the warning the officer gave.",
+
+  "judge_action_items_grade": "GOOD",
+  "judge_action_items_rationale": "Both action items match commitments made in the meeting, with the right owners.",
+  "judge_action_items_hallucinations": "None",
+  "judge_action_items_omissions": "None",
+
+  "judge_overall_grade": "BAD",
+  "judge_overall_rationale": "A reader would believe the client is employed and would not know about the curfew violation.",
+  "judge_overall_hallucinations": "- Implies the client has stable employment.",
+  "judge_overall_omissions": "- The curfew violation and the warning.",
+
+  "case_note": "Met with the client for a scheduled check-in. The client reported starting work at the warehouse on Monday and said things at home are stable. Reviewed upcoming treatment group dates. The client has no questions at this time.",
+  "action_items": "[Officer] Send the client the updated treatment group schedule\n[Client] Bring proof of address to the next check-in",
+  "staff_notes": "warehouse interview thurs. curfew check missed 10/3, warned",
+  "transcript": "Officer: Thanks for coming in. How have things been since last time?\nClient: Pretty good. I had an interview at the warehouse on Thursday.\nOfficer: That's great. Did they say when you'd hear back?\nClient: Maybe next week.\nOfficer: I also need to talk about the curfew check on the third. You weren't home when they came by.\nClient: Yeah, I was at my cousin's. I lost track of time.\nOfficer: I understand, but this is your warning. Another one and I have to report it.\nClient: Got it.\nOfficer: I'll send you the new treatment group schedule, and bring proof of address next time.",
+  "audio": "gs://demo-meetings-recordings/US_DEMO/demo-llmaj-triage-0001/final.webm",
+
+  "meta": {
+    "State": "US_DEMO",
+    "Recording date": "2026-10-08",
+    "Duration": "18m 40s",
+    "Meeting ID": "demo-llmaj-triage-0001",
+    "Person Display ID": "DEMO-1042"
+  }
+}

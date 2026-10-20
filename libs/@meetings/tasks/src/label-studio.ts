@@ -24,6 +24,19 @@ import { Storage } from "@google-cloud/storage";
 import type { Prisma, StateCode } from "~@meetings/prisma/client";
 import { formatTranscripts } from "~@meetings/tasks/llm/utils";
 
+// =============================================================================
+// The full-review task: a Label Studio task asking a QA rater to grade a
+// meeting's case note, action items and transcript from scratch, without
+// seeing the LLM judge's grades. A meeting gets one when it is sampled for
+// review or the judge forces it into review (see the run-llmaj-evaluation
+// route). It is written to label-studio-task.json and imported into the main
+// Meetings project.
+//
+// Its counterpart is the LLMAJ triage task in label-studio-llmaj-triage.ts,
+// which asks a rater to check the judge's BAD grades instead and goes to its
+// own project.
+// =============================================================================
+
 /**
  * Prisma include shape for fetching a meeting with the relations needed
  * to build a Label Studio task.
