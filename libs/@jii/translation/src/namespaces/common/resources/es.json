@@ -1,6 +1,7 @@
 {
   "nav": {
-    "homeLink": "Inicio"
+    "homeLink": "Inicio",
+    "programsLink": "Programas"
   },
   "unknownUser": {
     "heading": "Error al iniciar sesión",

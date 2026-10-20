@@ -20,9 +20,10 @@ import { makeAutoObservable } from "mobx";
 import { SimpleNavLinkProps } from "~@jii/common-ui";
 import { ResidentFlags, UserStore } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
+import { I18nResources } from "~@jii/translation";
 
 type AdditionalTopBarLink = {
-  label: string;
+  navKey: keyof I18nResources["common"]["nav"];
   to: string;
   // Whether this link should stay highlighted while on any of its sub-routes,
   // rather than only when its own path is matched exactly. Defaults to false.
@@ -56,7 +57,7 @@ export class ResidentNavBarPresenter {
     if (this.routeParams.stateSlug === "tennessee") {
       return [
         {
-          label: "About",
+          navKey: "aboutLink",
           to: State.Resident.UsTnMoreInformation.About.buildPath(
             this.routeParams,
           ),
@@ -67,7 +68,7 @@ export class ResidentNavBarPresenter {
     if (this.routeParams.stateSlug === "arizona") {
       const links: Array<AdditionalTopBarLink> = [
         {
-          label: "About",
+          navKey: "aboutLink",
           to: State.Resident.UsAzMoreInformation.About.buildPath(
             this.routeParams,
           ),
@@ -75,7 +76,7 @@ export class ResidentNavBarPresenter {
       ];
       if (this.residentFlags?.usAzClassification) {
         links.push({
-          label: "My Classification",
+          navKey: "myClassificationLink",
           to: State.Resident.UsAzClassificationPoints.buildPath(
             this.routeParams,
           ),
@@ -94,7 +95,7 @@ export class ResidentNavBarPresenter {
     if (showsProgramCatalog) {
       return [
         {
-          label: "Programs",
+          navKey: "programsLink",
           to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
         },
       ];
@@ -103,14 +104,14 @@ export class ResidentNavBarPresenter {
     if (this.routeParams.stateSlug === "mass") {
       const links: AdditionalTopBarLink[] = [
         {
-          label: "Programs",
+          navKey: "programsLink",
           to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
         },
       ];
 
       if (this.residentFlags?.usMaReentry) {
         links.push({
-          label: "Reentry",
+          navKey: "reentryLink",
           to: State.Resident.UsMaReentry.buildPath(this.routeParams),
           activeOnSubroutes: true,
         });

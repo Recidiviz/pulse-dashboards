@@ -1,6 +1,10 @@
 {
   "nav": {
-    "homeLink": "[common]nav.homeLink"
+    "homeLink": "[common]nav.homeLink",
+    "programsLink": "[common]nav.programsLink",
+    "aboutLink": "[common]nav.aboutLink",
+    "reentryLink": "[common]nav.reentryLink",
+    "myClassificationLink": "[common]nav.myClassificationLink"
   },
   "unknownUser": {
     "heading": "[common]unknownUser.heading",

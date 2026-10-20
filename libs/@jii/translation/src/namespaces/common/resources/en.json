@@ -1,6 +1,10 @@
 {
   "nav": {
-    "homeLink": "Home"
+    "homeLink": "Home",
+    "programsLink": "Programs",
+    "aboutLink": "About",
+    "reentryLink": "Reentry",
+    "myClassificationLink": "My Classification"
   },
   "unknownUser": {
     "heading": "Login failed",
