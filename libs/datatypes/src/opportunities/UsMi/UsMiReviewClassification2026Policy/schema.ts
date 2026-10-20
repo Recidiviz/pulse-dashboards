@@ -135,5 +135,4 @@ export type UsMiReviewClassification2026DraftData =
     s3q14Selection: number;
     s3q15Selection: number;
     s3q16Selection: number;
-    s3q17Selection: number;
   };

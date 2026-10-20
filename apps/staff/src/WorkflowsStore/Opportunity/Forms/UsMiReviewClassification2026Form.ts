@@ -16,8 +16,6 @@
 // =============================================================================
 
 import {
-  goodBeahviorNotesSchema,
-  goodBehaviorPeriodNotes,
   incidentNotesSchema,
   miFemaleReviewClassificationQuestions,
   miMaleReviewClassificationQuestions,
@@ -35,7 +33,7 @@ import {
   countIncidents,
   getMultiplierScore,
   getQuestionAgeOptionSelection,
-  getQuestionVfoOptionSelection as getInitialVfoOptionSelection,
+  getQuestionVfoOptionSelection,
   getSingleScore,
 } from "./UsMiInitialClassification2026Form";
 
@@ -58,19 +56,7 @@ const ReviewKeySelections = [
   "s3q14Selection",
   "s3q15Selection",
   "s3q16Selection",
-  "s3q17Selection",
 ] as const;
-
-// The female VFO question has no "High" option, so anything other than Low
-// maps to "Neither" at index 1.
-function getQuestionVfoOptionSelection(
-  note: string | undefined,
-  gender: string,
-) {
-  const selection = getInitialVfoOptionSelection(note);
-  if (gender === "MALE") return selection;
-  return selection === 0 ? 0 : 1;
-}
 
 function getHighProgramCompletion(count: number | null | undefined) {
   if (count === undefined || count === null) return 1;
@@ -103,58 +89,6 @@ function getTimeIntervals(
   return incidents.length ? { incidentsList: incidents } : undefined;
 }
 
-function calculateGoodBehaviorPoints(
-  incidentsList: incidentNotesSchema["incidentsList"],
-  adSegStaysList: goodBeahviorNotesSchema["adSegStartsList"],
-) {
-  const incidents0_4 = incidentsList?.filter(
-    (incident) => incident.incidentTimePeriod === "0-4 months",
-  );
-
-  const incidents4_8 = incidentsList?.filter(
-    (incident) => incident.incidentTimePeriod === "4-8 months",
-  );
-
-  const incidents8_12 = incidentsList?.filter(
-    (incident) => incident.incidentTimePeriod === "8-12 months",
-  );
-
-  const adSegs0_4 = adSegStaysList?.filter(
-    (adSeg) => adSeg.incidentTimePeriod === "0-4 months",
-  );
-
-  const adSegs4_8 = adSegStaysList?.filter(
-    (adSeg) => adSeg.incidentTimePeriod === "4-8 months",
-  );
-  const adSegs8_12 = adSegStaysList?.filter(
-    (adSeg) => adSeg.incidentTimePeriod === "8-12 months",
-  );
-
-  let amt = 0;
-  amt += !incidents0_4?.length && !adSegs0_4?.length ? 1 : 0;
-
-  amt += !incidents4_8?.length && !adSegs4_8?.length ? 1 : 0;
-
-  amt += !incidents8_12?.length && !adSegs8_12?.length ? 1 : 0;
-
-  const periods: goodBehaviorPeriodNotes = [
-    {
-      timePeriod: "0-4 months",
-      misconductCount: (incidents0_4?.length || 0) + (adSegs0_4?.length || 0),
-    },
-    {
-      timePeriod: "4-8 months",
-      misconductCount: (incidents4_8?.length || 0) + (adSegs4_8?.length || 0),
-    },
-    {
-      timePeriod: "8-12 months",
-      misconductCount: (incidents8_12?.length || 0) + (adSegs8_12?.length || 0),
-    },
-  ];
-
-  return { periods, total: amt };
-}
-
 function inferredMiClassificationData(
   formInformation: UsMiFormReviewInformation,
   gender: string | undefined,
@@ -171,8 +105,8 @@ function inferredMiClassificationData(
   );
 
   const s1q2Selection = getQuestionVfoOptionSelection(
+    questionsList[0].questions[1],
     formInformation.vfoNotes?.vfoLevel,
-    gender,
   );
 
   const s2q3Selection =
@@ -240,20 +174,13 @@ function inferredMiClassificationData(
     formInformation.pastFightThreatPowIncNotes,
   );
 
-  const goodBehavior = calculateGoodBehaviorPoints(
-    formInformation.goodBehaviorNotes?.incidentsList || [],
-    formInformation.goodBehaviorNotes?.adSegStartsList || [],
-  );
-
   const s2q13Selection = countIncidents(formInformation.currentOtherIncNotes);
 
-  const s3q14Selection = goodBehavior.total;
-
-  const s3q15Selection = getCoreProgramCompletion(
+  const s3q14Selection = getCoreProgramCompletion(
     formInformation.programCompleteCoreNotes,
   );
 
-  const s3q16Selection = getHighProgramCompletion(
+  const s3q15Selection = getHighProgramCompletion(
     formInformation.programCompleteHighNotes?.highProgramCompletionCount,
   );
 
@@ -270,11 +197,9 @@ function inferredMiClassificationData(
 
   const s2q13Notes = formInformation.currentOtherIncNotes;
 
-  const s3q14Notes = goodBehavior.periods;
-
-  const s3q15Notes =
+  const s3q14Notes =
     formInformation.programCompleteCoreNotes?.coreProgramCompletionsList;
-  const s3q16Notes =
+  const s3q15Notes =
     formInformation.programCompleteHighNotes?.highProgramCompletionsList;
 
   return {
@@ -297,7 +222,6 @@ function inferredMiClassificationData(
     // section 3
     s3q14Selection,
     s3q15Selection,
-    s3q16Selection,
 
     s1q1Notes,
     s1q2Notes,
@@ -314,7 +238,6 @@ function inferredMiClassificationData(
     s2q13Notes,
     s3q14Notes,
     s3q15Notes,
-    s3q16Notes,
   };
 }
 
@@ -343,7 +266,6 @@ export function deriveMiClassification(
     s3q14Selection,
     s3q15Selection,
     s3q16Selection,
-    s3q17Selection,
   } = formData;
 
   // section 1
@@ -410,17 +332,11 @@ export function deriveMiClassification(
   const s3q14 = questionsList[2].questions[0];
   const s3q14Score = getMultiplierScore(s3q14, s3q14Selection);
   const s3q15 = questionsList[2].questions[1];
-  const s3q15Score = getMultiplierScore(s3q15, s3q15Selection);
+  const s3q15Score = getSingleScore(s3q15, s3q15Selection);
   const s3q16 = questionsList[2].questions[2];
-  const s3q16Score = getSingleScore(s3q16, s3q16Selection);
-  const s3q17 = questionsList[2].questions[3];
-  const s3q17Score = getMultiplierScore(s3q17, s3q17Selection);
+  const s3q16Score = getMultiplierScore(s3q16, s3q16Selection);
 
-  let s3SubScore =
-    (s3q14Score || 0) +
-    (s3q15Score || 0) +
-    (s3q16Score || 0) +
-    (s3q17Score || 0);
+  let s3SubScore = (s3q14Score || 0) + (s3q15Score || 0) + (s3q16Score || 0);
 
   s3SubScore = Number(s3SubScore.toFixed(2));
 
@@ -478,17 +394,11 @@ export function deriveMiClassification(
     formData.currentOtherIncNotes,
   );
 
-  const goodBehavior = calculateGoodBehaviorPoints(
-    formData.goodBehaviorNotes?.incidentsList || [],
-    formData.goodBehaviorNotes?.adSegStartsList || [],
-  );
-  const s3q14Notes = classificationNote("goodBehavior", goodBehavior.periods);
-
-  const s3q15Notes = classificationNote(
+  const s3q14Notes = classificationNote(
     "programs",
     formData.programCompleteCoreNotes?.coreProgramCompletionsList,
   );
-  const s3q16Notes = classificationNote(
+  const s3q15Notes = classificationNote(
     "programs",
     formData.programCompleteHighNotes?.highProgramCompletionsList,
   );
@@ -516,7 +426,6 @@ export function deriveMiClassification(
     s3q14Score,
     s3q15Score,
     s3q16Score,
-    s3q17Score,
     subscores: [s1SubScore, s2SubScore, s3SubScore],
     totalScore,
     s1q1Notes,
@@ -534,7 +443,6 @@ export function deriveMiClassification(
     s2q13Notes,
     s3q14Notes,
     s3q15Notes,
-    s3q16Notes,
   };
 }
 

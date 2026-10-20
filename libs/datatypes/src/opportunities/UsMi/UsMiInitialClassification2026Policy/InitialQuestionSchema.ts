@@ -54,32 +54,35 @@ export const miBaseInitialClassificationQuestions = [
     title: "Criminal & Incarceration History",
     questions: [
       {
-        title: "Released from Level V in the last 60 Months",
+        title: "Released from Level V in the past 60 Months",
         type: "SINGLE",
         description:
-          "Based on the most recent release to supervision or liberty in the past 60 months and the TRUE security level at that release. Temporary release on writ does not count.",
+          "Based on the most recent release to supervision or liberty in the past 60 months and the True Security Level at that release.",
         options: [
           { text: "Yes", score: 8 },
           { text: "No", score: 0 },
         ],
         note: {
-          header: "Releases, past 60 months",
-          notfound: "No releases found in the past 60 months",
+          header: "Most recent release, past 60 months",
+          notfound:
+            "No release to supervision or liberty in the past 60 months.",
         },
       },
       {
-        title: "Had an assaultive felony conviction in past 36 months",
+        title:
+          "Was sentenced for an assaultive felony conviction in past 36 months",
         type: "SINGLE",
         autofilled: false,
         description:
-          "Not auto-filled. Review the felony convictions below and determine which are assaultive per MDOC policy. 36 months is based on the date imposed.",
+          "Not auto-filled. Review the felony convictions below and determine which are assaultive per MDOC policy. 36 months is based on the sentence date.",
         options: [
           { text: "Yes", score: 1.6 },
           { text: "No", score: 0 },
         ],
         note: {
-          header: "Assaultive felonies, past 36 months",
-          notfound: "None recorded in the last 36 months",
+          header: "Felony convictions, past 36 months (sentence date)",
+          notfound:
+            "No felony convictions with a sentence date in the past 36 months.",
         },
       },
     ],
@@ -93,12 +96,25 @@ export const miBaseInitialClassificationQuestions = [
         countDescriptor: "Placements",
         description:
           "Counts distinct ad seg placement starts (current or previous incarceration periods) in past 36 months.",
-        bounds: 0,
+        bounds: 99,
         multiplier: 4.2,
         note: {
-          header: "Administrative Segregation Placements, past 36 months",
-          notfound: "None recorded in the last 36 months",
+          header: "Ad seg placements, past 36 months",
+          notfound: "None recorded in the past 36 months.",
         },
+      },
+      {
+        title: "Assaultive acts in jail in the past 12 months (max 4)",
+        type: "SINGLE",
+        autofilled: false,
+        description: "Not auto-filled.",
+        options: [
+          { text: "None", score: 0 },
+          { text: "One", score: 6.5 },
+          { text: "Two", score: 13 },
+          { text: "Three", score: 19.5 },
+          { text: "Four or more", score: 26.0 },
+        ],
       },
       {
         title:
@@ -116,16 +132,16 @@ export const miBaseInitialClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 0-36 Months",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past incarceration period(s), within past 36 months (max 4)",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         bounds: 4,
         description:
-          "Includes any incarceration periods overlapping the past 36 months.",
+          "Counts misconducts from previous incarceration periods that happened in the past 36 months.",
         multiplier: 9.7,
         note: {
           header: "Assaultive misconducts, past 36 months",
-          notfound: "None recorded in the last 36 months",
+          notfound: "None recorded in the past 36 months",
         },
       },
       {
@@ -144,20 +160,21 @@ export const miBaseInitialClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 0-36 Months",
+          "Number of misconducts for fighting, threatening behavior, or possession of a weapon in past incarceration period(s), within past 36 months (max 4)",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
-          "Includes any incarceration periods overlapping the past 36 months.",
+          "Counts misconducts from previous incarceration periods that happened in the past 36 months.",
         bounds: 4,
         multiplier: 2,
         note: {
           header: "Fighting misconducts, past 36 months",
-          notfound: "None recorded in the last 36 months",
+          notfound: "None recorded in the past 36 months",
         },
       },
       {
-        title: "Number of Class One or Class Two Misconducts in Past 6 Months",
+        title:
+          "Number of other Class I or Class II misconducts in past 6 months in current incarceration period",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description: "Auto-filled from misconduct records.",
@@ -165,21 +182,8 @@ export const miBaseInitialClassificationQuestions = [
         multiplier: 1,
         note: {
           header: "Other non-violent Class I and II misconducts, past 6 months",
-          notfound: "None recorded in the last 6 months",
+          notfound: "None recorded in the past 6 months",
         },
-      },
-      {
-        title: "Assaultive Acts in Jail",
-        type: "SINGLE",
-        autofilled: false,
-        description: "Not auto-filled.",
-        options: [
-          { text: "None", score: 0 },
-          { text: "One", score: 6.5 },
-          { text: "Two", score: 13 },
-          { text: "Three", score: 19.5 },
-          { text: "Four or more", score: 26.0 },
-        ],
       },
     ],
   },
@@ -209,11 +213,12 @@ export const miMaleAgeClassificationQuestions = {
       title: "VFO Score",
       type: "SINGLE",
       description:
-        "Based on most recent COMPAS assessment on record (all time). “Neither” applies if the person has never had a COMPAS assessment.",
+        "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",
       options: [
         { text: "Low", score: -1.2 },
+        { text: "Medium", score: 0 },
         { text: "High", score: 2.1 },
-        { text: "Neither", score: 0 },
+        { text: "None", score: 0 },
       ],
       note: {
         header: "Most recent COMPAS assessment",
@@ -252,10 +257,11 @@ const miFemaleAgeClassificationQuestions = {
       title: "VFO Score",
       type: "SINGLE",
       description:
-        "Based on most recent COMPAS assessment on record (all time). “Neither” applies if the person has never had a COMPAS assessment.",
+        "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",
       options: [
         { text: "Low", score: -1.2 },
-        { text: "Neither", score: 0 },
+        { text: "Medium", score: 0 },
+        { text: "None", score: 0 },
       ],
       note: {
         header: "Most recent COMPAS assessment",

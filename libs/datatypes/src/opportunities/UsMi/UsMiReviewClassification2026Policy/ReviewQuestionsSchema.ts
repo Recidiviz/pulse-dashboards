@@ -30,8 +30,8 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 4.2,
         note: {
-          header: "Administrative Segregation Placements, past 36 months",
-          notfound: "None recorded in the last 36 months",
+          header: "Ad seg placements, past 36 months",
+          notfound: "None recorded in the past 36 months",
         },
       },
       {
@@ -161,15 +161,16 @@ export const miBaseReviewClassificationQuestions = [
         },
       },
       {
-        title: "Number of Class One or Class Two Misconducts in Past 6 Months",
+        title:
+          "Number of other Class I or Class II misconducts in past 6 months in current incarceration period",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description: "Auto-filled from misconduct records.",
         bounds: 0,
         multiplier: 1,
         note: {
-          header: "Class I and Class II misconducts, past 6 months",
-          notfound: "None recorded in the last 6 months",
+          header: "Other non-violent Class I and II misconducts, past 6 months",
+          notfound: "None recorded in the past 6 months.",
         },
       },
     ],
@@ -178,26 +179,13 @@ export const miBaseReviewClassificationQuestions = [
     title: "Good Behavior and Programming",
     questions: [
       {
-        title:
-          "Number of 4 Month Periods Without Misconducts In Past 12 Months",
-        type: "NUMBER",
-        countDescriptor: "Periods Without Misconducts",
-        description: "Auto-filled from misconduct records.",
-        bounds: 0,
-        multiplier: -0.8,
-        note: {
-          header: "Periods without misconducts, past 12 months",
-          notfound: "None recorded in the last 12 months",
-        },
-      },
-      {
-        title: "Program Completion - Core",
+        title: "Program Completion - Core (MAX 2)",
         type: "NUMBER",
         countDescriptor: "Programs",
         description:
           "Count of CORE program completions in the current incarceration period.",
-        bounds: 0,
-        multiplier: -0.8,
+        bounds: 2,
+        multiplier: -2.1,
         note: {
           header: "Count of CORE Program completions",
           notfound: "None recorded",
@@ -209,7 +197,7 @@ export const miBaseReviewClassificationQuestions = [
         description:
           "Count of High program completions in the current incarceration period.",
         options: [
-          { text: "True", score: -1.8 },
+          { text: "True", score: -2.3 },
           { text: "False", score: 0 },
         ],
         note: {
@@ -255,11 +243,12 @@ const miMaleAgeClassificationQuestions = {
       title: "VFO Score",
       type: "SINGLE",
       description:
-        "Based on most recent COMPAS assessment on record (all time). “Neither” applies if the person has never had a COMPAS assessment.",
+        "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",
       options: [
         { text: "Low", score: -1.2 },
+        { text: "Medium", score: 0 },
         { text: "High", score: 2.1 },
-        { text: "Neither", score: 0 },
+        { text: "None", score: 0 },
       ],
       note: {
         header: "Most recent COMPAS assessment",
@@ -298,10 +287,11 @@ const miFemaleAgeClassificationQuestions = {
       title: "VFO Score",
       type: "SINGLE",
       description:
-        "Based on most recent COMPAS assessment on record (all time). “Neither” applies if the person has never had a COMPAS assessment.",
+        "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",
       options: [
         { text: "Low", score: -1.2 },
-        { text: "Neither", score: 0 },
+        { text: "Medium", score: 0 },
+        { text: "None", score: 0 },
       ],
       note: {
         header: "Most recent COMPAS assessment",

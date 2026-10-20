@@ -52,18 +52,32 @@ export function getQuestionAgeOptionSelection(
   return question.options.length - 1;
 }
 
-export function getQuestionVfoOptionSelection(note: string | undefined) {
+function getVfoOptionText(note: string | undefined) {
   switch (note) {
     case "LOW":
     case "MIN":
-      return 0;
+      return "Low";
+    case "MEDIUM":
+    case "MED":
+      return "Medium";
     case "HIGH":
     case "MAX":
-      return 1;
-    case "NEITHER":
+      return "High";
     default:
-      return 2;
+      return "None";
   }
+}
+
+// The female VFO question has no "High" option, so a high score falls back to
+// "None", which carries the same score as "Medium".
+export function getQuestionVfoOptionSelection(
+  question: UsMiAssessmentQuestionSpec,
+  note: string | undefined,
+) {
+  if (question.type !== "SINGLE") return;
+  const optionTexts = question.options.map((option) => option.text);
+  const index = optionTexts.indexOf(getVfoOptionText(note));
+  return index === -1 ? optionTexts.indexOf("None") : index;
 }
 
 export function getReleasedFromLevelFive(note: prevLevelFiveNotes | null) {
@@ -96,6 +110,7 @@ export function inferredMiClassificationData(
   );
 
   const s1q2Selection = getQuestionVfoOptionSelection(
+    questionsList[0].questions[1],
     formInformation.vfoNotes?.vfoLevel,
   );
 
@@ -106,19 +121,19 @@ export function inferredMiClassificationData(
   const s3q5Selection =
     formInformation?.pastAdSegNotes?.numAdSegStartsInPast36Months;
 
-  const s3q6Selection = countIncidents(formInformation.currentViolentIncNotes);
+  const s3q7Selection = countIncidents(formInformation.currentViolentIncNotes);
 
-  const s3q7Selection = countIncidents(formInformation.pastViolentIncNotes);
+  const s3q8Selection = countIncidents(formInformation.pastViolentIncNotes);
 
-  const s3q8Selection = countIncidents(
+  const s3q9Selection = countIncidents(
     formInformation.currentFightThreatPowIncNotes,
   );
 
-  const s3q9Selection = countIncidents(
+  const s3q10Selection = countIncidents(
     formInformation.pastFightThreatPowIncNotes,
   );
 
-  const s3q10Selection = countIncidents(formInformation.currentOtherIncNotes);
+  const s3q11Selection = countIncidents(formInformation.currentOtherIncNotes);
 
   const s1q1Notes = formInformation.ageNotes;
 
@@ -130,32 +145,32 @@ export function inferredMiClassificationData(
 
   const s3q5Notes = formInformation.pastAdSegNotes;
 
-  const s3q6Notes = formInformation.currentViolentIncNotes;
-  const s3q7Notes = formInformation.pastViolentIncNotes;
-  const s3q8Notes = formInformation.currentFightThreatPowIncNotes;
-  const s3q9Notes = formInformation.pastFightThreatPowIncNotes;
-  const s3q10Notes = formInformation.currentOtherIncNotes;
+  const s3q7Notes = formInformation.currentViolentIncNotes;
+  const s3q8Notes = formInformation.pastViolentIncNotes;
+  const s3q9Notes = formInformation.currentFightThreatPowIncNotes;
+  const s3q10Notes = formInformation.pastFightThreatPowIncNotes;
+  const s3q11Notes = formInformation.currentOtherIncNotes;
 
   return {
     s1q1Selection,
     s1q2Selection,
     s2q3Selection,
     s3q5Selection,
-    s3q6Selection,
     s3q7Selection,
     s3q8Selection,
     s3q9Selection,
     s3q10Selection,
+    s3q11Selection,
     s1q1Notes,
     s1q2Notes,
     s2q3Notes,
     s2q4Notes,
     s3q5Notes,
-    s3q6Notes,
     s3q7Notes,
     s3q8Notes,
     s3q9Notes,
     s3q10Notes,
+    s3q11Notes,
   };
 }
 
@@ -261,7 +276,7 @@ export function deriveMiClassification(
   const s3q5Score = getMultiplierScore(s3q5, s3q5Selection);
 
   const s3q6 = questionsList[2].questions[1];
-  const s3q6Score = getMultiplierScore(s3q6, s3q6Selection);
+  const s3q6Score = getSingleScore(s3q6, s3q6Selection);
 
   const s3q7 = questionsList[2].questions[2];
   const s3q7Score = getMultiplierScore(s3q7, s3q7Selection);
@@ -276,7 +291,7 @@ export function deriveMiClassification(
   const s3q10Score = getMultiplierScore(s3q10, s3q10Selection);
 
   const s3q11 = questionsList[2].questions[6];
-  const s3q11Score = getSingleScore(s3q11, s3q11Selection);
+  const s3q11Score = getMultiplierScore(s3q11, s3q11Selection);
 
   let s3SubScore =
     (s3q5Score || 0) +
@@ -302,23 +317,23 @@ export function deriveMiClassification(
 
   const s3q5Notes = classificationNote("adSeg", formData.pastAdSegNotes);
 
-  const s3q6Notes = classificationNote(
+  const s3q7Notes = classificationNote(
     "incidents",
     formData.currentViolentIncNotes,
   );
-  const s3q7Notes = classificationNote(
+  const s3q8Notes = classificationNote(
     "incidents",
     formData.pastViolentIncNotes,
   );
-  const s3q8Notes = classificationNote(
+  const s3q9Notes = classificationNote(
     "incidents",
     formData.currentFightThreatPowIncNotes,
   );
-  const s3q9Notes = classificationNote(
+  const s3q10Notes = classificationNote(
     "incidents",
     formData.pastFightThreatPowIncNotes,
   );
-  const s3q10Notes = classificationNote(
+  const s3q11Notes = classificationNote(
     "incidents",
     formData.currentOtherIncNotes,
   );
@@ -347,11 +362,11 @@ export function deriveMiClassification(
     s2q3Notes,
     s2q4Notes,
     s3q5Notes,
-    s3q6Notes,
     s3q7Notes,
     s3q8Notes,
     s3q9Notes,
     s3q10Notes,
+    s3q11Notes,
   };
 }
 
