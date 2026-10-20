@@ -25,6 +25,7 @@ import { useActiveMeetingStore } from "./activeMeetingStore";
 import { RecorderState } from "./recorderStates";
 import { useLeavePageWarning } from "./useLeavePageWarning";
 import { useRecorder } from "./useRecorder";
+import { useScreenWakeLock } from "./useScreenWakeLock";
 
 type RecordingContextValue = {
   state: RecorderState;
@@ -55,6 +56,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
   const { markActivity } = useActiveMeetingStore();
 
   useLeavePageWarning(recorder.state !== "idle");
+  useScreenWakeLock(recorder.state === "recording");
 
   const startRecording = async () => {
     try {
