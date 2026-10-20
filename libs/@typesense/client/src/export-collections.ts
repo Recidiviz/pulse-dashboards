@@ -94,11 +94,11 @@ const opportunityUpdatesConfig = {
   transform: "opportunityUpdate" as const,
 };
 
-// The person document's own id
+// The person document's own id.
 const PERSON_LOOKUP_KEY = {
   type: "fields" as const,
   fields: ["stateCode", "externalId"],
-  lowercaseFields: ["stateCode"],
+  lowercaseFields: ["stateCode", "externalId"],
 };
 
 // How an opportunity names the person it belongs to. Exactly one of the two
@@ -179,7 +179,10 @@ const opportunityTemplate = {
     "almostEligibleDate",
   ],
   // Changing this rewrites every opportunity id: the next backfill writes the
-  // new ones and the prune sweeps the old.
+  // new ones and the prune sweeps the old. Deliberately NOT lowercasing
+  // `externalId` here, unlike PERSON_LOOKUP_KEY — this id refers to nothing
+  // else, so it needs no agreement with Firestore, and changing it would churn
+  // every document for no gain.
   docIdOverrides: {
     type: "fields",
     fields: ["stateCode", "externalId", "opportunityType", "opportunityId"],
