@@ -181,13 +181,23 @@ export function classificationNote<K extends keyof ClassificationNoteData>(
   return data ? { kind, data } : null;
 }
 
+// A bounds of 0 means the question has no maximum.
+export function capToBounds(
+  question: Extract<UsMiAssessmentQuestionSpec, { type: "NUMBER" }>,
+  amount: number,
+): number {
+  return question.bounds > 0 ? Math.min(amount, question.bounds) : amount;
+}
+
 export function getMultiplierScore(
   question: UsMiAssessmentQuestionSpec,
   amount: number | undefined,
 ): number | undefined {
   if (amount === undefined || question.type !== "NUMBER") return undefined;
 
-  return Number((question.multiplier * amount).toFixed(2));
+  return Number(
+    (question.multiplier * capToBounds(question, amount)).toFixed(2),
+  );
 }
 
 export function getSingleScore(

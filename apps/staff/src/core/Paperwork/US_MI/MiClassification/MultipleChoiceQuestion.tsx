@@ -23,7 +23,10 @@ import { AssessmentOption, UsMiAssessmentQuestionSpec } from "~datatypes";
 import { palette } from "~design-system";
 import * as Styled from "~sentencing-client/components/CaseDetails/CaseDetails.styles";
 
-import { UsMiInitialClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import {
+  capToBounds,
+  UsMiInitialClassificationForm,
+} from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { UsMiReviewClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { QuestionNotes } from "./FormNotes";
@@ -42,6 +45,10 @@ type MiNumberQuestionSpec = Extract<
   UsMiAssessmentQuestionSpec,
   { type: "NUMBER" }
 >;
+
+function boundsMessage(bounds: number) {
+  return `Counted as ${bounds} (max ${bounds})`;
+}
 
 export const NumberMultiplierQuestion = observer(
   function NumberMultiplierQuestion({
@@ -144,10 +151,22 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
   questionSection: number;
   question: UsMiAssessmentQuestionSpec;
 }) {
-  const [showError, setError] = useState<string | null>();
-
   const selectionKey = `s${questionSection}q${questionNumber}Selection`;
   const opportunityForm = useOpportunityFormContext();
+
+  // Prefilled counts can exceed the question's max; scoring caps them, so
+  // tell the user the same way we do for typed input.
+  const [showError, setError] = useState<string | null>(() => {
+    const savedValue = opportunityForm.formData[selectionKey];
+    if (
+      question.type === "NUMBER" &&
+      typeof savedValue === "number" &&
+      capToBounds(question, savedValue) < savedValue
+    ) {
+      return boundsMessage(question.bounds);
+    }
+    return null;
+  });
 
   const [inputNumber, setInputNumber] = useState<string | number | null>(() => {
     const savedValue = opportunityForm.formData[selectionKey];
@@ -172,7 +191,7 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
     }
     const number = Number(value);
     if (bounds && number > bounds) {
-      setError(`Counted as ${bounds} (max ${bounds})`);
+      setError(boundsMessage(bounds));
       setInputNumber(number);
       opportunityForm.updateDraftData(selectionKey, bounds);
       setRequired(false);
