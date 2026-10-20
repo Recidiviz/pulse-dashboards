@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { deleteField } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { ChangeEventHandler, useState } from "react";
 
@@ -60,6 +61,10 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
     const savedValue = opportunityForm.formData[selectionKey];
     return typeof savedValue === "number" ? savedValue : null;
   });
+  const [required, setRequired] = useState<boolean>(() => {
+    const savedValue = opportunityForm.formData[selectionKey];
+    return savedValue === "" || savedValue === undefined;
+  });
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (question.type !== "NUMBER") return;
@@ -69,7 +74,8 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
     if (value === "" || Number(value) < 0 || !/^\d+$/.test(value)) {
       setError("Required. Enter a whole number of 0 or more");
       setInputNumber(value);
-      opportunityForm.updateDraftData(selectionKey, "");
+      opportunityForm.updateDraftData(selectionKey, deleteField());
+      setRequired(true);
       return;
     }
     const number = Number(value);
@@ -77,14 +83,17 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
       setError(`Counted as ${bounds} (max ${bounds})`);
       setInputNumber(number);
       opportunityForm.updateDraftData(selectionKey, bounds);
+      setRequired(false);
       return;
     }
     setError(null);
     setInputNumber(number);
     opportunityForm.updateDraftData(selectionKey, number);
+    setRequired(false);
   };
 
   const onChangeSingle = (index: number) => {
+    setRequired(false);
     opportunityForm.updateDraftData(selectionKey, index);
   };
 
@@ -101,11 +110,15 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
   const status = question.autofilled !== false && "AUTO-FILLED";
 
   return (
-    <QuestionBox $status={status}>
+    <QuestionBox $required={required}>
       <QuestionHeader id="question-header">
         <QuestionTitle>
           {questionNumber}: {question.title}
+          {required && (
+            <span style={{ color: palette.signal.error }}>{` *`}</span>
+          )}
         </QuestionTitle>
+
         <div
           style={{
             display: "flex",
@@ -122,7 +135,7 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
               color: "black",
             }}
           >
-            {score}
+            {typeof score === "number" ? score : "-"}
           </div>
         </div>
       </QuestionHeader>
@@ -182,7 +195,7 @@ export const NumberMultiplierQuestion = observer(
   }: {
     question: MiNumberQuestionSpec;
     inputNumber: number | string | null;
-    score: number;
+    score: number | string;
     onChange: ChangeEventHandler<HTMLInputElement>;
     showError: string | null | undefined;
   }) {

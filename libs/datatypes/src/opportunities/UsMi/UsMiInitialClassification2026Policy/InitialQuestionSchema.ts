@@ -73,6 +73,7 @@ export const miBaseInitialClassificationQuestions = [
           { text: "Yes", score: 1.6 },
           { text: "No", score: 0 },
         ],
+        autofilled: false,
       },
     ],
   },

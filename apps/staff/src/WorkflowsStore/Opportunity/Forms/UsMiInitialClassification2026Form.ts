@@ -75,7 +75,7 @@ export function getReleasedFromLevelFive(note: prevLevelFiveNotes | null) {
 
 export function countIncidents(
   note: incidentNotesSchema | null | undefined,
-): number {
+): number | undefined {
   return note?.incidentsList?.length ?? 0;
 }
 
@@ -161,8 +161,8 @@ export function inferredMiClassificationData(
 export function getMultiplierScore(
   question: UsMiAssessmentQuestionSpec,
   amount: number | undefined,
-): number {
-  if (amount === undefined || question.type !== "NUMBER") return 0;
+): number | undefined {
+  if (amount === undefined || question.type !== "NUMBER") return undefined;
 
   return Number((question.multiplier * amount).toFixed(2));
 }
@@ -174,6 +174,32 @@ export function getSingleScore(
   if (question.type !== "SINGLE" || selection === undefined) return undefined;
 
   return getSingleSectionQuestionScore(question, selection);
+}
+
+const InitialKeySelections = [
+  "s1q1Selection",
+  "s1q2Selection",
+  "s2q3Selection",
+  "s2q4Selection",
+  "s3q5Selection",
+  "s3q6Selection",
+  "s3q7Selection",
+  "s3q8Selection",
+  "s3q9Selection",
+  "s3q10Selection",
+  "s3q11Selection",
+] as const;
+
+export function calculateRemaining(
+  formData: Partial<UsMiInitialClassification2026DraftData>,
+  keySelections: readonly string[],
+) {
+  let count = 0;
+
+  keySelections.forEach((key) => {
+    if (typeof formData[key] !== "number") count += 1;
+  });
+  return count;
 }
 
 export function deriveMiClassification(
@@ -245,12 +271,12 @@ export function deriveMiClassification(
   const s3q11Score = getSingleScore(s3q11, s3q11Selection);
 
   let s3SubScore =
-    s3q5Score +
-    s3q6Score +
-    s3q7Score +
-    s3q8Score +
-    s3q9Score +
-    s3q10Score +
+    (s3q5Score || 0) +
+    (s3q6Score || 0) +
+    (s3q7Score || 0) +
+    (s3q8Score || 0) +
+    (s3q9Score || 0) +
+    (s3q10Score || 0) +
     (s3q11Score || 0);
 
   s3SubScore = Number(s3SubScore.toFixed(2));
@@ -360,5 +386,9 @@ export class UsMiClassificationForm extends FormBase<UsMiInitialClassification20
   get derivedData() {
     const { person } = this;
     return deriveMiClassification(this.formData, (person as Resident).gender);
+  }
+
+  get remainingFields() {
+    return calculateRemaining(this.formData, InitialKeySelections);
   }
 }

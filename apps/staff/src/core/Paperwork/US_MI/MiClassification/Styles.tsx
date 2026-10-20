@@ -122,7 +122,7 @@ export const VerticalHr = styled.hr`
 // for questions
 
 export const QuestionBox = styled.div<{
-  $status?: string | boolean;
+  $required?: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -132,8 +132,8 @@ export const QuestionBox = styled.div<{
   border: 1px solid ${palette.slate40};
   border-radius: 10px;
 
-  ${({ $status }) =>
-    $status === "required" &&
+  ${({ $required }) =>
+    $required &&
     `background: rgba(224, 168, 82, 0.05);
     border: 1px solid rgba(224, 168, 82, 0.55);
     `}
@@ -172,13 +172,21 @@ export const FormFooter = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   margin: 10px 10px;
 `;
 
-export const RemainingFields = styled.div`
+export const RemainingFields = styled.div<{ $remaining: boolean }>`
   color: rgb(138, 100, 32);
   font-size: ${rem(14)};
   font-weight: 600;
+  ${({ $remaining }) =>
+    $remaining
+      ? `
+      color: rgb(138, 100, 32);
+    `
+      : `
+    color: ${palette.pine3}`}
 `;
 
 export const ScoringNote = styled.div`

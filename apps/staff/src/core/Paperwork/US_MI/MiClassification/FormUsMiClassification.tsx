@@ -20,6 +20,7 @@ import { rem } from "polished";
 import React, { useEffect, useState } from "react";
 
 import { Button, palette } from "~design-system";
+import { pluralizeWord } from "~utils";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsMiClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
@@ -47,7 +48,13 @@ export const FormUsMiClassification = observer(function FormUsMiClassification({
   const formRef = React.useRef<HTMLDivElement>(null);
   const form = useOpportunityFormContext() as UsMiClassificationForm;
 
-  const { displayCustodyLevel, questionList, derivedData, formTitle } = form;
+  const {
+    displayCustodyLevel,
+    questionList,
+    derivedData,
+    formTitle,
+    remainingFields,
+  } = form;
 
   const [headerVisible, isHeaderVisible] = useState(true);
 
@@ -132,12 +139,22 @@ export const FormUsMiClassification = observer(function FormUsMiClassification({
             id="remaining-fields"
             style={{ display: "flex", flexDirection: "column" }}
           >
-            <RemainingFields>1 required field remaining</RemainingFields>
-            <ScoringNote>
-              The score and recommended level appear after you calculate
-            </ScoringNote>
+            {remainingFields ? (
+              <>
+                <ScoringNote>
+                  The score and recommended level appear after you calculate
+                </ScoringNote>
+                <RemainingFields $remaining={!!remainingFields}>
+                  {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
+                </RemainingFields>
+              </>
+            ) : (
+              <RemainingFields $remaining={!!remainingFields}>
+                All required fields complete
+              </RemainingFields>
+            )}
           </div>
-          <Button type="button" kind="primary">
+          <Button type="button" kind="primary" disabled={remainingFields > 0}>
             Calculate Classification
           </Button>
         </FormFooter>

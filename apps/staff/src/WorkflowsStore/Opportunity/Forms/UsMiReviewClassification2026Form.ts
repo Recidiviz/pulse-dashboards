@@ -19,7 +19,29 @@ import { UsMiReviewClassification2026DraftData } from "~datatypes";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { FormBase } from "./FormBase";
+import { calculateRemaining } from "./UsMiInitialClassification2026Form";
 
+const ReviewKeySelections = [
+  "s1q1Selection",
+  "s1q2Selection",
+
+  "s2q3Selection",
+  "s2q4Selection",
+  "s2q5Selection",
+  "s2q6Selection",
+  "s2q7Selection",
+  "s2q8Selection",
+  "s2q9Selection",
+  "s2q10Selection",
+  "s2q11Selection",
+  "s2q12Selection",
+  "s2q13Selection",
+
+  "s3q14Selection",
+  "s3q15Selection",
+  "s3q16Selection",
+  "s3q17Selection",
+] as const;
 export class UsMiReviewClassificationForm extends FormBase<UsMiReviewClassification2026DraftData> {
   get navigateToFormText(): string {
     return this.opportunity.isSubmitted
@@ -33,5 +55,9 @@ export class UsMiReviewClassificationForm extends FormBase<UsMiReviewClassificat
 
   get formTitle() {
     return "Review Classification";
+  }
+
+  get remainingFields() {
+    return calculateRemaining(this.formData, ReviewKeySelections);
   }
 }
