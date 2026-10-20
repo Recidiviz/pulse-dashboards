@@ -316,6 +316,12 @@ export class CaseloadTasksPresenterV2
     return this.tenantStore.getDisplayIdCopy("SUPERVISION");
   }
 
+  get assignedToHeader() {
+    return (
+      this.tenantStore.currentTenantConfig?.assignedToCopy ?? "Assigned To"
+    );
+  }
+
   get tasksTableColumns(): TaskTableColumnId[] {
     const columns = this.tenantStore.tasksTableColumns;
     if (this.showOneRowPerClient) {

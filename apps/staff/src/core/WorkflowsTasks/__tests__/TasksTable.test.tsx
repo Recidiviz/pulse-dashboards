@@ -76,6 +76,7 @@ function makePresenter(
     rowEntitiesForSelectedCategory: rowEntities,
     tasksTableColumns: ["tasks"],
     displayIdHeader: "ID",
+    assignedToHeader: "Assigned To",
     showOneRowPerClient: true,
     selectPerson: vi.fn(),
     shouldHighlightRow: () => false,

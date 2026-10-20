@@ -170,6 +170,22 @@ describe("CaseloadTasksPresenterV2", () => {
     });
   });
 
+  describe("assignedToHeader", () => {
+    it("defaults to Assigned To", () => {
+      presenter = getPresenter({});
+      expect(presenter.assignedToHeader).toBe("Assigned To");
+    });
+
+    it("uses the tenant's assignedToCopy override", () => {
+      const tenantStore = {
+        ...mockTenantStore,
+        currentTenantConfig: { assignedToCopy: "Supervising Officer" },
+      } as any as TenantStore;
+      presenter = getPresenter({ tenantStore });
+      expect(presenter.assignedToHeader).toBe("Supervising Officer");
+    });
+  });
+
   describe("selectedTaskCategory", () => {
     it("selects OVERDUE when it's first and has overdue tasks", () => {
       const tenantStore = {

@@ -120,6 +120,12 @@ export class MyCaseloadPresenter
     return this.tenantStore.getDisplayIdCopy("SUPERVISION");
   }
 
+  get assignedToHeader() {
+    return (
+      this.tenantStore.currentTenantConfig?.assignedToCopy ?? "Assigned To"
+    );
+  }
+
   get tasksTableColumns(): TaskTableColumnId[] {
     // My Caseload's own column set: a rolled-up "tasks" column (first task +
     // "+n more") instead of the per-task task/dueDate/frequency/tasksDue

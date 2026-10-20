@@ -217,6 +217,7 @@ function FrequencyCell({ row }: { row: Row<TasksRowEntity> }) {
 export interface TasksTablePresenter {
   emptyTabText: string | undefined;
   displayIdHeader: string;
+  assignedToHeader: string;
   showOneRowPerClient: boolean;
   tasksTableColumns: TaskTableColumnId[];
   rowEntitiesForSelectedCategory: TasksRowEntity[];
@@ -253,6 +254,7 @@ export const EmptyTasksTabView = ({
 // make the column-id type circular.
 const getColumnDefs = (presenter: {
   displayIdHeader: string;
+  assignedToHeader: string;
   showOneRowPerClient: boolean;
   shouldSortByLastName: boolean;
 }) =>
@@ -360,7 +362,7 @@ const getColumnDefs = (presenter: {
       },
     },
     {
-      header: "Assigned To",
+      header: presenter.assignedToHeader,
       id: "assignedTo",
       // Sort by surname if available, full displayed name if not
       accessorFn: ({ person }) =>
