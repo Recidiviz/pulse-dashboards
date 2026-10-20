@@ -19,7 +19,7 @@
     "examples": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "EXAMPLES_PATHS=\"{args}\" storybook dev --config-dir .examples",
+        "command": "EXAMPLES_PATHS=\"{args}\" storybook dev --no-open --config-dir .examples",
         "cwd": "{projectRoot}"
       }
     },
