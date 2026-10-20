@@ -24,7 +24,7 @@ import {
   ParoleRecommendedStatus,
 } from "~datatypes";
 
-import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
+import { PaletteKey, WorkflowsBadgePill } from "../../../BadgePill/BadgePill";
 import {
   ParoleFactLabel,
   ParoleFactStack,
@@ -32,8 +32,8 @@ import {
   ParoleSectionCard,
   ParoleSectionTitle,
   ParoleSmallFactValue,
-} from "./ParoleCaseProfileStyles";
-import { EmptyState, SectionStack } from "./shared";
+} from "../ParoleCaseProfileStyles";
+import { EmptyState, SectionStack } from "../shared";
 
 const RECOMMENDED_STATUS_COLORS: Record<ParoleRecommendedStatus, PaletteKey> = {
   "YES (Favorable)": "GREEN",
@@ -102,7 +102,7 @@ function CommunitySupervisionPlanCard({
   );
 }
 
-export function CommunitySupervisionPlanSection({
+export function UsCoCommunitySupervisionPlanSection({
   communitySupervisionPlan,
 }: {
   communitySupervisionPlan: Array<ParoleCommunitySupervisionPlanEntry>;

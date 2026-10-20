@@ -19,8 +19,8 @@ import { render, screen } from "@testing-library/react";
 
 import { ParoleCommunitySupervisionPlanEntry } from "~datatypes";
 
-import { PaletteKey, statusStyles } from "../../../BadgePill/BadgePill";
-import { CommunitySupervisionPlanSection } from "../CommunitySupervisionPlanSection";
+import { PaletteKey, statusStyles } from "../../../../BadgePill/BadgePill";
+import { UsCoCommunitySupervisionPlanSection } from "../UsCoCommunitySupervisionPlanSection";
 
 function makeEntry(
   fields: Partial<ParoleCommunitySupervisionPlanEntry>,
@@ -45,11 +45,13 @@ const RECOMMENDED_STATUS_PALETTE: Array<
   ["Withdrawn", "SLATE_DARK"],
 ];
 
-describe("CommunitySupervisionPlanSection", () => {
+describe("UsCoCommunitySupervisionPlanSection", () => {
   it("renders the type of plan, name (relationship), and address for each entry", () => {
     const entry = makeEntry({});
     render(
-      <CommunitySupervisionPlanSection communitySupervisionPlan={[entry]} />,
+      <UsCoCommunitySupervisionPlanSection
+        communitySupervisionPlan={[entry]}
+      />,
     );
 
     expect(
@@ -62,7 +64,9 @@ describe("CommunitySupervisionPlanSection", () => {
   });
 
   it("renders the empty state when there are no plan entries", () => {
-    render(<CommunitySupervisionPlanSection communitySupervisionPlan={[]} />);
+    render(
+      <UsCoCommunitySupervisionPlanSection communitySupervisionPlan={[]} />,
+    );
 
     expect(
       screen.getByText("No community supervision plan on file."),
@@ -74,7 +78,9 @@ describe("CommunitySupervisionPlanSection", () => {
     (recommended, paletteKey) => {
       const entry = makeEntry({ recommended });
       render(
-        <CommunitySupervisionPlanSection communitySupervisionPlan={[entry]} />,
+        <UsCoCommunitySupervisionPlanSection
+          communitySupervisionPlan={[entry]}
+        />,
       );
 
       expect(screen.getByText(recommended)).toHaveStyleRule(

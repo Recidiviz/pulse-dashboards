@@ -25,7 +25,7 @@ import {
 
 import { ParoleCase, paroleCasesFixtureByState } from "~datatypes";
 
-import { OffenseHistorySection } from "../OffenseHistorySection";
+import { UsCoOffenseHistorySection } from "../UsCoOffenseHistorySection";
 
 const FIXTURE_CASE = paroleCasesFixtureByState.US_CO["45821"];
 
@@ -48,9 +48,9 @@ function caseWithLongDescription(): ParoleCase {
   };
 }
 
-describe("OffenseHistorySection", () => {
+describe("UsCoOffenseHistorySection", () => {
   it("heads each offense with its conviction and class felony", () => {
-    render(<OffenseHistorySection caseDetail={FIXTURE_CASE} />);
+    render(<UsCoOffenseHistorySection caseDetail={FIXTURE_CASE} />);
 
     const [firstOffense] = FIXTURE_CASE.offenseHistory.offenses;
     expect(screen.getByText(firstOffense.conviction)).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe("OffenseHistorySection", () => {
   });
 
   it("makes only each offense's description clickable", () => {
-    render(<OffenseHistorySection caseDetail={FIXTURE_CASE} />);
+    render(<UsCoOffenseHistorySection caseDetail={FIXTURE_CASE} />);
 
     expect(screen.getAllByRole("button")).toHaveLength(
       FIXTURE_CASE.offenseHistory.offenses.length,
@@ -66,7 +66,9 @@ describe("OffenseHistorySection", () => {
   });
 
   it("shows the offense description inside a clickable card", () => {
-    render(<OffenseHistorySection caseDetail={caseWithLongDescription()} />);
+    render(
+      <UsCoOffenseHistorySection caseDetail={caseWithLongDescription()} />,
+    );
 
     const card = screen.getByRole("button", {
       name: new RegExp(LONG_DESCRIPTION.slice(0, 20)),
@@ -75,7 +77,9 @@ describe("OffenseHistorySection", () => {
   });
 
   it("opens the full offense in a modal when a card is clicked", () => {
-    render(<OffenseHistorySection caseDetail={caseWithLongDescription()} />);
+    render(
+      <UsCoOffenseHistorySection caseDetail={caseWithLongDescription()} />,
+    );
 
     fireEvent.click(
       screen.getByRole("button", {
@@ -89,7 +93,9 @@ describe("OffenseHistorySection", () => {
   });
 
   it("closes the offense modal", async () => {
-    render(<OffenseHistorySection caseDetail={caseWithLongDescription()} />);
+    render(
+      <UsCoOffenseHistorySection caseDetail={caseWithLongDescription()} />,
+    );
 
     fireEvent.click(
       screen.getByRole("button", {

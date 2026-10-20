@@ -19,8 +19,8 @@ import { render, screen } from "@testing-library/react";
 
 import { ParoleRiskNeedFactor } from "~datatypes";
 
-import { statusStyles } from "../../../BadgePill/BadgePill";
-import { RiskAndNeedsAssessmentSection } from "../RiskAndNeedsAssessmentSection";
+import { statusStyles } from "../../../../BadgePill/BadgePill";
+import { UsCoRiskAndNeedsAssessmentSection } from "../UsCoRiskAndNeedsAssessmentSection";
 
 const FACTORS: Array<ParoleRiskNeedFactor> = [
   { factor: "Medical", score: "0", scale: "Low" },
@@ -30,9 +30,9 @@ const FACTORS: Array<ParoleRiskNeedFactor> = [
   { factor: "Sex Offender", score: "5", scale: "High" },
 ];
 
-describe("RiskAndNeedsAssessmentSection", () => {
+describe("UsCoRiskAndNeedsAssessmentSection", () => {
   it("renders each factor's name and score", () => {
-    render(<RiskAndNeedsAssessmentSection riskAndNeedsFactors={FACTORS} />);
+    render(<UsCoRiskAndNeedsAssessmentSection riskAndNeedsFactors={FACTORS} />);
 
     expect(screen.getByText("Medical")).toBeInTheDocument();
     expect(screen.getByText("Mental Health")).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe("RiskAndNeedsAssessmentSection", () => {
   });
 
   it("colors the Scale badge green for Low, orange for Moderate, and red for High", () => {
-    render(<RiskAndNeedsAssessmentSection riskAndNeedsFactors={FACTORS} />);
+    render(<UsCoRiskAndNeedsAssessmentSection riskAndNeedsFactors={FACTORS} />);
 
     expect(screen.getByText("Low")).toHaveStyleRule(
       "background-color",
@@ -64,7 +64,7 @@ describe("RiskAndNeedsAssessmentSection", () => {
       { factor: "Medical", score: "2", scale: "Low to moderate" },
       { factor: "Dental", score: "4", scale: "Needs Review" },
     ];
-    render(<RiskAndNeedsAssessmentSection riskAndNeedsFactors={factors} />);
+    render(<UsCoRiskAndNeedsAssessmentSection riskAndNeedsFactors={factors} />);
 
     expect(screen.getByText("Low to moderate")).toHaveStyleRule(
       "background-color",

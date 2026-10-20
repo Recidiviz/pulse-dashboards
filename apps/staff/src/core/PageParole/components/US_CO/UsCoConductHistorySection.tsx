@@ -23,19 +23,19 @@ import styled from "styled-components";
 import { ParoleConductRecord } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
-import { PaletteKey } from "../../BadgePill/BadgePill";
+import { PaletteKey } from "../../../BadgePill/BadgePill";
 import {
   conductClassificationPalette,
   conductClassificationTextColor,
   ConductRecordCard,
-} from "./ConductRecordCard";
+} from "../ConductRecordCard";
 import {
   ParoleSectionCard,
   ParoleSectionTitle,
   ParoleSmallFactValue,
   ParoleSubsectionCaption,
-} from "./ParoleCaseProfileStyles";
-import { partitionConductHistoryByRecency, SectionStack } from "./shared";
+} from "../ParoleCaseProfileStyles";
+import { partitionConductHistoryByRecency, SectionStack } from "../shared";
 
 const SummaryRow = styled(ParoleSubsectionCaption)`
   display: flex;
@@ -68,7 +68,7 @@ function countsBySeverity(
   return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
 }
 
-export function ConductHistorySection({
+export function UsCoConductHistorySection({
   conductHistory,
   conductClassificationColors,
   visibleYears,

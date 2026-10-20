@@ -19,19 +19,19 @@ import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { CommunitySupervisionPlanSection } from "../components/CommunitySupervisionPlanSection";
-import { ConductHistorySection } from "../components/ConductHistorySection";
-import { OffenseHistorySection } from "../components/OffenseHistorySection";
 import { DefaultParoleGeneralInfo } from "../components/ParoleGeneralInfo";
-import { ProgramParticipationSection } from "../components/ProgramParticipationSection";
-import { RiskAndNeedsAssessmentSection } from "../components/RiskAndNeedsAssessmentSection";
-import { RiskAssessmentSection } from "../components/RiskAssessmentSection";
 import { SectionAnchor } from "../components/SectionAnchor";
 import {
   DEFAULT_CONDUCT_HISTORY_YEARS,
   PAROLE_SECTION_IDS,
 } from "../components/shared";
+import { UsCoCommunitySupervisionPlanSection } from "../components/US_CO/UsCoCommunitySupervisionPlanSection";
+import { UsCoConductHistorySection } from "../components/US_CO/UsCoConductHistorySection";
+import { UsCoOffenseHistorySection } from "../components/US_CO/UsCoOffenseHistorySection";
 import { UsCoOlderDisciplinariesSection } from "../components/US_CO/UsCoOlderDisciplinariesSection";
+import { UsCoProgramParticipationSection } from "../components/US_CO/UsCoProgramParticipationSection";
+import { UsCoRiskAndNeedsAssessmentSection } from "../components/US_CO/UsCoRiskAndNeedsAssessmentSection";
+import { UsCoRiskAssessmentSection } from "../components/US_CO/UsCoRiskAssessmentSection";
 import { ParoleCaseProfileLayout } from "../ParoleCaseProfile/ParoleCaseProfileLayout";
 
 /**
@@ -88,31 +88,31 @@ export function UsCoParoleCaseProfile({
       }
     >
       <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
-        <OffenseHistorySection caseDetail={caseDetail} />
+        <UsCoOffenseHistorySection caseDetail={caseDetail} />
       </SectionAnchor>
 
       <SectionAnchor id={PAROLE_SECTION_IDS.riskAssessment}>
-        <RiskAssessmentSection
+        <UsCoRiskAssessmentSection
           riskAssessments={caseDetail.riskAssessments}
           riskAssessmentConfig={config.riskAssessmentConfig}
         />
       </SectionAnchor>
 
       <SectionAnchor id={PAROLE_SECTION_IDS.riskAndNeedsAssessment}>
-        <RiskAndNeedsAssessmentSection
+        <UsCoRiskAndNeedsAssessmentSection
           riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}
         />
       </SectionAnchor>
 
       <SectionAnchor id={PAROLE_SECTION_IDS.programParticipation}>
-        <ProgramParticipationSection
+        <UsCoProgramParticipationSection
           docPrograms={caseDetail.docPrograms}
           edovoPrograms={caseDetail.edovoPrograms}
         />
       </SectionAnchor>
 
       <SectionAnchor id={PAROLE_SECTION_IDS.conductHistory}>
-        <ConductHistorySection
+        <UsCoConductHistorySection
           conductHistory={caseDetail.conductHistory}
           conductClassificationColors={
             config.conductHistoryConfig.classificationColors
@@ -127,11 +127,11 @@ export function UsCoParoleCaseProfile({
             caseDetail={caseDetail}
             config={config}
           />
-        </ConductHistorySection>
+        </UsCoConductHistorySection>
       </SectionAnchor>
 
       <SectionAnchor id={PAROLE_SECTION_IDS.communitySupervisionPlan}>
-        <CommunitySupervisionPlanSection
+        <UsCoCommunitySupervisionPlanSection
           communitySupervisionPlan={caseDetail.communitySupervisionPlan}
         />
       </SectionAnchor>

@@ -20,23 +20,26 @@ import styled from "styled-components";
 
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 
-import type { ParoleRiskAssessmentConfig } from "../../models/types";
+import type { ParoleRiskAssessmentConfig } from "../../../models/types";
 import {
   ParoleSectionCard,
   ParoleSectionTitle,
-} from "./ParoleCaseProfileStyles";
-import { RiskAssessmentDetailHeader } from "./RiskAssessmentDetailHeader";
-import { RiskAssessmentLegend } from "./RiskAssessmentLegend";
-import { TOOL_COLORS } from "./RiskAssessmentSection.styles";
+} from "../ParoleCaseProfileStyles";
+import { RiskAssessmentDetailHeader } from "../RiskAssessmentDetailHeader";
+import { RiskAssessmentLegend } from "../RiskAssessmentLegend";
+import { TOOL_COLORS } from "../RiskAssessmentSection.styles";
 import {
   getRiskLevelForAssessment,
   groupAssessmentsByTool,
   isAssessmentStale,
   latestAssessmentsByTool,
-} from "./RiskAssessmentSection.utils";
-import { RiskTrajectoryChart, RiskTrajectoryLine } from "./RiskTrajectoryChart";
-import { EmptyState, Hr, parseIsoDate, safeScorePct } from "./shared";
-import { SubcategoryBreakdownChart } from "./SubcategoryBreakdownChart";
+} from "../RiskAssessmentSection.utils";
+import {
+  RiskTrajectoryChart,
+  RiskTrajectoryLine,
+} from "../RiskTrajectoryChart";
+import { EmptyState, Hr, parseIsoDate, safeScorePct } from "../shared";
+import { SubcategoryBreakdownChart } from "../SubcategoryBreakdownChart";
 
 // Tool set and aggregate-view labels used whenever a tenant doesn't supply
 // its own `riskAssessmentConfig` (see ParoleConfig) -- this is this
@@ -75,7 +78,7 @@ const ChartsRow = styled.div`
 // level) that they need but none of them owns on its own. See
 // RiskAssessmentLegend, RiskAssessmentDetailHeader, RiskTrajectoryChart, and
 // SubcategoryBreakdownChart for the actual rendering.
-export function RiskAssessmentSection({
+export function UsCoRiskAssessmentSection({
   riskAssessments,
   riskAssessmentConfig,
 }: {

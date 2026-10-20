@@ -42,12 +42,12 @@ import {
   ParoleSmallFactValue,
   ParoleSubsection,
   ParoleSubsectionTitle,
-} from "./ParoleCaseProfileStyles";
+} from "../ParoleCaseProfileStyles";
 import {
   ParoleRecordModal,
   ParoleRecordModalNarrative,
-} from "./ParoleRecordModal";
-import { AlertBanner, FactRow, formatDate, SectionStack } from "./shared";
+} from "../ParoleRecordModal";
+import { AlertBanner, FactRow, formatDate, SectionStack } from "../shared";
 
 const VICTIM_ALERT_COLOR = "#D97706";
 const VICTIM_ALERT_BACKGROUND_COLOR = "rgba(217, 119, 6, 0.08)";
@@ -162,11 +162,11 @@ function OffenseDetails({
 }
 
 /**
- * The generic Parole Offense & Criminal History section.
+ * Colorado's Offense & Criminal History section.
  *
  * @param caseDetail - The case whose offenses to show.
  */
-export function OffenseHistorySection({
+export function UsCoOffenseHistorySection({
   caseDetail,
 }: {
   caseDetail: ParoleCase;

@@ -22,12 +22,12 @@ import styled from "styled-components";
 import { ParoleRiskNeedFactor } from "~datatypes";
 import { palette } from "~design-system";
 
-import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
+import { PaletteKey, WorkflowsBadgePill } from "../../../BadgePill/BadgePill";
 import {
   ParoleSectionCard,
   ParoleSectionTitle,
-} from "./ParoleCaseProfileStyles";
-import { EmptyState } from "./shared";
+} from "../ParoleCaseProfileStyles";
+import { EmptyState } from "../shared";
 
 // Scale is free text, not a fixed enum, so this colors by substring
 // (checked most-severe-first) rather than exact match.
@@ -68,7 +68,7 @@ const RiskNeedTable = styled.table`
   }
 `;
 
-export function RiskAndNeedsAssessmentSection({
+export function UsCoRiskAndNeedsAssessmentSection({
   riskAndNeedsFactors,
 }: {
   riskAndNeedsFactors: Array<ParoleRiskNeedFactor>;

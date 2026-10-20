@@ -19,8 +19,8 @@ import { render, screen } from "@testing-library/react";
 
 import { ParoleConductRecord } from "~datatypes";
 
-import { PaletteKey, statusStyles } from "../../../BadgePill/BadgePill";
-import { ConductHistorySection } from "../ConductHistorySection";
+import { PaletteKey, statusStyles } from "../../../../BadgePill/BadgePill";
+import { UsCoConductHistorySection } from "../UsCoConductHistorySection";
 
 const DEFAULT_CONDUCT_CLASSIFICATION_COLORS: Record<string, PaletteKey> = {
   Major: "SLATE_DARK",
@@ -40,7 +40,7 @@ function makeRecord(fields: Partial<ParoleConductRecord>): ParoleConductRecord {
   };
 }
 
-describe("ConductHistorySection", () => {
+describe("UsCoConductHistorySection", () => {
   // Pin "now" to early January so a late-December record is only 5 days old
   // but falls in the previous calendar year.
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe("ConductHistorySection", () => {
   it("treats a record from a few days ago as recent even across a calendar-year boundary", () => {
     const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
@@ -71,7 +71,7 @@ describe("ConductHistorySection", () => {
   it("hides a record from over a year ago when no children are provided", () => {
     const record = makeRecord({ date: "2024-12-01", violation: "Fighting" });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
@@ -92,7 +92,7 @@ describe("ConductHistorySection", () => {
       violation: "Unauthorized Area",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[recent, older]}
@@ -112,7 +112,7 @@ describe("ConductHistorySection", () => {
       violation: "Unauthorized Area",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={3}
         conductHistory={[twoYearsOld]}
@@ -129,7 +129,7 @@ describe("ConductHistorySection", () => {
       violation: "Possession of Contraband",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={3}
         conductHistory={[fourYearsOld]}
@@ -145,14 +145,14 @@ describe("ConductHistorySection", () => {
   it("renders children at the end of the section when conductHistory is populated", () => {
     const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
       >
         <div>Facility Notes</div>
-      </ConductHistorySection>,
+      </UsCoConductHistorySection>,
     );
 
     expect(screen.getByText("Facility Notes")).toBeInTheDocument();
@@ -160,14 +160,14 @@ describe("ConductHistorySection", () => {
 
   it("renders children even when conductHistory is empty", () => {
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
       >
         <div>Facility Notes</div>
-      </ConductHistorySection>,
+      </UsCoConductHistorySection>,
     );
 
     expect(screen.getByText("No Disciplinary Infractions")).toBeInTheDocument();
@@ -181,7 +181,7 @@ describe("ConductHistorySection", () => {
       severity: "Class 1",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
@@ -202,7 +202,7 @@ describe("ConductHistorySection", () => {
       severity: "Class 1",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
@@ -223,7 +223,7 @@ describe("ConductHistorySection", () => {
       severity: "CLASS 1",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
@@ -251,7 +251,7 @@ describe("ConductHistorySection", () => {
       }),
     ];
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={records}
@@ -276,7 +276,7 @@ describe("ConductHistorySection", () => {
       severity: "Class IIc",
     });
     render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
@@ -314,7 +314,7 @@ describe("ConductHistorySection", () => {
       }),
     ];
     const { container } = render(
-      <ConductHistorySection
+      <UsCoConductHistorySection
         title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={records}

@@ -20,8 +20,8 @@ import userEvent from "@testing-library/user-event";
 
 import { ParoleRiskAssessment } from "~datatypes";
 
-import type { ParoleRiskAssessmentConfig } from "../../../models/types";
-import { RiskAssessmentSection } from "../RiskAssessmentSection";
+import type { ParoleRiskAssessmentConfig } from "../../../../models/types";
+import { UsCoRiskAssessmentSection } from "../UsCoRiskAssessmentSection";
 
 const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   {
@@ -62,7 +62,7 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   },
 ];
 
-describe("RiskAssessmentSection", () => {
+describe("UsCoRiskAssessmentSection", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2026, 6, 15));
@@ -72,7 +72,7 @@ describe("RiskAssessmentSection", () => {
   });
 
   it("defaults to the 'All' view with a trajectory chart of all assessments", () => {
-    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     expect(screen.getByText("Risk Score Trajectory")).toBeInTheDocument();
     expect(
@@ -87,7 +87,7 @@ describe("RiskAssessmentSection", () => {
 
   it("only allows a single assessment tool to be selected at a time", async () => {
     const user = userEvent.setup();
-    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
     expect(screen.getByText("10 / 100")).toBeInTheDocument();
@@ -99,7 +99,7 @@ describe("RiskAssessmentSection", () => {
 
   it("shows the score, assessment date, a risk pill, and a subcategory breakdown chart for a selected tool", async () => {
     const user = userEvent.setup();
-    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
 
@@ -113,7 +113,7 @@ describe("RiskAssessmentSection", () => {
 
   it("labels the risk level as the source recorded it, for every tool", async () => {
     const user = userEvent.setup();
-    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^PIT/ }));
     expect(screen.getByText("Moderate Risk — 45%")).toBeInTheDocument();
@@ -129,7 +129,7 @@ describe("RiskAssessmentSection", () => {
 
   it("warns when the selected assessment is over 12 months stale", async () => {
     const user = userEvent.setup();
-    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^SRT/ }));
     expect(
@@ -143,7 +143,7 @@ describe("RiskAssessmentSection", () => {
   });
 
   it("shows an empty state when there are no risk assessments", () => {
-    render(<RiskAssessmentSection riskAssessments={[]} />);
+    render(<UsCoRiskAssessmentSection riskAssessments={[]} />);
 
     expect(screen.getByText("Risk Score Trajectory")).toBeInTheDocument();
     expect(
@@ -169,7 +169,9 @@ describe("RiskAssessmentSection", () => {
       },
     ];
 
-    render(<RiskAssessmentSection riskAssessments={mismatchedAssessments} />);
+    render(
+      <UsCoRiskAssessmentSection riskAssessments={mismatchedAssessments} />,
+    );
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
     expect(screen.getByText("High Risk — 60%")).toBeInTheDocument();
@@ -178,7 +180,7 @@ describe("RiskAssessmentSection", () => {
   it("still shows the selected tool's detail when it records no risk level", async () => {
     const user = userEvent.setup();
     render(
-      <RiskAssessmentSection
+      <UsCoRiskAssessmentSection
         riskAssessments={[
           { tool: "LSIR", score: 10, maxScore: 100, date: "2026-06-01" },
         ]}
@@ -199,7 +201,7 @@ describe("RiskAssessmentSection", () => {
 // a plain CARAS component list. Every test above renders with no config at
 // all and pins that a tenant which doesn't opt in (e.g. US_ID) sees no
 // behavior change from any of this.
-describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
+describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
   const CUSTOM_CONFIG: ParoleRiskAssessmentConfig = {
     tools: ["LSIR", "PIT", "CARAS", "SRT"],
     aggregateView: { label: "Entire CTAP Suite", tools: ["PIT", "SRT"] },
@@ -216,7 +218,7 @@ describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
   it("shows raw scores instead of percentages in the legend and risk pill", async () => {
     const user = userEvent.setup();
     render(
-      <RiskAssessmentSection
+      <UsCoRiskAssessmentSection
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -232,7 +234,7 @@ describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
 
   it("renders the configured aggregate view label and tool subset", () => {
     render(
-      <RiskAssessmentSection
+      <UsCoRiskAssessmentSection
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -245,7 +247,7 @@ describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
   it("shows a raw-score trajectory subtitle for a selected tool", async () => {
     const user = userEvent.setup();
     render(
-      <RiskAssessmentSection
+      <UsCoRiskAssessmentSection
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -260,7 +262,7 @@ describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
   it("renders CARAS as a plain component list instead of a bar chart", async () => {
     const user = userEvent.setup();
     render(
-      <RiskAssessmentSection
+      <UsCoRiskAssessmentSection
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -283,7 +285,7 @@ describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
     };
 
     render(
-      <RiskAssessmentSection
+      <UsCoRiskAssessmentSection
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={narrowConfig}
       />,

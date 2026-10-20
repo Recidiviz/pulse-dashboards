@@ -40,8 +40,8 @@ import {
   ParoleSectionCard,
   ParoleSectionTitle,
   ParoleSmallFactValue,
-} from "./ParoleCaseProfileStyles";
-import { formatDate } from "./shared";
+} from "../ParoleCaseProfileStyles";
+import { formatDate } from "../shared";
 
 const StyledAccordion = styled(Accordion)`
   display: flex;
@@ -106,7 +106,7 @@ const EmptyState = styled.div`
   padding: ${rem(spacing.sm)} 0;
 `;
 
-export function ProgramParticipationSection({
+export function UsCoProgramParticipationSection({
   docPrograms,
   edovoPrograms,
 }: {

@@ -39,7 +39,7 @@ export type RiskTrajectoryLine = {
 
 /**
  * Line chart of risk scores over time, one line per tool.
- * @param trajectoryLines - Lines to plot. RiskAssessmentSection scales their
+ * @param trajectoryLines - Lines to plot. UsCoRiskAssessmentSection scales their
  * values to match hasCustomConfig.
  * @param hasCustomConfig - True plots raw scores up to yMax; false plots
  * percent of max score.

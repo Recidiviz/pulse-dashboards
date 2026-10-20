@@ -98,7 +98,7 @@ const NotOnFileList = styled.ul`
  * those tools have no result on file. US_ID-specific (OBT-45410) -- see
  * ParoleConfig.riskAssessmentConfig, which supplies `tools`. Deliberately
  * omits any change-over-time detail; the main Risk Score Trajectory section
- * (RiskAssessmentSection) still covers that.
+ * (UsCoRiskAssessmentSection) still covers that.
  */
 export function AssessmentsSidebarSection({
   riskAssessments,

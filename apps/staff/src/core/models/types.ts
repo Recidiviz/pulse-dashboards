@@ -179,7 +179,7 @@ export type ParoleConfig = {
   /**
    * Absent for any tenant that hasn't opted into the redesigned Risk Score
    * Trajectory section (raw-score axis, CARAS component list, custom
-   * aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
+   * aggregate-view label/tool-subset) -- UsCoRiskAssessmentSection falls back to
    * its original LSI/PIT/CARAS/SRT, percent-of-max, CARAS-bar-chart behavior
    * when this is unset.
    */

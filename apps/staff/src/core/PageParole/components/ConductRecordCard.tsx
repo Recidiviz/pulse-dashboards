@@ -47,14 +47,14 @@ export function conductClassificationPalette(
 // sit on a light background -- SLATE_DARK is the one solid-fill exception
 // (white text on its own dark backgroundColor), so using its `color` alone
 // renders invisible white-on-white text wherever there's no pill behind it
-// (e.g. ConductHistorySection's summary counts). Use backgroundColor instead
+// (e.g. UsCoConductHistorySection's summary counts). Use backgroundColor instead
 // for that one case; it's a plain dark grey, legible on its own.
 export function conductClassificationTextColor(paletteKey: PaletteKey): string {
   const style = statusStyles[paletteKey];
   return paletteKey === "SLATE_DARK" ? style.backgroundColor : style.color;
 }
 
-// Shared between ConductHistorySection's own (recent) records and any
+// Shared between UsCoConductHistorySection's own (recent) records and any
 // tenant-specific older-records slot (e.g. US_CO's "See Older
 // Disciplinaries" toggle), so a disciplinary record renders identically
 // wherever it's shown.
