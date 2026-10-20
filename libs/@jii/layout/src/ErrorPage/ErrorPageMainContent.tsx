@@ -31,10 +31,7 @@ const ErrorPageMainContentWrapped = ({ error }: ErrorPageProps) => {
 
   const contents = dedent`# ${t(($) => $.errorPage.heading)}
 
-  ${t(($) => $.errorPage.message)}
-
-  <em>[${error.name}] ${error.message}</em>
-  `;
+  ${t(($) => $.errorPage.message)}`;
 
   return (
     <PageContainer>
