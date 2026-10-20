@@ -156,6 +156,13 @@
           "adjustedDateLabel": "Fecha de MÁX ajustada"
         }
       }
+    },
+    "general": {
+      "hiddenMessage": "Tus fechas están ocultas por ahora"
+    },
+    "toggle": {
+      "hideLabel": "Ocultar mis fechas de liberación",
+      "showLabel": "Mostrar mis fechas de liberación"
     }
   }
 }

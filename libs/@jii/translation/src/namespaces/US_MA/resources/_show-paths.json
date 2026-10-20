@@ -159,6 +159,13 @@
           "adjustedDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.adjustedDateLabel"
         }
       }
+    },
+    "general": {
+      "hiddenMessage": "[US_MA]sentenceDates.general.hiddenMessage"
+    },
+    "toggle": {
+      "hideLabel": "[US_MA]sentenceDates.toggle.hideLabel",
+      "showLabel": "[US_MA]sentenceDates.toggle.showLabel"
     }
   },
   "reentry": {

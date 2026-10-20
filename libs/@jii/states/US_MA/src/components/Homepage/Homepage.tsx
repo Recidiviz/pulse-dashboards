@@ -85,6 +85,7 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomepagePresenter }> =
                   DateCardBodyWrapper: DateCardBodyWrapperOverride,
                   CardsWrapper: CardsWrapperOverride,
                 }}
+                showToggle
               />
             ) : (
               <DatesSection />

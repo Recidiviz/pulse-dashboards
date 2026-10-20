@@ -159,6 +159,13 @@
           "adjustedDateLabel": "Adjusted MAX date"
         }
       }
+    },
+    "general": {
+      "hiddenMessage": "Your dates are currently hidden"
+    },
+    "toggle": {
+      "hideLabel": "Hide my sentence dates",
+      "showLabel": "Show my sentence dates"
     }
   },
   "reentry": {

@@ -32,6 +32,7 @@ const ParoleCard = styled(Card)`
 
 export const CardsWrapperOverride: SentenceDatesComponents["CardsWrapper"] = ({
   children,
+  hidden,
   ...props
 }) => {
   const { t } = useUsMaTranslations();
@@ -39,10 +40,12 @@ export const CardsWrapperOverride: SentenceDatesComponents["CardsWrapper"] = ({
   return (
     <defaultComponents.CardsWrapper {...props}>
       {children}
-      <ParoleCard>
-        <DateInfo label={t(($) => $.home.dates.parole.label)} muted />
-        <SlateCopy>{t(($) => $.home.dates.parole.summary)}</SlateCopy>
-      </ParoleCard>
+      {!hidden && (
+        <ParoleCard>
+          <DateInfo label={t(($) => $.home.dates.parole.label)} muted />
+          <SlateCopy>{t(($) => $.home.dates.parole.summary)}</SlateCopy>
+        </ParoleCard>
+      )}
     </defaultComponents.CardsWrapper>
   );
 };
