@@ -859,7 +859,6 @@ export class WorkflowsStore implements Hydratable {
       activeSystem,
     } = this;
     if (!isHydrated(this) || !currentTenantId || !activeSystem) return [];
-
     const { opportunities } = this.opportunityConfigurationStore;
 
     return Object.entries(opportunities)
@@ -868,7 +867,11 @@ export class WorkflowsStore implements Hydratable {
         const isInSystem =
           activeSystem === "ALL" || opportunity?.systemType === activeSystem;
 
-        return isInState && isInSystem && opportunity?.isEnabled;
+        const hideOpportunity = opportunity.hideOpportunityRecord;
+
+        return (
+          isInState && isInSystem && opportunity?.isEnabled && !hideOpportunity
+        );
       })
       .sort(
         ([, a], [, b]) => a.homepagePosition - b.homepagePosition, // sort in ascending order

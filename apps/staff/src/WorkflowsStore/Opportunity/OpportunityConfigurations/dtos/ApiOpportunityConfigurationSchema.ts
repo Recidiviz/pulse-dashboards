@@ -142,6 +142,10 @@ export const apiOpportunityConfigurationSchema = z.object({
   supportsIneligible: z.boolean().default(false),
   showIneligibleFormButtons: z.boolean().default(true),
   hideIneligibleStatusPillOnProfile: z.boolean().optional(),
+
+  hideStatusPillMarker: z.boolean().optional(),
+  hideOpportunityRecord: z.boolean().optional(),
+
   supportsSubmitted: z.boolean().default(false),
   submittedTabTitle: nullishAsUndefined(z.string()),
 

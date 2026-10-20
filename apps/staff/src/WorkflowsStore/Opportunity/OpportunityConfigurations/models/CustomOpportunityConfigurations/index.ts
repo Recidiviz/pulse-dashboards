@@ -36,6 +36,7 @@ import { UsIdTransferToCRCLikeBedConfiguration } from "./UsId/UsIdTransferToCRCL
 import { UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMiSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration";
+import { UsMiClassification2026Configuration } from "./UsMi/UsMiClassification2026Policy";
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
 import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
@@ -96,6 +97,9 @@ const customOpportunityConfigurations: Partial<
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration,
   usMiPastFTRD: usMiPastFTRDConfiguration,
+  usMiAnnualClassificationReview2026Policy: UsMiClassification2026Configuration,
+  usMiInitialClassificationReview2026Policy:
+    UsMiClassification2026Configuration,
 
   // Missouri
   usMoOutsideClearance: UsMoWorkReleaseConfiguration,
