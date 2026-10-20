@@ -51,6 +51,12 @@ const querySelect = {
       caseNote: true,
     },
   },
+  unitId: true,
+  custodyLevel: true,
+  releaseDate: true,
+  paroleEligibilityDate: true,
+  paroleHearingMonth: true,
+  lastRiskAssessmentDate: true,
 } satisfies Prisma.ResidentSelect;
 
 type ListSort = z.infer<typeof listSortSchema> | undefined;

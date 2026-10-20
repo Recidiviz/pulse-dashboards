@@ -53,6 +53,11 @@ export const EVAL_PERSON: Client = {
   supervisionType: "PAROLE",
   isActive: true,
   staffEmails: [],
+  supervisionLocation: null,
+  supervisionLevel: null,
+  expirationDate: null,
+  lastRiskAssessmentDate: null,
+  isSexOffenseCase: null,
   lastImportedAt: new Date(0),
 };
 

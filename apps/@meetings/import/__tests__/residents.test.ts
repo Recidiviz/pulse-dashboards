@@ -263,4 +263,83 @@ describe("import resident data", () => {
       new Date(0).getTime(),
     );
   });
+
+  test("should import structured data on create and update, including mixed null batches", async () => {
+    const residentRow = (personId: string, externalId: string) => ({
+      state_code: StateCode.US_NE,
+      person_id: personId,
+      stable_person_external_id: externalId,
+      stable_person_external_id_type: fakeResident.stablePersonExternalIdType,
+      display_person_external_id: `display-${externalId}`,
+      pseudonymized_id: `pid-${externalId}`,
+      person_name: JSON.stringify({
+        given_names: fakeResident.givenNames,
+        middle_names: fakeResident.middleNames,
+        surname: fakeResident.surname,
+        name_suffix: fakeResident.suffix,
+      }),
+      facility_id: fakeResident.facilityId,
+    });
+    const structuredData = {
+      unit_id: "Unit A",
+      custody_level: "MEDIUM",
+      release_date: "2028-06-30",
+      parole_eligibility_date: "2027-01-15",
+      parole_hearing_month: "2026-11-01",
+      last_risk_assessment_date: "2026-01-02",
+    };
+
+    dataProviderSingleton.setData(TEST_RESIDENTS_FILE_NAME, [
+      {
+        ...residentRow("100", fakeResident.stablePersonExternalId),
+        ...structuredData,
+      },
+      { ...residentRow("3", "resident-ext-3"), ...structuredData },
+    ]);
+    await importHandler.import(TEST_STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    const expected = {
+      unitId: "Unit A",
+      custodyLevel: "MEDIUM",
+      releaseDate: new Date("2028-06-30"),
+      paroleEligibilityDate: new Date("2027-01-15"),
+      paroleHearingMonth: new Date("2026-11-01"),
+      lastRiskAssessmentDate: new Date("2026-01-02"),
+    };
+    expect(
+      await testPrismaClient.resident.findMany({
+        orderBy: { personId: "asc" },
+      }),
+    ).toEqual([
+      expect.objectContaining(expected),
+      expect.objectContaining(expected),
+    ]);
+
+    dataProviderSingleton.setData(TEST_RESIDENTS_FILE_NAME, [
+      { ...residentRow("3", "resident-ext-3"), ...structuredData },
+      {
+        ...residentRow("100", fakeResident.stablePersonExternalId),
+        unit_id: null,
+        custody_level: null,
+        release_date: null,
+        parole_eligibility_date: null,
+        parole_hearing_month: null,
+        last_risk_assessment_date: null,
+      },
+    ]);
+    await importHandler.import(TEST_STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    expect(
+      await testPrismaClient.resident.findUnique({
+        where: { personId: BigInt(100) },
+      }),
+    ).toMatchObject({
+      unitId: null,
+      custodyLevel: null,
+      releaseDate: null,
+      paroleEligibilityDate: null,
+      paroleHearingMonth: null,
+      lastRiskAssessmentDate: null,
+    });
+  });
 });

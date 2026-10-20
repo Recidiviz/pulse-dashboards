@@ -42,6 +42,11 @@ describe("SpecialistCore", () => {
     supervisionType: "PAROLE",
     isActive: true,
     staffEmails: ["fake@fake.com"],
+    supervisionLocation: null,
+    supervisionLevel: null,
+    expirationDate: null,
+    lastRiskAssessmentDate: null,
+    isSexOffenseCase: null,
     lastImportedAt: new Date(0),
   };
 
@@ -57,6 +62,12 @@ describe("SpecialistCore", () => {
     suffix: null,
     displayPersonExternalId: "ADC456",
     facilityId: "FACILITY_1",
+    unitId: null,
+    custodyLevel: null,
+    releaseDate: null,
+    paroleEligibilityDate: null,
+    paroleHearingMonth: null,
+    lastRiskAssessmentDate: null,
     isActive: true,
     lastImportedAt: new Date(0),
   };

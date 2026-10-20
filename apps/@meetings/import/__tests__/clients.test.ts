@@ -266,4 +266,78 @@ describe("import client data", () => {
       new Date(0).getTime(),
     );
   });
+
+  test("should import structured data on create and update, including mixed null batches", async () => {
+    const clientRow = (personId: string, externalId: string) => ({
+      state_code: StateCode.US_NE,
+      person_id: personId,
+      stable_person_external_id: externalId,
+      stable_person_external_id_type: fakeClient.stablePersonExternalIdType,
+      display_person_external_id: `display-${externalId}`,
+      pseudonymized_id: `pid-${externalId}`,
+      person_name: JSON.stringify({
+        given_names: fakeClient.givenNames,
+        middle_names: fakeClient.middleNames,
+        surname: fakeClient.surname,
+        name_suffix: fakeClient.suffix,
+      }),
+      officer_emails: [],
+      supervision_type: "PAROLE",
+    });
+    const structuredData = {
+      supervision_location: "Office 1",
+      supervision_level: "HIGH",
+      expiration_date: "2027-03-15",
+      last_risk_assessment_date: "2026-01-02",
+      is_sex_offense_case: true,
+    };
+
+    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+      {
+        ...clientRow("100", fakeClient.stablePersonExternalId),
+        ...structuredData,
+      },
+      { ...clientRow("2", "client-ext-2"), ...structuredData },
+    ]);
+    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
+
+    const expected = {
+      supervisionLocation: "Office 1",
+      supervisionLevel: "HIGH",
+      expirationDate: new Date("2027-03-15"),
+      lastRiskAssessmentDate: new Date("2026-01-02"),
+      isSexOffenseCase: true,
+    };
+    expect(
+      await testPrismaClient.client.findMany({ orderBy: { personId: "asc" } }),
+    ).toEqual([
+      expect.objectContaining(expected),
+      expect.objectContaining(expected),
+    ]);
+
+    dataProviderSingleton.setData(TEST_CLIENTS_FILE_NAME, [
+      { ...clientRow("2", "client-ext-2"), ...structuredData },
+      {
+        ...clientRow("100", fakeClient.stablePersonExternalId),
+        supervision_location: null,
+        supervision_level: null,
+        expiration_date: null,
+        last_risk_assessment_date: null,
+        is_sex_offense_case: null,
+      },
+    ]);
+    await importHandler.import(TEST_STATE_CODE, [CLIENTS_FILE_NAME]);
+
+    expect(
+      await testPrismaClient.client.findUnique({
+        where: { personId: BigInt(100) },
+      }),
+    ).toMatchObject({
+      supervisionLocation: null,
+      supervisionLevel: null,
+      expirationDate: null,
+      lastRiskAssessmentDate: null,
+      isSexOffenseCase: null,
+    });
+  });
 });

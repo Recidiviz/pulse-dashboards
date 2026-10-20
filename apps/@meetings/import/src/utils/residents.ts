@@ -96,6 +96,12 @@ export async function transformAndLoadResidentData(
       surname: residentData.person_name.surname,
       suffix: residentData.person_name.name_suffix,
       facilityId: residentData.facility_id,
+      unitId: residentData.unit_id ?? null,
+      custodyLevel: residentData.custody_level ?? null,
+      releaseDate: residentData.release_date ?? null,
+      paroleEligibilityDate: residentData.parole_eligibility_date ?? null,
+      paroleHearingMonth: residentData.parole_hearing_month ?? null,
+      lastRiskAssessmentDate: residentData.last_risk_assessment_date ?? null,
       isActive: true,
       lastImportedAt: importedAt,
     } satisfies ResidentCreateInput & BulkUpdateEntry;

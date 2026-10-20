@@ -74,6 +74,11 @@ describe("server", () => {
         displayPersonExternalId: fakeClient.displayPersonExternalId,
         activeMeetingId: fakeMeeting.id,
         supervisionType: fakeClient.supervisionType,
+        supervisionLocation: null,
+        supervisionLevel: null,
+        expirationDate: null,
+        lastRiskAssessmentDate: null,
+        isSexOffenseCase: null,
         meetingDetails: {
           id: null,
           caseNote: null,

@@ -30,12 +30,10 @@ export type Client = RawClient & {
 };
 
 export type RawResident = Awaited<
-  ReturnType<AppRouter["v1"]["resident"]["get"]>
->;
+  ReturnType<AppRouter["v1"]["resident"]["list"]>
+>["data"][0];
 
-export type Resident = Awaited<
-  ReturnType<AppRouter["v1"]["resident"]["get"]>
-> & {
+export type Resident = RawResident & {
   primaryMetadata: string;
   lastMeeting: string;
   fullName: string;

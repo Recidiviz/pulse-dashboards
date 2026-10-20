@@ -54,6 +54,11 @@ describe("ProductionPipeline", () => {
     supervisionType: "PROBATION",
     isActive: true,
     staffEmails: ["fake@fake.com"],
+    supervisionLocation: null,
+    supervisionLevel: null,
+    expirationDate: null,
+    lastRiskAssessmentDate: null,
+    isSexOffenseCase: null,
     lastImportedAt: new Date(0),
   };
 

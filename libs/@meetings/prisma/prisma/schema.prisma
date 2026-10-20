@@ -120,6 +120,12 @@ model Client {
   supervisionType String
   staffEmails     String[]
 
+  supervisionLocation    String?
+  supervisionLevel       String?
+  expirationDate         DateTime? @db.Date
+  lastRiskAssessmentDate DateTime? @db.Date
+  isSexOffenseCase       Boolean?
+
   meetings Meeting[]
 
   caseNoteInsightsSummaries CaseNoteInsightsSummary[]
@@ -154,6 +160,14 @@ model Resident {
   suffix      String?
 
   facilityId String
+
+  unitId                 String?
+  custodyLevel           String?
+  releaseDate            DateTime? @db.Date
+  paroleEligibilityDate  DateTime? @db.Date
+  // First of the month; only the month and year are meaningful.
+  paroleHearingMonth     DateTime? @db.Date
+  lastRiskAssessmentDate DateTime? @db.Date
 
   meetings Meeting[]
 

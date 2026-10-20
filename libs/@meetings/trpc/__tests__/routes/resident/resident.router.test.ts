@@ -172,6 +172,23 @@ describe("resident router", () => {
       });
     });
 
+    describe("get", () => {
+      test("returns structured data for a resident", async () => {
+        const result = await testTRPCClient.v1.resident.get.query({
+          personId: fakeResidents[0].personId,
+        });
+
+        expect(result).toMatchObject({
+          unitId: fakeResidents[0].unitId,
+          custodyLevel: fakeResidents[0].custodyLevel,
+          releaseDate: fakeResidents[0].releaseDate,
+          paroleEligibilityDate: fakeResidents[0].paroleEligibilityDate,
+          paroleHearingMonth: fakeResidents[0].paroleHearingMonth,
+          lastRiskAssessmentDate: fakeResidents[0].lastRiskAssessmentDate,
+        });
+      });
+    });
+
     describe("list", () => {
       test("returns list of all residents", async () => {
         const result = await testTRPCClient.v1.resident.list.query();
@@ -183,6 +200,12 @@ describe("resident router", () => {
             surname: fakeResidents[0].surname,
             displayPersonExternalId: fakeResidents[0].displayPersonExternalId,
             facilityId: fakeResidents[0].facilityId,
+            unitId: fakeResidents[0].unitId,
+            custodyLevel: fakeResidents[0].custodyLevel,
+            releaseDate: fakeResidents[0].releaseDate,
+            paroleEligibilityDate: fakeResidents[0].paroleEligibilityDate,
+            paroleHearingMonth: fakeResidents[0].paroleHearingMonth,
+            lastRiskAssessmentDate: fakeResidents[0].lastRiskAssessmentDate,
             activeMeetingId: fakeResidentMeeting.id,
             meetingDetails: {
               id: null,
@@ -199,6 +222,12 @@ describe("resident router", () => {
             surname: fakeResidents[1].surname,
             displayPersonExternalId: fakeResidents[1].displayPersonExternalId,
             facilityId: fakeResidents[1].facilityId,
+            unitId: null,
+            custodyLevel: null,
+            releaseDate: null,
+            paroleEligibilityDate: null,
+            paroleHearingMonth: null,
+            lastRiskAssessmentDate: null,
             activeMeetingId: null,
             meetingDetails: {
               id: fakeResidentMeetingCompleted.id,

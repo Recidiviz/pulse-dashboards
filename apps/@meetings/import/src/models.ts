@@ -52,6 +52,11 @@ export const clientImportSchema = z.object({
   // TODO(#11886): Remove nullish() when the data is coming through in staging+prod. The array will
   // always exist, but may be empty.
   officer_emails: z.array(z.string().email()).nullish(),
+  supervision_location: z.string().nullish(),
+  supervision_level: z.string().nullish(),
+  expiration_date: z.coerce.date().nullish(),
+  last_risk_assessment_date: z.coerce.date().nullish(),
+  is_sex_offense_case: z.boolean().nullish(),
 });
 
 export const residentImportSchema = z.object({
@@ -64,6 +69,12 @@ export const residentImportSchema = z.object({
   display_person_external_id: z.string(),
   person_name: nameSchema,
   facility_id: z.string(),
+  unit_id: z.string().nullish(),
+  custody_level: z.string().nullish(),
+  release_date: z.coerce.date().nullish(),
+  parole_eligibility_date: z.coerce.date().nullish(),
+  parole_hearing_month: z.coerce.date().nullish(),
+  last_risk_assessment_date: z.coerce.date().nullish(),
 });
 
 export const staffImportSchema = z.object({

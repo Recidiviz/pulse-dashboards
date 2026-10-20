@@ -58,6 +58,11 @@ const querySelect = {
     },
   },
   caseNoteInsightsSummaries: true,
+  supervisionLocation: true,
+  supervisionLevel: true,
+  expirationDate: true,
+  lastRiskAssessmentDate: true,
+  isSexOffenseCase: true,
 } satisfies Prisma.ClientSelect;
 
 function onMyCaseload(email: string): Prisma.Sql {

@@ -34,6 +34,16 @@ const PRISMA_COLUMN_NAME_TO_ENUM_NAME: Record<string, string> = {
   stateCode: "StateCode",
 };
 
+// Postgres types an all-NULL VALUES column as text, so non-text nullable columns need a cast.
+const PRISMA_COLUMN_NAME_TO_NULL_CAST: Record<string, string> = {
+  expirationDate: "date",
+  lastRiskAssessmentDate: "date",
+  isSexOffenseCase: "boolean",
+  releaseDate: "date",
+  paroleEligibilityDate: "date",
+  paroleHearingMonth: "date",
+};
+
 /**
  * Helper function to perform a bulk update on a Prisma table.
  * This function constructs a raw SQL query to update multiple rows in a single transaction.
@@ -63,6 +73,11 @@ export async function bulkUpdate(
     .map((entry) => {
       const values = fields.map((field) => {
         const value = entry[field];
+        if (value === null) {
+          return field in PRISMA_COLUMN_NAME_TO_NULL_CAST
+            ? `NULL::${PRISMA_COLUMN_NAME_TO_NULL_CAST[field]}`
+            : "NULL";
+        }
         // Handle enum values for columns listed in PRISMA_COLUMN_NAME_TO_ENUM_NAME
         if (
           field in PRISMA_COLUMN_NAME_TO_ENUM_NAME &&

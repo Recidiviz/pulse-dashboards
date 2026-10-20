@@ -101,6 +101,11 @@ const person: Person = {
   displayPersonExternalId: "EXT-1",
   pseudonymizedId: "test-person-pid-1",
   supervisionType: "PROBATION",
+  supervisionLocation: null,
+  supervisionLevel: null,
+  expirationDate: null,
+  lastRiskAssessmentDate: null,
+  isSexOffenseCase: null,
   staffEmails: [],
   activeMeetingId: null,
   meetingDetails: {

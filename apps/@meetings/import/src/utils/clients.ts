@@ -92,6 +92,11 @@ export async function transformAndLoadClientData(
       suffix: clientData.person_name.name_suffix,
       supervisionType: clientData.supervision_type,
       staffEmails: clientData.officer_emails ?? ([] as string[]),
+      supervisionLocation: clientData.supervision_location ?? null,
+      supervisionLevel: clientData.supervision_level ?? null,
+      expirationDate: clientData.expiration_date ?? null,
+      lastRiskAssessmentDate: clientData.last_risk_assessment_date ?? null,
+      isSexOffenseCase: clientData.is_sex_offense_case ?? null,
       isActive: true,
       lastImportedAt: importedAt,
     } satisfies ClientCreateInput & BulkUpdateEntry;
