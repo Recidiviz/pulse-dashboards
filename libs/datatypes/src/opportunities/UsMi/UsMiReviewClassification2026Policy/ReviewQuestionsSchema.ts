@@ -92,7 +92,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 0-36 Months",
+          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike in Past Incarceration Period(s), Within Past 36 Months (Max 4)",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         bounds: 4,
@@ -148,7 +148,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 0-36 Months",
+          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon in Past Incarceration Period(s), Within Past 36 Months (Max 4)",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
