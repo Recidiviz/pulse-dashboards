@@ -35,10 +35,8 @@
 import type { Request, Response } from "express";
 import * as admin from "firebase-admin";
 
-import { DOCUMENT_SYSTEMS } from "~@typesense/client";
-
 import { runBackfill } from "./backfill";
-import { isValidStateCode } from "./scope";
+import { parseBackfillRequest } from "./backfillRequestSchema";
 import type { CollectionConfig } from "./types";
 
 // Init only once per cold start. The default app reads the configured
@@ -60,60 +58,6 @@ function parseCollectionsJson(): CollectionConfig[] | { error: string } {
   }
 }
 
-function extractFilter(body: unknown): Set<string> | null {
-  if (!body || typeof body !== "object") return null;
-  const collections = (body as { collections?: unknown }).collections;
-  if (!Array.isArray(collections)) return null;
-  return new Set(collections.filter((c): c is string => typeof c === "string"));
-}
-
-// Optional per-invocation state scope. Returns `{}` when no `stateCode` was sent
-// (whole-collection run), `{ stateCode }` for a valid one, or `{ error }` when
-// the caller sent a malformed value. A malformed value is an ERROR, not a silent
-// whole-collection fallback: the prune deletes everything out of scope, so
-// degrading a per-state request to whole-collection could wipe every other
-// state's docs.
-function extractStateCode(
-  body: unknown,
-): { stateCode?: string } | { error: string } {
-  if (!body || typeof body !== "object") return {};
-  const raw = (body as { stateCode?: unknown }).stateCode;
-  if (raw === undefined || raw === null) return {};
-  const trimmed = typeof raw === "string" ? raw.trim() : raw;
-  if (!isValidStateCode(trimmed)) {
-    return { error: `invalid stateCode: ${JSON.stringify(raw)}` };
-  }
-  return { stateCode: trimmed };
-}
-
-// Optional per-invocation Firestore source-collection name, used to instantiate
-// the `opportunities` template config.
-function extractSourceCollection(body: unknown): string | undefined {
-  if (!body || typeof body !== "object") return undefined;
-  const raw = (body as { sourceCollection?: unknown }).sourceCollection;
-  if (typeof raw !== "string") return undefined;
-  const trimmed = raw.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}
-
-// The system the ETL says this source collection belongs to. Validated rather
-// than passed through: an unrecognised value would be indexed verbatim and then
-// match no scoped key, hiding every document in the source behind a filter that
-// silently never matches.
-function extractSystem(body: unknown): { system?: string } | { error: string } {
-  if (!body || typeof body !== "object") return {};
-  const raw = (body as { system?: unknown }).system;
-  if (raw === undefined || raw === null) return {};
-  const trimmed = typeof raw === "string" ? raw.trim() : raw;
-  if (
-    typeof trimmed !== "string" ||
-    !(DOCUMENT_SYSTEMS as readonly string[]).includes(trimmed)
-  ) {
-    return { error: `invalid system: ${JSON.stringify(raw)}` };
-  }
-  return { system: trimmed };
-}
-
 export async function backfill(req: Request, res: Response): Promise<void> {
   const startedAt = Date.now();
 
@@ -124,9 +68,17 @@ export async function backfill(req: Request, res: Response): Promise<void> {
   }
   const allCollections = parsed;
 
+  const parsedBody = parseBackfillRequest(req.body);
+  if ("error" in parsedBody) {
+    res.status(400).json({ error: parsedBody.error });
+    return;
+  }
+  const { collections, stateCode, sourceCollection, system } =
+    parsedBody.request;
+
   // Optional per-invocation filter: POST `{ "collections": ["clients"] }` to
   // backfill only a subset. Omit to backfill everything in COLLECTIONS_JSON.
-  const filter = extractFilter(req.body);
+  const filter = collections && new Set(collections);
   const targets = filter
     ? allCollections.filter((c) => filter.has(c.name))
     : allCollections;
@@ -136,36 +88,6 @@ export async function backfill(req: Request, res: Response): Promise<void> {
       error: filter
         ? `No matching collections in COLLECTIONS_JSON for filter: ${[...filter].join(",")}`
         : "COLLECTIONS_JSON is empty — nothing to backfill",
-    });
-    return;
-  }
-
-  // Optional per-invocation state scope: POST `{ "stateCode": "US_XX" }` to
-  // reconcile only that state (both the import and the prune are filtered to it).
-  // The ETL trigger fires per state, so this is the common path.
-  const stateResult = extractStateCode(req.body);
-  if ("error" in stateResult) {
-    res.status(400).json({ error: stateResult.error });
-    return;
-  }
-  const { stateCode } = stateResult;
-
-  // Optional per-invocation source: POST `{ "sourceCollection":
-  // "US_XX-<opportunity>Referrals" }`. The opportunity ETL trigger fires per
-  // source, so this is the common path for `collections: ["opportunities"]`.
-  const sourceCollection = extractSourceCollection(req.body);
-
-  // The system that source belongs to, supplied by the ETL per source.
-  const systemResult = extractSystem(req.body);
-  if ("error" in systemResult) {
-    res.status(400).json({ error: systemResult.error });
-    return;
-  }
-  const { system } = systemResult;
-
-  if (sourceCollection && !system) {
-    res.status(400).json({
-      error: `system is required alongside sourceCollection; expected one of ${DOCUMENT_SYSTEMS.join(", ")}`,
     });
     return;
   }

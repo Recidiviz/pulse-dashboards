@@ -79,7 +79,7 @@ describe("the system a backfill request carries", () => {
 
       expect(sent.status).toBe(400);
       expect(String((sent.body as { error: string }).error)).toContain(
-        "invalid system",
+        "system",
       );
     },
   );

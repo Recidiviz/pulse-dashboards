@@ -17,24 +17,22 @@
 
 import { CollectionFieldSchema } from "typesense/lib/Typesense/Collection";
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
-
-import type { SystemId } from "~datatypes";
+import { z } from "zod";
 
 /**
  * The systems a STORED document can belong to.
  *
- * `SystemId` also carries `ALL`, which is a query-time concept — a user asking
- * for both — and never a value in the index. Excluding it means a backfill
- * request carrying `ALL` is rejected rather than indexed and then matched by
- * no scoped key.
+ * Deliberately NOT `SystemId`, which also carries `ALL`. That is a query-time
+ * concept — a user asking for both — and never a value in the index. A backfill
+ * request carrying `ALL` is rejected rather than indexed and then matched by no
+ * scoped key.
  */
-export type DocumentSystem = Exclude<SystemId, "ALL">;
+export const documentSystemSchema = z.enum(["SUPERVISION", "INCARCERATION"]);
+
+export type DocumentSystem = z.infer<typeof documentSystemSchema>;
 
 /** The same two, for validating a value that arrives at runtime. */
-export const DOCUMENT_SYSTEMS: readonly DocumentSystem[] = [
-  "SUPERVISION",
-  "INCARCERATION",
-];
+export const DOCUMENT_SYSTEMS = documentSystemSchema.options;
 
 // Discriminates supervision vs incarceration on collections queried by a
 // cross-system caseload-scoped key. Stamped by backfill-fn's

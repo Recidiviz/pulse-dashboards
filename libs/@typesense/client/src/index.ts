@@ -43,6 +43,7 @@ export {
   collectionNames,
   DOCUMENT_SYSTEMS,
   type DocumentSystem,
+  documentSystemSchema,
   schemas,
 } from "./schemas";
 export {
