@@ -167,7 +167,7 @@
     "github-slugger": "^2.0.0",
     "google-auth-library": "^9.11.0",
     "googleapis": "^144.0.0",
-    "handlebars": "^4.7.9",
+    "handlebars": "^4.7.10",
     "helmet": "^5.1.0",
     "html2pdf.js": "^0.10.2",
     "i18next": "^25.5.2",
