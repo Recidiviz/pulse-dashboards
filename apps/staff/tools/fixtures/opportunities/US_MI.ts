@@ -188,7 +188,7 @@ export const mockApiOpportunityConfigurationResponse = {
       submittedTabTitle: null,
       supervisorReviewTabTitle: null,
       supportsIneligible: true,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       supportsSupervisorReviewOnGrants: false,
       supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
@@ -742,12 +742,7 @@ export const mockApiOpportunityConfigurationResponse = {
       dynamicEligibilityText:
         "resident[|s] may need an Initial Classification [2026 Policy]",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [
-        {
-          key: "notHasInitialClassificationInStatePrisonCustody",
-          text: "Has not had initial classification since latest start in MDOC custody",
-        },
-      ],
+      eligibleCriteriaCopy: [{ key: " ", text: " " }],
       emptyTabCopy: [],
       enabledColumns: [],
       firestoreCollection: "US_MI-initialClassificationReview2026Policy",
@@ -786,7 +781,7 @@ export const mockApiOpportunityConfigurationResponse = {
       submittedTabTitle: null,
       supervisorReviewTabTitle: null,
       supportsIneligible: true,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       supportsSupervisorReviewOnGrants: false,
       supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",

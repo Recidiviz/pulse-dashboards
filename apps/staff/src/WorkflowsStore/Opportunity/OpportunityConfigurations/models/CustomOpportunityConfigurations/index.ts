@@ -146,7 +146,8 @@ const customOpportunityConfigurations: Partial<
   usTnSeriousMisconductUpgrade: UsTn2026ClassificationConfiguration,
   usTnBiannualOther: UsTn2026ClassificationConfiguration,
   usTnAnnualReclassification2026PolicyV2: UsTn2026ClassificationConfiguration,
-  usTnCustodyLevelDowngrade2026PolicyV2: UsTn2026ClassificationConfiguration,
+  usTnCustodyLevelDowngrade2026PolicyV2:
+    UsTnCustodyLevelDowngrade2026PolicyConfiguration,
   usTnSpecialCustodyLevelUpgrade2026PolicyV2:
     UsTn2026ClassificationConfiguration,
   usTnTrusteeTransferV2: UsTn2026ClassificationConfiguration,

@@ -279,6 +279,7 @@ export class OpportunityPersonListPresenter
           sorting: [{ id: "SUPERVISION_EXPIRATION_DATE", desc: false }],
         };
       case "usTnCustodyLevelDowngrade2026Policy":
+      case "usTnCustodyLevelDowngrade2026PolicyV2":
         return {
           sorting: [{ id: "US_TN_LATEST_CLASSIFICATION_DATE", desc: true }],
         };

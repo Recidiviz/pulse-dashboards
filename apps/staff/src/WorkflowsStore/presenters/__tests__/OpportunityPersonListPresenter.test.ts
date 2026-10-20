@@ -1161,11 +1161,11 @@ describe("table view columns", () => {
   });
 
   describe("US_TN_LATEST_CLASSIFICATION_DATE", () => {
-    test("shows for usTnCustodyLevelDowngrade2026Policy", () => {
+    test("shows for usTnCustodyLevelDowngrade2026PolicyV2", () => {
       presenter = getPresenter({
         opportunityType:
-          "usTnCustodyLevelDowngrade2026Policy" as OpportunityType,
-        config: mockOpportunityConfigs.usTnCustodyLevelDowngrade2026Policy,
+          "usTnCustodyLevelDowngrade2026PolicyV2" as OpportunityType,
+        config: mockOpportunityConfigs.usTnCustodyLevelDowngrade2026PolicyV2,
       });
       expect(
         presenter.enabledColumnIds.includes("US_TN_LATEST_CLASSIFICATION_DATE"),

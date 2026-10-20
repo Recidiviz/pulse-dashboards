@@ -778,16 +778,27 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         {
-          key: "DISCRETION",
-          text: "Per the PO’s discretion, it is not in the best interest of society for the client to be removed from Electronic Monitoring.",
+          key: "EMPLOYMENT",
+          text: "Client does not have a sufficient employment status.",
         },
-        { key: "Other", text: "Other, please specify a reason" },
+        {
+          key: "PROGRAMMING",
+          text: "Client has not been attending required programming. ",
+        },
+        {
+          key: "PENDING CHARGE OR NEW ARREST",
+          text: "Client has a pending charge or new arrest.",
+        },
+        {
+          key: "Other",
+          text: "Per the PO’s discretion, it is not in the best interest of society for the client to have special condition T withdrawn",
+        },
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Withdrawal from Electronic Monitoring",
+      displayName: "Withdrawal of Special Condition T",
       dynamicEligibilityText:
-        "client[|s] may be eligible for withdrawal of special condition T and Removal from Electronic Monitoring",
+        "client[|s] may be eligible for e-transmittal to withdraw special condition T",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -833,12 +844,6 @@ export const mockApiOpportunityConfigurationResponse = {
           cellValue: null,
           columnHeader: null,
           columnId: "ELIGIBILITY_DATE",
-          sortingFn: null,
-        },
-        {
-          cellValue: null,
-          columnHeader: null,
-          columnId: "ALMOST_ELIGIBILITY_DATE",
           sortingFn: null,
         },
         {
@@ -904,7 +909,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       initialHeader:
-        "Search above to review and refer people eligible for opportunities like Annual Report Status, Early Release from Supervision, and Removal from Electronic Monitoring.",
+        "Search above to review and refer people eligible for opportunities like Annual Report Status, Early Release from Supervision, and Withdrawal of Special Condition T",
       isAlert: false,
       markSubmittedOnFormDownload: false,
       markSubmittedOptionsByTab: [],
@@ -918,8 +923,8 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [
         {
-          body: "Find the Parole Division's EM policy [here](https://www.tdcj.texas.gov/documents/pd/03.05.01_parole_policy.pdf).",
-          cta: "Close",
+          body: "The Withdrawal of Special Condition T tool is in a pilot phase. At the moment, you can see who is potentially eligible for withdrawal of special condition T. After evaluating a client's candidacy, you must still file the actual e-transmittal in OIMS.",
+          cta: "Acknowledge & Close",
           id: "757f764b-1710-4300-8f20-d55fbf4d2f91",
           pages: ["caseload"],
           type: "info",
@@ -940,22 +945,28 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Clients may be eligible to be submitted to the Board of Pardons and Paroles for withdrawal of special condition  T and Removal of Electronic Monitoring. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.05.01_parole_policy.pdf) effective Sep 1, 2025. Review the below clients to determine if they are eligible.",
-      submittedTabTitle: null,
+        "Clients may be eligible to be submitted to the Board of Pardons and Paroles for withdrawal of special condition T. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.05.01_parole_policy.pdf) effective Sep 1, 2025. Review the below clients to determine if they are eligible.",
+      submittedTabTitle: "e-Transmittal Filed",
       supervisorReviewTabTitle: null,
       supportsIneligible: false,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       supportsSupervisorReviewOnGrants: false,
       supportsSupervisorReviewOnSnooze: false,
       systemType: "SUPERVISION",
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Eligible Now", "Almost Eligible", "Marked Ineligible"],
+          tabs: [
+            "Ready for Review",
+            "Almost Eligible",
+            "Submitted for Review",
+            "Marked Ineligible",
+          ],
         },
       ],
       tabPrefaceCopy: [],
-      tooltipEligibilityText: "Eligible for Withdrawal of Special Condition T",
+      tooltipEligibilityText:
+        "Eligible for e-Transmittal to Withdraw of Special Condition T",
       urlSection: "RemovalFromElectronicMonitoring",
       zeroGrantsTooltip: null,
     },

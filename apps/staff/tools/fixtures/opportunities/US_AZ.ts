@@ -422,14 +422,6 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [
         {
-          tab: "Fast Trackers",
-          texts: [
-            "HOME_PLAN_IN_PROGRESS",
-            "AWAITING_HOME_PLAN_APPROVAL",
-            "AWAITING_RELEASE",
-          ],
-        },
-        {
           tab: "Eligible Now",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
@@ -522,7 +514,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "ELIGIBILITY STATUS",
           tabs: [
             "Almost Eligible",
-            "Fast Trackers",
             "Eligible Now",
             "Overdue",
             "Pending",
@@ -532,12 +523,8 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [
         {
-          tab: "Fast Trackers",
-          text: "Fast Tracker cases have a release date within 30 days, with dates already approved by Central Time Comp. COIIIs should ensure home plans are submitted and release packets are complete. Names are ordered by release date. ",
-        },
-        {
           tab: "Eligible Now",
-          text: "This tab lists cases with release dates 30–180 days out, approved by Central Time Comp. COIIIs must submit home plans for approval and complete all release packet components. Names are ordered by release date.",
+          text: "This tab lists cases with release dates  up to 180 days out, approved by Central Time Comp. COIIIs must submit home plans for approval and complete all release packet components. Names are ordered by release date.",
         },
         {
           tab: "Almost Eligible",
@@ -670,7 +657,7 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOnFormDownload: true,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
+        "https://drive.google.com/file/d/1RHd_sg40Od10qE6Id3Rfem-KfsfCFUmI/view?usp=sharing",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
