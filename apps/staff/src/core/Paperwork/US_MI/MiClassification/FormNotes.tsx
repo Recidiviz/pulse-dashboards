@@ -20,6 +20,7 @@ import { useState } from "react";
 
 import { ClassificationNote } from "~datatypes";
 import { palette } from "~design-system";
+import { pluralizeWord } from "~utils";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import {
@@ -83,6 +84,7 @@ export const QuestionNotes = observer(function QuestionNotes({
   const listLength =
     (note.kind === "adSeg" && note.data.adSegStartsList?.length) ||
     (note.kind === "incidents" && note.data.incidentsList?.length) ||
+    (note.kind === "programs" && note.data.length) ||
     0;
 
   return (
@@ -164,6 +166,26 @@ export const QuestionNotes = observer(function QuestionNotes({
                 />
               );
             })}
+
+        {note.kind === "goodBehavior" &&
+          note.data.map(({ timePeriod, misconductCount }) => (
+            <NotesRow key={timePeriod}>
+              <NoteField>{timePeriod}</NoteField>
+              <NoteField>
+                {`${misconductCount} ${pluralizeWord({ term: "Misconduct", count: misconductCount })}`}
+              </NoteField>
+            </NotesRow>
+          ))}
+
+        {note.kind === "programs" &&
+          note.data.slice(0, sliceAmount).map((program, index) => (
+            <NoteRow
+              // eslint-disable-next-line react/no-array-index-key
+              key={`program-note-${index}`}
+              event={program.programName}
+              date={program.completionDate}
+            />
+          ))}
       </div>
 
       {listLength > 4 && (

@@ -159,7 +159,7 @@ export function inferredMiClassificationData(
   };
 }
 
-function classificationNote<K extends keyof ClassificationNoteData>(
+export function classificationNote<K extends keyof ClassificationNoteData>(
   kind: K,
   data: ClassificationNoteData[K] | null | undefined,
 ): { kind: K; data: ClassificationNoteData[K] } | null {
@@ -355,7 +355,7 @@ export function deriveMiClassification(
   };
 }
 
-export class UsMiClassificationForm extends FormBase<UsMiInitialClassification2026DraftData> {
+export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassification2026DraftData> {
   get navigateToFormText(): string {
     return this.opportunity.isSubmitted
       ? "Review classification"

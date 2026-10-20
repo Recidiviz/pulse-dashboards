@@ -23,7 +23,8 @@ import { AssessmentOption, UsMiAssessmentQuestionSpec } from "~datatypes";
 import { palette } from "~design-system";
 import * as Styled from "~sentencing-client/components/CaseDetails/CaseDetails.styles";
 
-import { UsMiClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import { UsMiInitialClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import { UsMiReviewClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { QuestionNotes } from "./FormNotes";
 import {
@@ -190,7 +191,9 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
 
   const selection = opportunityForm.formData[selectionKey];
 
-  const { derivedData } = useOpportunityFormContext() as UsMiClassificationForm;
+  const { derivedData } = useOpportunityFormContext() as
+    | UsMiInitialClassificationForm
+    | UsMiReviewClassificationForm;
   const scoreKey = `s${questionSection}q${questionNumber}Score` as Exclude<
     Extract<keyof typeof derivedData, `${string}Score`>,
     "totalScore"

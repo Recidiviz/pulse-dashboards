@@ -23,14 +23,14 @@ import {
 } from "~datatypes";
 
 import { Resident } from "../../../Resident";
-import { UsMiClassificationForm } from "../../Forms/UsMiInitialClassification2026Form";
+import { UsMiInitialClassificationForm } from "../../Forms/UsMiInitialClassification2026Form";
 import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsMiInitialClassificationOpportunity extends OpportunityBase<
   Resident,
   UsMiInitialClassificationRecord["output"]
 > {
-  form: UsMiClassificationForm;
+  form: UsMiInitialClassificationForm;
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
@@ -38,6 +38,6 @@ export class UsMiInitialClassificationOpportunity extends OpportunityBase<
       resident.rootStore,
       usMiInitialClassificationSchema.parse(record),
     );
-    this.form = new UsMiClassificationForm(this, resident.rootStore);
+    this.form = new UsMiInitialClassificationForm(this, resident.rootStore);
   }
 }

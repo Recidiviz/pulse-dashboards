@@ -21,6 +21,10 @@ import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import {
+  goodBehaviorPeriodNotes,
+  programCompletionsList,
+} from "../UsMiReviewClassification2026Policy/schema";
+import {
   ageNotes,
   felonyConvictionsNotes,
   incidentNotesSchema,
@@ -57,6 +61,8 @@ export type ClassificationNoteData = {
   felony: felonyConvictionsNotes;
   adSeg: pastAdSegNotes;
   incidents: incidentNotesSchema;
+  goodBehavior: goodBehaviorPeriodNotes;
+  programs: programCompletionsList;
 };
 
 export type ClassificationNote = {

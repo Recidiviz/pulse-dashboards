@@ -22,7 +22,8 @@ import React, { useEffect, useState } from "react";
 import { Button, palette } from "~design-system";
 import { pluralizeWord } from "~utils";
 
-import { UsMiClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import { UsMiInitialClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import { UsMiReviewClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { ClassificationQuestion } from "./MultipleChoiceQuestion";
 import {
@@ -42,7 +43,9 @@ import {
 export const FormUsMiClassification = observer(
   function FormUsMiClassification() {
     const formRef = React.useRef<HTMLDivElement>(null);
-    const form = useOpportunityFormContext() as UsMiClassificationForm;
+    const form = useOpportunityFormContext() as
+      | UsMiInitialClassificationForm
+      | UsMiReviewClassificationForm;
 
     const {
       displayCustodyLevel,

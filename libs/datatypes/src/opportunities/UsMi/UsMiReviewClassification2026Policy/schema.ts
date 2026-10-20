@@ -25,6 +25,36 @@ import {
   usMiClassificationFormBaseSchema,
 } from "../UsMiInitialClassification2026Policy/utils";
 
+export const goodBeahviorNotesSchema = incidentNotesSchema.extend({
+  adSegStartsList: z
+    .array(
+      z.object({
+        adSegEndDateExclusive: dateStringSchema,
+        adSegStartDate: dateStringSchema,
+        incidentTimePeriod: z.string().optional(),
+      }),
+    )
+    .nullable(),
+});
+
+export type goodBeahviorNotesSchema = z.infer<typeof goodBeahviorNotesSchema>;
+
+export const programCompletionsList = z.array(
+  z.object({
+    completionDate: dateStringSchema,
+    programName: z.string(),
+  }),
+);
+
+export type programCompletionsList = z.infer<typeof programCompletionsList>;
+
+// Built on the frontend from goodBehaviorNotes: the misconduct count in each
+// four-month period of the past 12 months.
+export type goodBehaviorPeriodNotes = {
+  timePeriod: string;
+  misconductCount: number;
+}[];
+
 export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
     .object({
@@ -57,12 +87,7 @@ export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
     programCompleteCoreNotes: z
       .object({
         coreProgramCompletionCount: z.coerce.number().nullable(),
-        coreProgramCompletionList: z.array(
-          z.object({
-            completionDate: dateStringSchema,
-            programName: z.string(),
-          }),
-        ),
+        coreProgramCompletionsList: programCompletionsList,
       })
       .passthrough()
       .partial()
@@ -70,28 +95,13 @@ export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
     programCompleteHighNotes: z
       .object({
         highProgramCompletionCount: z.coerce.number().nullable(),
-        highProgramCompletionsList: z.array(
-          z.object({
-            completionDate: dateStringSchema,
-            programName: z.string(),
-          }),
-        ),
+        highProgramCompletionsList: programCompletionsList,
       })
       .passthrough()
       .partial()
       .nullish(),
     goodBehaviorScore: z.coerce.number().nullable(),
-    goodBehaviorNotes: incidentNotesSchema
-      .extend({
-        adSegStartsList: z
-          .array(
-            z.object({
-              adSegEndDateExclusive: dateStringSchema,
-              adSegStartDate: dateStringSchema,
-            }),
-          )
-          .nullable(),
-      })
+    goodBehaviorNotes: goodBeahviorNotesSchema
       .partial()
       .passthrough()
       .nullish(),
