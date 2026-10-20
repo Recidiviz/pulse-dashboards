@@ -52,6 +52,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     Low: "L",
     Annual: "A",
     "In-custody": "I–C",
+    "Early Release": "E–R",
   };
 
   constructor(

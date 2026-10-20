@@ -509,6 +509,7 @@ export const workflowsSupervisionLevelOptionsByTenant: Record<
     { label: "Annual", value: "LIMITED" },
     { label: "In-custody", value: "IN_CUSTODY" },
     { label: "Residential Reentry", value: "RESIDENTIAL_PROGRAM" },
+    { label: "Early Release", value: "UNSUPERVISED" },
   ],
   US_IA: [
     { label: "Level 0", value: "LEVEL 0" },
