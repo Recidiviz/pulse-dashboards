@@ -45,7 +45,10 @@ locals {
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   migrate_db_env_vars = nonsensitive([
-    for key, value in local.db_urls : {
+    for key, value in merge(
+      local.db_urls,
+      { ENABLED_STATE_DBS = data.dotenv.prisma_env.entries["ENABLED_STATE_DBS"] }
+      ) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
