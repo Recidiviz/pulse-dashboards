@@ -27,6 +27,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals = fixtureWithIdKey<
 >("externalId", [
   {
     externalId: "RES007",
+    locationId: "FACILITY1",
     stateCode: "US_MO",
     eligibleCriteria: {
       usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
@@ -71,6 +72,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals = fixtureWithIdKey<
   },
   {
     externalId: "RES008",
+    locationId: "FACILITY2",
     stateCode: "US_MO",
     eligibleCriteria: {
       usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
@@ -116,6 +118,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals = fixtureWithIdKey<
   },
   {
     externalId: "RES009",
+    locationId: "FACILITY1",
     stateCode: "US_MO",
     eligibleCriteria: {
       usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
@@ -161,6 +164,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals = fixtureWithIdKey<
   },
   {
     externalId: "RES010",
+    locationId: "FACILITY2",
     stateCode: "US_MO",
     eligibleCriteria: {
       usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {

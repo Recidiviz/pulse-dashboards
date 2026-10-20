@@ -29,6 +29,7 @@ exports[`schema for fullyEligible1 1`] = `
   "metadata": {
     "eligibleDate": 2024-02-03T00:00:00.000Z,
   },
+  "officerId": "OFFICER8",
   "stateCode": "US_MI",
 }
 `;

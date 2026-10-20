@@ -26,6 +26,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "001",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleStartDate: "2022-09-10",
       formInformation: {},
       eligibleCriteria: {
@@ -60,6 +62,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "002",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleStartDate: "2022-07-10",
       formInformation: {
         ncicCheckDate: "2022-11-10",
@@ -116,6 +120,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "004",
+      officerId: "OFFICER6",
+      locationId: "DISTRICT 1",
       eligibleStartDate: "2022-07-10",
       formInformation: {
         ncicCheckDate: "2022-11-10",
@@ -176,6 +182,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "007",
+      officerId: "OFFICER6",
+      locationId: "DISTRICT 1",
       eligibleStartDate: "2022-07-10",
       formInformation: {
         ncicCheckDate: "2022-11-10",
@@ -235,6 +243,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "008",
+      officerId: "OFFICER6",
+      locationId: "DISTRICT 1",
       eligibleStartDate: "2022-07-10",
       formInformation: {
         ncicCheckDate: "2022-11-10",

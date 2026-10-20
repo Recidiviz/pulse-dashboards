@@ -25,6 +25,8 @@ export const usCaSupervisionLevelDowngradeReferrals = fixtureWithIdKey<
   {
     stateCode: "US_CA",
     externalId: "005",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT 1",
     formInformation: {
       cdcno: "WF1234",
     },
@@ -43,6 +45,8 @@ export const usCaSupervisionLevelDowngradeReferrals = fixtureWithIdKey<
   {
     stateCode: "US_CA",
     externalId: "006",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT 1",
     formInformation: {
       cdcno: "AB1234",
     },

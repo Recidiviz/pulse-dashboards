@@ -26,6 +26,8 @@ export const usIdPastFtrdFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "002",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {
         supervisionPastFullTermCompletionDate: {
           eligibleDate: "2022-07-10",
@@ -39,6 +41,8 @@ export const usIdPastFtrdFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "010",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {},
       ineligibleCriteria: {
         supervisionPastFullTermCompletionDate: {

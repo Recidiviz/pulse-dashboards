@@ -25,6 +25,7 @@ export const usPaAdminSupervisionReferrals = fixtureWithIdKey<
   {
     stateCode: "US_PA",
     externalId: "001",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usPaNoHighSanctionsInPastYear: {},
       usPaNotServingIneligibleOffenseForAdminSupervision: null,
@@ -46,6 +47,7 @@ export const usPaAdminSupervisionReferrals = fixtureWithIdKey<
   {
     stateCode: "US_PA",
     externalId: "002",
+    officerId: "OFFICER2",
     eligibleCriteria: {
       usPaNoHighSanctionsInPastYear: {},
       usPaNotServingIneligibleOffenseForAdminSupervision: {
@@ -70,6 +72,7 @@ export const usPaAdminSupervisionReferrals = fixtureWithIdKey<
   {
     stateCode: "US_PA",
     externalId: "003",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usPaNoHighSanctionsInPastYear: null,
       usPaNotServingIneligibleOffenseForAdminSupervision: null,

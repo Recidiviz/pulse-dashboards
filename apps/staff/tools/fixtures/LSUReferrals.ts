@@ -23,6 +23,8 @@ export const LSUReferralsFixture: FirestoreFixture<UsIdLsuRecord["input"]> = {
   data: [
     {
       externalId: "001",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       stateCode: "US_ID",
       eligibleStartDate: "2022-04-28",
       formInformation: {
@@ -64,6 +66,8 @@ export const LSUReferralsFixture: FirestoreFixture<UsIdLsuRecord["input"]> = {
     },
     {
       externalId: "005",
+      officerId: "OFFICER6",
+      locationId: "DISTRICT 1",
       stateCode: "US_ID",
       eligibleStartDate: "2022-04-28",
       formInformation: {
@@ -106,6 +110,8 @@ export const LSUReferralsFixture: FirestoreFixture<UsIdLsuRecord["input"]> = {
     },
     {
       externalId: "006",
+      officerId: "OFFICER6",
+      locationId: "DISTRICT 1",
       stateCode: "US_ID",
       eligibleStartDate: "2022-04-28",
       formInformation: {

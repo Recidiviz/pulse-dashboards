@@ -25,6 +25,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "001",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
       notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
@@ -110,6 +111,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "002",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: {
         latestViolationReportDates: null,
@@ -211,6 +213,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "003",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
       notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
@@ -302,6 +305,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "004",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
       notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
@@ -376,6 +380,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "005",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usIaNoSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
       notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {

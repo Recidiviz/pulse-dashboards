@@ -28,7 +28,6 @@ import type { Client as TypesenseClient } from "typesense";
 import type {
   DocIdFieldsOverride,
   DocIdOverrides,
-  DocumentSystem,
   FirestoreDoc,
 } from "~@typesense/client";
 
@@ -156,11 +155,6 @@ export type MergeSource = {
   fields: Array<
     string | { from: string; into: string } | { value: string; into: string }
   >;
-  /**
-   * Restricts this source to runs for one system. An untagged source applies
-   * to every run.
-   */
-  system?: DocumentSystem;
   /**
    * Compose the merge LOOKUP key from the TARGET document's own fields instead
    * of the target's id, so one merge document can decorate many targets.

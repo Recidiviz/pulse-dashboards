@@ -36,6 +36,7 @@ exports[`schema for almostEligible 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "locationId": "FACILITY2",
   "metadata": {
     "daysInSolitarySession": 30,
     "daysInSolitarySessionType": "CALENDAR",
@@ -111,6 +112,7 @@ exports[`schema for fullyEligible1 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "locationId": "FACILITY1",
   "metadata": {
     "completedProgramming": "105",
     "daysInSolitarySession": 25,
@@ -205,6 +207,7 @@ exports[`schema for fullyEligible2 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "locationId": "FACILITY2",
   "metadata": {
     "daysInSolitarySession": 50,
     "daysInSolitarySessionType": "CALENDAR",
@@ -238,6 +241,7 @@ exports[`schema for fullyEligible2 1`] = `
     "solitarySessionType": "Temporary Segregation",
     "tabName": "NOT_DUE",
   },
+  "officerId": "MIOFFICER1",
   "stateCode": "US_MI",
 }
 `;

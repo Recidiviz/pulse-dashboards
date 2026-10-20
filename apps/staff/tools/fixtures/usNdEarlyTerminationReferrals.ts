@@ -23,6 +23,8 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
   {
     stateCode: "US_ND",
     externalId: "110",
+    officerId: "OFFICER3",
+    locationId: "DISTRICT 1",
     formInformation: {
       clientName: "Jamie Jones",
       convictionCounty: "NORTH_CENTRAL",
@@ -65,6 +67,8 @@ const data: UsNdEarlyTerminationReferralRecord["input"][] = [
   {
     stateCode: "US_ND",
     externalId: "111",
+    officerId: "OFFICER3",
+    locationId: "DISTRICT 1",
     formInformation: {
       clientName: "Justin Timberlake",
       convictionCounty: "NORTH_CENTRAL",

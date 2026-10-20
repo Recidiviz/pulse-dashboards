@@ -94,9 +94,10 @@ const opportunityUpdatesConfig = {
   transform: "opportunityUpdate" as const,
 };
 
-// The person document's own id.
-const PERSON_LOOKUP_KEY = {
-  type: "fields" as const,
+// The person document's own id. `externalId` is lowercased because the ETL
+// lowercases the WHOLE Firestore document id: a client with
+// `externalId: "001HG"` is filed under `us_pa_001hg`.
+const PERSON_DOC_ID = {
   fields: ["stateCode", "externalId"],
   lowercaseFields: ["stateCode", "externalId"],
 };
@@ -104,43 +105,8 @@ const PERSON_LOOKUP_KEY = {
 // How an opportunity names the person it belongs to. Exactly one of the two
 // resolves and the other dangles, which join filters exclude.
 const OPPORTUNITY_REFERENCE_FIELDS = [
-  {
-    into: "clientDocId",
-    fields: PERSON_LOOKUP_KEY.fields,
-    lowercaseFields: PERSON_LOOKUP_KEY.lowercaseFields,
-  },
-  {
-    into: "residentDocId",
-    fields: PERSON_LOOKUP_KEY.fields,
-    lowercaseFields: PERSON_LOOKUP_KEY.lowercaseFields,
-  },
-];
-
-// Person SCOPE merged onto the opportunities it governs — the fields the minted
-// scoped key reads, and nothing else.
-//
-// `system` picks exactly ONE of these per run, from the backfill request. Both
-// are keyed by (stateCode, externalId), and the two person collections can
-// carry the same externalId for different people, so running both would let
-// `residents` overwrite `clients` on every collision.
-const OPPORTUNITY_SCOPE_MERGE_SOURCES = [
-  {
-    sourceCollection: "clients",
-    system: "SUPERVISION" as const,
-    lookupKey: PERSON_LOOKUP_KEY,
-    hasStateCode: true,
-    fields: ["officerId", { from: "district", into: "locationId" }],
-  },
-  {
-    sourceCollection: "residents",
-    system: "INCARCERATION" as const,
-    lookupKey: PERSON_LOOKUP_KEY,
-    hasStateCode: true,
-    // Nothing filters on the resident side yet. Populated now anyway: the
-    // alternative is a collection recreate plus a full re-backfill the day a
-    // state turns facility scoping on.
-    fields: ["officerId", { from: "facilityId", into: "locationId" }],
-  },
+  { into: "clientDocId", ...PERSON_DOC_ID },
+  { into: "residentDocId", ...PERSON_DOC_ID },
 ];
 
 const PERSON_COLLECTIONS = new Set(["clients", "residents"]);
@@ -177,10 +143,15 @@ const opportunityTemplate = {
     "opportunityPseudonymizedId",
     "eligibleDate",
     "almostEligibleDate",
+    // Authorization scope, read ONLY by the minted scoped key. The ETL emits
+    // these per row: `location_id` is the district for a supervision
+    // opportunity and the facility for an incarceration one.
+    "officerId",
+    "locationId",
   ],
   // Changing this rewrites every opportunity id: the next backfill writes the
   // new ones and the prune sweeps the old. Deliberately NOT lowercasing
-  // `externalId` here, unlike PERSON_LOOKUP_KEY — this id refers to nothing
+  // `externalId` here, unlike PERSON_DOC_ID — this id refers to nothing
   // else, so it needs no agreement with Firestore, and changing it would churn
   // every document for no gain.
   docIdOverrides: {
@@ -191,7 +162,6 @@ const opportunityTemplate = {
   // Flattens `eligibleDate` to an epoch and lifts `metadata.tabName` out.
   transform: "opportunityFields" as const,
   referenceFields: OPPORTUNITY_REFERENCE_FIELDS,
-  mergeSources: OPPORTUNITY_SCOPE_MERGE_SOURCES,
 };
 
 const collections = [

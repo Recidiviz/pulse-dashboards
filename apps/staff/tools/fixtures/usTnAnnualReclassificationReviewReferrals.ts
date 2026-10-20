@@ -24,6 +24,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
   {
     stateCode: "US_TN",
     externalId: "RES003",
+    locationId: "BLEDSOE_CC",
     formReclassificationDueDate: relativeFixtureDate({ days: 2 }),
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
@@ -85,6 +86,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
   {
     stateCode: "US_TN",
     externalId: "RES004",
+    locationId: "BLEDSOE_CC",
     formReclassificationDueDate: relativeFixtureDate({ days: 6 }),
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,

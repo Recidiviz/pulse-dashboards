@@ -25,6 +25,7 @@ export const usTnCustodyLevelDowngradeFixture =
     {
       stateCode: "US_TN",
       externalId: "RES001",
+      locationId: "BLEDSOE_CC",
       eligibleCriteria: {
         usTnCustodyLevelHigherThanRecommended: {
           custodyLevel: "CLOSE",
@@ -71,6 +72,7 @@ export const usTnCustodyLevelDowngradeFixture =
     {
       stateCode: "US_TN",
       externalId: "RES002",
+      locationId: "BLEDSOE_CC",
       caseNotes: {
         "PRIOR RECORD OFFENSES": [
           {

@@ -25,6 +25,7 @@ export const usMiMinimumTelephoneReportingReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "010",
+    officerId: "OFFICER8",
     eligibleCriteria: {
       onMinimumSupervisionAtLeastSixMonths: null,
       usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {

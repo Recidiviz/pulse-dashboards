@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { CollectionConfig, MergeSource } from "./types";
+import type { CollectionConfig } from "./types";
 
 // The Recidiviz state-code shape: `US_` followed by two or three uppercase
 // ASCII letters (US_AZ, US_ID, US_NYC, ...). Not every tenant is a state — a
@@ -25,16 +25,6 @@ const STATE_CODE_PATTERN = /^US_[A-Z]{2,3}$/;
 
 export function isValidStateCode(raw: unknown): raw is string {
   return typeof raw === "string" && STATE_CODE_PATTERN.test(raw);
-}
-
-/**
- * Keeps only the merge sources this run's system may read.
- */
-function selectMergeSources(
-  sources: MergeSource[],
-  system: string | undefined,
-): MergeSource[] {
-  return sources.filter((source) => !source.system || source.system === system);
 }
 
 // Instantiates template configs (currently `opportunities`) that don't
@@ -62,9 +52,6 @@ export function instantiateFromSourceCollection(
             sourceCollection,
             ...(system ? { system } : {}),
           },
-          ...(config.mergeSources && {
-            mergeSources: selectMergeSources(config.mergeSources, system),
-          }),
         },
   );
 }

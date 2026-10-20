@@ -28,6 +28,8 @@ export const usNeOverrideModerateToLowReferrals = fixtureWithIdKey<
   {
     stateCode: "US_NE",
     externalId: "NE002",
+    officerId: "NEOFFICER1",
+    locationId: "DISTRICT 1",
     eligibleCriteria: {
       onParoleAtLeast6Months: {
         supervisionStartDate: relativeFixtureDate({ months: -15 }),
@@ -94,6 +96,8 @@ export const usNeOverrideModerateToLowReferrals = fixtureWithIdKey<
   {
     stateCode: "US_NE",
     externalId: "NE004",
+    officerId: "NEOFFICER1",
+    locationId: "DISTRICT 1",
     eligibleCriteria: {
       onParoleAtLeast6Months: {
         supervisionStartDate: relativeFixtureDate({ months: -17 }),

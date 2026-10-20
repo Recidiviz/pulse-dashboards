@@ -27,6 +27,7 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
   fullyEligible: makeRecordFixture(usPaSpecialCircumstancesSupervisionSchema, {
     stateCode: "US_PA",
     externalId: "CLIENT004",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usPaMeetsSpecialCircumstancesCriteriaForTimeServed: {
         caseType: "special probation or parole case",
@@ -58,6 +59,7 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
   almostEligible: makeRecordFixture(usPaSpecialCircumstancesSupervisionSchema, {
     stateCode: "US_PA",
     externalId: "CLIENT005",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       usPaMeetsSpecialCircumstancesCriteriaForSanctions: {
         caseType: "special probation or parole case",

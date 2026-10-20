@@ -28,6 +28,8 @@ export const usNeConditionalLowRiskOverrideReferrals = fixtureWithIdKey<
   {
     stateCode: "US_NE",
     externalId: "NE001",
+    officerId: "NEOFFICER1",
+    locationId: "DISTRICT 1",
     eligibleCriteria: {
       onParoleAtLeast6Months: {
         supervisionStartDate: relativeFixtureDate({ months: -18 }),
@@ -94,6 +96,8 @@ export const usNeConditionalLowRiskOverrideReferrals = fixtureWithIdKey<
   {
     stateCode: "US_NE",
     externalId: "NE003",
+    officerId: "NEOFFICER1",
+    locationId: "DISTRICT 1",
     eligibleCriteria: {
       onParoleAtLeast6Months: {
         supervisionStartDate: relativeFixtureDate({ months: -40 }),
@@ -156,6 +160,8 @@ export const usNeConditionalLowRiskOverrideReferrals = fixtureWithIdKey<
   {
     stateCode: "US_NE",
     externalId: "NE005",
+    officerId: "NEOFFICER1",
+    locationId: "DISTRICT 1",
     eligibleCriteria: {
       onParoleAtLeast6Months: {
         supervisionStartDate: relativeFixtureDate({ months: -44 }),

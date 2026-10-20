@@ -280,80 +280,30 @@ describe("instantiateFromSourceCollection", () => {
   });
 });
 
-describe("the merge source the system picks", () => {
-  // Mirrors OPPORTUNITY_SCOPE_MERGE_SOURCES: both keyed by the same composed
-  // (stateCode, externalId), differing only in which person collection they
-  // read and which field becomes `locationId`.
-  const clients = {
-    sourceCollection: "clients",
-    system: "SUPERVISION" as const,
-    hasStateCode: true,
-    fields: ["officerId", { from: "district", into: "locationId" }],
-  };
-  const residents = {
-    sourceCollection: "residents",
-    system: "INCARCERATION" as const,
-    hasStateCode: true,
-    fields: ["officerId", { from: "facilityId", into: "locationId" }],
-  };
+describe("merge sources on an instantiated config", () => {
+  // `clientUpdatesV2` is the only merge left: officer-written, so the ETL
+  // will never carry it. The scope merge that used to sit beside it is gone,
+  // and with it the rule that picked one person collection per run.
   const updates = {
     sourceCollection: "clientOpportunityUpdates",
     collectionGroup: true,
     fields: ["updateStatus"],
   };
 
-  const template = [
-    {
-      name: "opportunities",
-      fields: ["externalId"],
-      mergeSources: [clients, residents, updates],
-    },
-  ];
-
-  const sourcesFor = (system?: string) =>
-    instantiateFromSourceCollection(
-      template,
+  it("passes them through untouched", () => {
+    const [result] = instantiateFromSourceCollection(
+      [
+        {
+          name: "opportunities",
+          fields: ["externalId"],
+          mergeSources: [updates],
+        },
+      ],
       "US_TN-compliantReportingReferrals",
-      system,
-    )[0].mergeSources?.map((s) => s.sourceCollection);
+      "SUPERVISION",
+    );
 
-  it("reads clients on a SUPERVISION run", () => {
-    expect(sourcesFor("SUPERVISION")).toEqual([
-      "clients",
-      "clientOpportunityUpdates",
-    ]);
-  });
-
-  it("reads residents on an INCARCERATION run", () => {
-    expect(sourcesFor("INCARCERATION")).toEqual([
-      "residents",
-      "clientOpportunityUpdates",
-    ]);
-  });
-
-  it("never reads both", () => {
-    // The whole point. `clients` and `residents` can hold the same composed key
-    // for different people, and `projectWithMerges` lets the later source
-    // overwrite the earlier one, so a supervision opportunity would take its
-    // scope from an unrelated resident.
-    for (const system of ["SUPERVISION", "INCARCERATION"]) {
-      const picked = sourcesFor(system) ?? [];
-      expect(picked).not.toContain(
-        system === "SUPERVISION" ? "residents" : "clients",
-      );
-    }
-  });
-
-  it("keeps an untagged source on every run", () => {
-    expect(sourcesFor("SUPERVISION")).toContain("clientOpportunityUpdates");
-    expect(sourcesFor("INCARCERATION")).toContain("clientOpportunityUpdates");
-  });
-
-  it("drops every tagged source when the run has no system", () => {
-    // Fails closed. An unscoped document is invisible, which a re-backfill
-    // repairs; a wrongly scoped one is not. The handler rejects such a request
-    // before it reaches here, so this only bounds the blast radius.
-    expect(sourcesFor(undefined)).toEqual(["clientOpportunityUpdates"]);
+    expect(result.mergeSources).toEqual([updates]);
   });
 
   it("leaves a config with no merge sources without the key", () => {

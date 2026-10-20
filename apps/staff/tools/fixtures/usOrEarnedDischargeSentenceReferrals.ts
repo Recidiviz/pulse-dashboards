@@ -27,6 +27,7 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<
     {
       stateCode: "US_OR",
       externalId: "001",
+      officerId: "314159",
       opportunityId: "S1001",
       opportunityPseudonymizedId: "po101",
       eligibleCriteria: {
@@ -51,6 +52,7 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<
     {
       stateCode: "US_OR",
       externalId: "001",
+      officerId: "314159",
       opportunityId: "S1002",
       opportunityPseudonymizedId: "po102",
       eligibleCriteria: {
@@ -76,6 +78,7 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<
     {
       stateCode: "US_OR",
       externalId: "002",
+      officerId: "271828",
       opportunityId: "S2001",
       opportunityPseudonymizedId: "po201",
       eligibleCriteria: {
@@ -101,6 +104,7 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<
     {
       stateCode: "US_OR",
       externalId: "003",
+      officerId: "314159",
       opportunityId: "S3001",
       opportunityPseudonymizedId: "po301",
       eligibleCriteria: {
@@ -130,6 +134,7 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<
     {
       stateCode: "US_OR",
       externalId: "004",
+      officerId: "271828",
       opportunityId: "S4001",
       opportunityPseudonymizedId: "po401",
       eligibleCriteria: {

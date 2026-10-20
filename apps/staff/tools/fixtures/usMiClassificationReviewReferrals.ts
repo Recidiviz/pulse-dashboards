@@ -25,6 +25,7 @@ export const UsMiClassificationReviewReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "cr-eligible-1",
+    officerId: "OFFICER8",
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
@@ -51,6 +52,7 @@ export const UsMiClassificationReviewReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "cr-eligible-2",
+    officerId: "OFFICER8",
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: null,
       usMiSixMonthsPastLastClassificationReviewDate: {

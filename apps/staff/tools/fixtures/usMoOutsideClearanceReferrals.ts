@@ -23,6 +23,7 @@ const data: UsMoWorkReleaseReferralRecord["input"][] = [
   {
     stateCode: "US_MO",
     externalId: "RES019",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usMoMentalHealthScore3OrBelowWhileIncarcerated: {},
       usMoInstitutionalRiskScore1WhileIncarcerated: {},
@@ -45,6 +46,7 @@ const data: UsMoWorkReleaseReferralRecord["input"][] = [
   {
     stateCode: "US_MO",
     externalId: "RES020",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usMoMentalHealthScore3OrBelowWhileIncarcerated: {},
       usMoInstitutionalRiskScore1WhileIncarcerated: {},
@@ -67,6 +69,7 @@ const data: UsMoWorkReleaseReferralRecord["input"][] = [
   {
     stateCode: "US_MO",
     externalId: "RES021",
+    locationId: "FACILITY2",
     eligibleCriteria: {
       usMoMentalHealthScore3OrBelowWhileIncarcerated: {},
       usMoInstitutionalRiskScore1WhileIncarcerated: {},
@@ -94,6 +97,7 @@ const data: UsMoWorkReleaseReferralRecord["input"][] = [
   {
     stateCode: "US_MO",
     externalId: "RES022",
+    locationId: "FACILITY2",
     eligibleCriteria: {
       usMoMentalHealthScore3OrBelowWhileIncarcerated: {},
       usMoInstitutionalRiskScore1WhileIncarcerated: {},

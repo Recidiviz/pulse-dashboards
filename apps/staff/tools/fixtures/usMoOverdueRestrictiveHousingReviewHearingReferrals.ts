@@ -28,6 +28,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
   >("externalId", [
     {
       externalId: "RES015",
+      locationId: "FACILITY1",
       stateCode: "US_MO",
       eligibleCriteria: {
         usMoInRestrictiveHousing: {
@@ -73,6 +74,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
     },
     {
       externalId: "RES016",
+      locationId: "FACILITY2",
       stateCode: "US_MO",
       eligibleCriteria: {
         usMoInRestrictiveHousing: {
@@ -118,6 +120,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
     },
     {
       externalId: "RES017",
+      locationId: "FACILITY1",
       stateCode: "US_MO",
       eligibleCriteria: {
         usMoInRestrictiveHousing: {
@@ -163,6 +166,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
     },
     {
       externalId: "RES018",
+      locationId: "FACILITY2",
       stateCode: "US_MO",
       eligibleCriteria: {
         usMoPastLatestScheduledReviewDate: {

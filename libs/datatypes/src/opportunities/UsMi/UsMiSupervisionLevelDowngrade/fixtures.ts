@@ -29,6 +29,7 @@ export const usMiSupervisionLevelDowngradeFixtures = {
   fullyEligible1: makeRecordFixture(schema, {
     stateCode: "US_MI",
     externalId: "001",
+    officerId: "OFFICER8",
     eligibleCriteria: {
       supervisionLevelHigherThanAssessmentLevel: {
         assessmentLevel: "HIGH",

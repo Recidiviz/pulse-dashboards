@@ -27,6 +27,7 @@ export const usNeGoodTimeRestorationFixtures = {
   fullyEligible: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
     externalId: "RES001",
+    locationId: "DEMOFACILITY",
     isEligible: true,
     isAlmostEligible: false,
     eligibleDate: relativeFixtureDate({ months: -18 }),
@@ -59,6 +60,7 @@ export const usNeGoodTimeRestorationFixtures = {
   eligibleLowGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
     externalId: "RES002",
+    locationId: "DEMOFACILITY",
     isEligible: true,
     isAlmostEligible: false,
     eligibleDate: relativeFixtureDate({ months: -10 }),
@@ -91,6 +93,7 @@ export const usNeGoodTimeRestorationFixtures = {
   eligibleHighGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
     externalId: "RES003",
+    locationId: "DEMOFACILITY",
     isEligible: true,
     isAlmostEligible: false,
     eligibleDate: relativeFixtureDate({ years: 5, months: 6 }),
@@ -123,6 +126,7 @@ export const usNeGoodTimeRestorationFixtures = {
   eligibleModerateGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
     externalId: "RES004",
+    locationId: "DEMOFACILITY",
     isEligible: true,
     isAlmostEligible: false,
     eligibleDate: relativeFixtureDate({ months: -6 }),
@@ -155,6 +159,7 @@ export const usNeGoodTimeRestorationFixtures = {
   almostEligibleRecentIdcMr: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
     externalId: "RES005",
+    locationId: "DEMOFACILITY",
     isEligible: false,
     isAlmostEligible: true,
     eligibleDate: relativeFixtureDate({ months: -3 }),
@@ -196,6 +201,7 @@ export const usNeGoodTimeRestorationFixtures = {
     {
       stateCode: "US_NE",
       externalId: "RES006",
+      locationId: "DEMOFACILITY",
       isEligible: false,
       isAlmostEligible: true,
       eligibleDate: relativeFixtureDate({ months: -2 }),

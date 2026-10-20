@@ -27,6 +27,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "100",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 50",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,
@@ -84,6 +86,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "101",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 50",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,
@@ -144,6 +148,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "104",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 50",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,
@@ -214,6 +220,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "201",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT X",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,
@@ -285,6 +293,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "202",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT X",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,
@@ -348,6 +358,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "107",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 50",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,
@@ -429,6 +441,8 @@ export const usTnCompliantReporting2025PolicyReferrals =
       {
         stateCode: "US_TN",
         externalId: "203",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT X",
         eligibleCriteria: {
           usTnNoArrestsInPast6Months: null,
           usTnNoSupervisionSanctionWithin3Months: null,

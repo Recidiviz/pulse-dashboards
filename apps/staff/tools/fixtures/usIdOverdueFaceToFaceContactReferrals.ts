@@ -26,6 +26,8 @@ export const usIdOverdueFaceToFaceContactReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "001",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {
         usIdMeetsOverdueFaceToFaceContactAlert: {
           caseType: "GENERAL",
@@ -46,6 +48,8 @@ export const usIdOverdueFaceToFaceContactReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "003",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {
         usIdMeetsOverdueFaceToFaceContactAlert: {
           caseType: "GENERAL",
@@ -66,6 +70,8 @@ export const usIdOverdueFaceToFaceContactReferralsFixture: FirestoreFixture<
     {
       stateCode: "US_ID",
       externalId: "005",
+      officerId: "OFFICER6",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {
         usIdMeetsOverdueFaceToFaceContactAlert: {
           caseType: "SEX_OFFENSE",

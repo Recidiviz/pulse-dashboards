@@ -34,6 +34,7 @@ exports[`schema for fullyEligible1 1`] = `
   "isAlmostEligible": false,
   "isEligible": true,
   "metadata": {},
+  "officerId": "NCOFFICER1",
   "stateCode": "US_NC",
 }
 `;
@@ -72,6 +73,7 @@ exports[`schema for fullyEligible2 1`] = `
   "isAlmostEligible": false,
   "isEligible": true,
   "metadata": {},
+  "officerId": "NCOFFICER1",
   "stateCode": "US_NC",
 }
 `;

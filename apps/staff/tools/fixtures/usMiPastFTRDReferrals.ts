@@ -25,6 +25,7 @@ export const usMiPastFTRDReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "010",
+    officerId: "OFFICER8",
     eligibleCriteria: {
       supervisionTwoDaysPastFullTermCompletionDate: {
         eligibleDate: "2022-02-02",

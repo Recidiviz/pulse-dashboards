@@ -30,6 +30,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
       {
         stateCode: "US_MI",
         externalId: "RES019",
+        locationId: "FACILITY1",
         eligibleCriteria: {
           usMiPastWardenInPersonReviewForSccDate: {
             solitaryStartDate: relativeFixtureDate({ days: -20 }),
@@ -126,6 +127,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
       {
         stateCode: "US_MI",
         externalId: "RES020",
+        officerId: "MIOFFICER1",
+        locationId: "FACILITY2",
         eligibleCriteria: {
           usMiPastWardenInPersonReviewForSccDate: {
             solitaryStartDate: relativeFixtureDate({ days: -30 }),
@@ -186,6 +189,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
       {
         stateCode: "US_MI",
         externalId: "RES021",
+        locationId: "FACILITY2",
         eligibleCriteria: {
           usMiInSolitaryConfinementAtLeastSixMonths: {
             eligibleDate: relativeFixtureDate({ days: -50 }),
@@ -250,6 +254,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewV2Fixtures =
       {
         stateCode: "US_MI",
         externalId: "RES022",
+        officerId: "OFFICER8",
+        locationId: "FACILITY2",
         eligibleCriteria: {
           usMiPastWardenInPersonReviewForSccDate: {
             solitaryStartDate: relativeFixtureDate({ days: -30 }),

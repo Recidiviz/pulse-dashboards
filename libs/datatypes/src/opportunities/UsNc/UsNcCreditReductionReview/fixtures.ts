@@ -26,6 +26,7 @@ export const usNcCreditReductionReviewFixtures = {
   fullyEligible1: makeRecordFixture(usNcCreditReductionReviewSchema, {
     stateCode: "US_NC",
     externalId: "NC001",
+    officerId: "NCOFFICER1",
     isEligible: true,
     isAlmostEligible: false,
     eligibleCriteria: {
@@ -71,6 +72,7 @@ export const usNcCreditReductionReviewFixtures = {
   fullyEligible2: makeRecordFixture(usNcCreditReductionReviewSchema, {
     stateCode: "US_NC",
     externalId: "NC002",
+    officerId: "NCOFFICER1",
     isEligible: true,
     isAlmostEligible: false,
     eligibleCriteria: {

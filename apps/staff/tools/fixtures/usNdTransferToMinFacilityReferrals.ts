@@ -24,6 +24,8 @@ const data: OpportunityRecordBase[] = [
   {
     stateCode: "US_ND",
     externalId: "ND_RES003",
+    officerId: "OFFICER3",
+    locationId: "ND_DEMO_FACILITY",
     eligibleCriteria: {
       custodyLevelIsMinimum: {
         custodyLevel: "MINIMUM",
@@ -55,6 +57,8 @@ const data: OpportunityRecordBase[] = [
   {
     stateCode: "US_ND",
     externalId: "ND_RES004",
+    officerId: "OFFICER3",
+    locationId: "ND_DEMO_FACILITY",
     eligibleCriteria: {
       custodyLevelIsMinimum: {
         custodyLevel: "MINIMUM",
@@ -88,6 +92,8 @@ const data: OpportunityRecordBase[] = [
   {
     stateCode: "US_ND",
     externalId: "ND_RES005",
+    officerId: "OFFICER3",
+    locationId: "ND_DEMO_FACILITY",
     eligibleCriteria: {
       custodyLevelIsMinimum: {
         custodyLevel: "MINIMUM",

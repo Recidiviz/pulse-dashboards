@@ -29,6 +29,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
     {
       stateCode: "US_MI",
       externalId: "RES019",
+      locationId: "FACILITY1",
       eligibleCriteria: {
         usMiPastSecurityClassificationCommitteeReviewDate: {
           facilitySolitaryStartDate: relativeFixtureDate({ days: -20 }),
@@ -122,6 +123,8 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
     {
       stateCode: "US_MI",
       externalId: "RES020",
+      officerId: "MIOFFICER1",
+      locationId: "FACILITY2",
       eligibleCriteria: {
         usMiPastSecurityClassificationCommitteeReviewDate: {
           facilitySolitaryStartDate: relativeFixtureDate({ days: -30 }),
@@ -182,6 +185,7 @@ export const usMiSecurityClassificationCommitteeReviewV2Fixtures = {
     {
       stateCode: "US_MI",
       externalId: "RES021",
+      locationId: "FACILITY2",
       eligibleCriteria: {
         housingUnitTypeIsSolitaryConfinement: {
           solitaryStartDate: relativeFixtureDate({ days: -50 }),

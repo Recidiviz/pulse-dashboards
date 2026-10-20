@@ -26,6 +26,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES014",
+    officerId: "OFFICER1",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -64,6 +66,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES015",
+    officerId: "OFFICER1",
+    locationId: "FACILITY2",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -102,6 +106,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES016",
+    officerId: "OFFICER2",
+    locationId: "FACILITY3",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -142,6 +148,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES017",
+    officerId: "OFFICER2",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -182,6 +190,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES018",
+    officerId: "OFFICER3",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -221,6 +231,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES024",
+    officerId: "OFFICER1",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -262,6 +274,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES025",
+    officerId: "OFFICER2",
+    locationId: "FACILITY2",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -303,6 +317,8 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AZ",
     externalId: "RES026",
+    officerId: "OFFICER3",
+    locationId: "FACILITY3",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,

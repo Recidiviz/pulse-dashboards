@@ -24,6 +24,7 @@ export const usArWorkReleaseReferrals =
     {
       stateCode: "US_AR",
       externalId: "AR_RES004",
+      locationId: "FACILITY1",
       eligibleCriteria: {
         usArClassIOrEligibleForClassIWorkRelease: {},
         age21YearsOrOlder: {},
@@ -41,6 +42,7 @@ export const usArWorkReleaseReferrals =
     {
       stateCode: "US_AR",
       externalId: "AR_RES005",
+      locationId: "FACILITY1",
       eligibleCriteria: {
         usArClassIOrEligibleForClassIWorkRelease: {},
         age21YearsOrOlder: {},

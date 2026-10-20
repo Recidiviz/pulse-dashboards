@@ -27,6 +27,8 @@ export const usTnSupervisionLevelDowngradeReferrals =
       {
         stateCode: "US_TN",
         externalId: "102",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 50",
         eligibleCriteria: {
           supervisionLevelHigherThanAssessmentLevel: {
             assessmentLevel: "HIGH",
@@ -53,6 +55,8 @@ export const usTnSupervisionLevelDowngradeReferrals =
       {
         stateCode: "US_TN",
         externalId: "108",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 50",
         eligibleCriteria: {
           supervisionLevelHigherThanAssessmentLevel: {
             assessmentLevel: "LOW",
@@ -76,6 +80,8 @@ export const usTnSupervisionLevelDowngradeReferrals =
       {
         stateCode: "US_TN",
         externalId: "E2E_TN_BOTH",
+        officerId: "E2E_TN_FACILITY_OFFICER",
+        locationId: "BLEDSOE_CC",
         eligibleCriteria: {
           supervisionLevelHigherThanAssessmentLevel: {
             assessmentLevel: "MODERATE",

@@ -25,6 +25,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "ed-eligible-1",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Parole",
       interstateFlag: "IC-OUT",
@@ -74,6 +75,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "ed-eligible-2",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Probation",
       eligibleDate: "2021-03-01",
@@ -103,6 +105,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "ed-eligible-3",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Parole",
       interstateFlag: "IC-OUT",
@@ -152,6 +155,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "ed-eligible-4",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Probation",
       eligibleDate: "2022-04-04",
@@ -181,6 +185,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "ed-eligible-5",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Parole",
       interstateFlag: "IC-OUT",
@@ -230,6 +235,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "001",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Probation",
       eligibleDate: "2022-03-10",
@@ -259,6 +265,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "cr-eligible-1",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Probation",
       eligibleDate: "2022-05-15",
@@ -288,6 +295,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "cr-eligible-2",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Probation",
       eligibleDate: "2022-05-15",
@@ -317,6 +325,7 @@ export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_MI",
     externalId: "010",
+    officerId: "OFFICER8",
     metadata: {
       supervisionType: "Probation",
       eligibleDate: "2022-10-15",

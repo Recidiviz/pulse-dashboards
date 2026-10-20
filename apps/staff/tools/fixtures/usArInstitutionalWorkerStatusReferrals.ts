@@ -25,6 +25,7 @@ export const usArInstitutionalWorkerStatusReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AR",
     externalId: "AR_RES004",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       incarcerationWithin45MonthsOfParoleEligibilityDate: {},
       usArClassIOrEligibleForClassI309: {},
@@ -133,6 +134,7 @@ export const usArInstitutionalWorkerStatusReferrals = fixtureWithIdKey<
   {
     stateCode: "US_AR",
     externalId: "AR_RES005",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       incarcerationWithin45MonthsOfParoleEligibilityDate: {},
       usArClassIOrEligibleForClassI309: {},

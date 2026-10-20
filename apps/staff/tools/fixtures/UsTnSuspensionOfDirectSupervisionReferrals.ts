@@ -26,6 +26,8 @@ const data: UsTnSuspensionOfDirectSupervisionReferralRecordRaw[] = [
     isEligible: true,
     stateCode: "US_TN",
     externalId: "203",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT X",
     ineligibleCriteria: {},
     eligibleCriteria: {
       atLeast12MonthsSinceMostRecentPositiveDrugTest: null,
@@ -71,10 +73,12 @@ const data: UsTnSuspensionOfDirectSupervisionReferralRecordRaw[] = [
     isEligible: false,
     stateCode: "US_TN",
     externalId: "104",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT 50",
     ineligibleCriteria: {
-        hasFinesFeesBalanceOf0OrIsExempt: {
-            amountOwed: 125,
-        }
+      hasFinesFeesBalanceOf0OrIsExempt: {
+        amountOwed: 125,
+      },
     },
     eligibleCriteria: {
       atLeast12MonthsSinceMostRecentPositiveDrugTest: null,
@@ -126,8 +130,11 @@ const data: UsTnSuspensionOfDirectSupervisionReferralRecordRaw[] = [
     isEligible: false,
     stateCode: "US_TN",
     externalId: "107",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT 50",
     ineligibleCriteria: {
-        onSupervisionAtLeast2YearsAndAssessedRiskLowWhileOnSupervisionAtLeast2Years: null,
+      onSupervisionAtLeast2YearsAndAssessedRiskLowWhileOnSupervisionAtLeast2Years:
+        null,
     },
     eligibleCriteria: {
       atLeast12MonthsSinceMostRecentPositiveDrugTest: null,

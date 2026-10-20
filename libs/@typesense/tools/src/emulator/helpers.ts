@@ -188,8 +188,6 @@ export async function importCollection(
 // DUPLICATES production logic, because this library cannot import an app. Keep
 // it aligned with `export-collections.ts`.
 //
-// An opportunity carries the three SCOPE fields merged from its person: a key
-// that cannot match them makes every scoped-key spec vacuous.
 // ---------------------------------------------------------------------------
 
 const OPPORTUNITY_SOURCE_PATTERN = /^US_[A-Z]{2}-/;
@@ -214,12 +212,6 @@ function isOpportunitySource(collectionId: string): boolean {
   );
 }
 
-type PersonScopeFields = {
-  officerId?: unknown;
-  locationId?: unknown;
-  system: DocumentSystem;
-};
-
 /**
  * One `clientOpportunityUpdates` document as its `opportunityUpdates` row.
  *
@@ -242,25 +234,20 @@ export function projectOpportunityUpdate(
   return { ...projected, ...deriveUpdateFields(data, id), id };
 }
 
-/** Person id -> the scope an opportunity of theirs inherits. */
-async function loadPersonScope(
+/**
+ * Person id -> the system their opportunities belong to.
+ */
+async function loadPersonSystems(
   db: Firestore,
-): Promise<Map<string, PersonScopeFields>> {
-  const byId = new Map<string, PersonScopeFields>();
+): Promise<Map<string, DocumentSystem>> {
+  const byId = new Map<string, DocumentSystem>();
 
-  for (const [collection, locationField, system] of [
-    ["clients", "district", "SUPERVISION"],
-    ["residents", "facilityId", "INCARCERATION"],
+  for (const [collection, system] of [
+    ["clients", "SUPERVISION"],
+    ["residents", "INCARCERATION"],
   ] as const) {
     const snapshot = await db.collection(collection).get();
-    for (const doc of snapshot.docs) {
-      const data = doc.data();
-      byId.set(doc.id, {
-        officerId: data["officerId"],
-        locationId: data[locationField],
-        system,
-      });
-    }
+    for (const doc of snapshot.docs) byId.set(doc.id, system);
   }
 
   return byId;
@@ -286,7 +273,7 @@ export async function importOpportunities(
     .filter(isOpportunitySource);
   if (sources.length === 0) return 0;
 
-  const personScope = await loadPersonScope(db);
+  const personSystems = await loadPersonSystems(db);
   const docs: FirestoreDoc[] = [];
   let skippedUntyped = 0;
 
@@ -313,7 +300,7 @@ export async function importOpportunities(
       }
       if (!id || !personId) continue;
 
-      const scope = personScope.get(personId);
+      const system = personSystems.get(personId);
       docs.push({
         stateCode: data["stateCode"],
         opportunityType: data["opportunityType"],
@@ -329,24 +316,16 @@ export async function importOpportunities(
           "opportunityPseudonymizedId",
           "eligibleDate",
           "almostEligibleDate",
+          "officerId",
+          "locationId",
         ]),
         ...deriveOpportunityFields(data),
         sourceCollection: source,
         // Only the reference whose collection holds this person: the other
         // would claim a join edge that does not exist.
-        ...(scope?.system === "SUPERVISION" ? { clientDocId: personId } : {}),
-        ...(scope?.system === "INCARCERATION"
-          ? { residentDocId: personId }
-          : {}),
-        // Absent when the person is not in the fixtures. Left unset, as the
-        // real backfill does, so a key simply never matches it.
-        ...(scope?.officerId !== undefined
-          ? { officerId: scope.officerId }
-          : {}),
-        ...(scope?.locationId !== undefined
-          ? { locationId: scope.locationId }
-          : {}),
-        ...(scope ? { system: scope.system } : {}),
+        ...(system === "SUPERVISION" ? { clientDocId: personId } : {}),
+        ...(system === "INCARCERATION" ? { residentDocId: personId } : {}),
+        ...(system ? { system } : {}),
         id,
       });
     }

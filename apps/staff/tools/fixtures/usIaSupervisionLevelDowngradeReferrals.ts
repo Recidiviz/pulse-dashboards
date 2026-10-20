@@ -28,6 +28,7 @@ export const usIaSupervisionLevelDowngradeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "001",
+    officerId: "OFFICER1",
     eligibleCriteria: {
       noSupervisionLevelDowngradeWithin6Months: null,
       noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
@@ -143,6 +144,7 @@ export const usIaSupervisionLevelDowngradeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "002",
+    officerId: "OFFICER1",
     caseNotes: {
       "Open Interventions": [
         {
@@ -261,6 +263,7 @@ export const usIaSupervisionLevelDowngradeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "003",
+    officerId: "OFFICER1",
     caseNotes: {
       "Open Interventions": [
         {
@@ -393,6 +396,7 @@ export const usIaSupervisionLevelDowngradeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "004",
+    officerId: "OFFICER1",
     caseNotes: {},
     eligibleCriteria: {
       noSupervisionLevelDowngradeWithin6Months: null,
@@ -498,6 +502,7 @@ export const usIaSupervisionLevelDowngradeReferralsFixture = fixtureWithIdKey<
   {
     stateCode: "US_IA",
     externalId: "005",
+    officerId: "OFFICER1",
     isEligible: false,
     isAlmostEligible: true,
     eligibleDate: relativeFixtureDate({ months: -14 }),

@@ -24,6 +24,8 @@ const data: UsTnExpirationReferralRecordRaw[] = [
   {
     stateCode: "US_TN",
     externalId: "101",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT 50",
     formInformation: {
       offenses: ["FAILURE TO APPEAR (FELONY)", "FAILURE TO APPEAR (FELONY)"],
       convictionCounties: ["010"],
@@ -101,6 +103,8 @@ const data: UsTnExpirationReferralRecordRaw[] = [
   {
     stateCode: "US_TN",
     externalId: "109",
+    officerId: "OFFICER1",
+    locationId: "DISTRICT 50",
     formInformation: {
       offenses: ["DRIVING W/A REVOKED LICENSE", "TRAFFIC OFFENSE"],
       convictionCounties: ["010"],

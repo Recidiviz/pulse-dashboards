@@ -55,6 +55,17 @@ export const opportunitySchemaBase = z.object({
   // Hashed opportunity ID used to prevent emitting PII in Segment events
   opportunityPseudonymizedId: z.string().optional(),
   metadata: z.object({}).passthrough().default({}),
+  /**
+   * Authorization scope, emitted per row by the ETL and read ONLY by the
+   * minted Typesense scoped key. `locationId` is the district for a
+   * supervision opportunity and the facility for an incarceration one.
+   *
+   * Nothing in the product reads either. They are declared here so the record
+   * can carry its own scope, which is what lets the search index stop deriving
+   * it from the person collection at backfill time.
+   */
+  officerId: z.string().optional(),
+  locationId: z.string().optional(),
 });
 
 export type OpportunityRecordBase = z.infer<typeof opportunitySchemaBase>;

@@ -26,6 +26,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       // ── Eligible Now ───────────────────────────────────────────────────────
       {
         externalId: "002",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 1",
         stateCode: "US_TX",
         eligibleDate: "2023-11-19",
         eligibleCriteria: {
@@ -93,6 +95,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "013",
+        officerId: "OFFICER5",
+        locationId: "DISTRICT 42",
         stateCode: "US_TX",
         eligibleDate: "2024-01-02",
         eligibleCriteria: {
@@ -154,6 +158,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "003",
+        officerId: "OFFICER2",
+        locationId: "DISTRICT 42",
         stateCode: "US_TX",
         eligibleDate: "2025-06-15",
         eligibleCriteria: {
@@ -222,6 +228,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
         // ERS-eligible only — not in ARS fixture (limited supervision qualifies for ERS
         // minimum-or-limited criterion but not the ARS minimum-only criterion)
         externalId: "014",
+        officerId: "OFFICER5",
+        locationId: "DISTRICT 42",
         stateCode: "US_TX",
         eligibleDate: "2024-02-23",
         eligibleCriteria: {
@@ -253,6 +261,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "009",
+        officerId: "OFFICER4",
+        locationId: "DISTRICT 81",
         stateCode: "US_TX",
         eligibleDate: "2024-05-07",
         eligibleCriteria: {
@@ -316,6 +326,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "015",
+        officerId: "OFFICER1",
+        locationId: "DISTRICT 1",
         stateCode: "US_TX",
         eligibleDate: "2024-03-04",
         eligibleCriteria: {
@@ -372,6 +384,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "016",
+        officerId: "OFFICER2",
+        locationId: "DISTRICT 42",
         stateCode: "US_TX",
         eligibleDate: "2024-04-08",
         eligibleCriteria: {
@@ -428,6 +442,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "008",
+        officerId: "OFFICER3",
+        locationId: "DISTRICT 23",
         stateCode: "US_TX",
         eligibleDate: "2023-07-03",
         eligibleCriteria: {
@@ -495,6 +511,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       // ── Approved by Supervisor ──────────────────────────────────────────────
       {
         externalId: "018",
+        officerId: "OFFICER4",
+        locationId: "DISTRICT 81",
         stateCode: "US_TX",
         eligibleDate: "2024-07-30",
         eligibleCriteria: {
@@ -527,6 +545,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "007",
+        officerId: "OFFICER3",
+        locationId: "DISTRICT 23",
         stateCode: "US_TX",
         eligibleDate: "2024-12-28",
         eligibleCriteria: {
@@ -560,6 +580,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       // ── Almost Eligible ────────────────────────────────────────────────────
       {
         externalId: "005",
+        officerId: "OFFICER2",
+        locationId: "DISTRICT 42",
         stateCode: "US_TX",
         eligibleCriteria: {
           usTxNoWarrantWithSustainedViolationWithin2Years: null,
@@ -591,6 +613,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "010",
+        officerId: "OFFICER4",
+        locationId: "DISTRICT 81",
         stateCode: "US_TX",
         eligibleCriteria: {
           usTxNoWarrantWithSustainedViolationWithin2Years: null,
@@ -622,6 +646,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "011",
+        officerId: "OFFICER4",
+        locationId: "DISTRICT 81",
         stateCode: "US_TX",
         eligibleCriteria: {
           usTxNoWarrantWithSustainedViolationWithin2Years: null,
@@ -653,6 +679,8 @@ export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
       },
       {
         externalId: "012",
+        officerId: "OFFICER5",
+        locationId: "DISTRICT 42",
         stateCode: "US_TX",
         eligibleCriteria: {
           usTxNoWarrantWithSustainedViolationWithin2Years: null,

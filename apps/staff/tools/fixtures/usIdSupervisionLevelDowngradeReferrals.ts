@@ -23,6 +23,8 @@ export const usIdSupervisionLevelDowngradeReferrals =
     {
       stateCode: "US_ID",
       externalId: "001",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {
         supervisionLevelHigherThanAssessmentLevel: {
           assessmentLevel: "MINIMUM",
@@ -37,6 +39,8 @@ export const usIdSupervisionLevelDowngradeReferrals =
     {
       stateCode: "US_ID",
       externalId: "003",
+      officerId: "OFFICER4",
+      locationId: "DISTRICT 1",
       eligibleCriteria: {
         supervisionLevelHigherThanAssessmentLevel: {
           assessmentLevel: "MEDIUM",

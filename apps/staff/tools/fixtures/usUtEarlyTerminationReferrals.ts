@@ -23,6 +23,7 @@ const data: UsUtEarlyTerminationRecord["input"][] = [
   {
     stateCode: "US_UT",
     externalId: "UT001",
+    officerId: "UTOFFICER1",
     eligibleCriteria: {
       atLeast6MonthsSinceMostRecentPositiveDrugTest: null,
       onSupervisionAtLeast6Months: null,
@@ -66,6 +67,7 @@ const data: UsUtEarlyTerminationRecord["input"][] = [
   {
     stateCode: "US_UT",
     externalId: "UT002",
+    officerId: "UTOFFICER1",
     eligibleCriteria: {
       atLeast6MonthsSinceMostRecentPositiveDrugTest: null,
       onSupervisionAtLeast6Months: null,
@@ -110,6 +112,7 @@ const data: UsUtEarlyTerminationRecord["input"][] = [
   {
     stateCode: "US_UT",
     externalId: "UT003",
+    officerId: "UTOFFICER1",
     eligibleCriteria: {
       atLeast6MonthsSinceMostRecentPositiveDrugTest: null,
       onSupervisionAtLeast6Months: null,
@@ -154,6 +157,7 @@ const data: UsUtEarlyTerminationRecord["input"][] = [
   {
     stateCode: "US_UT",
     externalId: "UT004",
+    officerId: "UTOFFICER1",
     eligibleCriteria: {
       atLeast6MonthsSinceMostRecentPositiveDrugTest: null,
       onSupervisionAtLeast6Months: null,
@@ -197,6 +201,7 @@ const data: UsUtEarlyTerminationRecord["input"][] = [
   {
     stateCode: "US_UT",
     externalId: "UT005",
+    officerId: "UTOFFICER1",
     eligibleCriteria: {
       onSupervisionAtLeast6Months: null,
       supervisionHousingIsPermanentFor3Months: null,

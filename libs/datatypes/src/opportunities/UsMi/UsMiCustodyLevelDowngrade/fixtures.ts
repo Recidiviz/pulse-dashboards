@@ -27,6 +27,7 @@ export const usMiCustodyLevelDowngradeFixtures = {
   fullyEligible1: makeRecordFixture(usMiCustodyLevelDowngradeSchema, {
     stateCode: "US_MI",
     externalId: "RES019",
+    locationId: "FACILITY1",
     eligibleCriteria: {
       usMiActualPlacementLevelLessThanCustodyLevel: {
         actualPlacementLevel: "I",
@@ -50,6 +51,8 @@ export const usMiCustodyLevelDowngradeFixtures = {
   fullyEligible2: makeRecordFixture(usMiCustodyLevelDowngradeSchema, {
     stateCode: "US_MI",
     externalId: "RES020",
+    officerId: "MIOFFICER1",
+    locationId: "FACILITY2",
     eligibleCriteria: {
       usMiActualPlacementLevelLessThanCustodyLevel: {
         actualPlacementLevel: "I",
@@ -73,6 +76,7 @@ export const usMiCustodyLevelDowngradeFixtures = {
   almostEligible1: makeRecordFixture(usMiCustodyLevelDowngradeSchema, {
     stateCode: "US_MI",
     externalId: "RES021",
+    locationId: "FACILITY2",
     eligibleCriteria: {
       usMiManagementLevelLessThanOrEqualToCustodyLevel: {
         managementLevel: "II",
