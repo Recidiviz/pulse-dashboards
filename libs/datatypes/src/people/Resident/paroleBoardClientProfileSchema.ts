@@ -190,12 +190,15 @@ export const paroleBoardClientProfileSecurityThreatGroupSchema = z.object({
 // values -- US_ID's already matches (it's the normalized
 // StateProgramAssignmentParticipationStatus enum), but US_CO's is its own
 // free-form program-tracking status (e.g. "Transferred to another
-// Facility"), so the frontend translates it per state.
+// Facility"), so the frontend translates it per state. The two boolean flags
+// are US_ID-only and often null, because officers leave them unset.
 export const paroleBoardClientProfileProgramSchema = z.object({
   programName: nullishAsUndefined(z.string()),
   programStatus: nullishAsUndefined(z.string()),
   programCategory: nullishAsUndefined(z.string()),
   programNeed: nullishAsUndefined(z.string()),
+  programIsRequiredForRelease: nullishAsUndefined(z.boolean()),
+  programIsRequestedByResident: nullishAsUndefined(z.boolean()),
   programReferralDate: nullishAsUndefined(z.string()),
   programStartDate: nullishAsUndefined(z.string()),
   programCompletionDate: nullishAsUndefined(z.string()),

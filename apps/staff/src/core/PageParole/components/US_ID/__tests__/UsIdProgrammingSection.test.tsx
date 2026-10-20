@@ -81,13 +81,35 @@ describe("UsIdProgrammingSection", () => {
     Reflect.deleteProperty(Element.prototype, "scrollIntoView");
   });
 
-  it("renders the Date, Program and Status columns", () => {
+  it("renders the Date, Program, Status and Assigned or Voluntary columns", () => {
     renderSection([docProgram({})]);
 
     expect(screen.getByText("Programming")).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Date" })).toBeVisible();
     expect(screen.getByRole("columnheader", { name: "Program" })).toBeVisible();
     expect(screen.getByRole("columnheader", { name: "Status" })).toBeVisible();
+    expect(
+      screen.getByRole("columnheader", { name: "Assigned or Voluntary" }),
+    ).toBeVisible();
+  });
+
+  it("labels each program as assigned or voluntary, and shows Unknown when the enrollment type is not known", () => {
+    renderSection(
+      [
+        docProgram({ name: "Assigned Program", enrollmentType: "ASSIGNED" }),
+        docProgram({ name: "Voluntary Program", enrollmentType: "VOLUNTARY" }),
+        docProgram({ name: "Unflagged Program", enrollmentType: undefined }),
+      ],
+      [edovoProgram({ title: "Tablet Program" })],
+    );
+
+    const enrollmentByProgram = new Map(
+      renderedRows().map(([, name, , enrollment]) => [name, enrollment]),
+    );
+    expect(enrollmentByProgram.get("Assigned Program")).toBe("Assigned");
+    expect(enrollmentByProgram.get("Voluntary Program")).toBe("Voluntary");
+    expect(enrollmentByProgram.get("Unflagged Program")).toBe("Unknown");
+    expect(enrollmentByProgram.get("Tablet Program")).toBe("Unknown");
   });
 
   it("shows programs of every status, not only completed ones", () => {
@@ -202,9 +224,10 @@ describe("UsIdProgrammingSection", () => {
       }),
     ]);
 
-    expect(screen.getByText("3/1/2026")).toBeInTheDocument();
-    expect(screen.getByText("6/1/2006")).toBeInTheDocument();
-    expect(screen.queryByText("----")).not.toBeInTheDocument();
+    expect(renderedRows().map(([date]) => date)).toEqual([
+      "3/1/2026",
+      "6/1/2006",
+    ]);
   });
 
   it("dates an Edovo program by its state too", () => {

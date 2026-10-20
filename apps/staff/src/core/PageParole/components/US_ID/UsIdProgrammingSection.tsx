@@ -23,6 +23,7 @@ import styled from "styled-components";
 import {
   ParoleDocProgram,
   ParoleEdovoProgram,
+  ParoleProgramEnrollmentType,
   ParoleProgramStatus,
 } from "~datatypes";
 import { palette } from "~design-system";
@@ -83,7 +84,13 @@ const EDOVO_STATUS_DISPLAY: Record<
   "in-progress": { label: "Enrolled", datedBy: "start" },
 };
 
+const ENROLLMENT_TYPE_LABELS: Record<ParoleProgramEnrollmentType, string> = {
+  ASSIGNED: "Assigned",
+  VOLUNTARY: "Voluntary",
+};
+
 const EMPTY_PLACEHOLDER = "----";
+const UNKNOWN_ENROLLMENT_LABEL = "Unknown";
 
 export const US_ID_PROGRAMS_PER_PAGE = 10;
 
@@ -132,6 +139,7 @@ type ProgramRow = {
   date: string | undefined;
   name: string;
   status: string;
+  enrollmentType: ParoleProgramEnrollmentType | undefined;
 };
 
 /** Sorts rows newest first, with undated programs last. */
@@ -179,6 +187,7 @@ function programRows(
         date: dateFor(program, datedBy),
         name: program.name,
         status: label,
+        enrollmentType: program.enrollmentType,
       },
     ];
   });
@@ -190,6 +199,7 @@ function programRows(
       date: dateFor({ ...program, referralDate: undefined }, datedBy),
       name: program.title,
       status: label,
+      enrollmentType: undefined,
     };
   });
 
@@ -250,6 +260,7 @@ export function UsIdProgrammingSection({
                 <HeaderCell>Date</HeaderCell>
                 <HeaderCell>Program</HeaderCell>
                 <HeaderCell>Status</HeaderCell>
+                <HeaderCell>Assigned or Voluntary</HeaderCell>
               </tr>
             </thead>
             <tbody>
@@ -260,6 +271,11 @@ export function UsIdProgrammingSection({
                   </Cell>
                   <Cell>{row.name}</Cell>
                   <Cell>{row.status}</Cell>
+                  <Cell>
+                    {row.enrollmentType
+                      ? ENROLLMENT_TYPE_LABELS[row.enrollmentType]
+                      : UNKNOWN_ENROLLMENT_LABEL}
+                  </Cell>
                 </tr>
               ))}
             </tbody>

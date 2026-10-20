@@ -1165,6 +1165,67 @@ describe("ParoleAPIClient", () => {
       ]);
     });
 
+    it("derives enrollmentType from the required and requested flags, with a requirement winning over a request", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+          },
+        }),
+      );
+      stubProfile(rootStore, {
+        demographics: {},
+        programs: [
+          {
+            programName: "Required Only",
+            programStatus: "IN_PROGRESS",
+            programIsRequiredForRelease: true,
+            programIsRequestedByResident: false,
+          },
+          {
+            programName: "Requested Only",
+            programStatus: "IN_PROGRESS",
+            programIsRequiredForRelease: false,
+            programIsRequestedByResident: true,
+          },
+          {
+            programName: "Required And Requested",
+            programStatus: "IN_PROGRESS",
+            programIsRequiredForRelease: true,
+            programIsRequestedByResident: true,
+          },
+          {
+            programName: "Neither Flag True",
+            programStatus: "IN_PROGRESS",
+            programIsRequiredForRelease: false,
+            programIsRequestedByResident: false,
+          },
+          {
+            programName: "Flags Unset",
+            programStatus: "IN_PROGRESS",
+            programIsRequiredForRelease: null,
+            programIsRequestedByResident: null,
+          },
+        ],
+      });
+
+      const result = await client.caseDetail("RES999");
+
+      expect(
+        result.docPrograms.map(({ name, enrollmentType }) => [
+          name,
+          enrollmentType,
+        ]),
+      ).toEqual([
+        ["Required Only", "ASSIGNED"],
+        ["Requested Only", "VOLUNTARY"],
+        ["Required And Requested", "ASSIGNED"],
+        ["Neither Flag True", undefined],
+        ["Flags Unset", undefined],
+      ]);
+    });
+
     it("maps edovoPrograms, dropping a WITHDRAWN entry since PAROLE_EDOVO_STATUS has no bucket for it", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({

@@ -240,6 +240,13 @@ export type ParoleProgramStatus = z.infer<typeof PAROLE_PROGRAM_STATUS>;
 export const PAROLE_COMPLETED_PROGRAM_STATUSES: ReadonlySet<ParoleProgramStatus> =
   new Set(["DISCHARGED_SUCCESSFUL", "DISCHARGED_SUCCESSFUL_WITH_DISCRETION"]);
 
+// Who started a program enrollment. Left unset when the DOC record does not
+// say, which is common.
+export const PAROLE_PROGRAM_ENROLLMENT_TYPE = z.enum(["ASSIGNED", "VOLUNTARY"]);
+export type ParoleProgramEnrollmentType = z.infer<
+  typeof PAROLE_PROGRAM_ENROLLMENT_TYPE
+>;
+
 export const paroleDocProgramSchema = z.object({
   name: z.string(),
   referralDate: z.string().optional(),
@@ -248,6 +255,7 @@ export const paroleDocProgramSchema = z.object({
   type: z.string(),
   criminogenicNeed: z.string(),
   status: PAROLE_PROGRAM_STATUS,
+  enrollmentType: PAROLE_PROGRAM_ENROLLMENT_TYPE.optional(),
 });
 export type ParoleDocProgram = z.infer<typeof paroleDocProgramSchema>;
 

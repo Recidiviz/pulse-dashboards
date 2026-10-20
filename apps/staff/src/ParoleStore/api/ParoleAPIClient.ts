@@ -27,6 +27,7 @@ import {
   ParoleAttachment,
   ParoleBoardClientProfileHearing,
   ParoleBoardClientProfileLatestRiskNeedSummary,
+  ParoleBoardClientProfileProgram,
   ParoleBoardClientProfileRecord,
   ParoleBoardClientProfileRiskAssessment,
   ParoleBoardClientProfileSentence,
@@ -44,6 +45,7 @@ import {
   ParoleOffense,
   ParoleOffenseHistory,
   ParolePlan,
+  ParoleProgramEnrollmentType,
   ParoleProgramStatus,
   ParoleRecommendedStatus,
   ParoleResident,
@@ -240,6 +242,23 @@ function programStatusForRawLabel(
 ): ParoleProgramStatus | undefined {
   if (PROGRAM_STATUS_OPTIONS.has(raw)) return raw as ParoleProgramStatus;
   return PROGRAM_STATUS_BY_RAW_LABEL[raw];
+}
+
+/**
+ * Returns who started the enrollment. A requirement for release wins over a
+ * request by the resident, because the resident cannot opt out of it. Returns
+ * undefined when neither flag is true, since a false or missing flag does not
+ * say who started the enrollment.
+ */
+function enrollmentTypeForProgram(
+  program: Pick<
+    ParoleBoardClientProfileProgram,
+    "programIsRequiredForRelease" | "programIsRequestedByResident"
+  >,
+): ParoleProgramEnrollmentType | undefined {
+  if (program.programIsRequiredForRelease) return "ASSIGNED";
+  if (program.programIsRequestedByResident) return "VOLUNTARY";
+  return undefined;
 }
 
 // Edovo's raw status has a third value ("WITHDRAWN") that PAROLE_EDOVO_STATUS
@@ -744,6 +763,7 @@ export class ParoleAPIClient implements ParoleAPI {
           type: program.programCategory ?? UNKNOWN_TEXT,
           criminogenicNeed: program.programNeed ?? UNKNOWN_TEXT,
           status,
+          enrollmentType: enrollmentTypeForProgram(program),
         },
       ];
     });
