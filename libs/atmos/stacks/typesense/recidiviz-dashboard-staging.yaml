@@ -30,6 +30,11 @@ components:
         backfill_allowlist_ip_ranges:
           - !terraform.state apps/typesense-backfill egress_ip
 
+        # Enforce the OWASP WAF rules in staging (they have been running in preview).
+        # Known false positives are opted out in exposure.tf.
+        # Production stays in preview until staging has run enforced without new 403s.
+        waf_preview: false
+
         # Public endpoint. DNS (A record + cert-validation CNAME) is managed outside
         # this project — see the endpoint_ip / cert_dns_authorization_record outputs.
         hostname: typesense-staging.recidiviz.org

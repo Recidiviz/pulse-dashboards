@@ -56,8 +56,19 @@ locals {
   # Typesense never reflects request arg names into response headers, so this rule
   # adds no protection here. Opted out cluster-wide rather than path-scoped because a
   # path carve-out would cost a third advanced rule against the tight regional quota.
+  #
+  # 942100 (sqli) = libinjection SQL-injection detection. It fires on legitimate
+  # ARG_VALUES: free-text document fields (e.g. `denial.otherReason`) on PATCH/upsert
+  # writes in production, and search `filter_by` expressions on POST /multi_search in
+  # staging. The shared waf-policy module also opts this rule out.
+  #
+  # 932150 (rce) = "Direct Unix command execution". It fired on a free-text document
+  # field (`denial.otherReason`) in a production document upsert; a prose value that
+  # merely resembles a shell command is not an attack against Typesense.
   waf_opt_out_rule_ids = {
     "protocolattack-v33-stable" = ["owasp-crs-v030301-id921150-protocolattack"]
+    "sqli-v33-stable"           = ["owasp-crs-v030301-id942100-sqli"]
+    "rce-v33-stable"            = ["owasp-crs-v030301-id932150-rce"]
   }
 
   # The CEL options fragment appended after 'sensitivity': 1 for each ruleset (empty

@@ -221,7 +221,9 @@ JSON traffic, but JSON/JSONL bodies still occasionally look like attacks. Decide
   normal API path (`/collections/.../documents`, `/search`), and `matchedFieldValue` is benign
   structure (a `\n` JSONL separator, a field value that merely _resembles_ SQL/HTML). Known case:
   **921150** fires on every `/documents/import` because JSONL record-separator newlines parse as arg
-  names — see `exposure.tf` `local.waf_opt_out_rule_ids`.
+  names — see `exposure.tf` `local.waf_opt_out_rule_ids`. Also opted out: **942100** (sqli) and
+  **932150** (rce), which fire on free-text document fields in writes and on search `filter_by`
+  expressions.
 - **Likely real** — unknown source, scanner-ish user agent, odd paths/methods, or a payload that is
   unambiguously an exploit string. Leave the rule enforcing.
 
