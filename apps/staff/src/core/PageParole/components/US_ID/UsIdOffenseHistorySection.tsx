@@ -15,69 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
 import { ParoleCase, ParoleOffense } from "~datatypes";
-import { palette } from "~design-system";
 
+import {
+  ParoleFactLabel,
+  ParoleFactStack,
+  paroleRecordCardStyles,
+  ParoleRecordHeader,
+  ParoleRecordHeaderDetail,
+  ParoleRecordHeading,
+  ParoleSectionCard,
+  ParoleSectionTitle,
+  ParoleSmallFactValue,
+  ParoleSubsection,
+  ParoleSubsectionTitle,
+} from "../ParoleCaseProfileStyles";
 import {
   FactRow,
   formatDateLong,
   formatDateNumeric,
   SectionStack,
 } from "../shared";
-import {
-  UsIdFactLabel,
-  UsIdFactStack,
-  usIdRecordCardStyles,
-  UsIdSectionCard,
-  UsIdSectionTitle,
-  UsIdSmallFactValue,
-  UsIdSubsection,
-  UsIdSubsectionTitle,
-} from "./UsIdCaseProfileStyles";
 
 // Shown for a date or date range that Idaho has not recorded on the offense yet.
 const EMPTY_PLACEHOLDER = "----";
 
 const OffenseCard = styled.div`
-  ${usIdRecordCardStyles}
+  ${paroleRecordCardStyles}
 `;
 
-const OffenseHeader = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: ${rem(spacing.md)};
-`;
-
-const OffenseHeading = styled.div`
-  ${typography.Sans16}
-  display: flex;
-  align-items: baseline;
-  gap: ${rem(spacing.sm)};
-  min-width: 0;
-  line-height: 1.5;
-  color: ${palette.pine2};
-`;
-
-const OffenseStatute = styled.span`
-  ${typography.Sans14}
-  flex-shrink: 0;
-  white-space: nowrap;
-  color: ${palette.slate85};
-`;
-
-const OffenseCaseNumber = styled.div`
-  ${typography.Sans14}
-  flex-shrink: 0;
-  white-space: nowrap;
-  color: ${palette.slate85};
-`;
-
-const OffenseFact = styled(UsIdFactStack)`
+const OffenseFact = styled(ParoleFactStack)`
   flex: 0 0 auto;
   min-width: ${rem(164)};
 `;
@@ -133,10 +103,10 @@ export function UsIdOffenseHistorySection({
   caseDetail: ParoleCase;
 }) {
   return (
-    <UsIdSectionCard>
-      <UsIdSectionTitle>Offense Information</UsIdSectionTitle>
-      <UsIdSubsection>
-        <UsIdSubsectionTitle>Instant Offenses</UsIdSubsectionTitle>
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Offense Information</ParoleSectionTitle>
+      <ParoleSubsection>
+        <ParoleSubsectionTitle>Instant Offenses</ParoleSubsectionTitle>
         <SectionStack>
           {caseDetail.offenseHistory.offenses.map((offense) => {
             const facts: Array<{ label: string; value: string }> = [
@@ -168,20 +138,24 @@ export function UsIdOffenseHistorySection({
 
             return (
               <OffenseCard key={`${offense.docket}-${offense.conviction}`}>
-                <OffenseHeader>
-                  <OffenseHeading>
+                <ParoleRecordHeader>
+                  <ParoleRecordHeading>
                     {offense.conviction}
                     {offense.statute && (
-                      <OffenseStatute>§{offense.statute}</OffenseStatute>
+                      <ParoleRecordHeaderDetail as="span">
+                        §{offense.statute}
+                      </ParoleRecordHeaderDetail>
                     )}
-                  </OffenseHeading>
-                  <OffenseCaseNumber>Case # {offense.docket}</OffenseCaseNumber>
-                </OffenseHeader>
+                  </ParoleRecordHeading>
+                  <ParoleRecordHeaderDetail>
+                    Case # {offense.docket}
+                  </ParoleRecordHeaderDetail>
+                </ParoleRecordHeader>
                 <FactRow>
                   {facts.map((fact) => (
                     <OffenseFact key={fact.label}>
-                      <UsIdFactLabel>{fact.label}</UsIdFactLabel>
-                      <UsIdSmallFactValue>{fact.value}</UsIdSmallFactValue>
+                      <ParoleFactLabel>{fact.label}</ParoleFactLabel>
+                      <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
                     </OffenseFact>
                   ))}
                 </FactRow>
@@ -189,7 +163,7 @@ export function UsIdOffenseHistorySection({
             );
           })}
         </SectionStack>
-      </UsIdSubsection>
-    </UsIdSectionCard>
+      </ParoleSubsection>
+    </ParoleSectionCard>
   );
 }

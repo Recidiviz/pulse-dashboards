@@ -15,20 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
-import styled from "styled-components";
-
 import {
   isParoleUnknownDate,
   PAROLE_UNKNOWN_TEXT,
   ParoleConductRecord,
 } from "~datatypes";
-import { Icon, palette } from "~design-system";
 
 import { PaletteKey, WorkflowsBadgePill } from "../../../BadgePill/BadgePill";
-import { DialogModal } from "../../../DialogModal";
 import { conductClassificationPalette } from "../ConductRecordCard";
+import {
+  ParoleRecordModal,
+  ParoleRecordModalNarrative,
+} from "../ParoleRecordModal";
 import {
   FactRow,
   FactRowStack,
@@ -36,53 +34,6 @@ import {
   formatDate,
   MutedText,
 } from "../shared";
-
-const StyledDialogModal = styled(DialogModal)`
-  .ReactModal__Content {
-    max-width: 90vw;
-    padding: 0;
-    width: ${rem(768)};
-  }
-`;
-
-const ModalHeader = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${palette.slate20};
-  display: flex;
-  justify-content: space-between;
-  padding: ${rem(spacing.lg)} ${rem(40)};
-`;
-
-const ModalTitle = styled.h2`
-  ${typography.Sans16}
-  color: ${palette.slate80};
-  font-weight: 500;
-  margin: 0;
-`;
-
-const CloseButton = styled.button.attrs({ type: "button" })`
-  align-items: center;
-  background: transparent;
-  border: 0;
-  color: ${palette.slate60};
-  cursor: pointer;
-  display: flex;
-  padding: 0;
-`;
-
-const ModalBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.lg)};
-  padding: ${rem(spacing.xl)} ${rem(40)};
-`;
-
-const FullNarrative = styled.div`
-  ${typography.Sans14}
-  color: ${palette.pine1};
-  line-height: 1.6;
-  white-space: pre-wrap;
-`;
 
 /**
  * Returns the report's severity class, with "(Pending)" appended while the
@@ -112,21 +63,13 @@ export function UsIdDisciplinaryReportModal({
   onRequestClose: () => void;
 }) {
   return (
-    <StyledDialogModal
+    <ParoleRecordModal
       isOpen={report !== undefined}
+      title="Disciplinary Offense Report"
       onRequestClose={onRequestClose}
-      aria={{ labelledby: "us-id-dor-modal-title" }}
     >
-      <ModalHeader>
-        <ModalTitle id="us-id-dor-modal-title">
-          Disciplinary Offense Report
-        </ModalTitle>
-        <CloseButton onClick={onRequestClose} aria-label="Close">
-          <Icon kind="Close" size={20} />
-        </CloseButton>
-      </ModalHeader>
       {report && (
-        <ModalBody>
+        <>
           <FactRow>
             <FactRowStack>
               <MutedText>Date</MutedText>
@@ -154,9 +97,11 @@ export function UsIdDisciplinaryReportModal({
               />
             </FactRowStack>
           </FactRow>
-          <FullNarrative>{report.description}</FullNarrative>
-        </ModalBody>
+          <ParoleRecordModalNarrative>
+            {report.description}
+          </ParoleRecordModalNarrative>
+        </>
       )}
-    </StyledDialogModal>
+    </ParoleRecordModal>
   );
 }

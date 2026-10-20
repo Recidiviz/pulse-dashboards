@@ -15,58 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import styled from "styled-components";
-
 import {
   isParoleUnknownDate,
   PAROLE_UNKNOWN_TEXT,
   ParoleConductRecord,
 } from "~datatypes";
-import { palette } from "~design-system";
 
+import { PaletteKey, statusStyles } from "../../BadgePill/BadgePill";
 import {
-  PaletteKey,
-  statusStyles,
-  WorkflowsBadgePill,
-} from "../../BadgePill/BadgePill";
-import { FactLabel, formatDate } from "./shared";
-
-const RecordCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.sm)};
-  background: ${palette.marble2};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(6)};
-  padding: ${rem(spacing.md)};
-`;
-
-const RecordHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const RecordTitle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(spacing.sm)};
-  font-weight: 600;
-  color: ${palette.pine1};
-`;
-
-const RecordDate = styled.span`
-  color: ${palette.slate70};
-`;
-
-// WorkflowsBadgePill doesn't expose a className, so this can't restyle it
-// directly -- text-transform is inherited, so wrapping it is enough to force
-// its label uppercase without touching the shared component.
-const UppercaseBadgeWrapper = styled.span`
-  text-transform: uppercase;
-`;
+  ParoleDisciplinaryRecord,
+  ParoleDisciplinaryRecordHeader,
+} from "./ParoleDisciplinaryRecord";
+import { formatDate } from "./shared";
 
 // Tenant configs key these colors by the severity string as the backend
 // spells it today ("Class 1"). Matching case-insensitively keeps a casing
@@ -94,25 +54,6 @@ export function conductClassificationTextColor(paletteKey: PaletteKey): string {
   return paletteKey === "SLATE_DARK" ? style.backgroundColor : style.color;
 }
 
-function ConductTag({
-  record,
-  conductClassificationColors,
-}: {
-  record: ParoleConductRecord;
-  conductClassificationColors: Record<string, PaletteKey>;
-}) {
-  const color = conductClassificationPalette(
-    conductClassificationColors,
-    record.severity,
-  );
-
-  return (
-    <UppercaseBadgeWrapper>
-      <WorkflowsBadgePill text={record.severity} palette={color} />
-    </UppercaseBadgeWrapper>
-  );
-}
-
 // Shared between ConductHistorySection's own (recent) records and any
 // tenant-specific older-records slot (e.g. US_CO's "See Older
 // Disciplinaries" toggle), so a disciplinary record renders identically
@@ -131,30 +72,26 @@ export function ConductRecordCard({
   conductClassificationColors: Record<string, PaletteKey>;
 }) {
   return (
-    <RecordCard>
-      <RecordHeader>
-        <RecordTitle>
-          <ConductTag
-            record={record}
-            conductClassificationColors={conductClassificationColors}
-          />
-          {record.violation}
-        </RecordTitle>
-        <RecordDate>
-          {isParoleUnknownDate(record.date)
-            ? PAROLE_UNKNOWN_TEXT
-            : formatDate(record.date)}
-        </RecordDate>
-      </RecordHeader>
-      <div>
-        Facility: <FactLabel as="span">{record.facility}</FactLabel>
-      </div>
-      <div>
-        Description: <FactLabel as="span">{record.description}</FactLabel>
-      </div>
-      <div>
-        Disposition: <FactLabel as="span">{record.disposition}</FactLabel>
-      </div>
-    </RecordCard>
+    <ParoleDisciplinaryRecord>
+      <ParoleDisciplinaryRecordHeader
+        facts={[
+          {
+            label: "Date",
+            value: isParoleUnknownDate(record.date)
+              ? PAROLE_UNKNOWN_TEXT
+              : formatDate(record.date),
+          },
+          { label: "Offense", value: record.violation },
+          { label: "Institution", value: record.facility },
+          { label: "Disposition", value: record.disposition },
+        ]}
+        shouldKeepFactsOnOneLine={true}
+        badgeText={record.severity}
+        badgePalette={conductClassificationPalette(
+          conductClassificationColors,
+          record.severity,
+        )}
+      />
+    </ParoleDisciplinaryRecord>
   );
 }

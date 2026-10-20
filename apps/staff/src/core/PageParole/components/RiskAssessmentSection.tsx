@@ -21,8 +21,10 @@ import styled from "styled-components";
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 
 import type { ParoleRiskAssessmentConfig } from "../../models/types";
-import { SectionCardHeader } from "../../SectionCard";
-import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
+import {
+  ParoleSectionCard,
+  ParoleSectionTitle,
+} from "./ParoleCaseProfileStyles";
 import { RiskAssessmentDetailHeader } from "./RiskAssessmentDetailHeader";
 import { RiskAssessmentLegend } from "./RiskAssessmentLegend";
 import { TOOL_COLORS } from "./RiskAssessmentSection.styles";
@@ -33,13 +35,7 @@ import {
   latestAssessmentsByTool,
 } from "./RiskAssessmentSection.utils";
 import { RiskTrajectoryChart, RiskTrajectoryLine } from "./RiskTrajectoryChart";
-import {
-  EmptyState,
-  Hr,
-  parseIsoDate,
-  safeScorePct,
-  SectionCard,
-} from "./shared";
+import { EmptyState, Hr, parseIsoDate, safeScorePct } from "./shared";
 import { SubcategoryBreakdownChart } from "./SubcategoryBreakdownChart";
 
 // Tool set and aggregate-view labels used whenever a tenant doesn't supply
@@ -152,14 +148,12 @@ export function RiskAssessmentSection({
 
   if (visibleAssessments.length === 0) {
     return (
-      <SectionCard>
-        <SectionCardHeader>Risk Score Trajectory</SectionCardHeader>
-        <PaddedSectionCardBody>
-          <EmptyState>
-            No risk assessments available for this resident.
-          </EmptyState>
-        </PaddedSectionCardBody>
-      </SectionCard>
+      <ParoleSectionCard>
+        <ParoleSectionTitle>Risk Score Trajectory</ParoleSectionTitle>
+        <EmptyState>
+          No risk assessments available for this resident.
+        </EmptyState>
+      </ParoleSectionCard>
     );
   }
 
@@ -189,47 +183,45 @@ export function RiskAssessmentSection({
   ).length;
 
   return (
-    <SectionCard>
-      <SectionCardHeader>Risk Score Trajectory</SectionCardHeader>
-      <PaddedSectionCardBody>
-        <TrajectoryChartCard>
-          <RiskAssessmentLegend
-            visibleAssessments={visibleAssessments}
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Risk Score Trajectory</ParoleSectionTitle>
+      <TrajectoryChartCard>
+        <RiskAssessmentLegend
+          visibleAssessments={visibleAssessments}
+          selectedTool={selectedTool}
+          onSelectTool={setSelectedTool}
+          aggregateLabel={aggregateLabel}
+          hasCustomConfig={hasCustomConfig}
+        />
+
+        <RiskAssessmentDetailHeader
+          selectedAssessment={selectedAssessment}
+          selectedRisk={selectedRisk}
+          selectedRawPct={selectedRawPct}
+          selectedStale={selectedStale}
+          hasCustomConfig={hasCustomConfig}
+          aggregateHeaderLabel={aggregateHeaderLabel}
+          aggregateAssessmentCount={aggregateAssessmentCount}
+        />
+
+        <Hr />
+
+        <ChartsRow>
+          <RiskTrajectoryChart
+            trajectoryLines={trajectoryLines}
+            hasCustomConfig={hasCustomConfig}
+            yMax={yMax}
             selectedTool={selectedTool}
-            onSelectTool={setSelectedTool}
-            aggregateLabel={aggregateLabel}
-            hasCustomConfig={hasCustomConfig}
           />
 
-          <RiskAssessmentDetailHeader
-            selectedAssessment={selectedAssessment}
-            selectedRisk={selectedRisk}
-            selectedRawPct={selectedRawPct}
-            selectedStale={selectedStale}
-            hasCustomConfig={hasCustomConfig}
-            aggregateHeaderLabel={aggregateHeaderLabel}
-            aggregateAssessmentCount={aggregateAssessmentCount}
-          />
-
-          <Hr />
-
-          <ChartsRow>
-            <RiskTrajectoryChart
-              trajectoryLines={trajectoryLines}
-              hasCustomConfig={hasCustomConfig}
-              yMax={yMax}
-              selectedTool={selectedTool}
+          {selectedAssessment && (
+            <SubcategoryBreakdownChart
+              assessment={selectedAssessment}
+              showCarasComponentList={hasCustomConfig}
             />
-
-            {selectedAssessment && (
-              <SubcategoryBreakdownChart
-                assessment={selectedAssessment}
-                showCarasComponentList={hasCustomConfig}
-              />
-            )}
-          </ChartsRow>
-        </TrajectoryChartCard>
-      </PaddedSectionCardBody>
-    </SectionCard>
+          )}
+        </ChartsRow>
+      </TrajectoryChartCard>
+    </ParoleSectionCard>
   );
 }

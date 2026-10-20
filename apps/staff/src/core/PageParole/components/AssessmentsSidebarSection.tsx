@@ -25,20 +25,20 @@ import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 import { PaletteKey, statusStyles } from "../../BadgePill/BadgePill";
 import { AssessmentScore } from "./AssessmentScore";
 import {
+  ParoleFactLabel,
+  ParoleFactStack,
+  ParoleSidebarTitle,
+  ParoleSmallFactValue,
+} from "./ParoleCaseProfileStyles";
+import {
   getRiskLevelForAssessment,
   latestAssessmentsByTool,
 } from "./RiskAssessmentSection.utils";
 import { FactRow, formatDate, Hr, SectionStack } from "./shared";
-import {
-  UsIdFactLabel,
-  UsIdFactStack,
-  UsIdSidebarTitle,
-  UsIdSmallFactValue,
-} from "./US_ID/UsIdCaseProfileStyles";
 
 // SectionStack's gap already spaces this from the first AssessmentRow, so
 // the title's own margin-bottom would double that spacing here.
-const AssessmentsTitle = styled(UsIdSidebarTitle)`
+const AssessmentsTitle = styled(ParoleSidebarTitle)`
   margin-bottom: 0;
 `;
 
@@ -131,16 +131,16 @@ export function AssessmentsSidebarSection({
             {index > 0 && <Hr />}
             <AssessmentRow>
               <AssessmentFactRow>
-                <UsIdFactStack>
-                  <UsIdFactLabel>Type</UsIdFactLabel>
-                  <UsIdSmallFactValue>{assessment.tool}</UsIdSmallFactValue>
-                </UsIdFactStack>
-                <UsIdFactStack>
-                  <UsIdFactLabel>Date</UsIdFactLabel>
-                  <UsIdSmallFactValue>
+                <ParoleFactStack>
+                  <ParoleFactLabel>Type</ParoleFactLabel>
+                  <ParoleSmallFactValue>{assessment.tool}</ParoleSmallFactValue>
+                </ParoleFactStack>
+                <ParoleFactStack>
+                  <ParoleFactLabel>Date</ParoleFactLabel>
+                  <ParoleSmallFactValue>
                     {formatDate(assessment.date)}
-                  </UsIdSmallFactValue>
-                </UsIdFactStack>
+                  </ParoleSmallFactValue>
+                </ParoleFactStack>
               </AssessmentFactRow>
               <ScoreRow>
                 <AssessmentScore assessment={assessment} />
@@ -156,16 +156,16 @@ export function AssessmentsSidebarSection({
       })}
 
       {notOnFileTools.length > 0 && (
-        <UsIdFactStack>
-          <UsIdFactLabel>Non Applicable/ Not on File</UsIdFactLabel>
+        <ParoleFactStack>
+          <ParoleFactLabel>Non Applicable/ Not on File</ParoleFactLabel>
           <NotOnFileList>
             {notOnFileTools.map((tool) => (
-              <UsIdSmallFactValue as="li" key={tool}>
+              <ParoleSmallFactValue as="li" key={tool}>
                 {tool}
-              </UsIdSmallFactValue>
+              </ParoleSmallFactValue>
             ))}
           </NotOnFileList>
-        </UsIdFactStack>
+        </ParoleFactStack>
       )}
     </SectionStack>
   );

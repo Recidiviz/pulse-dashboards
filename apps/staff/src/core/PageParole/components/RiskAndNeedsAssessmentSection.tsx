@@ -23,9 +23,11 @@ import { ParoleRiskNeedFactor } from "~datatypes";
 import { palette } from "~design-system";
 
 import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
-import { SectionCardHeader } from "../../SectionCard";
-import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { EmptyState, SectionCard } from "./shared";
+import {
+  ParoleSectionCard,
+  ParoleSectionTitle,
+} from "./ParoleCaseProfileStyles";
+import { EmptyState } from "./shared";
 
 // Scale is free text, not a fixed enum, so this colors by substring
 // (checked most-severe-first) rather than exact match.
@@ -50,22 +52,19 @@ const RiskNeedTable = styled.table`
   border-collapse: collapse;
 
   th {
-    ${typography.Sans12}
-    text-transform: uppercase;
+    ${typography.Sans14}
     color: ${palette.slate70};
     text-align: left;
-    font-weight: 600;
+    font-weight: 400;
     padding-bottom: ${rem(spacing.sm)};
+    border-bottom: 1px solid ${palette.slate10};
   }
 
   td {
     ${typography.Sans14}
-    padding: ${rem(spacing.sm)} 0;
-    border-top: 1px solid ${palette.slate10};
-  }
-
-  tbody tr:last-child td {
-    padding-bottom: 0;
+    color: ${palette.pine1};
+    padding: ${rem(spacing.md)} 0;
+    border-bottom: 1px solid ${palette.slate10};
   }
 `;
 
@@ -76,45 +75,43 @@ export function RiskAndNeedsAssessmentSection({
 }) {
   if (riskAndNeedsFactors.length === 0) {
     return (
-      <SectionCard>
-        <SectionCardHeader>Latest Risk and Needs Assessment</SectionCardHeader>
-        <PaddedSectionCardBody>
-          <EmptyState>
-            No risk and needs assessment available for this resident.
-          </EmptyState>
-        </PaddedSectionCardBody>
-      </SectionCard>
+      <ParoleSectionCard>
+        <ParoleSectionTitle>
+          Latest Risk and Needs Assessment
+        </ParoleSectionTitle>
+        <EmptyState>
+          No risk and needs assessment available for this resident.
+        </EmptyState>
+      </ParoleSectionCard>
     );
   }
 
   return (
-    <SectionCard>
-      <SectionCardHeader>Latest Risk and Needs Assessment</SectionCardHeader>
-      <PaddedSectionCardBody>
-        <RiskNeedTable>
-          <thead>
-            <tr>
-              <th>Factor</th>
-              <th>Score</th>
-              <th>Scale</th>
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Latest Risk and Needs Assessment</ParoleSectionTitle>
+      <RiskNeedTable>
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>Score</th>
+            <th>Scale</th>
+          </tr>
+        </thead>
+        <tbody>
+          {riskAndNeedsFactors.map((row) => (
+            <tr key={row.factor}>
+              <td>{row.factor}</td>
+              <td>{row.score}</td>
+              <td>
+                <WorkflowsBadgePill
+                  text={row.scale}
+                  palette={paletteForScale(row.scale)}
+                />
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {riskAndNeedsFactors.map((row) => (
-              <tr key={row.factor}>
-                <td>{row.factor}</td>
-                <td>{row.score}</td>
-                <td>
-                  <WorkflowsBadgePill
-                    text={row.scale}
-                    palette={paletteForScale(row.scale)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </RiskNeedTable>
-      </PaddedSectionCardBody>
-    </SectionCard>
+          ))}
+        </tbody>
+      </RiskNeedTable>
+    </ParoleSectionCard>
   );
 }

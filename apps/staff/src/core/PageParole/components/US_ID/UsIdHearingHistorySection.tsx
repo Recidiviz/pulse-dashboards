@@ -22,12 +22,12 @@ import styled from "styled-components";
 import { ParoleHearingHistoryEntry } from "~datatypes";
 import { palette } from "~design-system";
 
-import { formatMonthYearNumeric, Hr } from "../shared";
 import {
-  UsIdSectionCard,
-  UsIdSectionTitle,
-  UsIdSubsectionCaption,
-} from "./UsIdCaseProfileStyles";
+  ParoleSectionCard,
+  ParoleSectionTitle,
+  ParoleSubsectionCaption,
+} from "../ParoleCaseProfileStyles";
+import { formatMonthYearNumeric, Hr } from "../shared";
 
 const EMPTY_STATE_TEXT = "No hearing history on record";
 
@@ -82,16 +82,16 @@ export function UsIdHearingHistorySection({
 }) {
   if (!hearingHistory.length) {
     return (
-      <UsIdSectionCard>
-        <UsIdSectionTitle>Hearing History</UsIdSectionTitle>
-        <UsIdSubsectionCaption>{EMPTY_STATE_TEXT}</UsIdSubsectionCaption>
-      </UsIdSectionCard>
+      <ParoleSectionCard>
+        <ParoleSectionTitle>Hearing History</ParoleSectionTitle>
+        <ParoleSubsectionCaption>{EMPTY_STATE_TEXT}</ParoleSubsectionCaption>
+      </ParoleSectionCard>
     );
   }
 
   return (
-    <UsIdSectionCard>
-      <UsIdSectionTitle>Hearing History</UsIdSectionTitle>
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Hearing History</ParoleSectionTitle>
       <HearingList>
         {hearingHistory.map((hearing, index) => (
           <HearingItem
@@ -110,6 +110,6 @@ export function UsIdHearingHistorySection({
           </HearingItem>
         ))}
       </HearingList>
-    </UsIdSectionCard>
+    </ParoleSectionCard>
   );
 }

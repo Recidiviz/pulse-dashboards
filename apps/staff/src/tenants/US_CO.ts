@@ -43,6 +43,7 @@ const US_CO_CONFIG = {
       ],
       subheading: "Two Week Outlook",
       searchEnabled: true,
+      paginationEnabled: true,
       // CO's scheduled hearing dates are truncated to the 1st of the month in
       // the source table (see us_co/parole_board_client_profile.py), so a
       // hearing set for this month can already be "in the past" by the 2nd.
@@ -53,10 +54,10 @@ const US_CO_CONFIG = {
     },
     conductHistoryConfig: {
       classificationColors: {
-        "Class I": "BLUE",
-        "Class IIa": "GREEN",
-        "Class IIb": "YELLOW",
-        "Class III": "PURPLE",
+        "Class I": "BROWN",
+        "Class IIa": "GOLD",
+        "Class IIb": "GOLD",
+        "Class III": "TEAL",
       },
       visibleYears: 1,
     },

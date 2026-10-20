@@ -28,6 +28,12 @@ import { palette } from "~design-system";
 
 import { statusStyles } from "../../../BadgePill/BadgePill";
 import { AssessmentScore } from "../AssessmentScore";
+import {
+  PAROLE_SUBSECTION_TITLE_COLOR,
+  ParoleFactStack,
+  ParoleSubsection,
+  ParoleSubsectionTitle,
+} from "../ParoleCaseProfileStyles";
 import { ChartWrapper } from "../RiskAssessmentSection.styles";
 import {
   getRiskLevelForAssessment,
@@ -35,12 +41,6 @@ import {
 } from "../RiskAssessmentSection.utils";
 import { FactRow, FactValue, formatDate, MutedText } from "../shared";
 import { SubcategoryBreakdownChart } from "../SubcategoryBreakdownChart";
-import {
-  US_ID_SUBSECTION_TITLE_COLOR,
-  UsIdFactStack,
-  UsIdSubsection,
-  UsIdSubsectionTitle,
-} from "./UsIdCaseProfileStyles";
 
 const MENTAL_HEALTH_FACTOR = "Mental Health";
 const NOT_REPORTED = "None reported";
@@ -111,11 +111,11 @@ const ScoreLine = styled.div`
 
 const AssessedOn = styled.div`
   ${typography.Sans14}
-  color: ${US_ID_SUBSECTION_TITLE_COLOR};
+  color: ${PAROLE_SUBSECTION_TITLE_COLOR};
 `;
 
 const MentalHealthLabel = styled(MutedText)`
-  color: ${US_ID_SUBSECTION_TITLE_COLOR};
+  color: ${PAROLE_SUBSECTION_TITLE_COLOR};
 `;
 
 const NORMAL_TEXT_COLOR = "#00413E";
@@ -209,16 +209,16 @@ export function UsIdHealthAndAssessmentsSection({
     .filter((a): a is ParoleRiskAssessment => a !== undefined);
 
   return (
-    <UsIdSubsection>
-      <UsIdSubsectionTitle>Health and Assessments</UsIdSubsectionTitle>
+    <ParoleSubsection>
+      <ParoleSubsectionTitle>Health and Assessments</ParoleSubsectionTitle>
 
       <FactRow>
-        <UsIdFactStack>
+        <ParoleFactStack>
           <MentalHealthLabel>Mental health level of care</MentalHealthLabel>
           <FactValue>
             {mentalHealthLevelOfCare(riskAndNeedsFactors) ?? NOT_REPORTED}
           </FactValue>
-        </UsIdFactStack>
+        </ParoleFactStack>
       </FactRow>
 
       {onFileAssessments.length > 0 && (
@@ -231,6 +231,6 @@ export function UsIdHealthAndAssessmentsSection({
           ))}
         </CardRow>
       )}
-    </UsIdSubsection>
+    </ParoleSubsection>
   );
 }

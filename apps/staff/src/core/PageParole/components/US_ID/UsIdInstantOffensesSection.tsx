@@ -22,7 +22,7 @@ import styled from "styled-components";
 import { ParoleOffense } from "~datatypes";
 import { palette } from "~design-system";
 
-import { UsIdFactLabel } from "./UsIdCaseProfileStyles";
+import { ParoleFactLabel } from "../ParoleCaseProfileStyles";
 
 const InstantOffensesField = styled.div`
   display: flex;
@@ -61,7 +61,7 @@ export function UsIdInstantOffensesSection({
 
   return (
     <InstantOffensesField>
-      <UsIdFactLabel>Instant Offenses</UsIdFactLabel>
+      <ParoleFactLabel>Instant Offenses</ParoleFactLabel>
       <InstantOffenseList>
         {[...countsByConviction].map(([conviction, count]) => (
           <li key={conviction}>

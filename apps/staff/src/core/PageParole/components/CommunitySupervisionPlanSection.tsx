@@ -23,18 +23,17 @@ import {
   ParoleCommunitySupervisionPlanEntry,
   ParoleRecommendedStatus,
 } from "~datatypes";
-import { palette } from "~design-system";
 
 import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
-import { SectionCardHeader } from "../../SectionCard";
-import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
-  EmptyState,
-  FactLabel,
-  FactStack,
-  SectionCard,
-  SectionStack,
-} from "./shared";
+  ParoleFactLabel,
+  ParoleFactStack,
+  paroleRecordCardStyles,
+  ParoleSectionCard,
+  ParoleSectionTitle,
+  ParoleSmallFactValue,
+} from "./ParoleCaseProfileStyles";
+import { EmptyState, SectionStack } from "./shared";
 
 const RECOMMENDED_STATUS_COLORS: Record<ParoleRecommendedStatus, PaletteKey> = {
   "YES (Favorable)": "GREEN",
@@ -45,13 +44,7 @@ const RECOMMENDED_STATUS_COLORS: Record<ParoleRecommendedStatus, PaletteKey> = {
 };
 
 const PlanCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.sm)};
-  background: ${palette.marble2};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(6)};
-  padding: ${rem(spacing.md)};
+  ${paroleRecordCardStyles}
 `;
 
 const PlanCardHeader = styled.div`
@@ -61,9 +54,8 @@ const PlanCardHeader = styled.div`
   gap: ${rem(spacing.md)};
 `;
 
-const PlanTypeTitle = styled.div`
+const PlanTypeTitle = styled(ParoleSmallFactValue)`
   font-weight: 600;
-  color: ${palette.pine1};
 `;
 
 const PlanDetailsRow = styled.div`
@@ -88,23 +80,23 @@ function CommunitySupervisionPlanCard({
   return (
     <PlanCard>
       <PlanCardHeader>
-        <FactStack>
-          <FactLabel>TYPE OF PLAN</FactLabel>
+        <ParoleFactStack>
+          <ParoleFactLabel>TYPE OF PLAN</ParoleFactLabel>
           <PlanTypeTitle>{entry.typeOfPlan}</PlanTypeTitle>
-        </FactStack>
+        </ParoleFactStack>
         <RecommendedBadge status={entry.recommended} />
       </PlanCardHeader>
       <PlanDetailsRow>
-        <FactStack>
-          <FactLabel>NAME (RELATIONSHIP)</FactLabel>
-          <div>
+        <ParoleFactStack>
+          <ParoleFactLabel>NAME (RELATIONSHIP)</ParoleFactLabel>
+          <ParoleSmallFactValue>
             {entry.name} ({entry.relationship})
-          </div>
-        </FactStack>
-        <FactStack>
-          <FactLabel>ADDRESS</FactLabel>
-          <div>{entry.address}</div>
-        </FactStack>
+          </ParoleSmallFactValue>
+        </ParoleFactStack>
+        <ParoleFactStack>
+          <ParoleFactLabel>ADDRESS</ParoleFactLabel>
+          <ParoleSmallFactValue>{entry.address}</ParoleSmallFactValue>
+        </ParoleFactStack>
       </PlanDetailsRow>
     </PlanCard>
   );
@@ -116,23 +108,21 @@ export function CommunitySupervisionPlanSection({
   communitySupervisionPlan: Array<ParoleCommunitySupervisionPlanEntry>;
 }) {
   return (
-    <SectionCard>
-      <SectionCardHeader>Community Supervision Plan</SectionCardHeader>
-      <PaddedSectionCardBody>
-        {communitySupervisionPlan.length === 0 ? (
-          <EmptyState>No community supervision plan on file.</EmptyState>
-        ) : (
-          <SectionStack>
-            {communitySupervisionPlan.map((entry, idx) => (
-              <CommunitySupervisionPlanCard
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${entry.typeOfPlan}-${entry.name}-${entry.relationship}-${entry.address}-${entry.recommended}-${idx}`}
-                entry={entry}
-              />
-            ))}
-          </SectionStack>
-        )}
-      </PaddedSectionCardBody>
-    </SectionCard>
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Community Supervision Plan</ParoleSectionTitle>
+      {communitySupervisionPlan.length === 0 ? (
+        <EmptyState>No community supervision plan on file.</EmptyState>
+      ) : (
+        <SectionStack>
+          {communitySupervisionPlan.map((entry, idx) => (
+            <CommunitySupervisionPlanCard
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${entry.typeOfPlan}-${entry.name}-${entry.relationship}-${entry.address}-${entry.recommended}-${idx}`}
+              entry={entry}
+            />
+          ))}
+        </SectionStack>
+      )}
+    </ParoleSectionCard>
   );
 }

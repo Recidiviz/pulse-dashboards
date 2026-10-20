@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
@@ -24,10 +24,19 @@ import {
   PAROLE_UNKNOWN_TEXT,
   ParoleCase,
 } from "~datatypes";
-import { palette } from "~design-system";
 
 import { formatDocId } from "../../../../ParoleStore/utils";
 import { AssessmentsSidebarSection } from "../AssessmentsSidebarSection";
+import {
+  ParoleFactLabel,
+  ParoleFactStack,
+  ParoleIdentityBlock,
+  ParoleIdentityDetail,
+  ParoleIdentityDetails,
+  ParolePersonName,
+  ParoleSidebarTitle,
+  ParoleSmallFactValue,
+} from "../ParoleCaseProfileStyles";
 import { FullWidthHr, ParoleGeneralInfoProps } from "../ParoleGeneralInfo";
 import {
   calculateAge,
@@ -38,36 +47,7 @@ import {
   StackedFactRow,
   StackedFacts,
 } from "../shared";
-import {
-  UsIdFactLabel,
-  UsIdFactStack,
-  UsIdSidebarTitle,
-  UsIdSmallFactValue,
-} from "./UsIdCaseProfileStyles";
 import { UsIdInstantOffensesSection } from "./UsIdInstantOffensesSection";
-
-const IdentityBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-`;
-
-const PersonName = styled.div`
-  ${typography.Serif24}
-  color: ${palette.pine2};
-`;
-
-const IdentityDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.xs)};
-`;
-
-const IdentityDetail = styled.div`
-  ${typography.Sans14}
-  line-height: ${rem(24)};
-  color: ${palette.slate80};
-`;
 
 const ReportStatusRow = styled(StackedFactRow)`
   align-items: center;
@@ -100,14 +80,14 @@ function UsIdPersonalDetails({ caseDetail }: { caseDetail: ParoleCase }) {
 
   return (
     <div>
-      <UsIdSidebarTitle>Personal Details</UsIdSidebarTitle>
+      <ParoleSidebarTitle>Personal Details</ParoleSidebarTitle>
       <PersonalDetailsFields>
         <FactRow>
           {facts.map((fact) => (
-            <UsIdFactStack key={fact.label}>
-              <UsIdFactLabel>{fact.label}</UsIdFactLabel>
-              <UsIdSmallFactValue>{fact.value}</UsIdSmallFactValue>
-            </UsIdFactStack>
+            <ParoleFactStack key={fact.label}>
+              <ParoleFactLabel>{fact.label}</ParoleFactLabel>
+              <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
+            </ParoleFactStack>
           ))}
         </FactRow>
         <UsIdInstantOffensesSection
@@ -126,14 +106,18 @@ export function UsIdParoleSidebar({
 
   return (
     <>
-      <IdentityBlock>
-        <PersonName>{caseDetail.name}</PersonName>
-        <IdentityDetails>
-          <IdentityDetail>{formatDocId(caseDetail.displayId)}</IdentityDetail>
-          <IdentityDetail>{caseDetail.custodyLevel}</IdentityDetail>
-          <IdentityDetail>{caseDetail.currentFacility}</IdentityDetail>
-        </IdentityDetails>
-      </IdentityBlock>
+      <ParoleIdentityBlock>
+        <ParolePersonName>{caseDetail.name}</ParolePersonName>
+        <ParoleIdentityDetails>
+          <ParoleIdentityDetail>
+            {formatDocId(caseDetail.displayId)}
+          </ParoleIdentityDetail>
+          <ParoleIdentityDetail>{caseDetail.custodyLevel}</ParoleIdentityDetail>
+          <ParoleIdentityDetail>
+            {caseDetail.currentFacility}
+          </ParoleIdentityDetail>
+        </ParoleIdentityDetails>
+      </ParoleIdentityBlock>
 
       <FullWidthHr />
 
@@ -152,19 +136,21 @@ export function UsIdParoleSidebar({
       <FullWidthHr />
 
       <div>
-        <UsIdSidebarTitle>Report Status</UsIdSidebarTitle>
+        <ParoleSidebarTitle>Report Status</ParoleSidebarTitle>
         <StackedFacts>
           <ReportStatusRow>
-            <UsIdFactLabel>Report Type</UsIdFactLabel>
-            <UsIdSmallFactValue>{caseDetail.hearingType}</UsIdSmallFactValue>
+            <ParoleFactLabel>Report Type</ParoleFactLabel>
+            <ParoleSmallFactValue>
+              {caseDetail.hearingType}
+            </ParoleSmallFactValue>
           </ReportStatusRow>
           <ReportStatusRow>
-            <UsIdFactLabel>Parole Board Hearing</UsIdFactLabel>
-            <UsIdSmallFactValue>
+            <ParoleFactLabel>Parole Board Hearing</ParoleFactLabel>
+            <ParoleSmallFactValue>
               {caseDetail.hearingDate
                 ? formatMonth(caseDetail.hearingDate)
                 : "Not scheduled"}
-            </UsIdSmallFactValue>
+            </ParoleSmallFactValue>
           </ReportStatusRow>
         </StackedFacts>
       </div>

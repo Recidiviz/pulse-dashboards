@@ -18,8 +18,11 @@
 import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../../models/types";
+import {
+  ParoleSectionCard,
+  ParoleSectionTitle,
+} from "../ParoleCaseProfileStyles";
 import { UsIdCaseNotesSection } from "./UsIdCaseNotesSection";
-import { UsIdSectionCard, UsIdSectionTitle } from "./UsIdCaseProfileStyles";
 import { UsIdDisciplinaryReportsSection } from "./UsIdDisciplinaryReportsSection";
 import { UsIdHealthAndAssessmentsSection } from "./UsIdHealthAndAssessmentsSection";
 import { UsIdProgrammingSection } from "./UsIdProgrammingSection";
@@ -40,8 +43,8 @@ export function UsIdInstitutionalHistorySection({
   config: ParoleConfig;
 }) {
   return (
-    <UsIdSectionCard>
-      <UsIdSectionTitle>Institutional History</UsIdSectionTitle>
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Institutional History</ParoleSectionTitle>
       <UsIdProgrammingSection
         docPrograms={caseDetail.docPrograms}
         edovoPrograms={caseDetail.edovoPrograms}
@@ -58,6 +61,6 @@ export function UsIdInstitutionalHistorySection({
         riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}
         tools={config.riskAssessmentConfig?.tools ?? []}
       />
-    </UsIdSectionCard>
+    </ParoleSectionCard>
   );
 }

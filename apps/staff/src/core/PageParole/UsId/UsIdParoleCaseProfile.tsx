@@ -15,20 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components";
-
 import { ParoleCase } from "~datatypes";
-import { PersonGradientBanner } from "~ui";
 
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
-import {
-  US_ID_CARD_BACKGROUND_COLOR,
-  US_ID_CARD_CORNER_RADIUS,
-} from "../components/US_ID/UsIdCaseProfileStyles";
 import { UsIdHearingHistorySection } from "../components/US_ID/UsIdHearingHistorySection";
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
@@ -51,10 +43,6 @@ const SECTION_NAV = [
   },
 ];
 
-const SidebarBanner = styled(PersonGradientBanner)`
-  height: ${rem(65)};
-`;
-
 /**
  * Idaho's Parole case profile.
  *
@@ -72,13 +60,7 @@ export function UsIdParoleCaseProfile({
   return (
     <ParoleCaseProfileLayout
       sidebar={
-        <CaseProfileSidebar
-          caseDetail={caseDetail}
-          sections={SECTION_NAV}
-          banner={<SidebarBanner name={caseDetail.name} />}
-          cornerRadius={US_ID_CARD_CORNER_RADIUS}
-          backgroundColor={US_ID_CARD_BACKGROUND_COLOR}
-        >
+        <CaseProfileSidebar caseDetail={caseDetail} sections={SECTION_NAV}>
           <UsIdParoleSidebar caseDetail={caseDetail} config={config} />
         </CaseProfileSidebar>
       }

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
 import styled from "styled-components";
 
 import {
@@ -24,22 +23,28 @@ import {
   ParoleCase,
   ParoleLifeSentence,
 } from "~datatypes";
-import { palette } from "~design-system";
 
 import { formatDocId } from "../../../ParoleStore/utils";
 import type { ParoleConfig } from "../../models/types";
 import {
+  ParoleFactLabel,
+  ParoleFactStack,
+  ParoleIdentityBlock,
+  ParoleIdentityDetail,
+  ParoleIdentityDetails,
+  ParolePersonName,
+  ParoleSidebarTitle,
+  ParoleSmallFactValue,
+} from "./ParoleCaseProfileStyles";
+import {
   calculateAge,
-  FactLabel,
   FactRow,
-  FactRowStack,
   formatDate,
   formatMonth,
   Hr,
   PAROLE_SIDEBAR_PADDING_HORIZONTAL,
   StackedFactRow,
   StackedFacts,
-  SubsectionTitle,
 } from "./shared";
 
 export type ParoleGeneralInfoProps = {
@@ -47,65 +52,39 @@ export type ParoleGeneralInfoProps = {
   config: ParoleConfig;
 };
 
-const NameHeading = styled.div`
-  ${typography.Serif24}
-  color: ${palette.pine2};
-  margin-bottom: 0.5rem;
-`;
-
-const DocId = styled.div`
-  margin-bottom: 1rem;
-`;
-
 export const FullWidthHr = styled(Hr)`
   width: auto;
   margin: 0 -${PAROLE_SIDEBAR_PADDING_HORIZONTAL};
 `;
-
-export function ParoleNameHeading({
-  name,
-  displayId,
-}: {
-  name: string;
-  displayId: string;
-}) {
-  return (
-    <>
-      <NameHeading>{name}</NameHeading>
-      <DocId>{formatDocId(displayId)}</DocId>
-    </>
-  );
-}
 
 export function ParolePersonalDetails({
   caseDetail,
 }: {
   caseDetail: ParoleCase;
 }) {
+  const isDobUnknown = isParoleUnknownDate(caseDetail.dob);
+  const facts = [
+    { label: "Gender", value: caseDetail.gender },
+    {
+      label: "Age",
+      value: isDobUnknown ? PAROLE_UNKNOWN_TEXT : calculateAge(caseDetail.dob),
+    },
+    {
+      label: "DOB",
+      value: isDobUnknown ? PAROLE_UNKNOWN_TEXT : formatDate(caseDetail.dob),
+    },
+  ];
+
   return (
     <div>
-      <SubsectionTitle>Personal Details</SubsectionTitle>
+      <ParoleSidebarTitle>Personal Details</ParoleSidebarTitle>
       <FactRow>
-        <FactRowStack>
-          <div>Gender</div>
-          <FactLabel>{caseDetail.gender}</FactLabel>
-        </FactRowStack>
-        <FactRowStack>
-          <div>Age</div>
-          <FactLabel>
-            {isParoleUnknownDate(caseDetail.dob)
-              ? PAROLE_UNKNOWN_TEXT
-              : calculateAge(caseDetail.dob)}
-          </FactLabel>
-        </FactRowStack>
-        <FactRowStack>
-          <div>DOB</div>
-          <FactLabel>
-            {isParoleUnknownDate(caseDetail.dob)
-              ? PAROLE_UNKNOWN_TEXT
-              : formatDate(caseDetail.dob)}
-          </FactLabel>
-        </FactRowStack>
+        {facts.map((fact) => (
+          <ParoleFactStack key={fact.label}>
+            <ParoleFactLabel>{fact.label}</ParoleFactLabel>
+            <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
+          </ParoleFactStack>
+        ))}
       </FactRow>
     </div>
   );
@@ -145,31 +124,40 @@ function hearingDateLabel(caseDetail: ParoleCase): string {
     : formatDate(caseDetail.hearingDate);
 }
 
+const FactRowItem = styled(StackedFactRow)`
+  align-items: center;
+`;
+
 export function ParoleSentenceInfo({ caseDetail }: { caseDetail: ParoleCase }) {
+  const facts = [
+    {
+      label: "Sentence Start Date",
+      value: isParoleUnknownDate(caseDetail.sentenceStartDate)
+        ? PAROLE_UNKNOWN_TEXT
+        : formatDate(caseDetail.sentenceStartDate),
+    },
+    {
+      label: "Parole Eligibility Date (PED)",
+      value: paroleEligibilityLabel(caseDetail),
+    },
+    {
+      label: "Mandatory Release Date (MRD)",
+      value: isParoleUnknownDate(caseDetail.mandatoryReleaseDate)
+        ? PAROLE_UNKNOWN_TEXT
+        : formatDate(caseDetail.mandatoryReleaseDate),
+    },
+  ];
+
   return (
     <div>
-      <SubsectionTitle>Sentence Info</SubsectionTitle>
+      <ParoleSidebarTitle>Sentence Info</ParoleSidebarTitle>
       <StackedFacts>
-        <StackedFactRow>
-          <div>Sentence Start Date</div>
-          <FactLabel>
-            {isParoleUnknownDate(caseDetail.sentenceStartDate)
-              ? PAROLE_UNKNOWN_TEXT
-              : formatDate(caseDetail.sentenceStartDate)}
-          </FactLabel>
-        </StackedFactRow>
-        <StackedFactRow>
-          <div>Parole Eligibility Date (PED)</div>
-          <FactLabel>{paroleEligibilityLabel(caseDetail)}</FactLabel>
-        </StackedFactRow>
-        <StackedFactRow>
-          <div>Mandatory Release Date (MRD)</div>
-          <FactLabel>
-            {isParoleUnknownDate(caseDetail.mandatoryReleaseDate)
-              ? PAROLE_UNKNOWN_TEXT
-              : formatDate(caseDetail.mandatoryReleaseDate)}
-          </FactLabel>
-        </StackedFactRow>
+        {facts.map((fact) => (
+          <FactRowItem key={fact.label}>
+            <ParoleFactLabel>{fact.label}</ParoleFactLabel>
+            <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
+          </FactRowItem>
+        ))}
       </StackedFacts>
     </div>
   );
@@ -178,15 +166,25 @@ export function ParoleSentenceInfo({ caseDetail }: { caseDetail: ParoleCase }) {
 export function DefaultParoleGeneralInfo({
   caseDetail,
 }: ParoleGeneralInfoProps) {
+  const hearingFacts = [
+    { label: "Hearing Date", value: hearingDateLabel(caseDetail) },
+    { label: "Facility", value: caseDetail.currentFacility },
+    { label: "Case Manager", value: caseDetail.caseManagerName },
+  ];
+
   return (
     <>
-      <div>
-        <ParoleNameHeading
-          name={caseDetail.name}
-          displayId={caseDetail.displayId}
-        />
-        <FactLabel>Incarcerated | {caseDetail.custodyLevel}</FactLabel>
-      </div>
+      <ParoleIdentityBlock>
+        <ParolePersonName>{caseDetail.name}</ParolePersonName>
+        <ParoleIdentityDetails>
+          <ParoleIdentityDetail>
+            {formatDocId(caseDetail.displayId)}
+          </ParoleIdentityDetail>
+          <ParoleIdentityDetail>
+            Incarcerated | {caseDetail.custodyLevel}
+          </ParoleIdentityDetail>
+        </ParoleIdentityDetails>
+      </ParoleIdentityBlock>
 
       <FullWidthHr />
 
@@ -195,20 +193,14 @@ export function DefaultParoleGeneralInfo({
       <Hr />
 
       <div>
-        <SubsectionTitle>Hearing Info</SubsectionTitle>
+        <ParoleSidebarTitle>Hearing Info</ParoleSidebarTitle>
         <StackedFacts>
-          <StackedFactRow>
-            <div>Hearing Date</div>
-            <FactLabel>{hearingDateLabel(caseDetail)}</FactLabel>
-          </StackedFactRow>
-          <StackedFactRow>
-            <div>Facility</div>
-            <FactLabel>{caseDetail.currentFacility}</FactLabel>
-          </StackedFactRow>
-          <StackedFactRow>
-            <div>Case Manager</div>
-            <FactLabel>{caseDetail.caseManagerName}</FactLabel>
-          </StackedFactRow>
+          {hearingFacts.map((fact) => (
+            <FactRowItem key={fact.label}>
+              <ParoleFactLabel>{fact.label}</ParoleFactLabel>
+              <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
+            </FactRowItem>
+          ))}
         </StackedFacts>
       </div>
 

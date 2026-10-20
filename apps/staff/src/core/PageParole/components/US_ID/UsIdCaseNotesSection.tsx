@@ -35,16 +35,16 @@ import {
   Source,
 } from "../../../CaseNotes";
 import { Pagination } from "../../../Pagination/Pagination";
+import {
+  PAROLE_RECORD_CORNER_RADIUS,
+  paroleRecordCardStyles,
+  ParoleSubsection,
+  ParoleSubsectionCaption,
+  ParoleSubsectionHeading,
+  ParoleSubsectionTitle,
+} from "../ParoleCaseProfileStyles";
 import { formatDateLong, parseIsoDate } from "../shared";
 import { UsIdCaseNotesFilter } from "./UsIdCaseNotesFilter";
-import {
-  US_ID_RECORD_CORNER_RADIUS,
-  usIdRecordCardStyles,
-  UsIdSubsection,
-  UsIdSubsectionCaption,
-  UsIdSubsectionHeading,
-  UsIdSubsectionTitle,
-} from "./UsIdCaseProfileStyles";
 
 /** How many notes one page of the list holds. */
 export const US_ID_NOTES_PER_PAGE = 10;
@@ -64,10 +64,10 @@ const SubsectionHeader = styled.div`
 `;
 
 const NotesFrame = styled.div`
-  ${usIdRecordCardStyles}
+  ${paroleRecordCardStyles}
   padding: 0;
   background-color: transparent;
-  border-radius: ${US_ID_RECORD_CORNER_RADIUS};
+  border-radius: ${PAROLE_RECORD_CORNER_RADIUS};
   overflow: hidden;
   border: 0;
   box-shadow: inset 0 0 0 1px ${palette.slate10};
@@ -91,7 +91,7 @@ const UsIdNoteRow = styled(NoteRow)`
   &:hover,
   &:focus-visible {
     background: transparent;
-    border-radius: ${US_ID_RECORD_CORNER_RADIUS};
+    border-radius: ${PAROLE_RECORD_CORNER_RADIUS};
     box-shadow: inset 0 0 0 1px ${palette.slate60};
   }
 
@@ -212,16 +212,16 @@ export function UsIdCaseNotesSection({
   }
 
   return (
-    <UsIdSubsection>
+    <ParoleSubsection>
       <SubsectionHeader>
-        <UsIdSubsectionHeading>
-          <UsIdSubsectionTitle>Case Notes</UsIdSubsectionTitle>
-          <UsIdSubsectionCaption>
+        <ParoleSubsectionHeading>
+          <ParoleSubsectionTitle>Case Notes</ParoleSubsectionTitle>
+          <ParoleSubsectionCaption>
             {notes.length === 0
               ? `No case notes in the last ${US_ID_CASE_NOTE_YEARS} years`
               : `Showing case notes from the last ${US_ID_CASE_NOTE_YEARS} years`}
-          </UsIdSubsectionCaption>
-        </UsIdSubsectionHeading>
+          </ParoleSubsectionCaption>
+        </ParoleSubsectionHeading>
         {noteTypes.length > 1 && (
           <UsIdCaseNotesFilter
             types={noteTypes}
@@ -235,9 +235,9 @@ export function UsIdCaseNotesSection({
         )}
       </SubsectionHeader>
       {notes.length > 0 && visibleNotes.length === 0 && (
-        <UsIdSubsectionCaption>
+        <ParoleSubsectionCaption>
           No case notes match the selected filters
-        </UsIdSubsectionCaption>
+        </ParoleSubsectionCaption>
       )}
       {visibleNotes.length > 0 && (
         <>
@@ -273,6 +273,6 @@ export function UsIdCaseNotesSection({
         note={selectedNote}
         onRequestClose={() => setSelectedNote(undefined)}
       />
-    </UsIdSubsection>
+    </ParoleSubsection>
   );
 }

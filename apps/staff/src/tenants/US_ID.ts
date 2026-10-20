@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "~design-system";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import { TenantConfig } from "../core/models/types";
@@ -233,7 +232,6 @@ const US_ID_CONFIG = {
     methodology: ["system", "operations"],
   },
   paroleConfig: {
-    caseProfileBackgroundColor: palette.marble3,
     docketConfig: {
       columns: [
         { header: "Name", field: "individualName", sortable: true },

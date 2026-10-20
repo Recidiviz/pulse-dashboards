@@ -26,6 +26,11 @@ import { Icon, IconSVG, palette } from "~design-system";
 import useIsStuck from "../../../hooks/useIsStuck";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import {
+  PAROLE_CARD_BACKGROUND_COLOR,
+  PAROLE_CARD_CORNER_RADIUS,
+} from "./ParoleCaseProfileStyles";
+import { ParoleSidebarBanner } from "./ParoleSidebarBanner";
+import {
   AlertBanner,
   PAROLE_SIDEBAR_PADDING_HORIZONTAL,
   PAROLE_SIDEBAR_PADDING_VERTICAL,
@@ -51,34 +56,20 @@ const StickyNavSentinel = styled.div`
   height: 0;
 `;
 
-const cardOverrideStyles = ({
-  $cornerRadius,
-  $backgroundColor,
-}: {
-  $cornerRadius?: string;
-  $backgroundColor?: string;
-}) => css`
-  ${$cornerRadius && `border-radius: ${$cornerRadius};`}
-  ${$backgroundColor && `background-color: ${$backgroundColor};`}
+const cardStyles = css`
+  border-radius: ${PAROLE_CARD_CORNER_RADIUS};
+  background-color: ${PAROLE_CARD_BACKGROUND_COLOR};
 `;
 
-// With a banner, the card stops clipping so the banner can cover its border.
-// The info card, banner included, shows the person's name, IDs and case
-// details, so FullStory excludes the whole card. The section nav card below
-// holds only fixed labels and stays recorded.
+// The card stops clipping so the banner can cover its border. The info card,
+// banner included, shows the person's name, IDs and case details, so FullStory
+// excludes the whole card. The section nav card below holds only fixed labels
+// and stays recorded.
 const InfoCard = styled(SectionCard).attrs({ className: "fs-exclude" })<{
   $isNavStuck: boolean;
-  $hasBanner: boolean;
-  $cornerRadius?: string;
-  $backgroundColor?: string;
 }>`
-  ${cardOverrideStyles}
-
-  ${({ $hasBanner }) =>
-    $hasBanner &&
-    css`
-      overflow: visible;
-    `}
+  ${cardStyles}
+  overflow: visible;
 
   ${({ $isNavStuck }) =>
     !$isNavStuck &&
@@ -96,15 +87,11 @@ const BannerSlot = styled.div`
   overflow: hidden;
 `;
 
-const SectionNavCard = styled(SectionCard)<{
-  $isNavStuck: boolean;
-  $cornerRadius?: string;
-  $backgroundColor?: string;
-}>`
+const SectionNavCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
   position: sticky;
   top: ${rem(NAV_BAR_HEIGHT + spacing.lg)};
 
-  ${cardOverrideStyles}
+  ${cardStyles}
 
   ${({ $isNavStuck }) =>
     !$isNavStuck &&
@@ -151,28 +138,15 @@ export type ParoleSectionNavItem = {
  *
  * @param caseDetail - The case the card describes.
  * @param sections - Nav entries, in the order the sections render in.
- * @param banner - Drawn across the top of the info card, above its padded
- *   body, covering the card's top border. The slot sets the corners; the
- *   banner sets its own height.
- * @param cornerRadius - Corner radius of both sidebar cards, in place of the
- *   SectionCard default.
- * @param backgroundColor - Background of both sidebar cards, in place of the
- *   SectionCard default.
  * @param children - Body of the info card.
  */
 export function CaseProfileSidebar({
   caseDetail,
   sections,
-  banner,
-  cornerRadius,
-  backgroundColor,
   children,
 }: {
   caseDetail: ParoleCase;
   sections: ReadonlyArray<ParoleSectionNavItem>;
-  banner?: ReactNode;
-  cornerRadius?: string;
-  backgroundColor?: string;
   children: ReactNode;
 }) {
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
@@ -183,13 +157,10 @@ export function CaseProfileSidebar({
 
   return (
     <>
-      <InfoCard
-        $isNavStuck={isNavStuck}
-        $hasBanner={banner !== undefined}
-        $cornerRadius={cornerRadius}
-        $backgroundColor={backgroundColor}
-      >
-        {banner && <BannerSlot>{banner}</BannerSlot>}
+      <InfoCard $isNavStuck={isNavStuck}>
+        <BannerSlot>
+          <ParoleSidebarBanner name={caseDetail.name} />
+        </BannerSlot>
         <InfoCardBody>
           <SectionStack>
             {caseDetail.isParoleReturn && (
@@ -217,11 +188,7 @@ export function CaseProfileSidebar({
       </InfoCard>
 
       <StickyNavSentinel ref={setSentinel} />
-      <SectionNavCard
-        $isNavStuck={isNavStuck}
-        $cornerRadius={cornerRadius}
-        $backgroundColor={backgroundColor}
-      >
+      <SectionNavCard $isNavStuck={isNavStuck}>
         <NavCardBody>
           <SectionNav>
             {sections.map((section) => (

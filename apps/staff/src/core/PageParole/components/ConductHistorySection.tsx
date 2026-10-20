@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components";
@@ -24,24 +24,22 @@ import { ParoleConductRecord } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import { PaletteKey } from "../../BadgePill/BadgePill";
-import { SectionCardHeader } from "../../SectionCard";
 import {
   conductClassificationPalette,
   conductClassificationTextColor,
   ConductRecordCard,
 } from "./ConductRecordCard";
-import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
-  FactLabel,
-  partitionConductHistoryByRecency,
-  SectionCard,
-  SectionStack,
-} from "./shared";
+  ParoleSectionCard,
+  ParoleSectionTitle,
+  ParoleSmallFactValue,
+  ParoleSubsectionCaption,
+} from "./ParoleCaseProfileStyles";
+import { partitionConductHistoryByRecency, SectionStack } from "./shared";
 
-const SummaryRow = styled.div`
+const SummaryRow = styled(ParoleSubsectionCaption)`
   display: flex;
   gap: ${rem(spacing.lg)};
-  color: ${palette.slate70};
 `;
 
 // The per-record pills are already colored by classification; without this the
@@ -56,10 +54,8 @@ const NoInfractionsBanner = styled.div`
   gap: ${rem(spacing.sm)};
 `;
 
-const NoInfractionsHeading = styled.div`
-  ${typography.Sans14}
+const NoInfractionsHeading = styled(ParoleSmallFactValue)`
   font-weight: 600;
-  color: ${palette.pine1};
 `;
 
 function countsBySeverity(
@@ -87,25 +83,23 @@ export function ConductHistorySection({
 }) {
   if (conductHistory.length === 0) {
     return (
-      <SectionCard>
-        <SectionCardHeader>{title}</SectionCardHeader>
-        <PaddedSectionCardBody>
-          <SectionStack>
-            <NoInfractionsBanner>
-              <Icon
-                kind={IconSVG.Success}
-                width={20}
-                color={palette.signal.highlight}
-                aria-hidden="true"
-              />
-              <NoInfractionsHeading>
-                No Disciplinary Infractions
-              </NoInfractionsHeading>
-            </NoInfractionsBanner>
-            {children}
-          </SectionStack>
-        </PaddedSectionCardBody>
-      </SectionCard>
+      <ParoleSectionCard>
+        <ParoleSectionTitle>{title}</ParoleSectionTitle>
+        <SectionStack>
+          <NoInfractionsBanner>
+            <Icon
+              kind={IconSVG.Success}
+              width={20}
+              color={palette.signal.highlight}
+              aria-hidden="true"
+            />
+            <NoInfractionsHeading>
+              No Disciplinary Infractions
+            </NoInfractionsHeading>
+          </NoInfractionsBanner>
+          {children}
+        </SectionStack>
+      </ParoleSectionCard>
     );
   }
 
@@ -116,39 +110,40 @@ export function ConductHistorySection({
   );
 
   return (
-    <SectionCard>
-      <SectionCardHeader>{title}</SectionCardHeader>
-      <PaddedSectionCardBody>
-        <SectionStack>
-          <SummaryRow>
-            <span>
-              Total Violations:{" "}
-              <FactLabel as="span">{conductHistory.length}</FactLabel>
-            </span>
-            {severityCounts.map(([severity, count]) => (
-              <SeverityCount
-                key={severity}
-                $color={conductClassificationTextColor(
-                  conductClassificationPalette(
-                    conductClassificationColors,
-                    severity,
-                  ),
-                )}
-              >
-                {severity}: <FactLabel as="span">{count}</FactLabel>
-              </SeverityCount>
-            ))}
-          </SummaryRow>
-          {recentRecords.map((record, _) => (
-            <ConductRecordCard
-              key={`${record.date}-${record.violation}-${record.facility}-${record.severity}`}
-              record={record}
-              conductClassificationColors={conductClassificationColors}
-            />
+    <ParoleSectionCard>
+      <ParoleSectionTitle>{title}</ParoleSectionTitle>
+      <SectionStack>
+        <SummaryRow>
+          <span>
+            Total Violations:{" "}
+            <ParoleSmallFactValue as="span">
+              {conductHistory.length}
+            </ParoleSmallFactValue>
+          </span>
+          {severityCounts.map(([severity, count]) => (
+            <SeverityCount
+              key={severity}
+              $color={conductClassificationTextColor(
+                conductClassificationPalette(
+                  conductClassificationColors,
+                  severity,
+                ),
+              )}
+            >
+              {severity}:{" "}
+              <ParoleSmallFactValue as="span">{count}</ParoleSmallFactValue>
+            </SeverityCount>
           ))}
-          {children}
-        </SectionStack>
-      </PaddedSectionCardBody>
-    </SectionCard>
+        </SummaryRow>
+        {recentRecords.map((record) => (
+          <ConductRecordCard
+            key={`${record.date}-${record.violation}-${record.facility}-${record.severity}`}
+            record={record}
+            conductClassificationColors={conductClassificationColors}
+          />
+        ))}
+        {children}
+      </SectionStack>
+    </ParoleSectionCard>
   );
 }

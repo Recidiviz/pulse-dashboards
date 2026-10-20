@@ -21,6 +21,7 @@ import { MemoryRouter } from "react-router-dom";
 import * as StoreProvider from "../../../../components/StoreProvider";
 import useIsMobile from "../../../../hooks/useIsMobile";
 import { ParoleStore } from "../../../../ParoleStore/ParoleStore";
+import { ParoleDocketPresenter } from "../../../../ParoleStore/presenters/ParoleDocketPresenter";
 import { RootStore } from "../../../../RootStore";
 import { ParoleDocketView } from "../ParoleDocketView";
 
@@ -143,7 +144,10 @@ describe("ParoleDocketView columns", () => {
 });
 
 describe("ParoleDocketView hearing count summary", () => {
-  it("shows the summary for a tenant without pagination", async () => {
+  it("shows the summary when pagination is off", async () => {
+    const paginationSpy = vi
+      .spyOn(ParoleDocketPresenter.prototype, "docketPaginationEnabled", "get")
+      .mockReturnValue(false);
     render(
       <MemoryRouter>
         <ParoleDocketView />
@@ -151,17 +155,21 @@ describe("ParoleDocketView hearing count summary", () => {
     );
 
     expect(await screen.findByText(/upcoming hearings$/)).toBeInTheDocument();
+    paginationSpy.mockRestore();
   });
 
-  it("drops the summary for a tenant with pagination, whose counter replaces it", async () => {
-    mockCurrentTenant("US_ID");
-    render(
-      <MemoryRouter>
-        <ParoleDocketView />
-      </MemoryRouter>,
-    );
+  it.each(["US_CO", "US_ID"] as const)(
+    "drops the summary for %s, whose pagination counter replaces it",
+    async (tenantId) => {
+      mockCurrentTenant(tenantId);
+      render(
+        <MemoryRouter>
+          <ParoleDocketView />
+        </MemoryRouter>,
+      );
 
-    await screen.findAllByRole("link");
-    expect(screen.queryByText(/upcoming hearings$/)).not.toBeInTheDocument();
-  });
+      await screen.findAllByRole("link");
+      expect(screen.queryByText(/upcoming hearings$/)).not.toBeInTheDocument();
+    },
+  );
 });

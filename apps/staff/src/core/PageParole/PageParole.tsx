@@ -26,7 +26,6 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import cssVars from "../CoreConstants.module.scss";
 import {
@@ -44,8 +43,6 @@ const Wrapper = styled.div<{ $backgroundColor: string }>`
   ${typography.Sans14};
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   min-height: 100vh;
-  max-height: 100vh;
-  height: 100%;
   width: 100%;
 `;
 
@@ -84,11 +81,8 @@ const Main = styled.main<{ isMobile?: boolean }>`
 const PageParole: React.FC = observer(function PageParole() {
   const { isMobile } = useIsMobile(true);
   const { pathname } = useLocation();
-  const { paroleStore } = useRootStore();
   const isCaseProfile = useMatch(PAROLE_PATHS.caseProfile) !== null;
-  const backgroundColor =
-    (isCaseProfile && paroleStore.config.caseProfileBackgroundColor) ||
-    palette.marble1;
+  const backgroundColor = isCaseProfile ? palette.marble3 : palette.marble1;
 
   useEffect(() => {
     window.scrollTo({ top: 0 });

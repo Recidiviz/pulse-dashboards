@@ -29,14 +29,14 @@ import {
 import { palette } from "~design-system";
 
 import { Pagination } from "../../../Pagination/Pagination";
+import {
+  ParoleSubsection,
+  ParoleSubsectionCaption,
+  ParoleSubsectionHeading,
+  ParoleSubsectionTitle,
+} from "../ParoleCaseProfileStyles";
 import { SectionAnchor } from "../SectionAnchor";
 import { formatDateNumeric } from "../shared";
-import {
-  UsIdSubsection,
-  UsIdSubsectionCaption,
-  UsIdSubsectionHeading,
-  UsIdSubsectionTitle,
-} from "./UsIdCaseProfileStyles";
 
 type ProgramDateType = "completion" | "start" | "referral";
 
@@ -242,13 +242,15 @@ export function UsIdProgrammingSection({
 
   return (
     <SectionAnchor ref={sectionRef}>
-      <UsIdSubsection>
-        <UsIdSubsectionHeading>
-          <UsIdSubsectionTitle>Programming</UsIdSubsectionTitle>
+      <ParoleSubsection>
+        <ParoleSubsectionHeading>
+          <ParoleSubsectionTitle>Programming</ParoleSubsectionTitle>
           {rows.length === 0 && (
-            <UsIdSubsectionCaption>No programs on record</UsIdSubsectionCaption>
+            <ParoleSubsectionCaption>
+              No programs on record
+            </ParoleSubsectionCaption>
           )}
-        </UsIdSubsectionHeading>
+        </ParoleSubsectionHeading>
         {rows.length > 0 && (
           <Table>
             <colgroup>
@@ -291,7 +293,7 @@ export function UsIdProgrammingSection({
             }`}
           />
         )}
-      </UsIdSubsection>
+      </ParoleSubsection>
     </SectionAnchor>
   );
 }

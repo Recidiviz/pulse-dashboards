@@ -33,9 +33,15 @@ import {
 } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
-import { SectionCardHeader } from "../../SectionCard";
-import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { FactLabel, FactStack, formatDate, SectionCard } from "./shared";
+import {
+  PAROLE_RECORD_CORNER_RADIUS,
+  ParoleFactLabel,
+  ParoleFactStack,
+  ParoleSectionCard,
+  ParoleSectionTitle,
+  ParoleSmallFactValue,
+} from "./ParoleCaseProfileStyles";
+import { formatDate } from "./shared";
 
 const StyledAccordion = styled(Accordion)`
   display: flex;
@@ -44,8 +50,8 @@ const StyledAccordion = styled(Accordion)`
 `;
 
 const StyledAccordionItem = styled(AccordionItem)`
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(4)};
+  border: 1px solid ${palette.slate10};
+  border-radius: ${PAROLE_RECORD_CORNER_RADIUS};
   overflow: hidden;
 `;
 
@@ -117,65 +123,63 @@ export function ProgramParticipationSection({
   );
 
   return (
-    <SectionCard>
-      <SectionCardHeader>Program Participation</SectionCardHeader>
-      <PaddedSectionCardBody>
-        <StyledAccordion allowMultipleExpanded allowZeroExpanded>
-          <StyledAccordionItem uuid="doc">
-            <AccordionItemHeading>
-              <AccordionButton>
-                Completed Programs ({completedDocPrograms.length})
-                <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
-              </AccordionButton>
-            </AccordionItemHeading>
-            <AccordionBody>
-              {completedDocPrograms.length === 0 ? (
-                <EmptyState>No completed DOC programs on record.</EmptyState>
-              ) : (
-                completedDocPrograms.map((program) => (
-                  <ProgramRow key={program.name}>
-                    <FactStack>
-                      <div>{program.name}</div>
-                      {program.completionDate && (
-                        <FactLabel>
-                          Completed: {formatDate(program.completionDate)}
-                        </FactLabel>
-                      )}
-                    </FactStack>
-                  </ProgramRow>
-                ))
-              )}
-            </AccordionBody>
-          </StyledAccordionItem>
+    <ParoleSectionCard>
+      <ParoleSectionTitle>Program Participation</ParoleSectionTitle>
+      <StyledAccordion allowMultipleExpanded allowZeroExpanded>
+        <StyledAccordionItem uuid="doc">
+          <AccordionItemHeading>
+            <AccordionButton>
+              Completed Programs ({completedDocPrograms.length})
+              <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
+            </AccordionButton>
+          </AccordionItemHeading>
+          <AccordionBody>
+            {completedDocPrograms.length === 0 ? (
+              <EmptyState>No completed DOC programs on record.</EmptyState>
+            ) : (
+              completedDocPrograms.map((program) => (
+                <ProgramRow key={program.name}>
+                  <ParoleFactStack>
+                    <ParoleSmallFactValue>{program.name}</ParoleSmallFactValue>
+                    {program.completionDate && (
+                      <ParoleFactLabel>
+                        Completed: {formatDate(program.completionDate)}
+                      </ParoleFactLabel>
+                    )}
+                  </ParoleFactStack>
+                </ProgramRow>
+              ))
+            )}
+          </AccordionBody>
+        </StyledAccordionItem>
 
-          <StyledAccordionItem uuid="edovo">
-            <AccordionItemHeading>
-              <AccordionButton>
-                Edovo Credit Programs ({completedEdovoPrograms.length})
-                <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
-              </AccordionButton>
-            </AccordionItemHeading>
-            <AccordionBody>
-              {completedEdovoPrograms.length === 0 ? (
-                <EmptyState>No completed Edovo programs on record.</EmptyState>
-              ) : (
-                completedEdovoPrograms.map((program) => (
-                  <ProgramRow key={program.title}>
-                    <FactStack>
-                      <div>{program.title}</div>
-                      {program.completionDate && (
-                        <FactLabel>
-                          Completed: {formatDate(program.completionDate)}
-                        </FactLabel>
-                      )}
-                    </FactStack>
-                  </ProgramRow>
-                ))
-              )}
-            </AccordionBody>
-          </StyledAccordionItem>
-        </StyledAccordion>
-      </PaddedSectionCardBody>
-    </SectionCard>
+        <StyledAccordionItem uuid="edovo">
+          <AccordionItemHeading>
+            <AccordionButton>
+              Edovo Credit Programs ({completedEdovoPrograms.length})
+              <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
+            </AccordionButton>
+          </AccordionItemHeading>
+          <AccordionBody>
+            {completedEdovoPrograms.length === 0 ? (
+              <EmptyState>No completed Edovo programs on record.</EmptyState>
+            ) : (
+              completedEdovoPrograms.map((program) => (
+                <ProgramRow key={program.title}>
+                  <ParoleFactStack>
+                    <ParoleSmallFactValue>{program.title}</ParoleSmallFactValue>
+                    {program.completionDate && (
+                      <ParoleFactLabel>
+                        Completed: {formatDate(program.completionDate)}
+                      </ParoleFactLabel>
+                    )}
+                  </ParoleFactStack>
+                </ProgramRow>
+              ))
+            )}
+          </AccordionBody>
+        </StyledAccordionItem>
+      </StyledAccordion>
+    </ParoleSectionCard>
   );
 }

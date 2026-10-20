@@ -184,8 +184,6 @@ export type ParoleConfig = {
    * when this is unset.
    */
   riskAssessmentConfig?: ParoleRiskAssessmentConfig;
-  /** Background color of the case profile page. Omit for white. */
-  caseProfileBackgroundColor?: string;
 };
 
 export type ParoleConductHistoryConfig = {
