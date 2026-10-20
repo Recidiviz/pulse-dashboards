@@ -25,6 +25,7 @@ import * as Styled from "~sentencing-client/components/CaseDetails/CaseDetails.s
 
 import { UsMiClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
+import { QuestionNotes } from "./FormNotes";
 import {
   FormInput,
   PlacementsSection,
@@ -34,156 +35,12 @@ import {
   QuestionStatusBadge,
   QuestionTitle,
   StyledQuestionButton,
-  ViewMoreNotes,
 } from "./Styles";
 
 type MiNumberQuestionSpec = Extract<
   UsMiAssessmentQuestionSpec,
   { type: "NUMBER" }
 >;
-
-export const ClassificationQuestion = observer(function ClassificationQuestion({
-  questionSection,
-  questionNumber,
-  question,
-}: {
-  questionNumber: number;
-  questionSection: number;
-  question: UsMiAssessmentQuestionSpec;
-}) {
-  const [showMore, updateShowMore] = useState(false);
-  const [showError, setError] = useState<string | null>();
-
-  const selectionKey = `s${questionSection}q${questionNumber}Selection`;
-  const opportunityForm = useOpportunityFormContext();
-
-  const [inputNumber, setInputNumber] = useState<string | number | null>(() => {
-    const savedValue = opportunityForm.formData[selectionKey];
-    return typeof savedValue === "number" ? savedValue : null;
-  });
-  const [required, setRequired] = useState<boolean>(() => {
-    const savedValue = opportunityForm.formData[selectionKey];
-    return savedValue === "" || savedValue === undefined;
-  });
-
-  const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    if (question.type !== "NUMBER") return;
-    const { bounds } = question;
-    const value = event.target.value.trim();
-
-    if (value === "" || Number(value) < 0 || !/^\d+$/.test(value)) {
-      setError("Required. Enter a whole number of 0 or more");
-      setInputNumber(value);
-      opportunityForm.updateDraftData(selectionKey, deleteField());
-      setRequired(true);
-      return;
-    }
-    const number = Number(value);
-    if (bounds && number > bounds) {
-      setError(`Counted as ${bounds} (max ${bounds})`);
-      setInputNumber(number);
-      opportunityForm.updateDraftData(selectionKey, bounds);
-      setRequired(false);
-      return;
-    }
-    setError(null);
-    setInputNumber(number);
-    opportunityForm.updateDraftData(selectionKey, number);
-    setRequired(false);
-  };
-
-  const onChangeSingle = (index: number) => {
-    setRequired(false);
-    opportunityForm.updateDraftData(selectionKey, index);
-  };
-
-  const selection = opportunityForm.formData[selectionKey];
-
-  const { derivedData } = useOpportunityFormContext() as UsMiClassificationForm;
-  const scoreKey = `s${questionSection}q${questionNumber}Score` as Exclude<
-    Extract<keyof typeof derivedData, `${string}Score`>,
-    "totalScore"
-  >;
-
-  const score = derivedData[scoreKey];
-
-  const status = question.autofilled !== false && "AUTO-FILLED";
-
-  return (
-    <QuestionBox $required={required}>
-      <QuestionHeader id="question-header">
-        <QuestionTitle>
-          {questionNumber}: {question.title}
-          {required && (
-            <span style={{ color: palette.signal.error }}>{` *`}</span>
-          )}
-        </QuestionTitle>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          {status && (
-            <QuestionStatusBadge $status={status}>{status}</QuestionStatusBadge>
-          )}
-
-          <div
-            style={{
-              fontWeight: "600",
-              color: "black",
-            }}
-          >
-            {typeof score === "number" ? score : "-"}
-          </div>
-        </div>
-      </QuestionHeader>
-      <QuestionDescription>{question.description}</QuestionDescription>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div
-          id="questions"
-          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-        >
-          {question.type === "SINGLE" ? (
-            question.options.map((value: AssessmentOption, index: number) => (
-              <SingleSelectionQuestion
-                key={value.text}
-                value={value}
-                selection={selection}
-                index={index}
-                onChangeSingle={onChangeSingle}
-              />
-            ))
-          ) : (
-            <NumberMultiplierQuestion
-              question={question}
-              inputNumber={inputNumber}
-              score={score || 0}
-              onChange={onChange}
-              showError={showError}
-            />
-          )}
-        </div>
-        <div
-          id="bottom-half"
-          style={{ display: "flex", flexDirection: "column", width: "40%" }}
-        >
-          {question && (
-            <ViewMoreNotes
-              onClick={(e) => {
-                e.preventDefault();
-                updateShowMore(!showMore);
-              }}
-            >
-              {showMore ? "Show Fewer" : "Show More"}
-            </ViewMoreNotes>
-          )}
-        </div>
-      </div>
-    </QuestionBox>
-  );
-});
 
 export const NumberMultiplierQuestion = observer(
   function NumberMultiplierQuestion({
@@ -276,3 +133,142 @@ export const SingleSelectionQuestion = observer(
     );
   },
 );
+
+export const ClassificationQuestion = observer(function ClassificationQuestion({
+  questionSection,
+  questionNumber,
+  question,
+}: {
+  questionNumber: number;
+  questionSection: number;
+  question: UsMiAssessmentQuestionSpec;
+}) {
+  const [showError, setError] = useState<string | null>();
+
+  const selectionKey = `s${questionSection}q${questionNumber}Selection`;
+  const opportunityForm = useOpportunityFormContext();
+
+  const [inputNumber, setInputNumber] = useState<string | number | null>(() => {
+    const savedValue = opportunityForm.formData[selectionKey];
+    return typeof savedValue === "number" ? savedValue : null;
+  });
+  const [required, setRequired] = useState<boolean>(() => {
+    const savedValue = opportunityForm.formData[selectionKey];
+    return savedValue === "" || savedValue === undefined;
+  });
+
+  const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    if (question.type !== "NUMBER") return;
+    const { bounds } = question;
+    const value = event.target.value.trim();
+
+    if (value === "" || Number(value) < 0 || !/^\d+$/.test(value)) {
+      setError("Required. Enter a whole number of 0 or more");
+      setInputNumber(value);
+      opportunityForm.updateDraftData(selectionKey, deleteField());
+      setRequired(true);
+      return;
+    }
+    const number = Number(value);
+    if (bounds && number > bounds) {
+      setError(`Counted as ${bounds} (max ${bounds})`);
+      setInputNumber(number);
+      opportunityForm.updateDraftData(selectionKey, bounds);
+      setRequired(false);
+      return;
+    }
+    setError(null);
+    setInputNumber(number);
+    opportunityForm.updateDraftData(selectionKey, number);
+    setRequired(false);
+  };
+
+  const onChangeSingle = (index: number) => {
+    setRequired(false);
+    opportunityForm.updateDraftData(selectionKey, index);
+  };
+
+  const selection = opportunityForm.formData[selectionKey];
+
+  const { derivedData } = useOpportunityFormContext() as UsMiClassificationForm;
+  const scoreKey = `s${questionSection}q${questionNumber}Score` as Exclude<
+    Extract<keyof typeof derivedData, `${string}Score`>,
+    "totalScore"
+  >;
+
+  const score = derivedData[scoreKey];
+
+  const notesKey = `s${questionSection}q${questionNumber}Notes` as Extract<
+    keyof typeof derivedData,
+    `${string}Notes`
+  >;
+  const note = derivedData[notesKey];
+
+  const status = question.autofilled !== false && "AUTO-FILLED";
+
+  return (
+    <QuestionBox $required={required}>
+      <QuestionHeader id="question-header">
+        <QuestionTitle>
+          {questionNumber}: {question.title}
+          {required && (
+            <span style={{ color: palette.signal.error }}>{` *`}</span>
+          )}
+        </QuestionTitle>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          {status && (
+            <QuestionStatusBadge $status={status}>{status}</QuestionStatusBadge>
+          )}
+
+          <div
+            style={{
+              fontWeight: "600",
+              color: "black",
+            }}
+          >
+            {typeof score === "number" ? score : "-"}
+          </div>
+        </div>
+      </QuestionHeader>
+      <QuestionDescription>{question.description}</QuestionDescription>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          id="questions"
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+        >
+          {question.type === "SINGLE" ? (
+            question.options.map((value: AssessmentOption, index: number) => (
+              <SingleSelectionQuestion
+                key={value.text}
+                value={value}
+                selection={selection}
+                index={index}
+                onChangeSingle={onChangeSingle}
+              />
+            ))
+          ) : (
+            <NumberMultiplierQuestion
+              question={question}
+              inputNumber={inputNumber}
+              score={score || 0}
+              onChange={onChange}
+              showError={showError}
+            />
+          )}
+        </div>
+        <div
+          id="bottom-half"
+          style={{ display: "flex", flexDirection: "column", width: "80%" }}
+        >
+          <QuestionNotes noteInfo={question.note} note={note} />
+        </div>
+      </div>
+    </QuestionBox>
+  );
+});

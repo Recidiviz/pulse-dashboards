@@ -20,7 +20,14 @@ import { z } from "zod";
 import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
-import { usMiClassificationFormBaseSchema } from "./utils";
+import {
+  ageNotes,
+  felonyConvictionsNotes,
+  incidentNotesSchema,
+  pastAdSegNotes,
+  usMiClassificationFormBaseSchema,
+  vfoNotes,
+} from "./utils";
 
 export const prevLevelFiveNotes = z.object({
   hadPrevTrueLevel5Release: z.coerce.number(),
@@ -42,6 +49,22 @@ export const usMiInitialClassificationSchema = opportunitySchemaBase.extend({
 });
 
 export type prevLevelFiveNotes = z.infer<typeof prevLevelFiveNotes>;
+
+export type ClassificationNoteData = {
+  age: ageNotes;
+  vfo: vfoNotes;
+  releases: prevLevelFiveNotes;
+  felony: felonyConvictionsNotes;
+  adSeg: pastAdSegNotes;
+  incidents: incidentNotesSchema;
+};
+
+export type ClassificationNote = {
+  [K in keyof ClassificationNoteData]: {
+    kind: K;
+    data: ClassificationNoteData[K];
+  };
+}[keyof ClassificationNoteData];
 
 export type UsMiInitialClassificationRecord = ParsedRecord<
   typeof usMiInitialClassificationSchema

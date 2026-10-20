@@ -49,7 +49,7 @@ export const vfoNotes = z
   })
   .passthrough();
 
-export const felonyConvictionNotes = z.array(
+export const felonyConvictionsNotes = z.array(
   z.object({
     description: z.string(),
     imposedDate: dateStringSchema,
@@ -60,7 +60,14 @@ export const felonyConvictionNotes = z.array(
 export const pastAdSegNotes = z
   .object({
     numAdSegStartsInPast36Months: z.coerce.number(),
-    adSegStartsList: z.array(z.record(z.unknown())).nullable(),
+    adSegStartsList: z
+      .array(
+        z.object({
+          adSegEndDateExclusive: dateStringSchema.nullable(),
+          adSegStartDate: dateStringSchema.nullable(),
+        }),
+      )
+      .nullable(),
   })
   .passthrough();
 
@@ -73,7 +80,7 @@ export const usMiClassificationFormBaseSchema = z
     currentFightThreatPowIncNotes: incidentNotesSchema.nullable(),
     pastFightThreatPowIncNotes: incidentNotesSchema.nullable(),
     currentOtherIncNotes: incidentNotesSchema.nullable(),
-    felonyConvictionNotes: felonyConvictionNotes.nullable(),
+    felonyConvictionsNotes: felonyConvictionsNotes.nullable(),
     pastAdSegNotes: pastAdSegNotes.nullable(),
     ageScore: z.coerce.number().nullable(),
     calculatedTotalScore: z.coerce.number().nullable(),
@@ -91,4 +98,5 @@ export const usMiClassificationFormBaseSchema = z
 export type incidentNotesSchema = z.infer<typeof incidentNotesSchema>;
 export type ageNotes = z.infer<typeof ageNotes>;
 export type vfoNotes = z.infer<typeof vfoNotes>;
-export type felonyConvictionNotes = z.infer<typeof felonyConvictionNotes>;
+export type felonyConvictionsNotes = z.infer<typeof felonyConvictionsNotes>;
+export type pastAdSegNotes = z.infer<typeof pastAdSegNotes>;

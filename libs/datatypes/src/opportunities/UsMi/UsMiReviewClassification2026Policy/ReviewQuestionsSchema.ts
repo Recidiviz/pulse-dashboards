@@ -30,7 +30,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 4.2,
         note: {
-          type: "AdSeg",
           header: "Administrative Segregation Placements, past 36 months",
           notfound: "None recorded in the last 36 months",
         },
@@ -45,7 +44,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 12.3,
         note: {
-          type: "Incidents",
           header: "Assaultive misconducts, past 6 months",
           notfound: "None recorded in the last 6 months",
         },
@@ -60,7 +58,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 7.5,
         note: {
-          type: "Incidents",
           header: "Assaultive misconducts, past 6-12 months",
           notfound: "None recorded in the last 6-12 months",
         },
@@ -75,7 +72,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 4.6,
         note: {
-          type: "Incidents",
           header: "Assaultive misconducts, past 12-24 months",
           notfound: "None recorded in the last 12-24 months",
         },
@@ -90,7 +86,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 3.7,
         note: {
-          type: "Incidents",
           header: "Assaultive misconducts, past 24-36 months",
           notfound: "None recorded in the last 24-36 months",
         },
@@ -105,7 +100,6 @@ export const miBaseReviewClassificationQuestions = [
           "Includes any incarceration periods overlapping the past 36 months.",
         multiplier: 3.7,
         note: {
-          type: "Incidents",
           header: "Assaultive misconducts, past 36 months",
           notfound: "None recorded in the last 36 months",
         },
@@ -120,7 +114,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 6,
         note: {
-          type: "Incidents",
           header: "Fighting misconducts, past 6 months",
           notfound: "None recorded in the last 6 months",
         },
@@ -135,7 +128,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 3.5,
         note: {
-          type: "Incidents",
           header: "Fighting misconducts, past 6-12 months",
           notfound: "None recorded in the last 6-12 months",
         },
@@ -150,7 +142,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 2,
         note: {
-          type: "Incidents",
           header: "Fighting misconducts, past 12-36 months",
           notfound: "None recorded in the last 12-36 months",
         },
@@ -165,7 +156,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 4,
         multiplier: 2,
         note: {
-          type: "Incidents",
           header: "Fighting misconducts, past 36 months",
           notfound: "None recorded in the last 36 months",
         },
@@ -178,7 +168,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: 1,
         note: {
-          type: "Incidents",
           header: "Class I and Class II misconducts, past 6 months",
           notfound: "None recorded in the last 6 months",
         },
@@ -197,7 +186,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: -0.8,
         note: {
-          type: "NoMisconducts",
           header: "Periods without misconducts, past 12 months",
           notfound: "None recorded in the last 12 months",
         },
@@ -211,7 +199,6 @@ export const miBaseReviewClassificationQuestions = [
         bounds: 0,
         multiplier: -0.8,
         note: {
-          type: "Programs",
           header: "Count of CORE Program completions",
           notfound: "None recorded",
         },
@@ -226,7 +213,6 @@ export const miBaseReviewClassificationQuestions = [
           { text: "False", score: 0 },
         ],
         note: {
-          type: "Programs",
           header: "Count of High Program completions",
           notfound: "None recorded",
         },
@@ -261,7 +247,6 @@ const miMaleAgeClassificationQuestions = {
         { text: "50 or Older", score: 8.0 },
       ],
       note: {
-        type: "Age",
         header: "Age",
         notfound: "No age found",
       },
@@ -277,7 +262,6 @@ const miMaleAgeClassificationQuestions = {
         { text: "Neither", score: 0 },
       ],
       note: {
-        type: "VFO",
         header: "Most recent COMPAS assessment",
         notfound: "No VFO score found",
       },
@@ -306,7 +290,6 @@ const miFemaleAgeClassificationQuestions = {
         { text: "50 or Older", score: 8.0 },
       ],
       note: {
-        type: "Age",
         header: "Age",
         notfound: "No age found",
       },
@@ -321,7 +304,6 @@ const miFemaleAgeClassificationQuestions = {
         { text: "Neither", score: 0 },
       ],
       note: {
-        type: "VFO",
         header: "Most recent COMPAS assessment",
         notfound: "No VFO score found",
       },

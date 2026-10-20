@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  ClassificationNoteData,
   getSingleSectionQuestionScore,
   incidentNotesSchema,
   miFemaleInitialClassificationQuestions,
@@ -125,7 +126,7 @@ export function inferredMiClassificationData(
 
   const s2q3Notes = formInformation.prevLevelFiveNotes;
 
-  const s2q4Notes = formInformation.felonyConvictionNotes;
+  const s2q4Notes = formInformation.felonyConvictionsNotes;
 
   const s3q5Notes = formInformation.pastAdSegNotes;
 
@@ -156,6 +157,13 @@ export function inferredMiClassificationData(
     s3q9Notes,
     s3q10Notes,
   };
+}
+
+function classificationNote<K extends keyof ClassificationNoteData>(
+  kind: K,
+  data: ClassificationNoteData[K] | null | undefined,
+): { kind: K; data: ClassificationNoteData[K] } | null {
+  return data ? { kind, data } : null;
 }
 
 export function getMultiplierScore(
@@ -281,21 +289,39 @@ export function deriveMiClassification(
 
   s3SubScore = Number(s3SubScore.toFixed(2));
 
-  const s1q1Notes = formData.ageNotes;
+  const s1q1Notes = classificationNote("age", formData.ageNotes);
 
-  const s1q2Notes = formData.vfoNotes;
+  const s1q2Notes = classificationNote("vfo", formData.vfoNotes);
 
-  const s2q3Notes = formData.prevLevelFiveNotes;
+  const s2q3Notes = classificationNote("releases", formData.prevLevelFiveNotes);
 
-  const s2q4Notes = formData.felonyConvictionNotes;
+  const s2q4Notes = classificationNote(
+    "felony",
+    formData.felonyConvictionsNotes,
+  );
 
-  const s3q5Notes = formData.pastAdSegNotes;
+  const s3q5Notes = classificationNote("adSeg", formData.pastAdSegNotes);
 
-  const s3q6Notes = formData.currentViolentIncNotes;
-  const s3q7Notes = formData.pastViolentIncNotes;
-  const s3q8Notes = formData.currentFightThreatPowIncNotes;
-  const s3q9Notes = formData.pastFightThreatPowIncNotes;
-  const s3q10Notes = formData.currentOtherIncNotes;
+  const s3q6Notes = classificationNote(
+    "incidents",
+    formData.currentViolentIncNotes,
+  );
+  const s3q7Notes = classificationNote(
+    "incidents",
+    formData.pastViolentIncNotes,
+  );
+  const s3q8Notes = classificationNote(
+    "incidents",
+    formData.currentFightThreatPowIncNotes,
+  );
+  const s3q9Notes = classificationNote(
+    "incidents",
+    formData.pastFightThreatPowIncNotes,
+  );
+  const s3q10Notes = classificationNote(
+    "incidents",
+    formData.currentOtherIncNotes,
+  );
 
   const totalScore = s1SubScore + s2SubScore + s3SubScore;
 

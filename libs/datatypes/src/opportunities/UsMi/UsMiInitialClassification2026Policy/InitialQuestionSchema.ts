@@ -18,7 +18,6 @@
 import { SingleSectionAssessmentQuestionSpec } from "~datatypes";
 
 export type UsMiAssessmentQuestionNote = {
-  type: "AdSeg" | "Incidents" | "NoMisconducts" | "Programs" | "Age" | "VFO";
   header: string;
   notfound: string;
 };
@@ -63,17 +62,25 @@ export const miBaseInitialClassificationQuestions = [
           { text: "Yes", score: 8 },
           { text: "No", score: 0 },
         ],
+        note: {
+          header: "Releases, past 60 months",
+          notfound: "No releases found in the past 60 months",
+        },
       },
       {
         title: "Had an assaultive felony conviction in past 36 months",
         type: "SINGLE",
+        autofilled: false,
         description:
           "Not auto-filled. Review the felony convictions below and determine which are assaultive per MDOC policy. 36 months is based on the date imposed.",
         options: [
           { text: "Yes", score: 1.6 },
           { text: "No", score: 0 },
         ],
-        autofilled: false,
+        note: {
+          header: "Assaultive felonies, past 36 months",
+          notfound: "None recorded in the last 36 months",
+        },
       },
     ],
   },
@@ -88,6 +95,10 @@ export const miBaseInitialClassificationQuestions = [
           "Counts distinct ad seg placement starts (current or previous incarceration periods) in past 36 months.",
         bounds: 0,
         multiplier: 4.2,
+        note: {
+          header: "Administrative Segregation Placements, past 36 months",
+          notfound: "None recorded in the last 36 months",
+        },
       },
       {
         title:
@@ -98,6 +109,10 @@ export const miBaseInitialClassificationQuestions = [
           "Includes any incarceration periods overlapping the past 6 months.",
         bounds: 0,
         multiplier: 24.1,
+        note: {
+          header: "Assaultive misconducts, past 6 months",
+          notfound: "None recorded in the last 6 months",
+        },
       },
       {
         title:
@@ -108,6 +123,10 @@ export const miBaseInitialClassificationQuestions = [
         description:
           "Includes any incarceration periods overlapping the past 36 months.",
         multiplier: 9.7,
+        note: {
+          header: "Assaultive misconducts, past 36 months",
+          notfound: "None recorded in the last 36 months",
+        },
       },
       {
         title:
@@ -118,6 +137,10 @@ export const miBaseInitialClassificationQuestions = [
           "Includes any incarceration periods overlapping the past 6 months.",
         bounds: 0,
         multiplier: 6,
+        note: {
+          header: "Fighting misconducts, past 6 months",
+          notfound: "None recorded in the last 6 months",
+        },
       },
       {
         title:
@@ -128,6 +151,10 @@ export const miBaseInitialClassificationQuestions = [
           "Includes any incarceration periods overlapping the past 36 months.",
         bounds: 4,
         multiplier: 2,
+        note: {
+          header: "Fighting misconducts, past 36 months",
+          notfound: "None recorded in the last 36 months",
+        },
       },
       {
         title: "Number of Class One or Class Two Misconducts in Past 6 Months",
@@ -136,10 +163,15 @@ export const miBaseInitialClassificationQuestions = [
         description: "Auto-filled from misconduct records.",
         bounds: 0,
         multiplier: 1,
+        note: {
+          header: "Other non-violent Class I and II misconducts, past 6 months",
+          notfound: "None recorded in the last 6 months",
+        },
       },
       {
         title: "Assaultive Acts in Jail",
         type: "SINGLE",
+        autofilled: false,
         description: "Not auto-filled.",
         options: [
           { text: "None", score: 0 },
@@ -168,6 +200,10 @@ export const miMaleAgeClassificationQuestions = {
         { text: "41-49", score: 6.4 },
         { text: "50 or Older", score: 6.3 },
       ],
+      note: {
+        header: "Age",
+        notfound: "No age found",
+      },
     },
     {
       title: "VFO Score",
@@ -179,6 +215,10 @@ export const miMaleAgeClassificationQuestions = {
         { text: "High", score: 2.1 },
         { text: "Neither", score: 0 },
       ],
+      note: {
+        header: "Most recent COMPAS assessment",
+        notfound: "No VFO score found",
+      },
     },
   ],
 } satisfies UsMiAssessmentSectionsSpec;
@@ -203,6 +243,10 @@ const miFemaleAgeClassificationQuestions = {
         { text: "41-49", score: 6.4 },
         { text: "50 or Older", score: 6.3 },
       ],
+      note: {
+        header: "Age",
+        notfound: "No age found",
+      },
     },
     {
       title: "VFO Score",
@@ -213,6 +257,10 @@ const miFemaleAgeClassificationQuestions = {
         { text: "Low", score: -1.2 },
         { text: "Neither", score: 0 },
       ],
+      note: {
+        header: "Most recent COMPAS assessment",
+        notfound: "No VFO score found",
+      },
     },
   ],
 } satisfies UsMiAssessmentSectionsSpec;

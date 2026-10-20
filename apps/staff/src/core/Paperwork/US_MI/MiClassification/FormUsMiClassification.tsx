@@ -22,7 +22,6 @@ import React, { useEffect, useState } from "react";
 import { Button, palette } from "~design-system";
 import { pluralizeWord } from "~utils";
 
-import { Opportunity } from "../../../../WorkflowsStore";
 import { UsMiClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { ClassificationQuestion } from "./MultipleChoiceQuestion";
@@ -40,125 +39,123 @@ import {
   VerticalHr,
 } from "./Styles";
 
-export const FormUsMiClassification = observer(function FormUsMiClassification({
-  opportunity,
-}: {
-  opportunity: Opportunity;
-}) {
-  const formRef = React.useRef<HTMLDivElement>(null);
-  const form = useOpportunityFormContext() as UsMiClassificationForm;
+export const FormUsMiClassification = observer(
+  function FormUsMiClassification() {
+    const formRef = React.useRef<HTMLDivElement>(null);
+    const form = useOpportunityFormContext() as UsMiClassificationForm;
 
-  const {
-    displayCustodyLevel,
-    questionList,
-    derivedData,
-    formTitle,
-    remainingFields,
-  } = form;
+    const {
+      displayCustodyLevel,
+      questionList,
+      derivedData,
+      formTitle,
+      remainingFields,
+    } = form;
 
-  const [headerVisible, isHeaderVisible] = useState(true);
+    const [headerVisible, isHeaderVisible] = useState(true);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 80) {
-        isHeaderVisible(false);
-      } else {
-        isHeaderVisible(true);
-      }
-    };
+    useEffect(() => {
+      const handleScroll = () => {
+        if (window.scrollY > 80) {
+          isHeaderVisible(false);
+        } else {
+          isHeaderVisible(true);
+        }
+      };
 
-    window.addEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScroll);
 
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+      // Clean up event listener on component unmount
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
 
-  let questionNumber = 0;
-  return (
-    <>
-      <StickyHeader $headerVisible={headerVisible}>
-        <div>
-          <FormTitle>{formTitle}</FormTitle>
-          <SubHeading $headerVisible={headerVisible}>
-            Auto-filled fields are pulled from OMS. Review each and complete
-            required fields.
-          </SubHeading>
-        </div>
-        <StatusBadge $headerVisible={headerVisible}>
-          <LevelBadge $headerVisible={headerVisible}>
-            <div style={{ fontSize: rem(12) }}>CURRENT LEVEL</div>
+    let questionNumber = 0;
+    return (
+      <>
+        <StickyHeader $headerVisible={headerVisible}>
+          <div>
+            <FormTitle>{formTitle}</FormTitle>
+            <SubHeading $headerVisible={headerVisible}>
+              Auto-filled fields are pulled from OMS. Review each and complete
+              required fields.
+            </SubHeading>
+          </div>
+          <StatusBadge $headerVisible={headerVisible}>
+            <LevelBadge $headerVisible={headerVisible}>
+              <div style={{ fontSize: rem(12) }}>CURRENT LEVEL</div>
+              <div
+                style={{ fontWeight: 700, color: "black", padding: "0px 5px" }}
+              >
+                {displayCustodyLevel}
+              </div>
+            </LevelBadge>
+            <VerticalHr />
+            <div style={{ flexGrow: "5", fontSize: `${rem(12)}` }}>
+              All Changes Saved
+            </div>
+          </StatusBadge>
+        </StickyHeader>
+
+        <ClassificationForm
+          ref={formRef}
+          style={{
+            borderLeft: `1px solid ${palette.slate20}`,
+            marginTop: "90px",
+          }}
+        >
+          {questionList?.map((section, sectionIndex) => {
+            const { subscores } = derivedData;
+            return (
+              <div key={section.title}>
+                <SectionHeading>
+                  <div style={{ fontWeight: "600", color: "black" }}>
+                    {section.title}
+                  </div>
+                  <div>Subtotal: {subscores && subscores[sectionIndex]}</div>
+                </SectionHeading>
+                {section.questions.map((question) => {
+                  questionNumber += 1;
+                  return (
+                    <ClassificationQuestion
+                      key={question.title}
+                      questionSection={sectionIndex + 1}
+                      question={question}
+                      questionNumber={questionNumber}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+          <hr style={{ width: "100%" }} />
+          <FormFooter>
             <div
-              style={{ fontWeight: 700, color: "black", padding: "0px 5px" }}
+              id="remaining-fields"
+              style={{ display: "flex", flexDirection: "column" }}
             >
-              {displayCustodyLevel}
-            </div>
-          </LevelBadge>
-          <VerticalHr />
-          <div style={{ flexGrow: "5", fontSize: `${rem(12)}` }}>
-            All Changes Saved
-          </div>
-        </StatusBadge>
-      </StickyHeader>
-
-      <ClassificationForm
-        ref={formRef}
-        style={{
-          borderLeft: `1px solid ${palette.slate20}`,
-          marginTop: "90px",
-        }}
-      >
-        {questionList?.map((section, sectionIndex) => {
-          const { subscores } = derivedData;
-          return (
-            <div key={section.title}>
-              <SectionHeading>
-                <div style={{ fontWeight: "600", color: "black" }}>
-                  {section.title}
-                </div>
-                <div>Subtotal: {subscores && subscores[sectionIndex]}</div>
-              </SectionHeading>
-              {section.questions.map((question) => {
-                questionNumber += 1;
-                return (
-                  <ClassificationQuestion
-                    key={question.title}
-                    questionSection={sectionIndex + 1}
-                    question={question}
-                    questionNumber={questionNumber}
-                  />
-                );
-              })}
-            </div>
-          );
-        })}
-        <hr style={{ width: "100%" }} />
-        <FormFooter>
-          <div
-            id="remaining-fields"
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            {remainingFields ? (
-              <>
-                <ScoringNote>
-                  The score and recommended level appear after you calculate
-                </ScoringNote>
+              {remainingFields ? (
+                <>
+                  <ScoringNote>
+                    The score and recommended level appear after you calculate
+                  </ScoringNote>
+                  <RemainingFields $remaining={!!remainingFields}>
+                    {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
+                  </RemainingFields>
+                </>
+              ) : (
                 <RemainingFields $remaining={!!remainingFields}>
-                  {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
+                  All required fields complete
                 </RemainingFields>
-              </>
-            ) : (
-              <RemainingFields $remaining={!!remainingFields}>
-                All required fields complete
-              </RemainingFields>
-            )}
-          </div>
-          <Button type="button" kind="primary" disabled={remainingFields > 0}>
-            Calculate Classification
-          </Button>
-        </FormFooter>
-      </ClassificationForm>
-    </>
-  );
-});
+              )}
+            </div>
+            <Button type="button" kind="primary" disabled={remainingFields > 0}>
+              Calculate Classification
+            </Button>
+          </FormFooter>
+        </ClassificationForm>
+      </>
+    );
+  },
+);

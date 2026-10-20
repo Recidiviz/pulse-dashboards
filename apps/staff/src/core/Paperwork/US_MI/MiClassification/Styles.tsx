@@ -260,15 +260,68 @@ export const PlacementsSection = styled.div`
   background: white;
 `;
 
-/*
- * Case notes - show few and show more
- */
-
-export const ViewMoreNotes = styled.button`
+export const ViewMoreQuestionNotes = styled.button`
   color: ${palette.pine4};
   border: none;
   background: none;
   font-weight: 500;
   padding: 5px;
   text-align: left;
+`;
+
+export const NotesBox = styled.div`
+  border-left: 2px solid ${palette.slate20};
+  margin-left: 5px;
+  padding-left: 5px;
+`;
+
+export const NotesRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: ${palette.slate70};
+`;
+
+export const NoNoteFound = styled.div`
+  font-style: italic;
+  font-weight: 300;
+  color: ${palette.slate70};
+  display: flex;
+  flex-direction: row;
+  border-left: 2px solid ${palette.slate20};
+  margin-left: 5px;
+  padding-left: 5px;
+`;
+
+export const NoteHeader = styled.div`
+  color: ${palette.slate90};
+  font-weight: 500;
+  margin: 5px;
+`;
+
+export const NoteMisconducts = styled.div`
+  display: flex;
+  flex-grow: 0;
+  text-wrap: wrap;
+  font-weight: 300;
+  color: ${palette.slate70};
+  padding-left: 5px;
+  margin-left: 5px;
+`;
+
+export const NoteDate = styled.div`
+  display: flex;
+  flex-grow: 0;
+  text-wrap: nowrap;
+  font-weight: 300;
+  color: ${palette.slate70};
+  padding-left: 5px;
+  margin-left: 5px;
+`;
+
+export const NoteField = styled.div`
+  color: ${palette.slate70};
+  display: flex;
+  flex-direction: row;
+  padding-left: 5px;
 `;
