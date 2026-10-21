@@ -68,7 +68,12 @@ SOPS file:
 export TS_ADMIN_KEY="$(sops -d ../../atmos/components/terraform/apps/typesense/secrets/recidiviz-dashboard-staging.enc.yaml | yq '.typesense_admin_api_key')"
 ```
 
-Mint, scoped narrowly to the searchable collection set:
+Mint, scoped narrowly to the searchable collection set. That set is
+`BROWSER_SEARCHABLE_COLLECTIONS` in [`src/schemas/index.ts`](src/schemas/index.ts),
+which is the source of truth — read it rather than copying the list below, which
+only shows the shape. **Keys are immutable**, so adding a collection to that
+constant means re-minting this key; a key minted before a collection existed
+cannot search it, and the browser gets a 403 that names no collection:
 
 ```bash
 curl -fsS "https://typesense-staging.recidiviz.org/keys" \
@@ -77,7 +82,7 @@ curl -fsS "https://typesense-staging.recidiviz.org/keys" \
   -d '{
     "description": "Parent search key — staff client (staging)",
     "actions": ["documents:search"],
-    "collections": ["clients", "residents", "supervisionStaff", "incarcerationStaff", "locations"]
+    "collections": ["clients", "residents", "locations", "supervisionStaff", "incarcerationStaff", "opportunities"]
   }' | jq
 ```
 
@@ -100,6 +105,30 @@ sops env.staging.enc.yaml
 # Set:
 #   TYPESENSE_API_SEARCH_KEY: <value>
 ```
+
+### The value lives in several files — update all of them
+
+This file is **not** the one a deployed server reads. `additional-sops-env-files`
+wires it into the local `nx dev staff` target only. Every deployed environment
+reads its own GAE env file:
+
+| Reads it                               | File                                                       |
+| -------------------------------------- | ---------------------------------------------------------- |
+| local `nx dev staff`                   | `libs/@typesense/client/env.staging.enc.yaml`              |
+| ops tooling, probes, `migrate-schemas` | `libs/@typesense/client/env.{staging,production}.enc.yaml` |
+| deployed staging                       | `apps/staff-server/gae-staging.enc.yaml`                   |
+| deployed staging-demo                  | `apps/staff-server/gae-staging-demo.enc.yaml`              |
+| deployed production                    | `apps/staff-server/gae-production.enc.yaml`                |
+
+**Rotating the key means writing the new value into every file for that
+environment.** A copy that drifts does not fail at deploy. It fails for users,
+as every minted scoped key coming back `Forbidden - a valid
+x-typesense-api-key header must be sent` — a message that names neither the key
+nor the file. No stack deploy repairs it either: `apps/typesense-api-key`
+pushes a SOPS value into Secret Manager and never touches the cluster.
+
+Nothing checks this today. TODO(OBT-55038) replaces the copies with one value
+injected at deploy time.
 
 After rotation, revoke the old parent key in Typesense (otherwise any
 previously-issued scoped key signed off it remains valid until its

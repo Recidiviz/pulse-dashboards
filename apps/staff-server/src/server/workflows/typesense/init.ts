@@ -53,13 +53,24 @@ export function getTypesenseClient(): TypesenseClient {
  * key (an admin-derived scope is silently ignored by Typesense), so this
  * function makes sure such a key is available:
  *
- *   - dev / staging / production: `TYPESENSE_API_SEARCH_KEY` is already the
- *     search-only key, pre-provisioned in
- *     libs/@typesense/client/env.<env>.enc.yaml and surfaced here via the
- *     SOPS plugin's `additional-sops-env-files`.
+ *   - local `nx dev`: `TYPESENSE_API_SEARCH_KEY` comes from
+ *     libs/@typesense/client/env.staging.enc.yaml, pulled in by the SOPS
+ *     plugin's `additional-sops-env-files` on that target.
+ *   - deployed staging / staging-demo / production: the same variable, but from
+ *     that environment's OWN gae-*.enc.yaml. Those are separate copies of one
+ *     value and nothing in the deploy keeps them in step, so a key that is
+ *     correct for local dev is not thereby correct once deployed.
+ *     TODO(OBT-55038): inject this at deploy time from a single secret, and
+ *     drop the per-environment copies.
  *   - offline: no `TYPESENSE_API_SEARCH_KEY` env is set; the client uses the
  *     admin bootstrap key ("xyz") to talk to local Typesense, and we provision
  *     `OFFLINE_PARENT_KEY` as a search-only sub-key of it.
+ *
+ * A mismatch surfaces only at runtime, as every minted scoped key coming back
+ * `Forbidden - a valid x-typesense-api-key header must be sent` — a message
+ * that names neither the key nor the file. Typesense keys are also immutable,
+ * so widening `BROWSER_SEARCHABLE_COLLECTIONS` means re-minting this key and
+ * updating every copy. See libs/@typesense/client/README.md.
  */
 
 /**
