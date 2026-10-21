@@ -37,6 +37,7 @@ import { downloadZipFile } from "../../utils";
 import {
   AGE_SUPPORTING_TEXT,
   ClassificationFormPage,
+  ClassificationResourceLinksBanner,
   DISCIPLINARY_RECORD_SUPPORTING_TEXT,
   DoubleNotes,
   Header,
@@ -119,6 +120,7 @@ export const FormUsTnDiagnosticClassification2026 = observer(
         isMissingContent={downloadTooltip !== undefined}
         downloadTooltip={downloadTooltip}
         downloadButtonLabel="Download as .DOCX"
+        headerBanner={<ClassificationResourceLinksBanner />}
       >
         <PreworkModal />
         <FormViewer formRef={formRef}>

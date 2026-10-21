@@ -37,6 +37,7 @@ import {
   AGE_SUPPORTING_TEXT,
   BLOCKED_DOWNLOAD_WRONG_VERSION_NEW,
   ClassificationFormPage,
+  ClassificationResourceLinksBanner,
   DISCIPLINARY_RECORD_SUPPORTING_TEXT,
   DoubleNotes,
   Header,
@@ -140,6 +141,7 @@ export const FormUsTnReclassification2026V2 = observer(
           isMissingContent={downloadTooltip !== undefined}
           downloadTooltip={downloadTooltip}
           downloadButtonLabel="Download as .DOCX"
+          headerBanner={<ClassificationResourceLinksBanner />}
           additionalHeaderButtons={<UsTnReclassSubmitButton />}
         >
           <PreworkModal />

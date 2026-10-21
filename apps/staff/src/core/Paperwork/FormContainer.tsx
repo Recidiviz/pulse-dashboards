@@ -205,6 +205,8 @@ export type FormHeaderProps = {
   opportunity: Opportunity;
   children: React.ReactNode;
   additionalHeaderButtons?: React.ReactNode;
+  /** Rendered in the header bar, below the "Last edited" message. */
+  headerBanner?: React.ReactNode;
   onDenialButtonClick?: () => void;
 };
 
@@ -225,6 +227,7 @@ export const FormContainer = observer(function FormContainer({
   opportunity,
   children,
   additionalHeaderButtons,
+  headerBanner,
   onDenialButtonClick = () => null,
 }: FormHeaderProps): React.ReactElement<any> {
   const { form } = opportunity;
@@ -341,6 +344,7 @@ export const FormContainer = observer(function FormContainer({
                 />
               </LastEditedMessage>
             )}
+            {headerBanner}
           </div>
         </FormHeaderSection>
         {opportunity.config.enableSupervisorReviewChain ? (
