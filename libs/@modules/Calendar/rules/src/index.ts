@@ -24,6 +24,7 @@ export {
   todayIn,
   weekdayOf,
 } from "./dates";
+export { describePatternRules } from "./describePattern";
 export type { CalendarRulesErrorCode } from "./errors";
 export { CalendarRulesError } from "./errors";
 export { MAX_YEAR, MIN_YEAR } from "./plainDates";

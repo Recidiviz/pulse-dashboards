@@ -15,6 +15,7 @@ Dates cross the public API as `"YYYY-MM-DD"` strings (`IsoDate`). Inside, the li
 | `resolvePatternRule`                                        | The date a `weekOfMonth` rule makes in a month.                                                         |
 | `everyWeekdayDates`, `everyNWeeksDates`                     | The dates an `everyWeekday` or `everyNWeeks` rule makes in a month.                                     |
 | `expandPatternRules`                                        | Every date a list of rules makes in a month, sorted, with `inMonth` for dates past month end.           |
+| `describePatternRules`                                      | Display text such as "1st and 2nd Monday" or "Every 3 weeks on Friday from Sep 4, 2026".                |
 | `CalendarRulesError`                                        | Thrown for invalid input, with a `code` such as `INVALID_DATE` or `ANCHOR_WEEKDAY_MISMATCH`.            |
 | `WEEKDAYS`, `WEEK_NUMBERINGS`, `HOLIDAY_POLICIES` and types | `PatternRule`, `CalendarSettings`, `WeekSettings`, `YearMonth` and the enums the Prisma schema mirrors. |
 
