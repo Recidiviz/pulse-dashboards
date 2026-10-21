@@ -224,6 +224,11 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: false,
+      dpoAddress: {
+        line1: "3600 Presidential Blvd",
+        city: "Austin",
+        zip: "78719",
+      },
     },
   },
   {
@@ -240,6 +245,11 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: true,
+      dpoAddress: {
+        line1: "2400 Aviation Dr",
+        city: "Dallas",
+        zip: "75261",
+      },
     },
   },
   {
@@ -256,6 +266,11 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: false,
+      dpoAddress: {
+        line1: "3600 Presidential Blvd",
+        city: "Austin",
+        zip: "78719",
+      },
     },
   },
   {
@@ -272,6 +287,11 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: true,
+      dpoAddress: {
+        line1: "2800 N Terminal Rd",
+        city: "Houston",
+        zip: "77032",
+      },
     },
   },
   {
@@ -288,6 +308,11 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: false,
+      dpoAddress: {
+        line1: "3600 Presidential Blvd",
+        city: "Austin",
+        zip: "78719",
+      },
     },
   },
 

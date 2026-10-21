@@ -414,6 +414,11 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER1' 1`] = `
   "staffExternalId": "OFFICER1",
   "stateCode": "US_TX",
   "stateSpecificData": {
+    "dpoAddress": {
+      "city": "Austin",
+      "line1": "3600 Presidential Blvd",
+      "zip": "78719",
+    },
     "isInUnderstaffedOffice": false,
     "stateCode": "US_TX",
   },
@@ -434,6 +439,11 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER2' 1`] = `
   "staffExternalId": "OFFICER2",
   "stateCode": "US_TX",
   "stateSpecificData": {
+    "dpoAddress": {
+      "city": "Dallas",
+      "line1": "2400 Aviation Dr",
+      "zip": "75261",
+    },
     "isInUnderstaffedOffice": true,
     "stateCode": "US_TX",
   },
@@ -454,6 +464,11 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER3' 1`] = `
   "staffExternalId": "OFFICER3",
   "stateCode": "US_TX",
   "stateSpecificData": {
+    "dpoAddress": {
+      "city": "Austin",
+      "line1": "3600 Presidential Blvd",
+      "zip": "78719",
+    },
     "isInUnderstaffedOffice": false,
     "stateCode": "US_TX",
   },
@@ -474,6 +489,11 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER4' 1`] = `
   "staffExternalId": "OFFICER4",
   "stateCode": "US_TX",
   "stateSpecificData": {
+    "dpoAddress": {
+      "city": "Houston",
+      "line1": "2800 N Terminal Rd",
+      "zip": "77032",
+    },
     "isInUnderstaffedOffice": true,
     "stateCode": "US_TX",
   },
@@ -494,6 +514,11 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER5' 1`] = `
   "staffExternalId": "OFFICER5",
   "stateCode": "US_TX",
   "stateSpecificData": {
+    "dpoAddress": {
+      "city": "Austin",
+      "line1": "3600 Presidential Blvd",
+      "zip": "78719",
+    },
     "isInUnderstaffedOffice": false,
     "stateCode": "US_TX",
   },
