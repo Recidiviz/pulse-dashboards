@@ -39,6 +39,7 @@ export type CalloutProps = {
   action?: ReactNode;
   dismiss?: { label: string; onClick: () => void };
   role?: "alert" | "status";
+  bordered?: boolean;
 };
 
 /**
@@ -56,6 +57,8 @@ export type CalloutProps = {
  * - banner (default): an accent bar on the left, with the action to the right
  * - slim: a banner with less padding, for tight spaces
  * - card: rounded corners, with the action below the text
+ *
+ * bordered - adds a 1px outline in the tone's border color, on top of any variant.
  */
 export const Callout = ({
   tone,
@@ -66,8 +69,9 @@ export const Callout = ({
   action,
   dismiss,
   role,
+  bordered = false,
 }: CalloutProps) => (
-  <Wrapper $tone={tone} $variant={variant} role={role}>
+  <Wrapper $tone={tone} $variant={variant} $bordered={bordered} role={role}>
     {icon && <IconSlot $variant={variant}>{icon}</IconSlot>}
     <Content>
       {heading && <Heading>{heading}</Heading>}

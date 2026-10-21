@@ -78,10 +78,17 @@ const variantStyles = {
 export const Wrapper = styled.div<{
   $tone: CalloutTone;
   $variant: CalloutVariant;
+  $bordered: boolean;
 }>`
   background-color: ${({ $tone }) => toneStyles[$tone].backgroundColor};
   display: flex;
   gap: ${rem(spacing.md)};
+
+  ${({ $bordered, $tone }) =>
+    $bordered &&
+    css`
+      border: 1px solid ${toneStyles[$tone].borderColor};
+    `}
 
   ${({ $variant }) => variantStyles[$variant]}
 `;
@@ -109,7 +116,7 @@ export const Heading = styled.p`
   margin: 0;
 `;
 
-export const Description = styled.p<{ $variant: CalloutVariant }>`
+export const Description = styled.div<{ $variant: CalloutVariant }>`
   ${typography.Sans16}
 
   color: ${({ $variant }) =>

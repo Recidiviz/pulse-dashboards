@@ -18,7 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { PageContainer } from "~@jii/common-ui";
+import { CopyWrapper, PageContainer } from "~@jii/common-ui";
 import { spacing } from "~design-system";
 
 export const Wrapper = styled(PageContainer)`
@@ -28,4 +28,10 @@ export const Wrapper = styled(PageContainer)`
   gap: ${rem(64)};
   padding-bottom: ${rem(spacing.xxl)};
   padding-top: ${rem(spacing.xl)};
+`;
+
+export const GuideCopy = styled(CopyWrapper)`
+  p:last-child {
+    margin-bottom: 0;
+  }
 `;
