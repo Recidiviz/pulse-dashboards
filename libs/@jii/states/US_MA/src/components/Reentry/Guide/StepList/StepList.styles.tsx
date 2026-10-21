@@ -69,3 +69,14 @@ export const StepHeading = styled.h3`
 export const StepDetail = styled.div`
   padding: 0 ${rem(spacing.xl)};
 `;
+
+export const DetailLabel = styled.p`
+  ${typography.Sans14}
+
+  color: ${palette.slate80};
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: ${rem(20)};
+  margin: 0;
+  text-transform: uppercase;
+`;

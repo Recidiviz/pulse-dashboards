@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useUsMaTranslations } from "~@jii/translation";
+
 import { GuideCopy } from "../Guide.styles";
 import {
+  DetailLabel,
   StepDetail,
   StepHeader,
   StepHeading,
@@ -25,25 +28,46 @@ import {
   Steps,
 } from "./StepList.styles";
 
-export type GuideStep = { heading: string; body: string };
+export type GuideStep =
+  | { heading: string; body: string }
+  | { heading: string; when: string; whatToDo: string };
 
 type StepListProps = {
   steps: Record<string, GuideStep>;
 };
 
-export const StepList = ({ steps }: StepListProps) => (
-  <Steps>
-    {Object.entries(steps).map(([stepId, step], index) => (
-      <StepItem key={stepId}>
-        <StepHeader>
-          <StepNumber aria-hidden>{index + 1}</StepNumber>
-          <StepHeading>{step.heading}</StepHeading>
-        </StepHeader>
+export const StepList = ({ steps }: StepListProps) => {
+  const { t } = useUsMaTranslations();
 
-        <StepDetail>
-          <GuideCopy>{step.body}</GuideCopy>
-        </StepDetail>
-      </StepItem>
-    ))}
-  </Steps>
-);
+  return (
+    <Steps>
+      {Object.entries(steps).map(([stepId, step], index) => (
+        <StepItem key={stepId}>
+          <StepHeader>
+            <StepNumber aria-hidden>{index + 1}</StepNumber>
+            <StepHeading>{step.heading}</StepHeading>
+          </StepHeader>
+
+          {"body" in step ? (
+            <StepDetail>
+              <GuideCopy>{step.body}</GuideCopy>
+            </StepDetail>
+          ) : (
+            <>
+              <StepDetail>
+                <DetailLabel>{t(($) => $.reentry.guide.whenLabel)}</DetailLabel>
+                <GuideCopy>{step.when}</GuideCopy>
+              </StepDetail>
+              <StepDetail>
+                <DetailLabel>
+                  {t(($) => $.reentry.guide.whatToDoLabel)}
+                </DetailLabel>
+                <GuideCopy>{step.whatToDo}</GuideCopy>
+              </StepDetail>
+            </>
+          )}
+        </StepItem>
+      ))}
+    </Steps>
+  );
+};
