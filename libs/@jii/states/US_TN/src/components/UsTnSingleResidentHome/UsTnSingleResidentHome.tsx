@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MaintenanceAnnouncement } from "../MaintenanceAnnouncement";
 import { UsTnLastUpdatedBanner } from "../UsTnLastUpdatedBanner";
 import { UsTnImportantDates } from "./UsTnImportantDates";
 import { UsTnMonthlyReports } from "./UsTnMonthlyReports";
@@ -24,7 +23,6 @@ export function UsTnSingleResidentHome() {
   return (
     <div>
       <UsTnLastUpdatedBanner />
-      <MaintenanceAnnouncement />
       <UsTnImportantDates />
       <UsTnMonthlyReports />
     </div>
