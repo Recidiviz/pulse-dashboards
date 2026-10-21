@@ -24,7 +24,7 @@
  * - Auditor Agent (Gemini-2.5-Flash): Finds verbatim citations for verification
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import dedent from "dedent";
 import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
@@ -36,7 +36,10 @@ import type {
   MeetingTypeConfigEntry,
 } from "~@meetings/config/types";
 import type { Person } from "~@meetings/prisma/types";
-import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
+import {
+  createVertexGeminiClient,
+  generateContentWithZodSchema,
+} from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
 import { PROMPTS } from "~@meetings/tasks/llm/prompts";
 import {
@@ -131,15 +134,14 @@ function buildDraftingOutputSchema(
 
 export class SpecialistCore {
   private openai: OpenAI;
-  private gemini: GoogleGenerativeAI;
+  private gemini: GoogleGenAI;
 
   static factory(): SpecialistCore {
     const openaiKey = process.env["OPENAI_API_KEY"];
-    const geminiKey = process.env["GOOGLE_API_KEY"];
 
-    if (!openaiKey || !geminiKey) {
+    if (!openaiKey) {
       throw new Error(
-        "Missing API keys. Set OPENAI_API_KEY and GOOGLE_API_KEY environment variables.",
+        "Missing API key. Set the OPENAI_API_KEY environment variable.",
       );
     }
 
@@ -163,17 +165,11 @@ export class SpecialistCore {
 
     return new SpecialistCore({
       openai: langsmithEnabled ? wrapOpenAI(baseOpenAI) : baseOpenAI,
-      gemini: new GoogleGenerativeAI(geminiKey),
+      gemini: createVertexGeminiClient(),
     });
   }
 
-  constructor({
-    openai,
-    gemini,
-  }: {
-    openai: OpenAI;
-    gemini: GoogleGenerativeAI;
-  }) {
+  constructor({ openai, gemini }: { openai: OpenAI; gemini: GoogleGenAI }) {
     if (openai.baseURL != "https://us.api.openai.com/v1") {
       throw new Error("Must use US-based OpenAI client");
     }

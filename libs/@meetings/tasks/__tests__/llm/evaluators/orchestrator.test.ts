@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import * as agents from "~@meetings/tasks/llm/evaluators/agents";
 import {
@@ -37,11 +37,8 @@ vi.mock("langsmith/traceable", () => ({
   traceable: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
-const mockFileManager = { uploadFile: vi.fn(), getFile: vi.fn() } as never;
-
 const mockClients: EvaluatorClients = {
   gemini: mockGemini,
-  fileManager: mockFileManager,
   timeout: 1000,
 };
 
@@ -193,8 +190,8 @@ describe("runAllEvaluators", () => {
 
     await runAllEvaluators(clientsWithTimeout, baseInputs);
 
-    // Fourth argument to runTranscriptComparison is the timeout
-    expect(transcriptSpy.mock.calls[0]?.[3]).toBe(99000);
+    // Third argument to runTranscriptComparison is the timeout
+    expect(transcriptSpy.mock.calls[0]?.[2]).toBe(99000);
     // Third argument to runCaseNote is the timeout
     expect(caseNoteSpy.mock.calls[0]?.[2]).toBe(99000);
   });
@@ -211,7 +208,6 @@ describe("runAllEvaluators", () => {
 
     expect(transcriptSpy).toHaveBeenCalledWith(
       mockGemini,
-      mockFileManager,
       {
         audioBucket: baseInputs.audioBucket,
         audioPath: baseInputs.audioPath,
@@ -223,31 +219,28 @@ describe("runAllEvaluators", () => {
 });
 
 describe("createEvaluatorClients", () => {
-  const originalKey = process.env["GOOGLE_API_KEY"];
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  test("should throw when GOOGLE_API_KEY is not set", () => {
-    delete process.env["GOOGLE_API_KEY"];
-
-    expect(() => createEvaluatorClients()).toThrow(
-      "Missing GOOGLE_API_KEY environment variable",
-    );
-
-    process.env["GOOGLE_API_KEY"] = originalKey;
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
-  test("should return clients when GOOGLE_API_KEY is set", () => {
-    process.env["GOOGLE_API_KEY"] = "test-key";
+  test("should throw when GOOGLE_CLOUD_PROJECT is not set", () => {
+    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
+
+    expect(() => createEvaluatorClients()).toThrow(
+      "Missing GOOGLE_CLOUD_PROJECT environment variable",
+    );
+  });
+
+  test("should return clients when GOOGLE_CLOUD_PROJECT is set", () => {
+    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
 
     const clients = createEvaluatorClients();
 
     expect(clients.gemini).toBeDefined();
-    expect(clients.fileManager).toBeDefined();
     expect(clients.timeout).toBe(1800000);
-
-    process.env["GOOGLE_API_KEY"] = originalKey;
   });
 });

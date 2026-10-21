@@ -83,6 +83,7 @@ nx run @meetings/eval-golden:mirror-prompt                    # re-mirror prompt
 | Var                                       | Default   | Effect                                                                                                                                         |
 | ----------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `OPENAI_API_KEY`                          | —         | Required. Loaded locally from `@meetings/server`'s SOPS env via the `requires-sops-env:` target prefix.                                        |
+| `GOOGLE_CLOUD_PROJECT`                    | —         | Set to `recidiviz-dashboard-staging` by the `regression` target. `SpecialistCore.factory()` needs it for the Vertex AI Gemini client.          |
 | `LANGSMITH_API_KEY` / `LANGCHAIN_API_KEY` | —         | Required, to read the datasets and record experiments. `LANGCHAIN_API_KEY` is already in the same SOPS env for tracing; either name works.     |
 | `EVAL_SUITE`                              | `all`     | `extraction`, `bias`, or `all`.                                                                                                                |
 | `EVAL_RUNS`                               | `1`       | Extraction passes per example (LangSmith `numRepetitions`); `>1` gates on a **strict majority** of runs, smoothing per-example flake.          |

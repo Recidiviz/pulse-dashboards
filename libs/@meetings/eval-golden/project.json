@@ -35,7 +35,11 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx src/cli/regression.ts",
-        "cwd": "{projectRoot}"
+        "cwd": "{projectRoot}",
+        "env": {
+          "GOOGLE_CLOUD_PROJECT": "recidiviz-dashboard-staging",
+          "GOOGLE_CLOUD_LOCATION": "us-central1"
+        }
       },
       "inputs": [
         "{projectRoot}/**/*",

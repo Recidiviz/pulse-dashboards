@@ -53,6 +53,8 @@ The `LOCAL_STORAGE_DIR` environment variable can optionally be set to control wh
 
 Transcripts under 50 words fail with a "too short" error. To test with shorter recordings, set `MIN_TRANSCRIPT_WORDS` in your `.env.dev` file (for example, `MIN_TRANSCRIPT_WORDS=3`).
 
+Notetaking calls Gemini on Vertex AI. Local dev uses `recidiviz-meetings-staging`, a project that holds no meeting data and is used only for model calls, so you can use it without other GCP access. Deployed servers (previews, staging and production) and the LLM-as-judge jobs use their own `recidiviz-dashboard-staging` or `recidiviz-dashboard-production` project instead, because Vertex reads meeting audio from that project's bucket. The `dev` target sets `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION`. The client authenticates with Application Default Credentials: the service account key from step 2 if you set `GOOGLE_APPLICATION_CREDENTIALS`, and your `gcloud auth application-default login` account otherwise. If calls fail with a permission error, ask Aurora to add you to `s-meetings-developers@recidiviz.org`. Without access, the verification step logs an error and returns action items without evidence quotes.
+
 ### Updating the prisma schema
 
 Instructions for updating the prisma schema are in the [prisma README](../../libs/@meetings/prisma/README.md).

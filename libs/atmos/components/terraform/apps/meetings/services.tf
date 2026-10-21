@@ -92,6 +92,22 @@ resource "google_project_iam_member" "cloudtasksenqueuer" {
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 
+# Grant Vertex AI user so the service account can call Gemini on Vertex AI
+resource "google_project_iam_member" "aiplatformuser" {
+  project = var.project_id
+  role    = "roles/aiplatform.user"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
+# Vertex AI's service agent, which reads meeting audio from the audio bucket when
+# a Gemini request passes it as a gs:// URI. Creating it here also makes sure it
+# exists before main.tf binds it to that bucket.
+resource "google_project_service_identity" "aiplatform" {
+  project  = var.project_id
+  provider = google-beta
+  service  = "aiplatform.googleapis.com"
+}
+
 # Grant object creator role so the service account can write objects in the GCS bucket
 resource "google_project_iam_member" "gcsbucketobjectcreator" {
   project = var.project_id

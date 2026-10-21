@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { GoogleGenAI } from "@google/genai";
+import { File } from "@google-cloud/storage";
+import type { MockInstance } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 import {
+  audioFilePart,
+  createVertexGeminiClient,
   generateContentWithZodSchema,
   zodToGeminiResponseSchema,
 } from "~@meetings/tasks/llm/clients/gemini";
@@ -118,8 +123,63 @@ describe("Gemini Client", () => {
     });
   });
 
+  describe("createVertexGeminiClient", () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    test("should throw when GOOGLE_CLOUD_PROJECT is not set", () => {
+      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
+
+      expect(() => createVertexGeminiClient()).toThrow(
+        "Missing GOOGLE_CLOUD_PROJECT environment variable",
+      );
+      expect(GoogleGenAI).not.toHaveBeenCalled();
+    });
+
+    test("should default the location to us-central1", () => {
+      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+      delete process.env["GOOGLE_CLOUD_LOCATION"];
+
+      createVertexGeminiClient();
+
+      expect(GoogleGenAI).toHaveBeenCalledWith({
+        vertexai: true,
+        project: "test-project",
+        location: "us-central1",
+      });
+    });
+
+    test("should use GOOGLE_CLOUD_LOCATION when set", () => {
+      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+      vi.stubEnv("GOOGLE_CLOUD_LOCATION", "us-east4");
+
+      createVertexGeminiClient();
+
+      expect(GoogleGenAI).toHaveBeenCalledWith({
+        vertexai: true,
+        project: "test-project",
+        location: "us-east4",
+      });
+    });
+  });
+
   describe("generateContentWithZodSchema", () => {
-    test("should successfully generate content with valid response", async () => {
+    const generateContent = vi.mocked(mockGemini.models.generateContent);
+
+    function mockResponseText(text: string | undefined) {
+      generateContent.mockResolvedValue({ text } as never);
+    }
+
+    function lastRequest() {
+      const request = generateContent.mock.calls.at(-1)?.[0];
+      if (!request) {
+        throw new Error("generateContent was not called");
+      }
+      return request;
+    }
+
+    test("should return the parsed response", async () => {
       const schema = z.object({
         verifications: z.array(
           z.object({
@@ -128,7 +188,6 @@ describe("Gemini Client", () => {
           }),
         ),
       });
-
       const mockResponse = {
         verifications: [
           {
@@ -137,16 +196,7 @@ describe("Gemini Client", () => {
           },
         ],
       };
-
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify(mockResponse),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+      mockResponseText(JSON.stringify(mockResponse));
 
       const result = await generateContentWithZodSchema({
         client: mockGemini,
@@ -156,82 +206,57 @@ describe("Gemini Client", () => {
       });
 
       expect(result).toEqual(mockResponse);
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
-        expect.objectContaining({
-          systemInstruction: "You are a verification assistant",
-          generationConfig: expect.objectContaining({
-            responseMimeType: "application/json",
-          }),
-        }),
-        undefined,
-      );
     });
 
-    test("should use custom model name when provided", async () => {
-      const schema = z.object({ test: z.string() });
-
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify({ test: "value" }),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+    test("should use the default model when not specified", async () => {
+      mockResponseText(JSON.stringify({ test: "value" }));
 
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Test",
         parts: "Test message",
-        schema,
+        schema: z.object({ test: z.string() }),
+      });
+
+      expect(lastRequest().model).toBe("gemini-2.5-flash");
+    });
+
+    test("should use a custom model name when provided", async () => {
+      mockResponseText(JSON.stringify({ test: "value" }));
+
+      await generateContentWithZodSchema({
+        client: mockGemini,
+        systemInstruction: "Test",
+        parts: "Test message",
+        schema: z.object({ test: z.string() }),
         modelName: "gemini-1.5-pro",
       });
 
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
-        expect.objectContaining({
-          model: "gemini-1.5-pro",
-        }),
-        undefined,
-      );
+      expect(lastRequest().model).toBe("gemini-1.5-pro");
     });
 
-    test("should use default model when not specified", async () => {
-      const schema = z.object({ test: z.string() });
-
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify({ test: "value" }),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+    test("should send the system instruction, JSON mime type, and zero temperature", async () => {
+      mockResponseText(JSON.stringify({ data: "test" }));
 
       await generateContentWithZodSchema({
         client: mockGemini,
-        systemInstruction: "Test",
-        parts: "Test message",
-        schema,
+        systemInstruction: "You are a verification assistant",
+        parts: "Test",
+        schema: z.object({ data: z.string() }),
       });
 
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
+      expect(lastRequest().config).toEqual(
         expect.objectContaining({
-          model: "gemini-2.5-flash",
+          systemInstruction: "You are a verification assistant",
+          responseMimeType: "application/json",
+          temperature: 0,
         }),
-        undefined,
       );
     });
 
-    test("should omit request options when no timeout is specified", async () => {
-      const schema = z.object({ test: z.string() });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: vi.fn().mockResolvedValue({
-          response: { text: () => JSON.stringify({ test: "value" }) },
-        }),
-      } as never);
+    test("should send the converted schema as responseJsonSchema", async () => {
+      const schema = z.object({ items: z.array(z.string()) });
+      mockResponseText(JSON.stringify({ items: ["a", "b"] }));
 
       await generateContentWithZodSchema({
         client: mockGemini,
@@ -240,86 +265,87 @@ describe("Gemini Client", () => {
         schema,
       });
 
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
-        expect.any(Object),
-        undefined,
+      expect(lastRequest().config?.responseJsonSchema).toEqual(
+        zodToGeminiResponseSchema(schema),
       );
     });
 
-    test("should pass custom timeout to getGenerativeModel", async () => {
-      const schema = z.object({ test: z.string() });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: vi.fn().mockResolvedValue({
-          response: { text: () => JSON.stringify({ test: "value" }) },
-        }),
-      } as never);
+    test("should pass the timeout as httpOptions.timeout", async () => {
+      mockResponseText(JSON.stringify({ test: "value" }));
 
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "Test",
         parts: "Test",
-        schema,
+        schema: z.object({ test: z.string() }),
         timeout: 1800000,
       });
 
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
-        expect.any(Object),
-        { timeout: 1800000 },
-      );
+      expect(lastRequest().config?.httpOptions).toEqual({ timeout: 1800000 });
     });
 
-    test("should pass user message to generateContent", async () => {
-      const schema = z.object({ result: z.string() });
+    test("should omit httpOptions when no timeout is specified", async () => {
+      mockResponseText(JSON.stringify({ test: "value" }));
 
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify({ result: "success" }),
-        },
+      await generateContentWithZodSchema({
+        client: mockGemini,
+        systemInstruction: "Test",
+        parts: "Test",
+        schema: z.object({ test: z.string() }),
       });
 
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+      expect(lastRequest().config).not.toHaveProperty("httpOptions");
+    });
+
+    test("should send a string message as the contents", async () => {
+      mockResponseText(JSON.stringify({ result: "success" }));
 
       await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "System prompt",
         parts: "User prompt with specific content",
-        schema,
+        schema: z.object({ result: z.string() }),
       });
 
-      expect(mockGenerateContent).toHaveBeenCalledWith(
-        "User prompt with specific content",
-      );
+      expect(lastRequest().contents).toBe("User prompt with specific content");
     });
 
-    test("should validate response against Zod schema", async () => {
-      const schema = z.object({
-        required_field: z.string(),
-      });
-
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify({ wrong_field: "value" }),
+    test("should wrap content parts in a single user turn", async () => {
+      mockResponseText(JSON.stringify({ result: "success" }));
+      const parts = [
+        {
+          fileData: {
+            fileUri: "gs://test-audio-bucket/meetings/final.m4a",
+            mimeType: "audio/mp4",
+          },
         },
+        { text: "Compare the transcripts" },
+      ];
+
+      await generateContentWithZodSchema({
+        client: mockGemini,
+        systemInstruction: "System prompt",
+        parts,
+        schema: z.object({ result: z.string() }),
       });
 
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+      expect(lastRequest().contents).toEqual([{ role: "user", parts }]);
+    });
+
+    test("should validate the response against the Zod schema", async () => {
+      mockResponseText(JSON.stringify({ wrong_field: "value" }));
 
       await expect(
         generateContentWithZodSchema({
           client: mockGemini,
           systemInstruction: "Test",
           parts: "Test",
-          schema,
+          schema: z.object({ required_field: z.string() }),
         }),
       ).rejects.toThrow();
     });
 
-    test("should handle complex verification payload", async () => {
+    test("should handle a complex verification payload", async () => {
       const mockVerification = {
         verifications: [
           {
@@ -336,16 +362,7 @@ describe("Gemini Client", () => {
           },
         ],
       };
-
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify(mockVerification),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+      mockResponseText(JSON.stringify(mockVerification));
 
       const result = await generateContentWithZodSchema({
         client: mockGemini,
@@ -359,89 +376,77 @@ describe("Gemini Client", () => {
       expect(result.verifications[0]?.evidenceQuotes).toHaveLength(2);
     });
 
-    test("should throw on invalid JSON in response", async () => {
-      const schema = z.object({ test: z.string() });
-
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => "invalid json {",
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+    test("should throw on invalid JSON in the response", async () => {
+      mockResponseText("invalid json {");
 
       await expect(
         generateContentWithZodSchema({
           client: mockGemini,
           systemInstruction: "Test",
           parts: "Test",
-          schema,
+          schema: z.object({ test: z.string() }),
         }),
       ).rejects.toThrow();
     });
 
-    test("should set response mime type to application/json", async () => {
-      const schema = z.object({ data: z.string() });
+    test("should throw when the response has no text", async () => {
+      mockResponseText(undefined);
 
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify({ data: "test" }),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
-
-      await generateContentWithZodSchema({
-        client: mockGemini,
-        systemInstruction: "Test",
-        parts: "Test",
-        schema,
-      });
-
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
-        expect.objectContaining({
-          generationConfig: expect.objectContaining({
-            responseMimeType: "application/json",
-          }),
+      await expect(
+        generateContentWithZodSchema({
+          client: mockGemini,
+          systemInstruction: "Test",
+          parts: "Test",
+          schema: z.object({ test: z.string() }),
         }),
-        undefined,
-      );
+      ).rejects.toThrow("Gemini returned a response with no text");
+    });
+  });
+
+  describe("audioFilePart", () => {
+    let getMetadataSpy: MockInstance;
+
+    beforeEach(() => {
+      vi.stubEnv("AUDIO_RECORDINGS_BUCKET_NAME", "test-audio-bucket");
+      getMetadataSpy = vi.spyOn(File.prototype, "getMetadata");
     });
 
-    test("should include response schema in generation config", async () => {
-      const schema = z.object({
-        items: z.array(z.string()),
-      });
+    afterEach(() => {
+      getMetadataSpy.mockRestore();
+      vi.unstubAllEnvs();
+    });
 
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify({ items: ["a", "b"] }),
+    test("should return a gs:// file part with the object's content type", async () => {
+      getMetadataSpy.mockResolvedValue([{ contentType: "audio/mp4" }]);
+
+      const part = await audioFilePart(
+        "test-audio-bucket",
+        "US_XX/meetings/final.m4a",
+      );
+
+      expect(part).toEqual({
+        fileData: {
+          fileUri: "gs://test-audio-bucket/US_XX/meetings/final.m4a",
+          mimeType: "audio/mp4",
         },
       });
+    });
 
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+    test("should fall back to audio/mpeg when the object has no content type", async () => {
+      getMetadataSpy.mockResolvedValue([{}]);
 
-      await generateContentWithZodSchema({
-        client: mockGemini,
-        systemInstruction: "Test",
-        parts: "Test",
-        schema,
-      });
+      const part = await audioFilePart("test-audio-bucket", "final.mp3");
 
-      expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
-        expect.objectContaining({
-          generationConfig: expect.objectContaining({
-            responseSchema: expect.any(Object),
-          }),
-        }),
-        undefined,
+      expect(part.fileData?.mimeType).toBe("audio/mpeg");
+    });
+
+    test("should reject a bucket other than the audio recordings bucket", async () => {
+      await expect(
+        audioFilePart("some-other-bucket", "final.m4a"),
+      ).rejects.toThrow(
+        "Requested audio from bucket some-other-bucket, expected test-audio-bucket",
       );
+      expect(getMetadataSpy).not.toHaveBeenCalled();
     });
   });
 });

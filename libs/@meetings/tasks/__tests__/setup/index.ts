@@ -18,7 +18,7 @@
 import { request } from "node:http";
 
 import { DeepgramClient } from "@deepgram/sdk";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { File } from "@google-cloud/storage";
 import { AssemblyAI } from "assemblyai";
 import OpenAI from "openai";
@@ -262,23 +262,19 @@ vi.mock("openai", () => ({
   }),
 }));
 
-// Mock Google Generative AI client
-export const mockGemini = mock<GoogleGenerativeAI>({
-  getGenerativeModel: vi.fn().mockReturnValue({
+// Mock Google Gen AI client
+export const mockGemini = mock<GoogleGenAI>({
+  models: {
     generateContent: vi.fn().mockResolvedValue({
-      response: {
-        text: vi.fn().mockReturnValue(
-          JSON.stringify({
-            verifications: [],
-          }),
-        ),
-      },
+      text: JSON.stringify({
+        verifications: [],
+      }),
     }),
-  }),
+  },
 });
 
-vi.mock("@google/generative-ai", () => ({
-  GoogleGenerativeAI: vi.fn().mockImplementation(() => {
+vi.mock("@google/genai", () => ({
+  GoogleGenAI: vi.fn().mockImplementation(() => {
     return mockGemini;
   }),
 }));

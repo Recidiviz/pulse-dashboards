@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenerativeAI, Part } from "@google/generative-ai";
-import { GoogleAIFileManager } from "@google/generative-ai/server";
+import { GoogleGenAI, Part } from "@google/genai";
 import { traceable } from "langsmith/traceable";
 
 import {
+  audioFilePart,
   generateContentWithZodSchema,
-  uploadAudioToGemini,
 } from "~@meetings/tasks/llm/clients/gemini";
 import { EVALUATOR_PROMPTS } from "~@meetings/tasks/llm/evaluators/prompts";
 import {
@@ -33,8 +32,7 @@ import {
 } from "~@meetings/tasks/llm/evaluators/schemas";
 
 async function runTranscriptComparisonInternal(
-  gemini: GoogleGenerativeAI,
-  fileManager: GoogleAIFileManager,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "audioBucket" | "audioPath" | "transcriptsByProvider" | "meetingContext"
@@ -63,14 +61,8 @@ async function runTranscriptComparisonInternal(
     };
   }
 
-  const { uri: audioUri, mimeType: audioMimeType } = await uploadAudioToGemini(
-    fileManager,
-    inputs.audioBucket,
-    inputs.audioPath,
-  );
-
   const parts: Part[] = [
-    { fileData: { mimeType: audioMimeType, fileUri: audioUri } },
+    await audioFilePart(inputs.audioBucket, inputs.audioPath),
     {
       text: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.USER({
         assemblyAiTranscript,
@@ -90,7 +82,7 @@ async function runTranscriptComparisonInternal(
 }
 
 async function runCaseNoteInternal(
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "caseNote" | "meetingContext"
@@ -111,7 +103,7 @@ async function runCaseNoteInternal(
 }
 
 async function runActionItemsInternal(
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "actionItems" | "meetingContext"
@@ -132,7 +124,7 @@ async function runActionItemsInternal(
 }
 
 async function runOverallInternal(
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "caseNote" | "actionItems" | "meetingContext"

@@ -79,6 +79,8 @@ module "server" {
         { name = "LLMAJ_TASK_QUEUE_NAME", value = google_cloud_tasks_queue.llmaj_task_queue.name },
         { name = "CLOUD_TASKS_PROJECT", value = var.project_id },
         { name = "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL", value = google_service_account.default.email },
+        { name = "GOOGLE_CLOUD_PROJECT", value = var.project_id },
+        { name = "GOOGLE_CLOUD_LOCATION", value = "us-central1" },
       ], module.envs.env_vars_by_component["server"])
 
       volume_mounts = [{
@@ -195,10 +197,13 @@ module "audio_gcs_bucket" {
   }
 
   # BigQuery in recidiviz-data reads the per-meeting label-studio-task.json files in
-  # this bucket through an external table, as part of task monitoring.
+  # this bucket through an external table, as part of task monitoring. Vertex AI's
+  # service agent reads meeting audio when a Gemini request passes it as a gs:// URI.
+  # This binding is authoritative, so a viewer added outside Terraform is removed on
+  # the next apply.
   set_viewer_roles = true
   bucket_viewers = {
-    (local.audio_bucket_name) = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com,serviceAccount:${local.label_studio_cloudrun_service_account}"
+    (local.audio_bucket_name) = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com,serviceAccount:${local.label_studio_cloudrun_service_account},serviceAccount:${google_project_service_identity.aiplatform.email}"
   }
 
   cors = [{

@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GoogleAIFileManager } from "@google/generative-ai/server";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
 import type { ActionItem } from "~@meetings/tasks/llm/schemas";
@@ -87,8 +86,7 @@ export interface EvaluatorInputs {
 }
 
 export interface EvaluatorClients {
-  gemini: GoogleGenerativeAI;
-  fileManager: GoogleAIFileManager;
+  gemini: GoogleGenAI;
   /** Request timeout in milliseconds passed to each generateContentWithZodSchema call. */
   timeout?: number;
 }

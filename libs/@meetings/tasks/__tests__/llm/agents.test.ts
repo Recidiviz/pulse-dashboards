@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { AgencyConfig } from "~@meetings/config/types";
 import { Client, Resident } from "~@meetings/prisma/client";
@@ -119,31 +119,31 @@ describe("SpecialistCore", () => {
   });
 
   describe("Factory", () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
     test("should throw error when OpenAI API key is missing", () => {
-      const originalKey = process.env["OPENAI_API_KEY"];
-      delete process.env["OPENAI_API_KEY"];
+      vi.stubEnv("OPENAI_API_KEY", "");
+      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
 
       expect(() => SpecialistCore.factory()).toThrow(
-        "Missing API keys. Set OPENAI_API_KEY and GOOGLE_API_KEY environment variables.",
+        "Missing API key. Set the OPENAI_API_KEY environment variable.",
       );
-
-      process.env["OPENAI_API_KEY"] = originalKey;
     });
 
-    test("should throw error when Google API key is missing", () => {
-      const originalKey = process.env["GOOGLE_API_KEY"];
-      delete process.env["GOOGLE_API_KEY"];
+    test("should throw error when GOOGLE_CLOUD_PROJECT is missing", () => {
+      vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
+      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
 
       expect(() => SpecialistCore.factory()).toThrow(
-        "Missing API keys. Set OPENAI_API_KEY and GOOGLE_API_KEY environment variables.",
+        "Missing GOOGLE_CLOUD_PROJECT environment variable",
       );
-
-      process.env["GOOGLE_API_KEY"] = originalKey;
     });
 
-    test("should create instance when API keys are present", () => {
-      process.env["OPENAI_API_KEY"] = "test-openai-key";
-      process.env["GOOGLE_API_KEY"] = "test-google-key";
+    test("should create instance when the OpenAI key and GCP project are set", () => {
+      vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
+      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
 
       const instance = SpecialistCore.factory();
 
@@ -919,14 +919,8 @@ describe("SpecialistCore", () => {
         ],
       };
 
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () => JSON.stringify(mockVerification),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
+      vi.mocked(mockGemini.models.generateContent).mockResolvedValue({
+        text: JSON.stringify(mockVerification),
       } as never);
 
       const result = await core.runVerification(
@@ -954,7 +948,7 @@ describe("SpecialistCore", () => {
       );
 
       expect(result).toEqual(emptyExtraction);
-      expect(mockGemini.getGenerativeModel).not.toHaveBeenCalled();
+      expect(mockGemini.models.generateContent).not.toHaveBeenCalled();
     });
 
     test("should return unverified facts on error", async () => {
@@ -971,13 +965,9 @@ describe("SpecialistCore", () => {
         entities: [],
       };
 
-      const mockGenerateContent = vi
-        .fn()
-        .mockRejectedValue(new Error("API error"));
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
-      } as never);
+      vi.mocked(mockGemini.models.generateContent).mockRejectedValue(
+        new Error("API error"),
+      );
 
       const result = await core.runVerification(
         mockTranscript,
@@ -1003,23 +993,16 @@ describe("SpecialistCore", () => {
         entities: [],
       };
 
-      const mockGenerateContent = vi.fn().mockResolvedValue({
-        response: {
-          text: () =>
-            JSON.stringify({
-              verifications: [],
-            }),
-        },
-      });
-
-      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
-        generateContent: mockGenerateContent,
+      vi.mocked(mockGemini.models.generateContent).mockResolvedValue({
+        text: JSON.stringify({ verifications: [] }),
       } as never);
 
       await core.runVerification(mockTranscript, mockExtraction, mockClient);
 
-      expect(mockGenerateContent).toHaveBeenCalledWith(
-        expect.stringContaining("ID: ACT_0"),
+      expect(mockGemini.models.generateContent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          contents: expect.stringContaining("ID: ACT_0"),
+        }),
       );
     });
   });
