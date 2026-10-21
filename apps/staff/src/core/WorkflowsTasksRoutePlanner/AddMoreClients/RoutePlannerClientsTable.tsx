@@ -163,12 +163,14 @@ type ClientsResidentsColumnDef = ColumnDef<Client> & {
 };
 
 function buildColumns({
+  assignedStaffHeader,
   displayIdHeader,
   isSelected,
   getCardinal,
   isBadAddress,
   getBadAddressCopy,
 }: {
+  assignedStaffHeader: string;
   displayIdHeader: string;
   isSelected: (person: Client) => boolean;
   getCardinal: (person: Client) => number;
@@ -212,7 +214,7 @@ function buildColumns({
       cell: PersonIdCellWrapper,
     },
     {
-      header: "Assigned To",
+      header: assignedStaffHeader,
       id: "ASSIGNED_STAFF_NAME",
       accessorFn: (person) =>
         person.assignedStaffFullName || person.assignedStaffId,
@@ -261,6 +263,7 @@ export const RoutePlannerTable = observer(function RoutePlannerTable({
   presenter: RoutePlannerTablePresenter;
 }) {
   const {
+    assignedStaffHeader,
     displayIdHeader,
     isSelected,
     getCardinal,
@@ -270,13 +273,21 @@ export const RoutePlannerTable = observer(function RoutePlannerTable({
   const columns = useMemo(
     () =>
       buildColumns({
+        assignedStaffHeader,
         displayIdHeader,
         isSelected,
         getCardinal,
         isBadAddress,
         getBadAddressCopy,
       }),
-    [displayIdHeader, isSelected, getCardinal, isBadAddress, getBadAddressCopy],
+    [
+      assignedStaffHeader,
+      displayIdHeader,
+      isSelected,
+      getCardinal,
+      isBadAddress,
+      getBadAddressCopy,
+    ],
   );
   return (
     <CaseloadTable

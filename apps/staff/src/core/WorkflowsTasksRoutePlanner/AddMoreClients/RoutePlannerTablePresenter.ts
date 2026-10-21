@@ -155,6 +155,12 @@ export class RoutePlannerTablePresenter {
     );
   }
 
+  get assignedStaffHeader(): string {
+    return this.rootStore.currentTenantId === "US_TX"
+      ? "Supervising Officer"
+      : "Assigned To";
+  }
+
   get displayIdHeader(): string {
     return this.rootStore.tenantStore.getDisplayIdCopy(
       this.rootStore.workflowsStore.activeSystem,
@@ -164,6 +170,9 @@ export class RoutePlannerTablePresenter {
   // Different states choose to surface different clients in the Home Contact Route Planner
   // When more states are added in - this will need to include their surfacing logic
   getSubheadingCopy(): string {
+    if (this.rootStore.currentTenantId === "US_TX") {
+      return "Select any client from an officer's caseload. Clients with home contacts due soon or overdue aren't listed here.";
+    }
     return "Clients without home contacts due soon or overdue";
   }
 
