@@ -43,6 +43,10 @@ export const ParoleSectionCard = styled(SectionCard)`
   background-color: ${PAROLE_CARD_BACKGROUND_COLOR};
   border-radius: ${PAROLE_CARD_CORNER_RADIUS};
   padding: ${rem(spacing.lg)};
+  /* SectionCard clips to keep a header bar inside its rounded corners. This
+   * card has no header bar, and the clip cut off dropdown menus, such as the
+   * case notes filter, that extend past the card's bottom edge. */
+  overflow: visible;
 `;
 
 export const ParoleSectionTitle = styled.h4`

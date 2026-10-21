@@ -226,6 +226,8 @@ export type ParoleBoardClientProfileEdovoProgram = z.infer<
 export const paroleBoardClientProfileCaseNoteSchema = z.object({
   noteDate: nullishAsUndefined(z.string()),
   noteType: nullishAsUndefined(z.string()),
+  // Comma-separated contact types, e.g. "Face to Face, Phone".
+  noteContactModes: nullishAsUndefined(z.string()),
   noteBody: nullishAsUndefined(z.string()),
 });
 

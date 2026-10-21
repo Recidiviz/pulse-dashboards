@@ -138,78 +138,100 @@ const ClearAllButton = styled(FilterItem)`
 `;
 
 /**
- * Type filter for the US_ID case notes list.
+ * One checkbox group in the filter menu. The options are every value the
+ * resident's notes have, in display order.
+ */
+export type UsIdCaseNotesFilterGroup = {
+  title: string;
+  options: Array<string>;
+  selectedOptions: Set<string>;
+  countsByOption: Map<string, number>;
+  onToggleOption: (option: string) => void;
+  onSelectOnlyOption: (option: string) => void;
+};
+
+/**
+ * Filter menu for the US_ID case notes list. Each group narrows the list
+ * independently.
  *
- * @param types - Every note type this resident has, in display order.
- * @param selectedTypes - The types currently shown.
- * @param countsByType - How many notes each type has.
- * @param onToggleType - Adds or removes one type.
- * @param onSelectOnlyType - Narrows to one type.
- * @param onSelectAllTypes - Selects every type.
- * @param onClearAllTypes - Deselects every type.
+ * @param groups - The checkbox groups to show, in display order.
+ * @param onSelectAll - Selects every option in every group.
+ * @param onClearAll - Deselects every option in every group.
  */
 export function UsIdCaseNotesFilter({
-  types,
-  selectedTypes,
-  countsByType,
-  onToggleType,
-  onSelectOnlyType,
-  onSelectAllTypes,
-  onClearAllTypes,
+  groups,
+  onSelectAll,
+  onClearAll,
 }: {
-  types: Array<string>;
-  selectedTypes: Set<string>;
-  countsByType: Map<string, number>;
-  onToggleType: (type: string) => void;
-  onSelectOnlyType: (type: string) => void;
-  onSelectAllTypes: () => void;
-  onClearAllTypes: () => void;
+  groups: Array<UsIdCaseNotesFilterGroup>;
+  onSelectAll: () => void;
+  onClearAll: () => void;
 }) {
-  const allSelected = selectedTypes.size === types.length;
+  const allSelected = groups.every(
+    ({ options, selectedOptions }) => selectedOptions.size === options.length,
+  );
+  const selectedCount = groups.reduce(
+    (total, { selectedOptions }) => total + selectedOptions.size,
+    0,
+  );
 
   return (
     <Dropdown>
       <FilterToggle>
         <FilterIcon $filters={!allSelected} /> Filters
-        {!allSelected && ` (${selectedTypes.size})`}
+        {!allSelected && ` (${selectedCount})`}
         <FilterDownArrow />
       </FilterToggle>
       <FilterMenu alignment="right">
-        <FilterGroup $isMobile={false}>
-          <FilterGroupHeader>Contact Type</FilterGroupHeader>
-          {types.map((type) => (
-            <FilterItem
-              key={type}
-              preventCloseOnClickEvent
-              onClick={(e: React.MouseEvent) => {
-                e.preventDefault();
-                onToggleType(type);
-              }}
-            >
-              <OptionLabel>
-                <CheckboxContainer>
-                  <Checkbox checked={selectedTypes.has(type)} value={type} />
-                </CheckboxContainer>
-                {type}
-              </OptionLabel>
-              <FilterCount>{countsByType.get(type) ?? 0}</FilterCount>
-              <SelectOnlyButton
-                onClick={(e: React.MouseEvent) => {
-                  onSelectOnlyType(type);
-                  e.stopPropagation();
-                }}
-              >
-                ONLY
-              </SelectOnlyButton>
-            </FilterItem>
-          ))}
-          <ClearAllButton
-            preventCloseOnClickEvent
-            onClick={allSelected ? onClearAllTypes : onSelectAllTypes}
-          >
-            {allSelected ? "Clear all filters" : "Select all filters"}
-          </ClearAllButton>
-        </FilterGroup>
+        {groups.map(
+          ({
+            title,
+            options,
+            selectedOptions,
+            countsByOption,
+            onToggleOption,
+            onSelectOnlyOption,
+          }) => (
+            <FilterGroup key={title} $isMobile={false}>
+              <FilterGroupHeader>{title}</FilterGroupHeader>
+              {options.map((option) => (
+                <FilterItem
+                  key={option}
+                  preventCloseOnClickEvent
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    onToggleOption(option);
+                  }}
+                >
+                  <OptionLabel>
+                    <CheckboxContainer>
+                      <Checkbox
+                        checked={selectedOptions.has(option)}
+                        value={option}
+                      />
+                    </CheckboxContainer>
+                    {option}
+                  </OptionLabel>
+                  <FilterCount>{countsByOption.get(option) ?? 0}</FilterCount>
+                  <SelectOnlyButton
+                    onClick={(e: React.MouseEvent) => {
+                      onSelectOnlyOption(option);
+                      e.stopPropagation();
+                    }}
+                  >
+                    ONLY
+                  </SelectOnlyButton>
+                </FilterItem>
+              ))}
+            </FilterGroup>
+          ),
+        )}
+        <ClearAllButton
+          preventCloseOnClickEvent
+          onClick={allSelected ? onClearAll : onSelectAll}
+        >
+          {allSelected ? "Clear all filters" : "Select all filters"}
+        </ClearAllButton>
       </FilterMenu>
     </Dropdown>
   );

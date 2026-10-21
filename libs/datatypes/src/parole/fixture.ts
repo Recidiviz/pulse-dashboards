@@ -2234,6 +2234,18 @@ const ID_CASE_NOTE_TYPES = [
   "PSI",
 ] as const;
 
+/**
+ * Contact types a fixture note can carry. An empty entry is a note with no
+ * contact type; a two-item entry is a note that records two.
+ */
+const ID_CASE_NOTE_CONTACT_TYPES: ReadonlyArray<ReadonlyArray<string>> = [
+  ["Face to Face"],
+  ["Phone"],
+  ["Face to Face", "Collateral"],
+  [],
+  ["Written Correspondence"],
+];
+
 // Sentences the fixture strings together into note bodies. Idaho's real
 // notes average around 340 characters and the longest run into the
 // thousands, so a note here is built long enough to truncate in the list.
@@ -2277,6 +2289,11 @@ function buildIdCaseNotes(index: number, today: Date): Array<ParoleCaseNote> {
     return {
       id: `note-${index}-${noteIndex}`,
       type: ID_CASE_NOTE_TYPES[seed % ID_CASE_NOTE_TYPES.length],
+      contactTypes: [
+        ...ID_CASE_NOTE_CONTACT_TYPES[
+          (seed * 3 + noteIndex) % ID_CASE_NOTE_CONTACT_TYPES.length
+        ],
+      ],
       date: iso(subDays(today, noteIndex * 21 + (seed % 5))),
       body,
     };

@@ -44,7 +44,10 @@ import {
   ParoleSubsectionTitle,
 } from "../ParoleCaseProfileStyles";
 import { formatDateLong, parseIsoDate } from "../shared";
-import { UsIdCaseNotesFilter } from "./UsIdCaseNotesFilter";
+import {
+  UsIdCaseNotesFilter,
+  UsIdCaseNotesFilterGroup,
+} from "./UsIdCaseNotesFilter";
 
 /** How many notes one page of the list holds. */
 export const US_ID_NOTES_PER_PAGE = 10;
@@ -123,19 +126,59 @@ const ClampedNoteBody = styled(NoteBody)`
   overflow: hidden;
 `;
 
+/** Separates the note type from its contact types in a note's label. */
+const NOTE_LABEL_SEPARATOR = " - ";
+
+/**
+ * A case note plus the two values the filter groups match on. The source is
+ * the label shown on the row and in the modal.
+ */
+type UsIdCaseNote = CaseNote & {
+  noteType: string;
+  contactTypes: Array<string>;
+};
+
 /**
  * Turns a wire case note into the shape the shared note list renders. The
- * type is whatever Idaho's source system calls it -- "Parole Board Note",
- * "Supervision Notes" -- so it is shown as sent, never mapped to a code.
+ * types are whatever Idaho's source system calls them -- "Parole Board Note",
+ * "Face to Face" -- so they are shown as sent, never mapped to a code. The
+ * label reads "Supervision Notes - Face to Face, Phone", or just the note type
+ * when the note has no contact type.
  *
  * @param note - One case note from the parole case record.
  */
-function toCaseNote(note: ParoleCaseNote): CaseNote {
+function toCaseNote(note: ParoleCaseNote): UsIdCaseNote {
   return {
     id: note.id,
-    source: note.type,
+    source: [note.type, note.contactTypes.join(", ")]
+      .filter(Boolean)
+      .join(NOTE_LABEL_SEPARATOR),
+    noteType: note.type,
+    contactTypes: note.contactTypes,
     date: parseIsoDate(note.date),
     body: note.body,
+  };
+}
+
+/**
+ * Returns each distinct value in display order, with how many notes carry it.
+ *
+ * @param notes - The notes to tally.
+ * @param valuesOf - The values one note carries for the group being tallied.
+ */
+function tallyValues(
+  notes: Array<UsIdCaseNote>,
+  valuesOf: (note: UsIdCaseNote) => Array<string>,
+) {
+  const counts = new Map<string, number>();
+  for (const note of notes) {
+    for (const value of valuesOf(note)) {
+      counts.set(value, (counts.get(value) ?? 0) + 1);
+    }
+  }
+  return {
+    values: [...counts.keys()].sort(),
+    counts,
   };
 }
 
@@ -153,6 +196,8 @@ export function UsIdCaseNotesSection({
 }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>();
+  const [selectedContactTypes, setSelectedContactTypes] =
+    useState<Set<string>>();
   const [selectedNote, setSelectedNote] = useState<CaseNote | undefined>(
     undefined,
   );
@@ -168,27 +213,38 @@ export function UsIdCaseNotesSection({
       .sort((a, b) => b.date.getTime() - a.date.getTime());
   }, [caseNotes]);
 
-  const noteTypes = useMemo(
-    () => [...new Set(notes.map((note) => note.source))].sort(),
+  const { values: noteTypes, counts: countsByType } = useMemo(
+    () => tallyValues(notes, (note) => [note.noteType]),
     [notes],
   );
 
-  const countsByType = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const note of notes) {
-      counts.set(note.source, (counts.get(note.source) ?? 0) + 1);
-    }
-    return counts;
-  }, [notes]);
+  const { values: contactTypes, counts: countsByContactType } = useMemo(
+    () => tallyValues(notes, (note) => note.contactTypes),
+    [notes],
+  );
+
+  // The menu hides a group with a single option, and a filter the reader
+  // can't see must never hide notes, so a hidden group's selection is ignored.
+  const activeTypes = noteTypes.length > 1 ? selectedTypes : undefined;
+  const activeContactTypes =
+    contactTypes.length > 1 ? selectedContactTypes : undefined;
 
   // Undefined means no filter yet, which shows everything -- the types are
-  // derived from the notes, so there is no full set to seed state with.
+  // derived from the notes, so there is no full set to seed state with. A note
+  // with no contact type has nothing to match on, so the contact type filter
+  // never hides it.
   const visibleNotes = useMemo(
     () =>
-      selectedTypes
-        ? notes.filter((note) => selectedTypes.has(note.source))
-        : notes,
-    [notes, selectedTypes],
+      notes.filter(
+        (note) =>
+          (!activeTypes || activeTypes.has(note.noteType)) &&
+          (!activeContactTypes ||
+            note.contactTypes.length === 0 ||
+            note.contactTypes.some((contactType) =>
+              activeContactTypes.has(contactType),
+            )),
+      ),
+    [notes, activeTypes, activeContactTypes],
   );
 
   const totalPages = Math.ceil(visibleNotes.length / US_ID_NOTES_PER_PAGE);
@@ -204,12 +260,45 @@ export function UsIdCaseNotesSection({
     setCurrentPage(0);
   }
 
-  function toggleType(type: string) {
-    const next = new Set(selectedTypes ?? noteTypes);
-    if (next.has(type)) next.delete(type);
-    else next.add(type);
-    applyTypes(next);
+  function applyContactTypes(types: Set<string> | undefined) {
+    setSelectedContactTypes(types);
+    setCurrentPage(0);
   }
+
+  function toggled(
+    current: Set<string> | undefined,
+    all: Array<string>,
+    value: string,
+  ) {
+    const next = new Set(current ?? all);
+    if (next.has(value)) next.delete(value);
+    else next.add(value);
+    return next;
+  }
+
+  const allFilterGroups: Array<UsIdCaseNotesFilterGroup> = [
+    {
+      title: "Note Type",
+      options: noteTypes,
+      selectedOptions: new Set(activeTypes ?? noteTypes),
+      countsByOption: countsByType,
+      onToggleOption: (type) =>
+        applyTypes(toggled(activeTypes, noteTypes, type)),
+      onSelectOnlyOption: (type) => applyTypes(new Set([type])),
+    },
+    {
+      title: "Contact Type",
+      options: contactTypes,
+      selectedOptions: new Set(activeContactTypes ?? contactTypes),
+      countsByOption: countsByContactType,
+      onToggleOption: (type) =>
+        applyContactTypes(toggled(activeContactTypes, contactTypes, type)),
+      onSelectOnlyOption: (type) => applyContactTypes(new Set([type])),
+    },
+  ];
+  const filterGroups = allFilterGroups.filter(
+    ({ options }) => options.length > 1,
+  );
 
   return (
     <ParoleSubsection>
@@ -222,15 +311,17 @@ export function UsIdCaseNotesSection({
               : `Showing case notes from the last ${US_ID_CASE_NOTE_YEARS} years`}
           </ParoleSubsectionCaption>
         </ParoleSubsectionHeading>
-        {noteTypes.length > 1 && (
+        {filterGroups.length > 0 && (
           <UsIdCaseNotesFilter
-            types={noteTypes}
-            selectedTypes={new Set(selectedTypes ?? noteTypes)}
-            countsByType={countsByType}
-            onToggleType={toggleType}
-            onSelectOnlyType={(type) => applyTypes(new Set([type]))}
-            onSelectAllTypes={() => applyTypes(undefined)}
-            onClearAllTypes={() => applyTypes(new Set())}
+            groups={filterGroups}
+            onSelectAll={() => {
+              applyTypes(undefined);
+              applyContactTypes(undefined);
+            }}
+            onClearAll={() => {
+              applyTypes(new Set());
+              applyContactTypes(new Set());
+            }}
           />
         )}
       </SubsectionHeader>

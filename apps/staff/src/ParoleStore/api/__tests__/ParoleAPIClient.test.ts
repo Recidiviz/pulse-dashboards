@@ -1583,7 +1583,7 @@ describe("ParoleAPIClient", () => {
       expect(result.stg).toBe("Group A; Group B");
     });
 
-    it("maps case notes, dropping one with no date or body and filling a missing type", async () => {
+    it("maps case notes, splitting contact types, dropping one with no date or body and filling a missing type", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -1598,6 +1598,7 @@ describe("ParoleAPIClient", () => {
           {
             noteDate: "2026-05-01",
             noteType: "Facility Notes",
+            noteContactModes: " Face to Face ,Phone,, ",
             noteBody: "First note",
           },
           { noteDate: null, noteType: "Facility Notes", noteBody: "x" },
@@ -1612,12 +1613,14 @@ describe("ParoleAPIClient", () => {
         {
           id: "0",
           type: "Facility Notes",
+          contactTypes: ["Face to Face", "Phone"],
           date: "2026-05-01",
           body: "First note",
         },
         {
           id: "2",
           type: PAROLE_UNKNOWN_TEXT,
+          contactTypes: [],
           date: "2026-04-01",
           body: "Third",
         },

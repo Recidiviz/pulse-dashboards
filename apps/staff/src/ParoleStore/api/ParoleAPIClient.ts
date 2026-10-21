@@ -813,6 +813,10 @@ export class ParoleAPIClient implements ParoleAPI {
             {
               id: String(index),
               type: note.noteType ?? UNKNOWN_TEXT,
+              contactTypes: (note.noteContactModes ?? "")
+                .split(",")
+                .map((contactType) => contactType.trim())
+                .filter(Boolean),
               date: note.noteDate,
               body: note.noteBody,
             },

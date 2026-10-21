@@ -32,6 +32,7 @@ function makeNotes(count: number): Array<ParoleCaseNote> {
   return Array.from({ length: count }, (_, i) => ({
     id: `n-${i}`,
     type: i % 2 === 0 ? "Supervision Notes" : "Parole Board Note",
+    contactTypes: [],
     date: format(subDays(new Date(2026, 2, 1), i), "yyyy-MM-dd"),
     body: `Body of note ${i}.`,
   }));
@@ -63,6 +64,7 @@ describe("UsIdCaseNotesSection", () => {
     const stale = {
       id: "old",
       type: "PSI",
+      contactTypes: [],
       date: "2022-01-01",
       body: "Body of a note from more than three years ago.",
     };
@@ -78,7 +80,13 @@ describe("UsIdCaseNotesSection", () => {
     render(
       <UsIdCaseNotesSection
         caseNotes={[
-          { id: "old", type: "PSI", date: "2019-06-01", body: "Ancient." },
+          {
+            id: "old",
+            type: "PSI",
+            contactTypes: [],
+            date: "2019-06-01",
+            body: "Ancient.",
+          },
         ]}
       />,
     );
@@ -163,6 +171,102 @@ describe("UsIdCaseNotesSection", () => {
       ),
     ).not.toBeInTheDocument();
     expect(screen.getByText("1-10 of 15")).toBeInTheDocument();
+  });
+
+  describe("contact types", () => {
+    const contactNotes: Array<ParoleCaseNote> = [
+      {
+        id: "c-0",
+        type: "Supervision Notes",
+        contactTypes: ["Face to Face", "Phone"],
+        date: "2026-03-01",
+        body: "Body of face to face and phone note.",
+      },
+      {
+        id: "c-1",
+        type: "Supervision Notes",
+        contactTypes: ["Phone"],
+        date: "2026-02-28",
+        body: "Body of phone note.",
+      },
+      {
+        id: "c-2",
+        type: "Supervision Notes",
+        contactTypes: [],
+        date: "2026-02-27",
+        body: "Body of uncontacted note.",
+      },
+    ];
+
+    /** Clicks ONLY on the option row in the filter menu, not the note rows. */
+    function clickOnlyFor(optionLabel: string) {
+      const notesList = screen.getByTestId("us-id-case-notes-list");
+      const option = screen
+        .getAllByText(optionLabel)
+        .find((element) => !notesList.contains(element));
+      if (!option) throw new Error(`Expected a filter option [${optionLabel}]`);
+      const row = option.closest("div[class]")?.parentElement;
+      fireEvent.click(within(row as HTMLElement).getByText("ONLY"));
+    }
+
+    it("joins the note type and contact types in the row label", () => {
+      render(<UsIdCaseNotesSection caseNotes={contactNotes} />);
+
+      const list = within(screen.getByTestId("us-id-case-notes-list"));
+      expect(
+        list.getByText("Supervision Notes - Face to Face, Phone"),
+      ).toBeInTheDocument();
+      expect(list.getByText("Supervision Notes - Phone")).toBeInTheDocument();
+      expect(list.getByText("Supervision Notes")).toBeInTheDocument();
+    });
+
+    it("shows the contact type in the modal label", () => {
+      render(<UsIdCaseNotesSection caseNotes={contactNotes} />);
+
+      fireEvent.click(screen.getByText("Body of phone note."));
+
+      expect(
+        within(screen.getByRole("dialog")).getByText(
+          "Supervision Notes - Phone",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("offers a contact type group even when every note shares a note type", () => {
+      render(<UsIdCaseNotesSection caseNotes={contactNotes} />);
+
+      fireEvent.click(screen.getByRole("button", { name: /Filters/ }));
+
+      expect(screen.getByText("Contact Type")).toBeInTheDocument();
+      expect(screen.queryByText("Note Type")).not.toBeInTheDocument();
+    });
+
+    it("narrows to notes with the chosen contact type but keeps notes with none", () => {
+      render(<UsIdCaseNotesSection caseNotes={contactNotes} />);
+
+      fireEvent.click(screen.getByRole("button", { name: /Filters/ }));
+      clickOnlyFor("Face to Face");
+
+      expect(
+        screen.getByText("Body of face to face and phone note."),
+      ).toBeInTheDocument();
+      expect(screen.queryByText("Body of phone note.")).not.toBeInTheDocument();
+      expect(screen.getByText("Body of uncontacted note.")).toBeInTheDocument();
+    });
+
+    it("ignores the hidden note type group after clearing all filters", () => {
+      render(<UsIdCaseNotesSection caseNotes={contactNotes} />);
+
+      fireEvent.click(screen.getByRole("button", { name: /Filters/ }));
+      fireEvent.click(screen.getByText("Clear all filters"));
+      // The notes are all one note type, so Phone is a menu option only.
+      fireEvent.click(screen.getByText("Phone"));
+
+      expect(screen.getByText("Body of phone note.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Body of face to face and phone note."),
+      ).toBeInTheDocument();
+    });
   });
 
   it("hides the type filter when every note shares a type", () => {

@@ -316,6 +316,8 @@ export type ParoleLifeSentence = z.infer<typeof PAROLE_LIFE_SENTENCE>;
 export const paroleCaseNoteSchema = z.object({
   id: z.string(),
   type: z.string(),
+  // Empty when the source records no contact type for the note.
+  contactTypes: z.array(z.string()),
   date: z.string(),
   body: z.string(),
 });
