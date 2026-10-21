@@ -60,10 +60,14 @@ export function useMeetingActions() {
     meetingTypeCategory,
     startTime,
   }: CreateMeetingParams) => {
+    // date-fns can't read the device zone; Hermes supports this Intl call on iOS and Android.
+    // eslint-disable-next-line no-restricted-globals
+    const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
     if (personType === "client") {
       await utils.client.v1.client.createMeeting.mutate({
         clientId: personId,
         startTime,
+        timeZone,
         meetingId,
         meetingType,
         meetingTypeCategory,
@@ -72,6 +76,7 @@ export function useMeetingActions() {
       await utils.client.v1.resident.createMeeting.mutate({
         residentId: personId,
         startTime,
+        timeZone,
         meetingId,
         meetingType,
         meetingTypeCategory,

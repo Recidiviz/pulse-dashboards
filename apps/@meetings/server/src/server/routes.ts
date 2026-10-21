@@ -812,6 +812,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
             meetingStart: formatMeetingStartForPrompt(
               meeting.startTime,
               stateCode,
+              meeting.timeZone,
             ),
           },
         };

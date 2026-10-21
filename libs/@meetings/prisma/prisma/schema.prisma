@@ -199,6 +199,8 @@ model Meeting {
 
   startTime DateTime
   endTime   DateTime?
+  // IANA timezone of the staff member's device; null for meetings created before it was recorded.
+  timeZone  String?
 
   recordingsGCSBucket   String
   recordingsFolderPath  String

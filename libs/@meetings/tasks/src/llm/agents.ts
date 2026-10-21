@@ -221,6 +221,7 @@ export class SpecialistCore {
       meetingStart: formatMeetingStartForPrompt(
         new Date(transcript.startTime),
         person.stateCode,
+        transcript.timeZone,
       ),
       transcript: transcript.rawText,
     });

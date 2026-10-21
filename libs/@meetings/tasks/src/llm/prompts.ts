@@ -72,9 +72,12 @@ export const PROMPTS = {
                             14. **The "Listening Trap":** If the professional is using Motivational Interviewing (asking "How important is this to you?" or saying "That sounds scary"), do NOT interpret their *concern* as an *Action Item*.
                                 - *Only* extract an Action Item if they explicitly say: "I am going to [action]" or "You need to [action]."
                                 - Reflective statements (e.g., "It sounds like you want to stop") are NOT tasks.
-                            15. **Strict Deadlines (No Bleed):** - Only assign a \`deadline\` if the speaker *explicitly* attaches a time to *that specific task*.
-                                - Do NOT infer deadlines from context. (e.g., If a parole officer says "I'll do X tonight and I'll also do Y", do NOT assume Y is tonight unless explicitly stated).
-                                - If a task is blocked by another (e.g., Client must wait for officer instructions), the deadline MUST be \`null\`.
+                            15. **Deadlines (Explicit & Clearly Implied):** Populate \`deadline\` whenever the conversation bounds a task in time.
+                                - **Explicit:** The speaker attaches a time to *that specific task*. Use it as stated.
+                                - **Clearly implied:** The conversation ties the task to a named day, a time of day, a concrete event, or a stated schedule window without stating a deadline outright. Provide the implied deadline (e.g., "Thursday", "before the parole hearing", "after release").
+                                - **Resolve relative references:** Per Instruction 5 (Relative Dates), a named weekday means its next occurrence after the meeting day, so the meeting's own weekday means the following week unless the speaker says "today" or names a later time that day. Write resolved dates as weekday and date.
+                                - **No Bleed:** Never copy a deadline from one task to another just because they were mentioned together (e.g., "I'll do X tonight and I'll also do Y" does NOT make Y due tonight).
+                                - **Genuinely unbounded -> null:** If no day, time, or event bounds the task (including tasks waiting on another party with no timeframe given), the deadline MUST be \`null\`. Never manufacture urgency.
                             16. **Investigation Tasks:** If the purpose of a task is to "Check for Warrants" or "Verify Court Dates":
                                 - Assign to **Staff Member** if it requires internal database access.
                                 - Assign to **Client** if the staff member tells them to "Call the court" or "Ask your lawyer."
@@ -92,7 +95,7 @@ export const PROMPTS = {
                             - **Assignee:** Must be "Client" or "Staff Member".
                             - **Standard Conditions:** If the Staff Member reads a list of rules (e.g., "Report police contact," "Do not leave the state"), extract *all critical or potentially important* ones as ongoing Client Action Items (especially Reporting and Travel restrictions).
                             - **CRITICAL:** If the Client states a specific plan for their release (e.g., "I'm going to live with my mom," "I'll apply for food stamps"), capture these as **Client Action Items**. Treat the Client's stated plan as a self-assigned mandate.
-                            - **CRITICAL:** Do NOT guess deadlines, or assume them based on other timelines described. Only provide deadlines when explicitly stated for the specific action item.
+                            - **Deadlines:** Follow Rule 15. Never guess.
                             
                             <%= aliasRules %>
                             

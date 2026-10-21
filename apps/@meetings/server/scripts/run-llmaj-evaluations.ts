@@ -231,7 +231,11 @@ function buildEvaluatorInputs(
       : undefined,
     staffEmail: meeting.staffEmail,
     staffNotes: meeting.userNotepadNotes ?? undefined,
-    meetingStart: formatMeetingStartForPrompt(meeting.startTime, stateCode),
+    meetingStart: formatMeetingStartForPrompt(
+      meeting.startTime,
+      stateCode,
+      meeting.timeZone,
+    ),
   };
 
   return {

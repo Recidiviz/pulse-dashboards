@@ -95,6 +95,24 @@ beforeEach(async () => {
 describe("client router", () => {
   describe("state user", () => {
     describe("createMeeting", () => {
+      test.each([
+        ["America/Denver", "America/Denver"],
+        ["Not/AZone", null],
+      ])("Stores time zone %s as %s", async (timeZone, stored) => {
+        const result = await testTRPCClient.v1.client.createMeeting.mutate({
+          clientId: fakeClients[0].personId,
+          startTime: faker.date.future(),
+          timeZone,
+          meetingId: createId(),
+          meetingType: pseudoMeetingType,
+        });
+
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: result.id },
+        });
+        expect(meeting.timeZone).toBe(stored);
+      });
+
       test("Creates a meeting", async () => {
         const startTime = faker.date.future();
 

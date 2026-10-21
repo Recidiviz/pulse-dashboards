@@ -65,6 +65,7 @@ export async function createMeetingForPerson({
   user,
   personId,
   startTime,
+  timeZone,
   personType,
   meetingId,
   meetingType,
@@ -75,6 +76,7 @@ export async function createMeetingForPerson({
   user: AuthUser;
   personId: bigint;
   startTime: Date;
+  timeZone?: string;
   personType: "client" | "resident";
   meetingId: string;
   meetingType?: string | null;
@@ -122,6 +124,7 @@ export async function createMeetingForPerson({
       },
       staffEmail: user.email,
       startTime,
+      timeZone,
       recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
       recordingsFolderPath: `${stateCode}/${meetingId}`,
     },

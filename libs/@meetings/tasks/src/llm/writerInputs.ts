@@ -165,6 +165,7 @@ export function buildWriterUserVariables(
     meetingStart: formatMeetingStartForPrompt(
       new Date(transcript.startTime),
       person.stateCode,
+      transcript.timeZone,
     ),
     poNotes: transcript.poNotes,
   };

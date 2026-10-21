@@ -182,7 +182,7 @@ export const EVALUATOR_PROMPTS = {
         Omissions should be noted, but don't count against the grade unless there are no action items at all even though there should be, in which case the grade should be PARTIAL.
       - Assignment — Is each task attributed to the right person? Misattributions should be noted, but assigning to the wrong person doesn't rise to the level of a PARTIAL or BAD grade.
       - Hallucination — Are there tasks listed that were never discussed?
-      - Deadlines — Are any deadlines invented rather than explicitly stated?
+      - Deadlines — A deadline is acceptable if it was explicitly stated or clearly implied by the conversation (a named day, a concrete event, a stated schedule window). Relative references ("Thursday", "tomorrow") may be resolved against the meeting date and time given in KNOWN CONTEXT. Flag deadlines with no basis in the transcript, and note missing deadlines where the conversation clearly implied one.
 
       Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
 

@@ -88,6 +88,7 @@ export const residentRouter = router({
         input: {
           residentId,
           startTime,
+          timeZone,
           meetingId,
           meetingType,
           meetingTypeCategory,
@@ -99,6 +100,7 @@ export const residentRouter = router({
           user,
           personId: residentId,
           startTime,
+          timeZone,
           meetingId,
           meetingType,
           meetingTypeCategory,

@@ -17,9 +17,12 @@
 
 import { z } from "zod";
 
+import { timeZoneSchema } from "~@meetings/trpc/routes/meeting/meeting.schema";
+
 export const createMeetingInputSchema = z.object({
   residentId: z.bigint(),
   startTime: z.date(),
+  timeZone: timeZoneSchema,
   meetingId: z.string().cuid2(),
   meetingType: z.string().optional(),
   meetingTypeCategory: z.string().nullable().optional(),

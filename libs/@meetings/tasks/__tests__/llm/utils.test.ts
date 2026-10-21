@@ -79,4 +79,12 @@ describe("formatMeetingStartForPrompt", () => {
       "Wednesday, March 4, 2026 at 1:00 AM EST",
     );
   });
+
+  test("prefers the meeting's own zone over the state's", () => {
+    // US_ID defaults to Mountain, but northern Idaho is on Pacific time.
+    const startTime = new Date("2026-03-04T06:00:00Z");
+    expect(
+      formatMeetingStartForPrompt(startTime, "US_ID", "America/Los_Angeles"),
+    ).toBe("Tuesday, March 3, 2026 at 10:00 PM PST");
+  });
 });

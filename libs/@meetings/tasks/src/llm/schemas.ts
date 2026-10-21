@@ -33,6 +33,10 @@ export const TranscriptInputSchema = z.object({
     .string()
     .datetime()
     .describe("Meeting start as an ISO 8601 UTC timestamp"),
+  timeZone: z
+    .string()
+    .optional()
+    .describe("IANA timezone the meeting took place in"),
   durationSeconds: z.number(),
   poNotes: z.string().default("").describe("Officer's raw notes"),
   meetingType: z.string().optional(),
@@ -57,7 +61,10 @@ export const GatekeeperOutputSchema = TranscriptInputSchema;
 export const ActionItemSchema = z.object({
   assignee: z.enum(["Staff Member", "Client", "Third Party"]),
   task: z.string(),
-  deadline: z.string().nullable().describe("Due date if specified, else null"),
+  deadline: z
+    .string()
+    .nullable()
+    .describe("Due date, explicitly stated or clearly implied, else null"),
   context: z.string().nullable().describe("Context/Reasoning for the task"),
   evidenceQuotes: z
     .array(z.string())

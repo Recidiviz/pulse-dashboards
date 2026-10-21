@@ -27,6 +27,22 @@ import {
 } from "~@meetings/prisma/client";
 import { StaffFeedbackOutputSchema, ValidationError } from "~@meetings/tasks";
 
+// An unrecognized zone is dropped, not rejected, so meeting creation never fails on it;
+// prompts then fall back to the state's timezone.
+export const timeZoneSchema = z
+  .string()
+  .max(64)
+  .refine((timeZone) => {
+    try {
+      new Intl.DateTimeFormat("en-US", { timeZone });
+      return true;
+    } catch {
+      return false;
+    }
+  })
+  .optional()
+  .catch(undefined);
+
 export const getDetailInputSchema = z.object({
   meetingId: z.string(),
 });

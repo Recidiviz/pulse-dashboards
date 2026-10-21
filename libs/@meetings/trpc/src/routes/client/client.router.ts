@@ -110,6 +110,7 @@ export const clientRouter = router({
         input: {
           clientId,
           startTime,
+          timeZone,
           meetingId,
           meetingType,
           meetingTypeCategory,
@@ -124,6 +125,7 @@ export const clientRouter = router({
           meetingType,
           meetingTypeCategory,
           startTime,
+          timeZone,
           personType: "client",
           stateCode,
         });

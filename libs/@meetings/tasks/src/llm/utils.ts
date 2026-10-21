@@ -142,9 +142,10 @@ const STATE_TIME_ZONES: Record<StateCode, string> = {
 export function formatMeetingStartForPrompt(
   startTime: Date,
   stateCode: StateCode,
+  timeZone?: string | null,
 ): string {
   return new Intl.DateTimeFormat("en-US", {
-    timeZone: STATE_TIME_ZONES[stateCode],
+    timeZone: timeZone ?? STATE_TIME_ZONES[stateCode],
     weekday: "long",
     year: "numeric",
     month: "long",
