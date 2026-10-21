@@ -1,7 +1,7 @@
 # Build environment for Anthropic's OSS Scanner (https://github.com/anthropics/oss-scanner).
 # The scanner builds this file with the pulse-dashboards checkout as the build context, with network
 # access, and then runs its audit with no network. Everything the tests need is installed here.
-FROM node:22.22-bookworm
+FROM node:22.23.4-bookworm
 
 # CI=true makes yarn 4 default to immutable installs, which the mirror cannot pass (see the install
 # step), so that default is switched off explicitly.

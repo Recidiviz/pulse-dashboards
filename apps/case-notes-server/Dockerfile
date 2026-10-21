@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:22.23.3-slim
+FROM node:22.23.4-slim
 WORKDIR /usr/src/app
 
 ENV NODE_ENV production
