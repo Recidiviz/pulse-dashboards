@@ -49,12 +49,8 @@ import {
   getDomainsForAssessmentType,
   ORASDomainRiskLevelField,
 } from "../../OffenderAssessment/utils";
-import {
-  DISPOSITION_TYPE_ORDER,
-  SARSection,
-  type SARSectionName,
-} from "../../SARDetails/constants";
-import { shouldShowSARSection } from "../../SARDetails/utils";
+import { DISPOSITION_TYPE_ORDER, SARSection } from "../../SARDetails/constants";
+import { shouldShowInSARReport } from "../../SARDetails/utils";
 
 /**
  * Minimal shape of the per-section skip flags the report reads from the raw
@@ -95,26 +91,12 @@ export const needsSkipped = (sar: SAR): boolean =>
 export const factorsSkipped = (sar: SAR): boolean =>
   sarSections(sar)?.keyConsiderations?.mitigatingFactors?.skipped === true;
 
-/** Whether a section's data should render in this report; delegates to the
- * shared `shouldShowSARSection`, which is also what
- * `SARDetailsPresenter.shouldShowInSummary` calls for the DOM report. */
-export const shouldShowInReport = (
-  sar: SAR,
-  section: SARSectionName,
-): boolean =>
-  shouldShowSARSection(
-    section,
-    sar.isVictimImpactOnly,
-    sar.reportType,
-    sar.defendantDeclinedToParticipate,
-  );
-
 /**
  * Whether Defendant's Version should render: this officer must be assigned
  * the section, and there must be unskipped content to show.
  */
 export const shouldShowDefendantStatement = (sar: SAR): boolean =>
-  shouldShowInReport(sar, SARSection.DEFENDANTS_VERSION) &&
+  shouldShowInSARReport(SARSection.DEFENDANTS_VERSION, sar) &&
   !!sar.defendantStatement &&
   !sectionSkipped(sar, "defendantStatement");
 
@@ -124,7 +106,7 @@ export const shouldShowDefendantStatement = (sar: SAR): boolean =>
  * when the defendant declined (Victim Impact doesn't depend on that).
  */
 export const shouldShowVictimImpact = (sar: SAR): boolean =>
-  shouldShowInReport(sar, SARSection.VICTIM_IMPACT) &&
+  shouldShowInSARReport(SARSection.VICTIM_IMPACT, sar) &&
   !!sar.victimImpactStatement &&
   !sectionSkipped(sar, "victimImpactStatement");
 
@@ -140,7 +122,7 @@ export const shouldShowHistoricalOutcome = (
 ): insight is NonNullable<SARInsight> =>
   !sar.defendantDeclinedToParticipate &&
   !!insight &&
-  shouldShowInReport(sar, SARSection.OFFENDER_ASSESSMENT);
+  shouldShowInSARReport(SARSection.OFFENDER_ASSESSMENT, sar);
 
 /** Reads a domain's risk-level field off the raw SAR, narrowed to a key. */
 const riskLevelOf = (

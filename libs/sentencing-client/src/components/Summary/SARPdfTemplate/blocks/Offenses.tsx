@@ -23,7 +23,7 @@ import { View } from "@react-pdf/renderer";
 import React from "react";
 
 import { SARSection } from "../../../SARDetails/constants";
-import { shouldShowInReport } from "../derive";
+import { shouldShowInSARReport } from "../../../SARDetails/utils";
 import { useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { OffenseBlock } from "./OffenseBlock";
@@ -31,7 +31,7 @@ import { OffenseBlock } from "./OffenseBlock";
 /** Renders one OffenseBlock per charge on the SAR (read from context). */
 export const Offenses: React.FC<{ style?: PdfStyle }> = ({ style = {} }) => {
   const { sar } = useSAR();
-  if (!shouldShowInReport(sar, SARSection.CASE_INFORMATION)) return null;
+  if (!shouldShowInSARReport(SARSection.CASE_INFORMATION, sar)) return null;
   return (
     <View style={style}>
       {sar.charges.map((charge, i) => (

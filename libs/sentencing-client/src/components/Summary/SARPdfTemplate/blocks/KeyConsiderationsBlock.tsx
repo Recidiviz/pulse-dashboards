@@ -19,7 +19,7 @@ import { Link, Text, View } from "@react-pdf/renderer";
 import React from "react";
 
 import { SARSection } from "../../../SARDetails/constants";
-import { shouldShowInReport } from "../derive";
+import { shouldShowInSARReport } from "../../../SARDetails/utils";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
@@ -36,7 +36,7 @@ export const KeyConsiderationsBlock: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  if (!shouldShowInReport(sar, SARSection.KEY_CONSIDERATIONS)) return null;
+  if (!shouldShowInSARReport(SARSection.KEY_CONSIDERATIONS, sar)) return null;
   return (
     <View style={style}>
       <View wrap={false}>

@@ -43,14 +43,8 @@ export type SARSectionName = (typeof SAR_REPORT_SECTIONS)[number];
  * Sections that apply when the defendant declined to participate: everything
  * except Key Considerations and Defendant's Version, which require
  * participation to complete. Recommendation is also excluded here (nothing
- * to fill out in the builder tool), but still needs to render in the actual
- * report with declined-fallback copy — that's handled as a report-only
- * override in `shouldShowSARSection` below, not by adding it back to this
- * list.
- *
- * Defined once here so `SARDetailsPresenter.SARSections` (drives the
- * builder's side nav) and the PDF template's `shouldShowSARSection` (which
- * also uses this) can't drift out of sync with each other.
+ * to fill out in the builder tool), but shouldShowInSARReport adds it back to
+ * the report so the report can print a declined fallback line.
  */
 export const DECLINED_SAR_REPORT_SECTIONS = [
   SARSection.CASE_INFORMATION,

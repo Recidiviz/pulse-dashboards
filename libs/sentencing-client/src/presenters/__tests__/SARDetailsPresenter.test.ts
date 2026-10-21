@@ -206,6 +206,30 @@ describe("defendant declined to participate", () => {
     });
   });
 
+  describe("Recommendation visibility", () => {
+    it("hides Recommendation on the Summary page but keeps it in the report when declined", async () => {
+      await hydrateWithDeclined(true);
+
+      expect(presenter.shouldShowInSummary(SARSection.RECOMMENDATION)).toBe(
+        false,
+      );
+      expect(presenter.shouldShowInReport(SARSection.RECOMMENDATION)).toBe(
+        true,
+      );
+    });
+
+    it("shows Recommendation on the Summary page and in the report when not declined", async () => {
+      await hydrateWithDeclined(false);
+
+      expect(presenter.shouldShowInSummary(SARSection.RECOMMENDATION)).toBe(
+        true,
+      );
+      expect(presenter.shouldShowInReport(SARSection.RECOMMENDATION)).toBe(
+        true,
+      );
+    });
+  });
+
   describe("hasOrasAssessment", () => {
     it("returns false when declined even if assessmentDate is set", async () => {
       vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({

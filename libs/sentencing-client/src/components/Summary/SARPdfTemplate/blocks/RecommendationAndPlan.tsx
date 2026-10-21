@@ -23,8 +23,9 @@ import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
 import { SARSection } from "../../../SARDetails/constants";
+import { shouldShowInSARReport } from "../../../SARDetails/utils";
 import { DECLINED_TEXT } from "../../SentencingAssessmentReport.constants";
-import { sectionSkipped, shouldShowInReport, splitParagraphs } from "../derive";
+import { sectionSkipped, splitParagraphs } from "../derive";
 import { Banner } from "../primitives/Banner";
 import { HomeIcon } from "../primitives/icons/HomeIcon";
 import { Paragraph } from "../primitives/Paragraph";
@@ -37,14 +38,14 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  if (!shouldShowInReport(sar, SARSection.RECOMMENDATION)) return null;
+  if (!shouldShowInSARReport(SARSection.RECOMMENDATION, sar)) return null;
 
   // Mirror the DOM report (ReportRecommendation): a declined defendant gets a
   // fixed fallback line; an explicitly skipped section is omitted entirely;
   // otherwise render whichever strategy groups have content.
   if (sar.defendantDeclinedToParticipate) {
     return (
-      <View style={style}>
+      <View style={style} wrap={false}>
         <UnderlinedHeading>
           Recommendation and Supervision Plan
         </UnderlinedHeading>

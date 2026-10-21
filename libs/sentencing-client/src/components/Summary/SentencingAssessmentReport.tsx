@@ -200,7 +200,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   updatedAt={updatedAt}
                   staff={staff}
                 />
-                {presenter.shouldShowInSummary(SARSection.CASE_INFORMATION) && (
+                {presenter.shouldShowInReport(SARSection.CASE_INFORMATION) && (
                   <SentencingAssessmentReportSection
                     title={OFFENDER_COURT_SECTION_TITLE}
                     splittable
@@ -220,7 +220,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     </Styled.ColumnFlexContainer>
                   </SentencingAssessmentReportSection>
                 )}
-                {presenter.shouldShowInSummary(
+                {presenter.shouldShowInReport(
                   SARSection.KEY_CONSIDERATIONS,
                 ) && (
                   <ReportKeyConsiderations
@@ -230,7 +230,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     ORASDomainsAvailable={sarData.ORASDomainsAvailable}
                   />
                 )}
-                {presenter.shouldShowInSummary(SARSection.DEFENDANTS_VERSION) &&
+                {presenter.shouldShowInReport(SARSection.DEFENDANTS_VERSION) &&
                   sarData.defendantStatement &&
                   !presenter.defendantStatementSkipped && (
                     <SentencingAssessmentReportSection
@@ -241,7 +241,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       </Styled.FreeTextContent>
                     </SentencingAssessmentReportSection>
                   )}
-                {presenter.shouldShowInSummary(SARSection.VICTIM_IMPACT) &&
+                {presenter.shouldShowInReport(SARSection.VICTIM_IMPACT) &&
                   sarData.victimImpactStatement &&
                   !presenter.victimImpactStatementSkipped && (
                     <SentencingAssessmentReportSection
@@ -253,9 +253,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     </SentencingAssessmentReportSection>
                   )}
                 {/* TODO(OBT-29467): remove spread once import skips manually-updated SARs */}
-                {presenter.shouldShowInSummary(
-                  SARSection.OFFENDER_ASSESSMENT,
-                ) &&
+                {presenter.shouldShowInReport(SARSection.OFFENDER_ASSESSMENT) &&
                   (declined ||
                     sarData.assessmentType ||
                     !presenter.hasOrasAssessment) && (
@@ -273,23 +271,21 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       isDeclined={declined}
                     />
                   )}
-                {presenter.shouldShowInSummary(
+                {presenter.shouldShowInReport(
                   SARSection.PRIOR_TREATMENT_HISTORY,
                 ) && (
                   <ReportPriorTreatmentHistory
                     presenter={presenter.priorTreatmentHistory}
                   />
                 )}
-                {presenter.shouldShowInSummary(SARSection.RECOMMENDATION) &&
+                {presenter.shouldShowInReport(SARSection.RECOMMENDATION) &&
                   (declined || !presenter.recommendationSkipped) && (
                     <ReportRecommendation
                       sarData={sarData}
                       isDeclined={declined}
                     />
                   )}
-                {presenter.shouldShowInSummary(
-                  SARSection.OFFENDER_ASSESSMENT,
-                ) &&
+                {presenter.shouldShowInReport(SARSection.OFFENDER_ASSESSMENT) &&
                   !declined &&
                   activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
@@ -302,9 +298,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       descriptionContext={insightDescriptionContext}
                     />
                   ))}
-                {presenter.shouldShowInSummary(
-                  SARSection.OFFENDER_ASSESSMENT,
-                ) &&
+                {presenter.shouldShowInReport(SARSection.OFFENDER_ASSESSMENT) &&
                   !declined &&
                   activeFeatureVariants["SARBuilder"] &&
                   insightData &&
@@ -320,9 +314,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       dispositionNumRecords={insightData.dispositionNumRecords}
                     />
                   ))}
-                {presenter.shouldShowInSummary(
-                  SARSection.OFFENDER_ASSESSMENT,
-                ) &&
+                {presenter.shouldShowInReport(SARSection.OFFENDER_ASSESSMENT) &&
                   !declined &&
                   activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (

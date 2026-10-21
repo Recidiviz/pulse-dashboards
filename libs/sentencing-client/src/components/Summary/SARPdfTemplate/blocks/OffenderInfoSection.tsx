@@ -21,7 +21,8 @@ import React from "react";
 import { formatDisplayDate } from "../../../../utils/utils";
 import { GenderToDisplayName } from "../../../CaseDetails/constants";
 import { SARSection } from "../../../SARDetails/constants";
-import { formattedRace, shouldShowInReport } from "../derive";
+import { shouldShowInSARReport } from "../../../SARDetails/utils";
+import { formattedRace } from "../derive";
 import { Chip } from "../primitives/Chip";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
@@ -33,7 +34,7 @@ export const OffenderInfoSection: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  if (!shouldShowInReport(sar, SARSection.CASE_INFORMATION)) return null;
+  if (!shouldShowInSARReport(SARSection.CASE_INFORMATION, sar)) return null;
   const gender = sar.client?.gender;
   return (
     <View style={style}>

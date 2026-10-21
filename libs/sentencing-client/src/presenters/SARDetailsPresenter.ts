@@ -63,14 +63,18 @@ import {
   ORASFormData,
 } from "../components/OffenderAssessment/utils";
 import {
-  DECLINED_SAR_REPORT_SECTIONS,
   DISPOSITION_TYPE_ORDER,
-  SAR_REPORT_SECTIONS,
   SARSection,
   type SARSectionName,
 } from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
-import { shouldShowSARSection } from "../components/SARDetails/utils";
+import {
+  getSARSections,
+  isPSRAllExceptVictimImpact,
+  isPSRVictimImpactOnly,
+  shouldShowInSARReport,
+  shouldShowInSARSummary,
+} from "../components/SARDetails/utils";
 import { InsightDescriptionContext } from "../components/Summary/insightsUtils";
 import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
 import { SignatureData } from "../components/Summary/ReportSignature";
@@ -366,26 +370,19 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   get SARSections(): SARSectionName[] {
-    if (this.isPSRVictimImpactOnly) {
-      return [SARSection.VICTIM_IMPACT, SARSection.SUMMARY];
-    }
-    const result =
-      this.defendantDeclinedToParticipate === false
-        ? [...SAR_REPORT_SECTIONS]
-        : [...DECLINED_SAR_REPORT_SECTIONS];
-    return result;
+    return getSARSections(this);
   }
 
-  /** Whether a section's data should render on the Summary page. Delegates
-   * to the shared `shouldShowSARSection`, which is also what the PDF
-   * template's `derive.ts`'s `shouldShowInReport` calls. */
+  /** Whether a section's data should render on the builder's Summary page;
+   * see shouldShowInSARSummary. */
   shouldShowInSummary(section: SARSectionName): boolean {
-    return shouldShowSARSection(
-      section,
-      this.isVictimImpactOnly,
-      this.reportType,
-      this.defendantDeclinedToParticipate,
-    );
+    return shouldShowInSARSummary(section, this);
+  }
+
+  /** Whether a section should render in the DOM report; see
+   * shouldShowInSARReport. */
+  shouldShowInReport(section: SARSectionName): boolean {
+    return shouldShowInSARReport(section, this);
   }
 
   get formattedClientName(): string {
@@ -732,12 +729,12 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** True when this officer is assigned everything other than the Victim Impact section. */
   get isPSRAllExceptVictimImpact(): boolean {
-    return this.isVictimImpactOnly === false && this.reportType === "PSR";
+    return isPSRAllExceptVictimImpact(this.isVictimImpactOnly, this.reportType);
   }
 
   /** True when this officer is assigned only the Victim Impact section. */
   get isPSRVictimImpactOnly(): boolean {
-    return this.isVictimImpactOnly === true && this.reportType === "PSR";
+    return isPSRVictimImpactOnly(this.isVictimImpactOnly, this.reportType);
   }
 
   private get sectionFieldCounts(): { completed: number; total: number } {

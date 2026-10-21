@@ -36,50 +36,76 @@ export const isPSRAllExceptVictimImpact = (
   reportType: SAR["reportType"] | undefined,
 ): boolean => isVictimImpactOnly === false && reportType === "PSR";
 
+/** The SAR fields that decide which sections this officer covers. Both a SAR
+ * and SARDetailsPresenter satisfy this shape. */
+export type SARSectionScope = {
+  isVictimImpactOnly: SAR["isVictimImpactOnly"];
+  reportType: SAR["reportType"] | undefined;
+  defendantDeclinedToParticipate: SAR["defendantDeclinedToParticipate"];
+};
+
 /**
- * Whether a section's data should render for this officer, in both the DOM
- * report/Summary page and the PDF report. The single source of truth for
- * this logic — `SARDetailsPresenter.shouldShowInSummary` (DOM) and
- * `SARPdfTemplate/derive.ts`'s `shouldShowInReport` (PDF) both call this
- * directly instead of each maintaining their own hand-synced copy, since the
- * PDF has no presenter to share an implementation with otherwise.
+ * Returns the sections in the builder's side nav, in order. A PSR officer
+ * assigned only Victim Impact gets Victim Impact and Summary; a declined
+ * defendant drops the sections that need their participation (see
+ * DECLINED_SAR_REPORT_SECTIONS).
  *
- * Two adjustments in opposite directions:
- * - Victim Impact stays in the base section list for the all-except-
- *   victim-impact split so its nav tab remains visible, but it shouldn't
- *   appear in this officer's report.
- * - Recommendation is deliberately excluded from the base section list when
- *   declined (nothing to fill out in the builder tool), but the report still
- *   needs to show it with declined-fallback copy, so it's surfaced here even
- *   though it's not in the base list.
+ * A PSR officer assigned everything except Victim Impact still gets the
+ * Victim Impact tab, which shows a banner saying the originating officer will
+ * complete it. shouldShowInSARSummary drops it from their Summary page and
+ * report.
  */
-export const shouldShowSARSection = (
+export const getSARSections = ({
+  isVictimImpactOnly,
+  reportType,
+  defendantDeclinedToParticipate,
+}: SARSectionScope): SARSectionName[] => {
+  if (isPSRVictimImpactOnly(isVictimImpactOnly, reportType)) {
+    return [SARSection.VICTIM_IMPACT, SARSection.SUMMARY];
+  }
+  return defendantDeclinedToParticipate === false
+    ? [...SAR_REPORT_SECTIONS]
+    : [...DECLINED_SAR_REPORT_SECTIONS];
+};
+
+/**
+ * Whether a section's data should render on the builder's Summary page.
+ *
+ * This is the builder's section list minus Victim Impact for a PSR officer
+ * assigned everything except Victim Impact. That officer keeps the Victim
+ * Impact nav tab, but another officer writes its content.
+ */
+export const shouldShowInSARSummary = (
   section: SARSectionName,
-  isVictimImpactOnly: SAR["isVictimImpactOnly"],
-  reportType: SAR["reportType"] | undefined,
-  defendantDeclinedToParticipate: SAR["defendantDeclinedToParticipate"],
+  scope: SARSectionScope,
 ): boolean => {
   if (
     section === SARSection.VICTIM_IMPACT &&
-    isPSRAllExceptVictimImpact(isVictimImpactOnly, reportType)
+    isPSRAllExceptVictimImpact(scope.isVictimImpactOnly, scope.reportType)
   ) {
     return false;
   }
+  return getSARSections(scope).includes(section);
+};
+
+/**
+ * Whether a section should render in the report.
+ *
+ * The report shows everything the Summary page does, plus Recommendation when
+ * the defendant declined. The builder has no Recommendation form in that
+ * case, but the report still prints a fallback line saying the officer could
+ * not complete it.
+ */
+export const shouldShowInSARReport = (
+  section: SARSectionName,
+  scope: SARSectionScope,
+): boolean => {
   if (
     section === SARSection.RECOMMENDATION &&
-    defendantDeclinedToParticipate &&
-    !isPSRVictimImpactOnly(isVictimImpactOnly, reportType)
+    scope.defendantDeclinedToParticipate === true &&
+    !isPSRVictimImpactOnly(scope.isVictimImpactOnly, scope.reportType)
   ) {
     return true;
   }
-
-  let sections: SARSectionName[];
-  if (isPSRVictimImpactOnly(isVictimImpactOnly, reportType)) {
-    sections = [SARSection.VICTIM_IMPACT, SARSection.SUMMARY];
-  } else if (defendantDeclinedToParticipate === false) {
-    sections = [...SAR_REPORT_SECTIONS];
-  } else {
-    sections = [...DECLINED_SAR_REPORT_SECTIONS];
-  }
-  return sections.includes(section);
+  return shouldShowInSARSummary(section, scope);
 };
