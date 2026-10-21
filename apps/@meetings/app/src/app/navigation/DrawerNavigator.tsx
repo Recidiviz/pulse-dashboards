@@ -42,7 +42,6 @@ import { ResidentsScreen } from "~@meetings/app/pages/residents";
 import { StateSelectionScreen } from "~@meetings/app/pages/state-selection";
 import {
   ClientsStackParamList,
-  IS_PROD,
   ResidentsStackParamList,
   RootStackParamList,
 } from "~@meetings/app/shared/config";
@@ -99,9 +98,7 @@ export default function DrawerNavigator() {
   }
 
   const getInitialRouteName = () => {
-    // Temporarily limit this to non-Recidiviz users on staging,
-    // which effectively hides it from all users while development is still in progress.
-    if (!hasSeenOnboarding && !isRecidivizUser && !IS_PROD) {
+    if (!hasSeenOnboarding && !isRecidivizUser) {
       return "Onboarding";
     }
     if (hasSupervisionAccess) {
