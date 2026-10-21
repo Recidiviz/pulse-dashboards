@@ -616,6 +616,9 @@ model SentencingAssessmentReport {
   reportType         SARReportType @default(SAR)
   // Locks whether reportType can be changed
   isReportTypeLocked Boolean?
+  // Set when the report is downloaded, since the downloaded PDF is the copy that
+  // goes to the court. Cleared when the user chooses to update and edit it.
+  lockedAt           DateTime?
 
   client   Client @relation(fields: [clientId], references: [externalId])
   clientId String
@@ -699,6 +702,7 @@ model SentencingAssessmentReport {
   employmentHistories EmploymentHistory[]
   hasManuallyUpdatedEmploymentHistory Boolean @default(false)
   priorTreatmentHistories PriorTreatmentHistory[]
+  insightSnapshot SARInsightSnapshot?
 
   // Metadata stored as JSON
   // Tracks form completion state including:
@@ -717,6 +721,50 @@ model SentencingAssessmentReport {
   supervisorLastSignedAt DateTime?
 
   @@index([staffId])
+}
+
+// Point-in-time copy of the insight shown on a SAR. A report with no row has
+// never had a snapshot taken. A row with null data fields means a snapshot was
+// taken but no insight existed for that offense, gender, and score bucket.
+model SARInsightSnapshot {
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+
+  // Copied from the report and client when the snapshot is taken, so a later
+  // correction to Client.gender or the report's offense or score doesn't change
+  // which insight the snapshot describes.
+  gender                     Gender?
+  assessmentScoreBucketStart Int?
+  assessmentScoreBucketEnd   Int?
+  offenseName                String?
+  offenseCategory            String?
+
+  // Disposition Data
+  dispositionNumRecords Int?
+  dispositionData          SARInsightSnapshotDisposition[]
+
+  // Time Served Data
+  avgSentenceLengthYears Float?
+  avgPctServed         Float?
+  timeServedNumRecords Int?
+
+  sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
+  sentencingAssessmentReportId String                     @unique
+}
+
+// Point-in-time copy of a Disposition, scoped to a single SAR's snapshot.
+model SARInsightSnapshotDisposition {
+  id                        String  @id @default(cuid())
+  recommendationType        String?
+  // The default range is 0 to -1 (equivalent to 0 to infinity)
+  sentenceLengthBucketStart Int     @default(0)
+  sentenceLengthBucketEnd   Int     @default(-1)
+  percentage                Float
+
+  sarInsightSnapshot   SARInsightSnapshot @relation(fields: [sarInsightSnapshotId], references: [id], onDelete: Cascade)
+  sarInsightSnapshotId String
+
+  @@unique([sarInsightSnapshotId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
 }
 
 model Charge {

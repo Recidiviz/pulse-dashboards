@@ -31,6 +31,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     mostSevereOffenseName: null,
     reportType: "SAR",
     isReportTypeLocked: true,
+    lockedAt: null,
     client: {
       externalId: "SAR-123456",
       fullName: "John Doe",
