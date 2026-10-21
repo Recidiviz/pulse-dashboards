@@ -26,7 +26,8 @@ import { palette, spacing } from "~design-system";
  * without a stray rule at the bottom.
  */
 export const RowDivider = styled.hr`
-  border-top: 1px solid ${palette.slate10};
+  border: none;
+  border-top: 1px solid ${palette.slate20};
   margin: ${rem(spacing.xs)} ${rem(spacing.xxs)};
 
   &:last-child {
