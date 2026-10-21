@@ -267,3 +267,48 @@ describe("WriteToTOMISModal", () => {
     `);
   });
 });
+
+describe("WriteToTOMISModal with TOMIS writeback paused", () => {
+  beforeEach(() => {
+    createTestUnit(
+      UsTnExpirationEligibleClientRecord,
+      usTnUserRecord,
+      UsTnExpirationReferralRecordFixture,
+    );
+    updatesSub = opp.updatesSubscription;
+    updatesSub.hydrationState = { status: "hydrated" };
+
+    render(
+      <WriteToTOMISModal
+        showModal
+        onCloseFn={vi.fn()}
+        paginatedNote={[
+          ["page 1, line 1", "page 1, line 2"],
+          ["page 2, line 1"],
+        ]}
+        opportunity={opp}
+        showSubmitPage={false}
+        writebackPaused
+      />,
+    );
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  test("shows the paused notice and copy options instead of submission", () => {
+    expect(
+      screen.getByTestId("tomis-writeback-paused-notice"),
+    ).toHaveTextContent(/temporarily disabled/);
+    expect(
+      screen.getByRole("button", { name: "Copy page 1" }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("tepe-copy-full-note-button")).toHaveTextContent(
+      "Copy full note",
+    );
+    expect(
+      screen.queryByRole("button", { name: "Submit note to eTomis" }),
+    ).not.toBeInTheDocument();
+  });
+});

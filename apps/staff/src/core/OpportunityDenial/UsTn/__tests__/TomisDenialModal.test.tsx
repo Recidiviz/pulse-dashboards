@@ -22,7 +22,10 @@ import ReactModal from "react-modal";
 import { setTimeout } from "timers/promises";
 import { Mock } from "vitest";
 
-import { useRootStore } from "../../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../../components/StoreProvider";
 import { Client, Opportunity } from "../../../../WorkflowsStore";
 import { mockOpportunity } from "../../../__tests__/testUtils";
 import { TomisDenialModal } from "../TomisDenialModal";
@@ -82,6 +85,7 @@ const defaultProps = {
 
 beforeEach(() => {
   ReactModal.setAppElement(document.createElement("div"));
+  (useFeatureVariants as Mock).mockReturnValue({});
   vi.stubEnv("VITE_NEW_BACKEND_API_URL", "TEST_API_URL");
 });
 
@@ -356,5 +360,76 @@ describe("TomisDenialModal", () => {
     expect(screen.getByTestId("tomis-confirmation-screen")).toBeInTheDocument();
     const submitButton = screen.getByTestId("tomis-submit-button");
     expect(submitButton).toBeDisabled();
+  });
+});
+
+describe("TomisDenialModal with TOMIS writeback paused", () => {
+  beforeEach(() => {
+    (useFeatureVariants as Mock).mockReturnValue({
+      usTnTomisWritebackPaused: {},
+    });
+  });
+
+  it("shows the paused notice and denial codes instead of the submission form", () => {
+    mockRootStore();
+
+    render(
+      <TomisDenialModal
+        opportunity={tomisMockOpportunity()}
+        {...defaultProps}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("tomis-writeback-paused-screen"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("tomis-writeback-paused-notice"),
+    ).toHaveTextContent(/temporarily disabled/);
+    expect(screen.getByText(/^DECF —/)).toBeInTheDocument();
+    expect(screen.getByText(/^DEIO —/)).toBeInTheDocument();
+    expect(screen.queryByTestId("tomis-submit-button")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("character-count-text-field"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("disables Mark Ineligible when every denial reason was cleared", () => {
+    mockRootStore();
+    const onSuccessFn = vi.fn();
+
+    render(
+      <TomisDenialModal
+        opportunity={tomisMockOpportunity()}
+        {...defaultProps}
+        reasons={[]}
+        onSuccessFn={onSuccessFn}
+      />,
+    );
+
+    const button = screen.getByTestId("tomis-mark-ineligible-button");
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
+    expect(onSuccessFn).not.toHaveBeenCalled();
+  });
+
+  it("marks the client ineligible without calling TOMIS", () => {
+    const { postExternalRequest, updateClientUpdatesV2Document } =
+      mockRootStore();
+    const onSuccessFn = vi.fn();
+
+    render(
+      <TomisDenialModal
+        opportunity={tomisMockOpportunity()}
+        {...defaultProps}
+        onSuccessFn={onSuccessFn}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("tomis-mark-ineligible-button"));
+
+    expect(onSuccessFn).toHaveBeenCalledTimes(1);
+    expect(postExternalRequest).not.toHaveBeenCalled();
+    expect(updateClientUpdatesV2Document).not.toHaveBeenCalled();
   });
 });

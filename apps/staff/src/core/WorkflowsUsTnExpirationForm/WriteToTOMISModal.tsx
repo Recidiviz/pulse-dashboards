@@ -40,6 +40,10 @@ import {
   PagePreview,
   SmallPagePreviewWithHover,
 } from "../controls/WorkflowsNotePreview";
+import {
+  TOMIS_WRITEBACK_PAUSED_COPY,
+  TomisWritebackPausedNotice,
+} from "../OpportunityDenial/UsTn/TomisWritebackPausedNotice";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const TOMIS_FONT_FAMILY = "Verdana, sans-serif";
@@ -120,6 +124,24 @@ const ModalText = styled(Sans16)`
   color: ${palette.slate80};
 `;
 
+const NoticeContainer = styled.div`
+  padding: 0 ${rem(spacing.xl)};
+`;
+
+const CopyButtonRow = styled.div`
+  display: flex;
+`;
+
+const CopyFullNoteButton = styled(Button).attrs({
+  kind: "secondary",
+  shape: "block",
+})`
+  margin: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.lg)} 0;
+  padding: ${rem(spacing.md)};
+  align-self: flex-start;
+  flex: none;
+`;
+
 const OKButton = styled(Button)`
   padding: ${rem(spacing.md)} ${rem(60)};
 `;
@@ -130,6 +152,7 @@ type writeToTOMISModalProps = {
   paginatedNote: string[][];
   opportunity: UsTnExpirationOpportunity;
   showSubmitPage: boolean;
+  writebackPaused?: boolean;
 };
 
 export function createContactNoteRequestBody(
@@ -162,6 +185,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   paginatedNote,
   opportunity,
   showSubmitPage,
+  writebackPaused = false,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
   const {
@@ -180,14 +204,30 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     },
   );
 
-  const onCopyButtonClick = () => {
-    copyToClipboard();
+  const [isFullNoteCopied, copyFullNoteToClipboard] = useClipboard(
+    paginatedNote.map((page) => page.join("\n")).join("\n"),
+    {
+      successDuration: animation.extendedDurationMs,
+    },
+  );
+
+  const trackCopy = () => {
     opportunity.setCompletedIfEligible();
     analyticsStore.trackReferralFormCopiedToClipboard({
       justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
       opportunityId: opportunity.sentryTrackingId,
     });
+  };
+
+  const onCopyButtonClick = () => {
+    copyToClipboard();
+    trackCopy();
+  };
+
+  const onCopyFullNoteButtonClick = () => {
+    copyFullNoteToClipboard();
+    trackCopy();
   };
 
   const submitTEPEContactNote = async function (body: Record<string, unknown>) {
@@ -370,15 +410,32 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       <ModalTitle>
         Copy each page of the note below and submit in TOMIS
       </ModalTitle>
+      {writebackPaused && (
+        <NoticeContainer>
+          <TomisWritebackPausedNotice
+            message={TOMIS_WRITEBACK_PAUSED_COPY.tepeNote}
+          />
+        </NoticeContainer>
+      )}
       {previewArea}
-      <ActionButton
-        onClick={onCopyButtonClick}
-        style={{ marginBottom: `${rem(spacing.lg)}`, minWidth: "7vw" }}
-      >
-        {isCopied
-          ? `Page ${pageNumberSelected + 1} copied!`
-          : `Copy page ${pageNumberSelected + 1}`}
-      </ActionButton>
+      <CopyButtonRow>
+        <ActionButton
+          onClick={onCopyButtonClick}
+          style={{ marginBottom: `${rem(spacing.lg)}`, minWidth: "7vw" }}
+        >
+          {isCopied
+            ? `Page ${pageNumberSelected + 1} copied!`
+            : `Copy page ${pageNumberSelected + 1}`}
+        </ActionButton>
+        {writebackPaused && (
+          <CopyFullNoteButton
+            onClick={onCopyFullNoteButtonClick}
+            data-testid="tepe-copy-full-note-button"
+          >
+            {isFullNoteCopied ? "Full note copied!" : "Copy full note"}
+          </CopyFullNoteButton>
+        )}
+      </CopyButtonRow>
       <Disclaimer>
         This note has {paginatedNote.length} pages. Make sure you copy and paste
         each of the {paginatedNote.length} pages into TOMIS prior to submitting

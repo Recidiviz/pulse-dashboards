@@ -20,7 +20,10 @@ import ReactModal from "react-modal";
 import { setTimeout } from "timers/promises";
 import { Mock } from "vitest";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { Client, Opportunity } from "../../../WorkflowsStore";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { ReioSubmissionModal } from "../ReioSubmissionModal";
@@ -68,6 +71,7 @@ const reioMockOpportunity = (): Opportunity => ({
 
 beforeEach(() => {
   ReactModal.setAppElement(document.createElement("div"));
+  (useFeatureVariants as Mock).mockReturnValue({});
   vi.stubEnv("VITE_NEW_BACKEND_API_URL", "TEST_API_URL");
 });
 
@@ -413,5 +417,58 @@ describe("ReioSubmissionModal", () => {
       ).toBeInTheDocument();
       expect(screen.getByTestId("reio-submit-button")).toBeDisabled();
     });
+  });
+});
+
+describe("ReioSubmissionModal with TOMIS writeback paused", () => {
+  beforeEach(() => {
+    (useFeatureVariants as Mock).mockReturnValue({
+      usTnTomisWritebackPaused: {},
+    });
+  });
+
+  it("shows the paused notice and only offers the download", () => {
+    mockRootStore();
+
+    render(
+      <ReioSubmissionModal
+        opportunity={reioMockOpportunity()}
+        isOpen
+        onClose={vi.fn()}
+        onDownload={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("tomis-writeback-paused-notice"),
+    ).toHaveTextContent(/temporarily disabled/);
+    expect(screen.getByTestId("reio-download-only-button")).toBeInTheDocument();
+    expect(screen.queryByTestId("reio-submit-button")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("character-count-text-field"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("downloads the form without calling TOMIS", async () => {
+    const { postExternalRequest, trackReferralFormDownloaded } =
+      mockRootStore();
+    const onDownload = vi.fn().mockResolvedValue(undefined);
+    const onClose = vi.fn();
+
+    render(
+      <ReioSubmissionModal
+        opportunity={reioMockOpportunity()}
+        isOpen
+        onClose={onClose}
+        onDownload={onDownload}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("reio-download-only-button"));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onDownload).toHaveBeenCalledTimes(1);
+    expect(trackReferralFormDownloaded).toHaveBeenCalledTimes(1);
+    expect(postExternalRequest).not.toHaveBeenCalled();
   });
 });

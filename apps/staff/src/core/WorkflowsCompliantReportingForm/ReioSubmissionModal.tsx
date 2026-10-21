@@ -28,9 +28,16 @@ import { Button, Icon, palette } from "~design-system";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import { CharacterCountTextField } from "../../components/CharacterCountTextField";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { DialogModal } from "../DialogModal";
+import {
+  TOMIS_WRITEBACK_PAUSED_COPY,
+  TomisWritebackPausedNotice,
+} from "../OpportunityDenial/UsTn/TomisWritebackPausedNotice";
 import {
   buildContactNoteRequestBody,
   chunkCommentToContactNote,
@@ -138,6 +145,8 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
     firestoreStore,
     workflowsStore: { user },
   } = useRootStore();
+
+  const { usTnTomisWritebackPaused } = useFeatureVariants();
 
   const staffId = user?.info?.staffExternalId ?? "";
 
@@ -339,6 +348,27 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
     </ModalContainer>
   );
 
+  const writebackPausedContent = (
+    <ModalContainer data-testid="reio-writeback-paused-screen">
+      <ModalControls>
+        <Button kind="link" onClick={handleClose}>
+          <Icon kind="Close" size="14" color={palette.pine2} />
+        </Button>
+      </ModalControls>
+      <ModalTitle>Compliant Reporting Referral Note (REIO)</ModalTitle>
+      <TomisWritebackPausedNotice
+        message={TOMIS_WRITEBACK_PAUSED_COPY.reioNote}
+      />
+      <FullWidthButton
+        disabled={isDownloadDisabled}
+        onClick={handleDownloadOnly}
+        data-testid="reio-download-only-button"
+      >
+        Download form
+      </FullWidthButton>
+    </ModalContainer>
+  );
+
   const submittingContent = (
     <ModalContainer>
       <CenteredContainer data-testid="reio-loading-screen">
@@ -384,7 +414,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
   );
 
   const content: Record<Phase, JSX.Element> = {
-    EDITING: editingContent,
+    EDITING: usTnTomisWritebackPaused ? writebackPausedContent : editingContent,
     SUBMITTING: submittingContent,
     SUCCESS: successContent,
     FAILED: failureContent,

@@ -55,6 +55,7 @@ import tepeTemplate, {
 import WebFormField from "../Paperwork/WebFormField";
 import WebFormSelectField from "../Paperwork/WebFormSelectField";
 import PillNav from "../PillNav";
+import { tomisModalBlocksClose } from "./utils";
 import { WriteToTOMISModal } from "./WriteToTOMISModal";
 
 const SubmittedText = styled(Sans14)`
@@ -80,6 +81,9 @@ const WorkflowsUsTnExpirationForm = observer(
     const [pageNumberCopied, setPageNumberCopied] = useState(-1);
     const [showTOMISPreviewModal, setShowTOMISPreviewModal] = useState(false);
     const { featureVariants } = workflowsStore;
+    const writebackPaused = !!featureVariants.usTnTomisWritebackPaused;
+    const submitToTomisEnabled =
+      !!featureVariants.usTnExpirationSubmitToTomis && !writebackPaused;
 
     useEffect(() => {
       if (pageToCopy) {
@@ -158,10 +162,8 @@ const WorkflowsUsTnExpirationForm = observer(
 
     const onModalCloseFn = () => {
       if (
-        opportunity.externalRequestStatus === "PENDING" ||
-        opportunity.externalRequestStatus === "IN_PROGRESS"
+        tomisModalBlocksClose(submitToTomisEnabled, opportunity.isNoteLoading)
       ) {
-        // Don't allow the user to close the modal on overlay click while the TOMIS request is in progress
         return;
       }
       setShowTOMISPreviewModal(false);
@@ -198,7 +200,7 @@ const WorkflowsUsTnExpirationForm = observer(
                 onClick={() => setShowTOMISPreviewModal(true)}
                 style={{ minWidth: "7vw" }}
               >
-                {!featureVariants.usTnExpirationSubmitToTomis ||
+                {!submitToTomisEnabled ||
                 opportunity.externalRequestStatus === "FAILURE"
                   ? "Copy note"
                   : "Submit to TOMIS"}
@@ -212,7 +214,8 @@ const WorkflowsUsTnExpirationForm = observer(
           onCloseFn={onModalCloseFn}
           paginatedNote={paginatedTEPENoteByLine(fullCharLimitedTEPENote, 10)}
           opportunity={opportunity}
-          showSubmitPage={!!featureVariants.usTnExpirationSubmitToTomis}
+          showSubmitPage={submitToTomisEnabled}
+          writebackPaused={writebackPaused}
         />
       </FormContainer>
     );

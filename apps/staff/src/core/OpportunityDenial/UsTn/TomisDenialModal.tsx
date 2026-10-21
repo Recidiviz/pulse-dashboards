@@ -15,25 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Loading, Sans16, Sans24, spacing } from "@recidiviz/design-system";
+import {
+  animation,
+  Loading,
+  Sans16,
+  Sans24,
+  spacing,
+} from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { type JSX, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import useClipboard from "react-use-clipboard";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField";
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
 import { DialogModal } from "../../DialogModal";
 import { DialogModalControls, ModalText } from "../../DialogModal/DialogView";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
+import {
+  TOMIS_WRITEBACK_PAUSED_COPY,
+  TomisWritebackPausedNotice,
+} from "./TomisWritebackPausedNotice";
 import {
   buildContactNoteRequestBody,
   chunkCommentToContactNote,
@@ -94,6 +108,14 @@ const SubmitButton = styled(Button).attrs({
   padding: ${rem(spacing.md)};
 `;
 
+const CopyCodesButton = styled(Button).attrs({
+  kind: "secondary",
+  shape: "block",
+})`
+  margin-top: ${rem(spacing.sm)};
+  padding: ${rem(spacing.md)};
+`;
+
 export const TomisDenialModal = observer(function TomisDenialModal({
   opportunity,
   reasons,
@@ -106,6 +128,8 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     firestoreStore,
     workflowsStore: { user },
   } = useRootStore();
+
+  const { usTnTomisWritebackPaused } = useFeatureVariants();
 
   const staffId = user?.info?.staffExternalId ?? "";
 
@@ -126,6 +150,11 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     (code) => code in denialReasons && !code.toUpperCase().includes("OTHER"),
   );
   const hasTomisCodes = tomisCodes.length > 0;
+
+  const [areCodesCopied, copyCodesToClipboard] = useClipboard(
+    tomisCodes.map((code) => `${code} — ${denialReasons[code]}`).join("\n"),
+    { successDuration: animation.extendedDurationMs },
+  );
 
   const isCommentValid =
     comment.trim().length >= TOMIS_COMMENT_MIN_CHARS &&
@@ -199,6 +228,42 @@ export const TomisDenialModal = observer(function TomisDenialModal({
     }
   };
 
+  const denialCodeList = tomisCodes.map((code) => (
+    <DenialCodeBlock key={code}>
+      <DenialCodeLabel>
+        {code} — {denialReasons[code]}
+      </DenialCodeLabel>
+    </DenialCodeBlock>
+  ));
+
+  const writebackPausedModal = (
+    <div data-testid="tomis-writeback-paused-screen">
+      <DialogModalControls onClose={onCloseFn} />
+      <ReviewContainer>
+        <ModalTitle>Compliant Reporting Denial Codes</ModalTitle>
+        <TomisWritebackPausedNotice
+          message={TOMIS_WRITEBACK_PAUSED_COPY.denialCodes}
+        />
+        {denialCodeList}
+        {hasTomisCodes && (
+          <CopyCodesButton
+            data-testid="tomis-copy-codes-button"
+            onClick={copyCodesToClipboard}
+          >
+            {areCodesCopied ? "Codes copied!" : "Copy denial codes"}
+          </CopyCodesButton>
+        )}
+        <SubmitButton
+          data-testid="tomis-mark-ineligible-button"
+          onClick={onSuccessFn}
+          disabled={!hasTomisCodes}
+        >
+          Mark Ineligible
+        </SubmitButton>
+      </ReviewContainer>
+    </div>
+  );
+
   const reviewingModal = (
     <div data-testid="tomis-confirmation-screen">
       <DialogModalControls onClose={onCloseFn} />
@@ -207,16 +272,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
         <Subtitle>
           Prefilled with data from TDOC on {formatWorkflowsDate(new Date())}
         </Subtitle>
-        {tomisCodes.map((code) => {
-          const description = denialReasons[code];
-          return (
-            <DenialCodeBlock key={code}>
-              <DenialCodeLabel>
-                {code} — {description}
-              </DenialCodeLabel>
-            </DenialCodeBlock>
-          );
-        })}
+        {denialCodeList}
         <CommentSection>
           <CharacterCountTextField
             value={comment}
@@ -260,7 +316,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
   );
 
   const modalContent: Record<typeof phase, JSX.Element> = {
-    REVIEWING: reviewingModal,
+    REVIEWING: usTnTomisWritebackPaused ? writebackPausedModal : reviewingModal,
     SUBMITTING: loadingModal,
     FAILED: failureModal,
   };

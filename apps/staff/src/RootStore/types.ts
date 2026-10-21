@@ -151,6 +151,7 @@ export type FeatureVariant =
   | "usTnInitialClassification"
   | "usTnSuspensionOfDirectSupervision"
   | "usTnTEPENotesForAll"
+  | "usTnTomisWritebackPaused"
   | "usTn2026ClassificationPolicyPilot"
   | "usTnRcafV2"
   | "usTnRcafV1"
@@ -265,6 +266,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   mandatoryMinimum: {},
   usTnCompliantReportingWriteback: {},
   usTnDoNotMarkPendingOnDownload: {},
+  usTnTomisWritebackPaused: {},
   reportIncorrectRosters: {},
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
