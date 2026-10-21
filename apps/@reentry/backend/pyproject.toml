@@ -67,6 +67,11 @@ RECIDIVIZ_ENV_NAME = "pytest"
 [tool.uv]
 required-version = ">=0.11.8"
 exclude-newer = "3 days"
+# certifi 2026.10.19 removes the emSign root CA in response to the eMudhra
+# certificate incident. It was published 2026-10-20, so the rolling 3-day
+# quarantine above caps resolution at an older release; this overrides the
+# cutoff for certifi alone. Safe to delete once exclude-newer moves past it.
+exclude-newer-package = { certifi = "2026-10-22T00:00:00Z" }
 
 [tool.uv.sources]
 
