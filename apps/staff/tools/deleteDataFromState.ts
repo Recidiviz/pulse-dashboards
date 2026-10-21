@@ -28,7 +28,7 @@ import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-config";
 
 import { deleteQueryBatch } from "./firestoreUtils";
 
-const env = process.env.NX_CONFIGURATION;
+const env = process.env.NX_TASK_TARGET_CONFIGURATION;
 const stateCode = process.argv[2];
 
 if (!env) {

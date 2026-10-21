@@ -17,7 +17,7 @@
 
 import { Firestore, Query } from "@google-cloud/firestore";
 
-const MAX_BATCH_SIZE = 2500;
+const MAX_BATCH_SIZE = 1000;
 
 export function getDb(): Firestore {
   return new Firestore({
