@@ -22,21 +22,21 @@ export const miBaseReviewClassificationQuestions = [
     title: "Disciplinary history",
     questions: [
       {
-        title: "Administrative Segregation Placements in Past 36 Months",
+        title: "Administrative segregation placements in past 36 months",
         type: "NUMBER",
         countDescriptor: "Placements",
         description:
-          "Counts distinct ad seg placement starts (current or previous incarceration periods) in past 36 months.",
+          "Counts distinct administrative segregation placement starts (current or previous incarceration periods) in past 36 months.",
         bounds: 0,
         multiplier: 4.2,
         note: {
-          header: "Ad seg placements, past 36 months",
+          header: "Administrative segregation placements, past 36 months",
           notfound: "None recorded in the past 36 months",
         },
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 6 Months",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past 6 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -50,7 +50,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 6-12 Months",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past 6-12 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -64,7 +64,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 12-24 Months",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past 12-24 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -78,7 +78,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 24-36 Months",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past 24-36 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -92,7 +92,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike in Past Incarceration Period(s), Within Past 36 Months (Max 4)",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past incarceration period(s), within past 36 months (max 4)",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         bounds: 4,
@@ -106,7 +106,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 6 Months",
+          "Number of misconducts for fighting, threatening behavior, or possession of a weapon in past 6 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -120,7 +120,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 6-12 Months",
+          "Number of misconducts for fighting, threatening behavior, or possession of a weapon in past 6-12 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -134,7 +134,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 12-36 Months",
+          "Number of misconducts for fighting, threatening behavior, or possession of a weapon in past 12-36 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -148,7 +148,7 @@ export const miBaseReviewClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon in Past Incarceration Period(s), Within Past 36 Months (Max 4)",
+          "Number of misconducts for fighting, threatening behavior, or possession of a weapon in past incarceration period(s), within past 36 months (max 4)",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -176,43 +176,43 @@ export const miBaseReviewClassificationQuestions = [
     ],
   },
   {
-    title: "Good Behavior and Programming",
+    title: "Good behavior and programming",
     questions: [
       {
-        title: "Program Completion - Core (MAX 2)",
+        title: "Program completion since 2021 - Core (max 2)",
         type: "NUMBER",
         countDescriptor: "Programs",
         description:
-          "Count of CORE program completions in the current incarceration period.",
+          "Count of Core program completions in the current incarceration period.",
         bounds: 2,
         multiplier: -2.1,
         note: {
-          header: "Count of CORE Program completions",
-          notfound: "None recorded",
+          header: "Count of Core program completions",
+          notfound: "No Core program completions recorded",
         },
       },
       {
-        title: "Program Completion - High",
+        title: "Program completion since 2021 - High",
         type: "SINGLE",
         description:
-          "Count of High program completions in the current incarceration period.",
+          "Has High program completions in the current incarceration period.",
         options: [
           { text: "True", score: -2.3 },
           { text: "False", score: 0 },
         ],
         note: {
-          header: "Count of High Program completions",
-          notfound: "None recorded",
+          header: "Count of High program completions",
+          notfound: "No High program completions recorded",
         },
       },
       {
-        title: "Work Participation",
+        title: "Work participation",
         type: "NUMBER",
         countDescriptor: "Periods with satisfactory work",
         autofilled: false,
         description:
           "Not autofilled. Number of 4-month periods with satisfactory work performance in past 12 months. Satisfactory performance is determined by facility staff.",
-        bounds: 0,
+        bounds: 3,
         multiplier: -1,
       },
     ],
@@ -220,7 +220,7 @@ export const miBaseReviewClassificationQuestions = [
 ] satisfies UsMiAssessmentSectionsSpec[];
 
 const miMaleAgeClassificationQuestions = {
-  title: "Background Factors",
+  title: "Background factors",
   questions: [
     {
       title: "Age",
@@ -240,7 +240,7 @@ const miMaleAgeClassificationQuestions = {
       },
     },
     {
-      title: "VFO Score",
+      title: "VFO score",
       type: "SINGLE",
       description:
         "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",
@@ -264,7 +264,7 @@ export const miMaleReviewClassificationQuestions = [
 ] satisfies UsMiAssessmentSectionsSpec[];
 
 const miFemaleAgeClassificationQuestions = {
-  title: "Background Factors",
+  title: "Background factors",
   questions: [
     {
       title: "Age",
@@ -284,7 +284,7 @@ const miFemaleAgeClassificationQuestions = {
       },
     },
     {
-      title: "VFO Score",
+      title: "VFO score",
       type: "SINGLE",
       description:
         "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",

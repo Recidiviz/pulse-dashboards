@@ -81,7 +81,7 @@ export const FormUsMiClassification = observer(
           <div>
             <FormTitle>{formTitle}</FormTitle>
             <SubHeading $headerVisible={headerVisible}>
-              Auto-filled fields are pulled from OMS. Review each and complete
+              Auto-filled fields are pulled from COMS. Review each and complete
               required fields.
             </SubHeading>
           </div>

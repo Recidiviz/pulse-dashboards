@@ -51,10 +51,10 @@ export type UsMiAssessmentSectionsSpec = {
 
 export const miBaseInitialClassificationQuestions = [
   {
-    title: "Criminal & Incarceration History",
+    title: "Criminal & incarceration history",
     questions: [
       {
-        title: "Released from Level V in the past 60 Months",
+        title: "Released from Level V in the past 60 months",
         type: "SINGLE",
         description:
           "Based on the most recent release to supervision or liberty in the past 60 months and the True Security Level at that release.",
@@ -91,7 +91,7 @@ export const miBaseInitialClassificationQuestions = [
     title: "Disciplinary history",
     questions: [
       {
-        title: "Administrative Segregation Placements in Past 36 Months",
+        title: "Administrative segregation placements in past 36 months",
         type: "NUMBER",
         countDescriptor: "Placements",
         description:
@@ -118,7 +118,7 @@ export const miBaseInitialClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 6 Months",
+          "Number of misconducts for assault, homicide, sexual violence, inciting a riot or strike in past 6 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -146,7 +146,7 @@ export const miBaseInitialClassificationQuestions = [
       },
       {
         title:
-          "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 6 Months",
+          "Number of misconducts for fighting, threatening behavior, or possession of a weapon in past 6 months",
         type: "NUMBER",
         countDescriptor: "Misconducts",
         description:
@@ -190,7 +190,7 @@ export const miBaseInitialClassificationQuestions = [
 ] satisfies UsMiAssessmentSectionsSpec[];
 
 export const miMaleAgeClassificationQuestions = {
-  title: "Background Factors",
+  title: "Background factors",
   questions: [
     {
       title: "Age",
@@ -210,7 +210,7 @@ export const miMaleAgeClassificationQuestions = {
       },
     },
     {
-      title: "VFO Score",
+      title: "VFO score",
       type: "SINGLE",
       description:
         "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",
@@ -234,7 +234,7 @@ export const miMaleInitialClassificationQuestions = [
 ] satisfies UsMiAssessmentSectionsSpec[];
 
 const miFemaleAgeClassificationQuestions = {
-  title: "Background Factors",
+  title: "Background factors",
   questions: [
     {
       title: "Age",
@@ -254,7 +254,7 @@ const miFemaleAgeClassificationQuestions = {
       },
     },
     {
-      title: "VFO Score",
+      title: "VFO score",
       type: "SINGLE",
       description:
         "Based on most recent COMPAS assessment on record (all time). “None” applies if the person has no COMPAS assessment on record.",

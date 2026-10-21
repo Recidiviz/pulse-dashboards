@@ -106,7 +106,7 @@ function inferredMiClassificationData(
 
   const s1q2Selection = getQuestionVfoOptionSelection(
     questionsList[0].questions[1],
-    formInformation.vfoNotes?.vfoLevel,
+    formInformation.vfoNotes?.vfoLevelDetail,
   );
 
   const s2q3Selection =

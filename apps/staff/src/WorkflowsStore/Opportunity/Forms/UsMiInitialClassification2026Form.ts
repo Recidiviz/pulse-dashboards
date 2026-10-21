@@ -52,16 +52,13 @@ export function getQuestionAgeOptionSelection(
   return question.options.length - 1;
 }
 
-function getVfoOptionText(note: string | undefined) {
-  switch (note) {
+function getVfoOptionText(vfoLevelDetail: string | null | undefined) {
+  switch (vfoLevelDetail?.toUpperCase()) {
     case "LOW":
-    case "MIN":
       return "Low";
     case "MEDIUM":
-    case "MED":
       return "Medium";
     case "HIGH":
-    case "MAX":
       return "High";
     default:
       return "None";
@@ -72,20 +69,19 @@ function getVfoOptionText(note: string | undefined) {
 // "None", which carries the same score as "Medium".
 export function getQuestionVfoOptionSelection(
   question: UsMiAssessmentQuestionSpec,
-  note: string | undefined,
+  vfoLevelDetail: string | null | undefined,
 ) {
   if (question.type !== "SINGLE") return;
   const optionTexts = question.options.map((option) => option.text);
-  const index = optionTexts.indexOf(getVfoOptionText(note));
+  const index = optionTexts.indexOf(getVfoOptionText(vfoLevelDetail));
   return index === -1 ? optionTexts.indexOf("None") : index;
 }
 
 export function getReleasedFromLevelFive(note: prevLevelFiveNotes | null) {
-  // if the note is null or undefined we want this question to be
-  // marked as 'No'
-  if (!note || note === null || note?.prevReleaseDate === null) {
-    return 1;
-  } else return 0;
+  // if the note is null or undefined or the hadPrevTrueLevel5Release is set to 0
+  // then we want this question to be marked as 'No'
+  if (!note || note === null || note.hadPrevTrueLevel5Release === 0) return 1;
+  return 0;
 }
 
 export function countIncidents(
@@ -111,7 +107,7 @@ export function inferredMiClassificationData(
 
   const s1q2Selection = getQuestionVfoOptionSelection(
     questionsList[0].questions[1],
-    formInformation.vfoNotes?.vfoLevel,
+    formInformation.vfoNotes?.vfoLevelDetail,
   );
 
   const s2q3Selection = getReleasedFromLevelFive(

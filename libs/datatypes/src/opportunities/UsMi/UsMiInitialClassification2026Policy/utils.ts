@@ -44,7 +44,7 @@ export const ageNotes = z
 export const vfoNotes = z
   .object({
     assessmentDate: dateStringSchema,
-    vfoLevelDetail: z.string(),
+    vfoLevelDetail: z.string().nullable(),
     vfoLevel: z.string(),
   })
   .passthrough();

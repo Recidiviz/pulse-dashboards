@@ -71,6 +71,7 @@ export const QuestionNotes = observer(function QuestionNotes({
 
   if (
     !note ||
+    (note.kind === "vfo" && note.data.vfoLevelDetail === null) ||
     (note.kind === "releases" && note.data.prevReleaseDate === null) ||
     (note.kind === "adSeg" && note.data.numAdSegStartsInPast36Months === 0)
   )
@@ -99,7 +100,7 @@ export const QuestionNotes = observer(function QuestionNotes({
       >
         {note.kind === "vfo" && (
           <NoteRow
-            event={`VFO: ${note.data.vfoLevel ?? note.data.vfoLevelDetail}`}
+            event={`VFO: ${note.data.vfoLevelDetail}`}
             date={note.data.assessmentDate}
           />
         )}
