@@ -18,49 +18,32 @@
 import { FC, useEffect } from "react";
 
 import { AnnouncementBanner } from "~@jii/common-ui";
-import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsCoTranslations } from "~@jii/translation";
 
 export const AETBanner: FC = () => {
   const { t } = useUsCoTranslations();
-  const { residentFlags } = useSingleResidentContext();
   const {
     userStore: { segmentClient },
   } = useRootStore();
 
-  const showEdovoCredits = residentFlags.usCoEdovoCredits;
-
   useEffect(() => {
-    if (!showEdovoCredits) return;
     segmentClient.trackAetCalloutImpression({
       placement: "homepage",
     });
-  }, [showEdovoCredits, segmentClient]);
+  }, [segmentClient]);
 
   const handleLinkClick = () => {
-    if (!showEdovoCredits) return;
     segmentClient.trackAetCalloutClicked({ placement: "homepage" });
   };
-  let copy;
-  let to;
-  if (showEdovoCredits) {
-    copy = t(($) => $.aetBanner.edovoCredits, { returnObjects: true });
-    to = State.Resident.$.ProgramCatalog.buildRelativePath({});
-  } else if (residentFlags.usCoEdovoV1) {
-    copy = t(($) => $.aetBanner.edovoV1, { returnObjects: true });
-    to = State.Resident.$.UsCoMoreInformation.EarnedTime.buildRelativePath({});
-  } else {
-    // TODO(OBT-49104) remove policyPage copy and AETChanges route and page
-    copy = t(($) => $.aetBanner.policyPage, { returnObjects: true });
-    to = State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath({});
-  }
+  const copy = t(($) => $.aetBanner.edovoCredits, { returnObjects: true });
 
   return (
     <AnnouncementBanner
       message={copy.message}
       linkText={copy.linkText}
-      to={to}
+      to={State.Resident.$.ProgramCatalog.buildRelativePath({})}
       onLinkClick={handleLinkClick}
     />
   );

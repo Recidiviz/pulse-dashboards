@@ -12,10 +12,6 @@
       "yosEarnedTime": {
         "heading": "[US_CO]moreInformation.pages.yosEarnedTime.heading",
         "body": "[US_CO]moreInformation.pages.yosEarnedTime.body"
-      },
-      "aetChanges": {
-        "heading": "[US_CO]moreInformation.pages.aetChanges.heading",
-        "body": "[US_CO]moreInformation.pages.aetChanges.body"
       }
     }
   },
@@ -121,17 +117,9 @@
     }
   },
   "aetBanner": {
-    "policyPage": {
-      "message": "[US_CO]aetBanner.policyPage.message",
-      "linkText": "[US_CO]aetBanner.policyPage.linkText"
-    },
     "edovoCredits": {
       "message": "[US_CO]aetBanner.edovoCredits.message",
       "linkText": "[US_CO]aetBanner.edovoCredits.linkText"
-    },
-    "edovoV1": {
-      "message": "[US_CO]aetBanner.edovoV1.message",
-      "linkText": "[US_CO]aetBanner.edovoV1.linkText"
     }
   }
 }

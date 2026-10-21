@@ -97,11 +97,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
   function UsCoProgramsList({ presenter }) {
     const { t } = useUsCoTranslations();
     const pathParams = useTypedParams(State.Resident);
-    const { residentFlags } = useSingleResidentContext();
     const showBackLink = !presenter.isYOSResident;
-    //AET does not apply to YOS residents
-    const showEdovoCard =
-      !presenter.isYOSResident && !!residentFlags.usCoEdovoCredits;
 
     const {
       userStore: { segmentClient },
@@ -146,7 +142,8 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
           </ButtonLink>
         </Header>
 
-        {showEdovoCard && (
+        {/* AET does not apply to YOS residents */}
+        {!presenter.isYOSResident && (
           <EdovoCoursesCard onGoToCourses={handleGoToCourses} />
         )}
 

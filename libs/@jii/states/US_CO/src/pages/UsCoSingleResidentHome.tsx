@@ -42,10 +42,9 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
   observer(function UsCoSingleResidentHome({ presenter }) {
     const residentUrlParams = useTypedParams(State.Resident);
     const { t } = useUsCoTranslations();
-    const { resident, residentFlags } = useSingleResidentContext();
+    const { resident } = useSingleResidentContext();
 
     usePageTitle(t(($) => $.homepage.pageTitle));
-    const showEdovoCredits = residentFlags.usCoEdovoCredits;
 
     if (isYOSResident(resident))
       return (
@@ -63,7 +62,7 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
         />
 
         <AETBanner />
-        {showEdovoCredits && <ProgramsCtaSection stateCode="US_CO" />}
+        <ProgramsCtaSection stateCode="US_CO" />
         <SentenceDates
           data={presenter.sentenceDatesData}
           stateCode="US_CO"
@@ -75,7 +74,6 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
           }}
         />
         <UsCoMonthlyReports />
-        {!showEdovoCredits && <ProgramsCtaSection stateCode="US_CO" />}
       </BottomPaddedContainer>
     );
   });
