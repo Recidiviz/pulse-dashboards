@@ -331,6 +331,7 @@ function staleSearches(
         facet_by: staleRangeFacet(
           "eligibleDateTimestamp",
           thresholdDays,
+          "date",
           today,
         ),
       },
@@ -345,7 +346,7 @@ function staleSearches(
           ...base,
           "$opportunityUpdates(lastViewedTimestamp:>=0)",
         ].join(" && "),
-        facet_by: `$opportunityUpdates(${staleRangeFacet("lastViewedTimestamp", thresholdDays, today)})`,
+        facet_by: `$opportunityUpdates(${staleRangeFacet("lastViewedTimestamp", thresholdDays, "timestamp", today)})`,
       },
     },
   ];
@@ -363,7 +364,17 @@ function pendingOverdueSearch(
   selection: string,
   thresholdDays: number,
   today: Date,
+  hydrateIneligible: boolean,
 ): PlannedOpportunitySearch {
+  const clauses = [
+    `$${personCollection}(${selection})`,
+    `opportunityType:=${quote(opportunityType)}`,
+  ];
+  if (!hydrateIneligible) {
+    clauses.push("( isEligible:=true || isAlmostEligible:=true )");
+  }
+  clauses.push("$opportunityUpdates(updateStatus:=`SUBMITTED`)");
+
   return {
     kind: "pendingOverdue",
     opportunityType,
@@ -371,12 +382,8 @@ function pendingOverdueSearch(
     descriptor: {
       collection: "opportunities",
       q: "*",
-      filter_by: [
-        `$${personCollection}(${selection})`,
-        `opportunityType:=${quote(opportunityType)}`,
-        "$opportunityUpdates(updateStatus:=`SUBMITTED`)",
-      ].join(" && "),
-      facet_by: `$opportunityUpdates(${staleRangeFacet("submittedDateTimestamp", thresholdDays, today)})`,
+      filter_by: clauses.join(" && "),
+      facet_by: `$opportunityUpdates(${staleRangeFacet("submittedDateTimestamp", thresholdDays, "timestamp", today)})`,
       facet_strategy: "exhaustive",
       max_facet_values: MAX_FACET_VALUES,
       per_page: 0,
@@ -443,6 +450,7 @@ export function buildOpportunitySearchPlan(
           selection,
           thresholds.pendingOverdueDays,
           today,
+          hydrateIneligible.has(type),
         ),
       );
     }

@@ -18,6 +18,14 @@
 import { differenceInDays, startOfToday, subDays } from "date-fns";
 
 /**
+ * Which clock an indexed field was written against. A `date` holds an ISO date
+ * the backfill parsed as UTC midnight, while the app reads the same string as
+ * LOCAL midnight; the cutoff has to be built in UTC to meet it. A `timestamp`
+ * holds a real moment and means the same in either zone.
+ */
+export type StaleDateTimeKind = "date" | "timestamp";
+
+/**
  * The exclusive upper bound, in epoch SECONDS, for a Typesense range facet that
  * counts records at least `thresholdDays` old.
  *
@@ -27,30 +35,45 @@ import { differenceInDays, startOfToday, subDays } from "date-fns";
  *
  *   1. Measured from `startOfToday()`, not `now`, which would move records in
  *      and out between two renders on the same day.
- *   2. `startOfToday()` is LOCAL, so the conversion belongs on the client.
+ *   2. The anchor follows `kind`. A `date` field is compared in UTC and a
+ *      `timestamp` field in local time, because that is how each was written.
  *   3. `differenceInDays` truncates, so a record on the boundary counts.
- *   4. A range facet's end is EXCLUSIVE, so the bound is one day later.
+ *   4. A range facet's end is EXCLUSIVE, so the bound is one second past the
+ *      newest stale record rather than one day.
  *
  * Returns SECONDS. A milliseconds value against a seconds field makes every
  * record look ancient, or none of them, with no error.
  */
 export function staleCutoffSeconds(
   thresholdDays: number,
+  kind: StaleDateTimeKind,
   today: Date = startOfToday(),
 ): number {
-  // The oldest instant that is NOT yet stale, so the exclusive bound lands one
-  // day past the last stale record.
-  const boundary = subDays(today, thresholdDays - 1);
-  return Math.floor(boundary.getTime() / 1000);
+  // The newest clock start that is already stale. Everything at or before it
+  // counts, so the exclusive bound sits one second later.
+  const newestStale = subDays(today, thresholdDays);
+  const seconds =
+    kind === "date"
+      ? utcMidnightSeconds(newestStale)
+      : Math.floor(newestStale.getTime() / 1000);
+  return seconds + 1;
+}
+
+/**
+ * UTC midnight of a local date's CALENDAR day, in seconds.
+ */
+export function utcMidnightSeconds(date: Date): number {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 1000;
 }
 
 /** The range-facet expression counting records at least `thresholdDays` old. */
 export function staleRangeFacet(
   field: string,
   thresholdDays: number,
+  kind: StaleDateTimeKind,
   today: Date = startOfToday(),
 ): string {
-  return `${field}(stale:[0, ${staleCutoffSeconds(thresholdDays, today)}])`;
+  return `${field}(stale:[0, ${staleCutoffSeconds(thresholdDays, kind, today)}])`;
 }
 
 /**
