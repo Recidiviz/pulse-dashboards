@@ -50,11 +50,12 @@ export const TopicCard = styled(Link)`
   &:active {
     border-color: ${palette.pine4};
   }
+`;
 
-  svg {
-    color: ${palette.pine4};
-    flex: 0 0 auto;
-  }
+export const TopicIcon = styled.img`
+  flex: 0 0 auto;
+  height: ${rem(20)};
+  width: ${rem(20)};
 `;
 
 export const TopicLabel = styled.span`

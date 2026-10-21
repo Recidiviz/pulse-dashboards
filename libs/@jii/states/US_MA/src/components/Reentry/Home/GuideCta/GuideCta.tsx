@@ -26,6 +26,7 @@ import {
   CardsRow,
   SectionLabel,
   TopicCard,
+  TopicIcon,
   TopicLabel,
 } from "./GuideCta.styles";
 
@@ -46,7 +47,7 @@ export const GuideCta = ({ onOpenVideo }: GuideCtaProps) => {
       <ReentryVideoLearnMoreRow onOpenVideo={onOpenVideo} />
 
       <CardsRow>
-        {GUIDE_TOPICS.map(({ slug, icon: Icon, label }) => (
+        {GUIDE_TOPICS.map(({ slug, iconSrc, label }) => (
           <TopicCard
             key={slug}
             to={State.Resident.UsMaReentry.Guide.buildPath({
@@ -54,7 +55,7 @@ export const GuideCta = ({ onOpenVideo }: GuideCtaProps) => {
               topicSlug: slug,
             })}
           >
-            <Icon size={20} />
+            <TopicIcon src={iconSrc} alt="" />
             <TopicLabel>{label(t)}</TopicLabel>
           </TopicCard>
         ))}

@@ -228,7 +228,7 @@
       "guideCta": {
         "sectionLabel": "[US_MA]reentry.overview.guideCta.sectionLabel",
         "idDocuments": "[US_MA]reentry.overview.guideCta.idDocuments",
-        "housingBasics": "[US_MA]reentry.overview.guideCta.housingBasics"
+        "housing": "[US_MA]reentry.overview.guideCta.housing"
       },
       "video": {
         "title": "[US_MA]reentry.overview.video.title",

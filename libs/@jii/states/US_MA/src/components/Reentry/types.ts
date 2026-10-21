@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { LucideIcon } from "lucide-react";
-
 import { usMaReentryGuideTopicSlugs } from "~@jii/paths";
 import { UsMaTFunction } from "~@jii/translation";
 
@@ -24,7 +22,7 @@ export type GuideTopicSlug = (typeof usMaReentryGuideTopicSlugs)[number];
 
 export type GuideTopicConfig = {
   slug: GuideTopicSlug;
-  icon: LucideIcon;
+  iconSrc: string;
   label: (t: UsMaTFunction) => string;
 };
 

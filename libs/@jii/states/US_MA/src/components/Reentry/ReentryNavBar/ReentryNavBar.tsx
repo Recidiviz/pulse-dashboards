@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useMatch } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "~@jii/paths";
@@ -33,6 +33,13 @@ import {
 export const ReentryNavBar = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const isGuidePage = !!useMatch(State.Resident.UsMaReentry.Guide.path);
+
+  // Guides are reached from the Overview, so they keep it highlighted
+  const overviewClassName = ({ isActive }: { isActive: boolean }) => {
+    const isOverviewOrGuide = isActive || isGuidePage;
+    return isOverviewOrGuide ? "active" : undefined;
+  };
 
   return (
     <Wrapper aria-label={t(($) => $.reentry.navBar.sectionLabel)}>
@@ -43,6 +50,7 @@ export const ReentryNavBar = () => {
           <NavLink
             to={State.Resident.UsMaReentry.Overview.buildPath(routeParams)}
             end
+            className={overviewClassName}
           >
             {t(($) => $.reentry.navBar.overview)}
           </NavLink>

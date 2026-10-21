@@ -157,10 +157,7 @@ export const ResourceExplorer = route(
   },
 );
 
-export const usMaReentryGuideTopicSlugs = [
-  "id-documents",
-  "housing-basics",
-] as const;
+export const usMaReentryGuideTopicSlugs = ["id-documents", "housing"] as const;
 
 export const UsMaReentry = route(
   "reentry",

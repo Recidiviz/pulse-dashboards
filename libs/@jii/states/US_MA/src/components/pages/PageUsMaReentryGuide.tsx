@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Guide } from "../Reentry/Guide/Guide";
+
 export const PageUsMaReentryGuide = () => {
-  return <div>PageUsMaReentryGuide</div>;
+  return <Guide />;
 };

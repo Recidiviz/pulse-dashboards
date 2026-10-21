@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FileText, Home as HomeIcon } from "lucide-react";
-
 import { UsMaTFunction } from "~@jii/translation";
 import { palette } from "~design-system";
 
+import documentTextIcon from "./Guide/icons/documentText.svg";
+import homeIcon from "./Guide/icons/home.svg";
 import housingIllustration from "./Home/ResourceCategoryCta/housingIllustration.svg";
 import {
   CompletedQuestionnaireCardCopy,
@@ -31,13 +31,13 @@ import {
 export const GUIDE_TOPICS: GuideTopicConfig[] = [
   {
     slug: "id-documents",
-    icon: FileText,
+    iconSrc: documentTextIcon,
     label: (t) => t(($) => $.reentry.overview.guideCta.idDocuments),
   },
   {
-    slug: "housing-basics",
-    icon: HomeIcon,
-    label: (t) => t(($) => $.reentry.overview.guideCta.housingBasics),
+    slug: "housing",
+    iconSrc: homeIcon,
+    label: (t) => t(($) => $.reentry.overview.guideCta.housing),
   },
 ];
 
