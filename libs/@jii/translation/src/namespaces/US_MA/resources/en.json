@@ -818,6 +818,214 @@
           "notListed": "Rent not listed"
         }
       }
+    },
+    "guide": {
+      "back": "Back",
+      "tipLabel": "Tip",
+      "whenLabel": "When",
+      "whatToDoLabel": "What to do",
+      "faqHeading": "Frequently asked questions",
+      "housing": {
+        "intro": "This page walks through common housing options, what to think about when making your home plan, and what you can do.",
+        "options": {
+          "heading": "Common housing options for reentry",
+          "items": {
+            "familyOrSupporter": {
+              "header": "Family member or supporter’s home",
+              "content": "**What it is**  \nA temporary or long-term agreement to live with a relative or friend in your support network.\n\n**What it costs**  \nTalk to your family member or supporter early about what you will contribute for food, bills, or rent. It is very important to discuss this so that you are on the same page. Many housing arrangements fall apart because people do not discuss these expectations ahead of time.\n\n**When considering this option, ask yourself:**\n\n- Have they agreed to let me stay with them? For how long?\n- Have I talked to them about any parole conditions that would affect them? Have they agreed that they are OK with those conditions?\n- What are the expectations for my stay? Will I pay rent or split other bills?\n- What are the house rules and chores I am agreeing to?\n- Will this environment help me stay sober, meet my parole conditions, and keep me away from triggers that could bring me back to prison?"
+            },
+            "soberHouse": {
+              "header": "Sober house",
+              "content": "**What it is**  \nA shared home where everyone agrees to stay sober. Each house has its own house rules you must follow.\n\n**What it costs**  \nSome sober houses have grant funding that can assist with placement up to 90 days. Other sober houses have a fee you pay each week or month. Most sober houses with a fee cost $150 to $300 per week (as of 2025). Some houses also have a security deposit that you must pay.\n\n**When considering this option, ask yourself:**\n\n- Is there a fee? If so, can I afford to pay it?\n- Am I eligible to get grant funding?\n- Does the house accept people with my charge?\n- Is the house for men only, women only, or co-ed?\n- What are the house rules? For example, is there a curfew? Are there required meetings, drug tests, or chores? Is there a work requirement?\n- How long does the sober house allow people to stay? Is there a time limit or not?"
+            },
+            "roomingHouse": {
+              "header": "Rooming house",
+              "content": "**What it is**  \nA room you rent in a shared house. You share the kitchen, bathroom, and other common spaces.\n\n**What it costs**  \nMost rooming houses cost $150 to $300 per week (as of 2025).\n\n**When considering this option, ask yourself:**\n\n- Can I pay the rent starting my first week out, before I have a job?\n- Is there a security deposit? If so, how much is it? Can I afford to pay it?\n- Is this house taking people coming out of the DOC right now?\n- How many other people live at the house?\n- What parts of the house are shared? For example, kitchen, bathroom, bedroom?\n- Will this environment help me stay sober, meet my parole conditions, and keep me away from triggers that could bring me back to prison?"
+            },
+            "residentialRecoveryHouse": {
+              "header": "Residential Recovery House",
+              "content": "**What it is**  \nA shared house where you live while you work on your recovery. Residential Recovery Houses have staff and a set program to support your sobriety.\n\nThese programs run for a set amount of time, often a few months, sometimes up to two years. Many Residential Recovery Houses require a referral, so if you are interested in this option, talk to your Reentry Specialist about getting a referral.\n\n**What it costs**  \nMost Residential Recovery Houses cost you nothing because insurance or the program pays. The few that do charge are usually under $200 a week (as of 2023).\n\n**When considering this option, ask yourself:**\n\n- Is there a cost to me, or does insurance or the program cover it?\n- How long is the program?\n- Do I need a referral? From who?\n- What are the program rules and expectations? For example, is there required treatment, meetings, or drug tests? Is there a curfew? Is there a work requirement?"
+            },
+            "transitionalHousing": {
+              "header": "Transitional housing",
+              "content": "**What it is**  \nA program you live in for a set amount of time while you get back on your feet, with staff on site. These are not all about recovery. Some are run for veterans, some for people leaving prison, some for people who were previously experiencing homelessness. Most stays run 6 to 12 months, and a few go up to two years.\n\n**What it costs**  \nMany transitional housing options are free. The ones that have a fee usually cost $150 to $300 per week (as of 2025). Most transitional housing options take people by referral, so if you are interested, talk to your Reentry Specialist about getting a referral.\n\n**When considering this option, ask yourself:**\n\n- Is there a cost to me? If so, how much is it?\n- How long am I able to stay?\n- Is this a specialized program (for example, for veterans or formerly incarcerated people)? If so, am I eligible for this program?\n- Do I need a referral? If so, from who?"
+            },
+            "longTermResidentialProgram": {
+              "header": "Long-Term Residential Program",
+              "content": "**What it is**  \nYou live there for a set time with staff support. Some focus on recovery. Some help you find work.\n\n**What it costs**  \nMore than half cost you nothing, and the ones that do charge are usually under $125 a week.\n\n**When considering this option, ask yourself:**\n\n- How long is the stay, and is it fixed or can it change?\n- Is there a cost to me each week, or is it covered?\n- Do I need a referral from my Reentry Specialist or my parole officer?\n- Can I work, go to school, or leave during the day?"
+            },
+            "ownPlace": {
+              "header": "Your own place (rent or own)",
+              "content": "**What it is**  \nA room, apartment, or house you lease or own.\n\n**What it costs**  \nIf you are renting, landlords often require a security deposit and 1 to 2 months rent (“first and last months rent”) up front. Monthly rent ranges widely based on location and the type of property.\n\n**When considering this option, ask yourself:**\n\n- Can I cover 1 to 2 months of rent up front and a security deposit?\n- Do I have a photo ID and the papers a landlord will ask for?\n- Will the landlord run a background check, and what will I say about my record?\n- Has someone I trust gone to see the place in person before I pay the security deposit?\n- If I plan to have a roommate, am I confident they can pay their share?"
+            }
+          }
+        },
+        "timing": {
+          "heading": "Timing for placement in housing and programs",
+          "body": "The beds in sober houses, rooming houses, Residential Recovery Houses, and other programs tend to open up suddenly and get filled quickly. Most housing providers do not hold beds because it costs them money.",
+          "callout": {
+            "heading": "Most housing placements can only be finalized 2-8 weeks before your release, depending on the housing provider.",
+            "body": "This uncertainty can be frustrating and nerve-wracking. You should make at least 2 back-up plans (“Plan B” and “Plan C”), so that you are prepared if your “Plan A” option doesn’t work out."
+          }
+        },
+        "steps": {
+          "heading": "6 Steps to plan your housing before release",
+          "intro": "Even though you cannot usually confirm a housing placement early, you can do almost everything else now.",
+          "items": {
+            "decideWhere": {
+              "heading": "Decide where you want to live.",
+              "body": "Pick at least two counties where you want to live. Choosing a few areas means you have more housing options to choose from and are more likely to find a good fit."
+            },
+            "reviewTypes": {
+              "heading": "Review the types of housing to find what fits you best.",
+              "body": "Read the [section above]({{housingOptionsUrl}}) to learn about the different types of housing. Learn about the costs and what questions to ask."
+            },
+            "makeList": {
+              "heading": "Make a list of your top 5 to 10 options.",
+              "body": "Use the [Resource Explorer]({{resourceExplorerUrl}}) in this app to browse housing providers. You can filter by county, rent, eligibility criteria, and more. Each provider’s page has a Housing Fact Sheet with details about eligibility criteria, house rules, and more. Make a list of the housing options you are interested in."
+            },
+            "planPayment": {
+              "heading": "Make a plan for how you’ll pay.",
+              "body": "Make a plan for how you will pay for housing when you get out, especially if you plan to release without a job. This might mean getting help from family or other supporters, grant funding, using your savings, or using other benefits like SSI/SSDI. Make sure you have a plan to cover the rent for your Plan A, Plan B, and Plan C."
+            },
+            "talkToSpecialist": {
+              "heading": "Talk to your Reentry Specialist about the areas you want to live in and your top housing choices there.",
+              "body": "You will begin working with a Reentry Specialist 1 year before your defined release date **or** after you receive a positive parole vote. Make sure they know what areas and programs you are interested in."
+            },
+            "apply": {
+              "heading": "Apply, interview, and submit your deposit.",
+              "body": "Your Reentry Specialist will help you submit applications. Sign your consent forms early so the Reentry Specialist can send your records to the houses as soon as a bed opens up. Some housing providers require an interview call or face-to-face meeting before they will accept you. Once you are accepted, work with your Reentry Specialist to submit any deposit payment required."
+            }
+          }
+        },
+        "supportSystemTip": "**Your support system can help you from the outside.** They can look at listings, and go see a place before you pay anything. Tell them what you are looking for.",
+        "faq": {
+          "cantLockIn": {
+            "header": "Why can’t I pick a place and lock it in now?",
+            "content": "Most houses will not hold beds for people who are not able to move in quickly. Sober houses, rooming houses, Residential Recovery Houses, and other programs have beds open up unpredictably when residents move out. If they save a bed and you do not come, they lose money.\n\nSo most of them only take an application in the last month before you leave. Longer programs, like Long Term Residential Programs, sometimes accept applications earlier, but they usually have long waiting lists. This is the reality of the housing process.\n\nYour job right now is to be ready: know your choices; make your Plan A, Plan B, and Plan C; and sign your consent forms so your Reentry Specialist can move fast when the time comes."
+          },
+          "specialistHelp": {
+            "header": "What does a Reentry Specialist do to help with housing?",
+            "content": "Your Reentry Specialist will help you create your housing plan and submit applications. They talk to you about where you want to go, contact housing providers to check bed availability, and send your applications when the time comes. Once you sign the consent forms, your Reentry Specialist will also send your CORI and medical records if a housing provider you apply to requires them."
+          },
+          "whenSpecialist": {
+            "header": "When can I work with a Reentry Specialist?",
+            "content": "You will begin meeting with a Reentry Specialist 1 year before your defined release date OR after you receive a positive parole vote. But you can start working on your housing plan long before that first meeting."
+          },
+          "programRules": {
+            "header": "If I go to a sober home or program, what rules will I have to follow?",
+            "content": "Every place sets its own rules. Common rules are a curfew, no drugs or alcohol, drug tests, chores, mandatory house meetings, and rules about visitors. Some places require that you find work within a set number of weeks. Some do not allow a car or overnight guests. Read the “Housing Fact Sheet” PDF in each resource’s detail page to learn more about specific rules.\n\nNote: A sober house gives you the rules in writing when you are accepted. Read them because breaking one can cost you your bed, and if you are on parole this can be a violation."
+          },
+          "paymentPrograms": {
+            "header": "Are there programs to help me pay for housing?",
+            "content": "Ask your Reentry Specialist to learn more on funding opportunities. If you cannot work because of a disability, SSI or SSDI may help, but it takes months, so start early. Many housing programs, like Residential Recovery Houses, are no cost. A small number of programs have a fee that is based on your income, which is useful for saving money and managing expenses as you return to the community."
+          },
+          "familyHelp": {
+            "header": "Can my family help from the outside?",
+            "content": "Yes. They can look at listings. Tell them what you are looking for and what you can afford."
+          },
+          "applyFromTablet": {
+            "header": "Can I apply to housing from this tablet?",
+            "content": "Not yet. For now you can look at places, write down the ones you like, and bring your list to your Reentry Specialist. They will contact housing providers and help you apply."
+          },
+          "backupPlan": {
+            "header": "Do I need a backup plan for housing?",
+            "content": "Yes. Have a Plan A, Plan B, and Plan C for your housing. Plans fall through more often than people expect. Plans to live with family fall through the most, usually in the last two months. If you are on parole and the board turns down your home plan, you will need another one fast. The people who do best are the ones who already had a second answer ready."
+          }
+        }
+      },
+      "idDocuments": {
+        "intro": "This page explains important identification documents, when you need them, and how to apply for them.",
+        "whyImportant": {
+          "heading": "Why ID documents are very important",
+          "callout": {
+            "heading": "You can get your important ID documents while you are inside for free.",
+            "body": "You can work with your Reentry Specialist to apply for the documents you need and keep them on file with MADOC. You will be provided with the identity documents you have already received on the day you release from the DOC. Any documents that are received by the DOC after your release will be mailed to your release address."
+          },
+          "body": "Think about your first months out. There are many things you will want to do: get a job, open a bank account, rent a room or apartment, enroll in benefits, buy a cell phone, pick up medicine. All of these things require that you have documents that prove your identity. Without these documents, many important things will be harder to do once you get out.\n\nIf you wait until you get out to apply for these documents, it can take months to get them. Most people can’t afford to wait months for a job, housing, or medicine – so it is best to start as early as possible while you are still inside.",
+          "tip": "**Do not assume that someone else has these documents for you.** If you release without them, it will make your transition to the community difficult."
+        },
+        "steps": {
+          "heading": "4 Steps to get your ID documents",
+          "items": {
+            "birthCertificate": {
+              "heading": "Apply for your Birth Certificate",
+              "when": "As early in your sentence as possible",
+              "whatToDo": "Fill out the “MADOC Birth Certificate Initiative” form on your tablet’s “Titanium” app. If you were born in Massachusetts, MADOC will order your birth certificate once you submit the digital form. If you were born in another state or Puerto Rico, your Reentry Specialist will help you complete the application 1 year before your defined release date **or** after you receive a positive parole vote."
+            },
+            "socialSecurityCard": {
+              "heading": "Apply for your Social Security Card",
+              "when": "6 months before your defined release date **or** after a positive parole vote",
+              "whatToDo": "Work with your Reentry Specialist to fill out the application forms. Make sure you already have your birth certificate."
+            },
+            "stateId": {
+              "heading": "Apply for your State ID",
+              "when": "6 months before your defined release date **or** after a positive parole vote",
+              "whatToDo": "Work with your Reentry Specialist to fill out the application forms. Make sure you already have your birth certificate."
+            },
+            "confirmOnFile": {
+              "heading": "Confirm that all documents are on file",
+              "when": "1 month before release **or** after a positive parole vote",
+              "whatToDo": "Confirm with your Reentry Specialist that all of your ID documents are ready for you in the Records department."
+            }
+          }
+        },
+        "documents": {
+          "heading": "About the most important ID documents",
+          "items": {
+            "birthCertificate": {
+              "tabLabel": "Birth Certificate",
+              "heading": "Birth Certificate",
+              "body": "You need a birth certificate to get your Social Security card and State ID. Use the “Titanium” app on your tablet to apply for it as early as possible. You can apply at any time in your sentence. If you were born outside of Massachusetts, the process may take longer.\n\n**When you can apply for your birth certificate**  \nThere is no time restriction. You should do this as early as possible in your sentence.",
+              "howTo": {
+                "heading": "How you get your birth certificate",
+                "body": "You can request your Birth Certificate by filling out the digital form on this tablet.\n\n1. Log into the “Titanium” app on your tablet\n2. Choose the “forms” tab on the left side of the home screen (last icon)\n3. Choose the form called “MADOC Birth Certificate Initiative”\n4. Fill out the required information (commitment number, name at birth, place of birth, parents’ names) and type your signature\n5. Submit the form\n\nIf you were born in Massachusetts: MADOC will order your birth certificate automatically after you fill out the digital form in the Titanium app."
+              }
+            },
+            "socialSecurityCard": {
+              "tabLabel": "Social Security Card",
+              "heading": "Social Security Card",
+              "body": "A Social Security card is required for employment, state ID applications, and more. You can work with your Reentry Specialist to apply for your Social Security card when you are 6 months from release **or** after a positive parole vote.\n\n**When you can apply for your Social Security card**\n\n- You can apply starting 6 months before your RTS/max-out date **or** after a positive parole vote. If you are waiting for your parole hearing or your parole decision, you cannot apply until after the parole board grants you parole.\n- You must have your birth certificate before you can apply for your Social Security card.",
+              "howTo": {
+                "heading": "How you get your Social Security card",
+                "body": "You work with your Reentry Specialist to fill out and submit the application form. The card comes back to the facility and will be stored in the Records department until your release."
+              }
+            },
+            "stateId": {
+              "tabLabel": "State ID",
+              "heading": "State ID",
+              "body": "A photo ID from the Registry of Motor Vehicles (“RMV”) is required for employment, housing, opening a bank account, and much more. You can work with your Reentry Specialist to get a Massachusetts State ID when you are 6 months from release **or** after a positive parole vote. When you apply for your Massachusetts State ID through MADOC, you save $25.\n\n**When you can apply for your State ID**\n\n- You can apply starting 6 months before your defined release date **or** after receipt of a positive parole vote. If you are waiting for your parole hearing or your parole decision, you cannot apply until after the board grants you parole.\n- You must have your birth certificate before you can apply for the State ID.",
+              "howTo": {
+                "heading": "How you get your State ID",
+                "body": "**If you plan to live in MA after release:**\n\nYou work with your Reentry Specialist to identify a housing plan which can be utilized for an address for your State ID, and to fill out and submit the application form to the RMV. The RMV will then review the application, determine if the application can be processed without an updated photo, or if an appointment is needed with the mobile unit to take your photo to process your application, and sends it back to your facility to be stored at Records until release.\n\n**If you will live in another state after release:**\n\nYou must wait until you are in the community to get a State ID from another state. This means it is very important to get your Birth Certificate and Social Security card before your release, so that you can quickly get your State ID."
+              }
+            },
+            "dd214": {
+              "tabLabel": "DD-214",
+              "heading": "DD-214 (Veterans only)",
+              "body": "The DD-214 document proves that you served in the military. The DD-214 is required to access VA benefits and more.\n\n**When you can apply for your DD-214**  \nYour Reentry Specialist can help you apply beginning 1 year before your defined release date **or** after receipt of a positive parole vote.",
+              "howTo": {
+                "heading": "How you get your DD-214",
+                "body": "Tell your Reentry Specialist you served in the military. They can start the DD-214 request and put you in touch with the veterans’ representative."
+              }
+            }
+          }
+        },
+        "faq": {
+          "whichDocuments": {
+            "header": "What ID documents do I need?",
+            "content": "Three documents matter most: birth certificate, Social Security card, and Massachusetts State ID or valid driver’s license. If you served in the military, you also need your DD-214."
+          },
+          "waitUntilRelease": {
+            "header": "Can’t I just wait until after I release to get these documents?",
+            "content": "It is much easier and cheaper to get your ID documents before you release. While you are incarcerated, you have time to get the documents. Once you release, you need your ID documents to do other important things like get a job, secure housing, or apply for benefits. Also, you can apply for your State ID for free while incarcerated, but after you release, the State ID application costs $25 (as of Sept 2026)."
+          },
+          "whenSpecialist": {
+            "header": "When will my Reentry Specialist work with me to get my documents?",
+            "content": "Your Reentry Specialist will begin working with you 1 year before your defined release date OR after you receive a positive parole vote to get your Birth Certificate and/or DD-214 if necessary. Your Reentry Specialist can help you apply for your Social Security card and State ID 6 months before your defined release date OR after a positive parole vote."
+          }
+        }
+      }
     }
   }
 }

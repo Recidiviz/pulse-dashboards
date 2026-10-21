@@ -818,6 +818,214 @@
           "notListed": "[US_MA]reentry.resources.filters.rent.notListed"
         }
       }
+    },
+    "guide": {
+      "back": "[US_MA]reentry.guide.back",
+      "tipLabel": "[US_MA]reentry.guide.tipLabel",
+      "whenLabel": "[US_MA]reentry.guide.whenLabel",
+      "whatToDoLabel": "[US_MA]reentry.guide.whatToDoLabel",
+      "faqHeading": "[US_MA]reentry.guide.faqHeading",
+      "housing": {
+        "intro": "[US_MA]reentry.guide.housing.intro",
+        "options": {
+          "heading": "[US_MA]reentry.guide.housing.options.heading",
+          "items": {
+            "familyOrSupporter": {
+              "header": "[US_MA]reentry.guide.housing.options.items.familyOrSupporter.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.familyOrSupporter.content"
+            },
+            "soberHouse": {
+              "header": "[US_MA]reentry.guide.housing.options.items.soberHouse.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.soberHouse.content"
+            },
+            "roomingHouse": {
+              "header": "[US_MA]reentry.guide.housing.options.items.roomingHouse.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.roomingHouse.content"
+            },
+            "residentialRecoveryHouse": {
+              "header": "[US_MA]reentry.guide.housing.options.items.residentialRecoveryHouse.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.residentialRecoveryHouse.content"
+            },
+            "transitionalHousing": {
+              "header": "[US_MA]reentry.guide.housing.options.items.transitionalHousing.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.transitionalHousing.content"
+            },
+            "longTermResidentialProgram": {
+              "header": "[US_MA]reentry.guide.housing.options.items.longTermResidentialProgram.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.longTermResidentialProgram.content"
+            },
+            "ownPlace": {
+              "header": "[US_MA]reentry.guide.housing.options.items.ownPlace.header",
+              "content": "[US_MA]reentry.guide.housing.options.items.ownPlace.content"
+            }
+          }
+        },
+        "timing": {
+          "heading": "[US_MA]reentry.guide.housing.timing.heading",
+          "body": "[US_MA]reentry.guide.housing.timing.body",
+          "callout": {
+            "heading": "[US_MA]reentry.guide.housing.timing.callout.heading",
+            "body": "[US_MA]reentry.guide.housing.timing.callout.body"
+          }
+        },
+        "steps": {
+          "heading": "[US_MA]reentry.guide.housing.steps.heading",
+          "intro": "[US_MA]reentry.guide.housing.steps.intro",
+          "items": {
+            "decideWhere": {
+              "heading": "[US_MA]reentry.guide.housing.steps.items.decideWhere.heading",
+              "body": "[US_MA]reentry.guide.housing.steps.items.decideWhere.body"
+            },
+            "reviewTypes": {
+              "heading": "[US_MA]reentry.guide.housing.steps.items.reviewTypes.heading",
+              "body": "[US_MA]reentry.guide.housing.steps.items.reviewTypes.body"
+            },
+            "makeList": {
+              "heading": "[US_MA]reentry.guide.housing.steps.items.makeList.heading",
+              "body": "[US_MA]reentry.guide.housing.steps.items.makeList.body"
+            },
+            "planPayment": {
+              "heading": "[US_MA]reentry.guide.housing.steps.items.planPayment.heading",
+              "body": "[US_MA]reentry.guide.housing.steps.items.planPayment.body"
+            },
+            "talkToSpecialist": {
+              "heading": "[US_MA]reentry.guide.housing.steps.items.talkToSpecialist.heading",
+              "body": "[US_MA]reentry.guide.housing.steps.items.talkToSpecialist.body"
+            },
+            "apply": {
+              "heading": "[US_MA]reentry.guide.housing.steps.items.apply.heading",
+              "body": "[US_MA]reentry.guide.housing.steps.items.apply.body"
+            }
+          }
+        },
+        "supportSystemTip": "[US_MA]reentry.guide.housing.supportSystemTip",
+        "faq": {
+          "cantLockIn": {
+            "header": "[US_MA]reentry.guide.housing.faq.cantLockIn.header",
+            "content": "[US_MA]reentry.guide.housing.faq.cantLockIn.content"
+          },
+          "specialistHelp": {
+            "header": "[US_MA]reentry.guide.housing.faq.specialistHelp.header",
+            "content": "[US_MA]reentry.guide.housing.faq.specialistHelp.content"
+          },
+          "whenSpecialist": {
+            "header": "[US_MA]reentry.guide.housing.faq.whenSpecialist.header",
+            "content": "[US_MA]reentry.guide.housing.faq.whenSpecialist.content"
+          },
+          "programRules": {
+            "header": "[US_MA]reentry.guide.housing.faq.programRules.header",
+            "content": "[US_MA]reentry.guide.housing.faq.programRules.content"
+          },
+          "paymentPrograms": {
+            "header": "[US_MA]reentry.guide.housing.faq.paymentPrograms.header",
+            "content": "[US_MA]reentry.guide.housing.faq.paymentPrograms.content"
+          },
+          "familyHelp": {
+            "header": "[US_MA]reentry.guide.housing.faq.familyHelp.header",
+            "content": "[US_MA]reentry.guide.housing.faq.familyHelp.content"
+          },
+          "applyFromTablet": {
+            "header": "[US_MA]reentry.guide.housing.faq.applyFromTablet.header",
+            "content": "[US_MA]reentry.guide.housing.faq.applyFromTablet.content"
+          },
+          "backupPlan": {
+            "header": "[US_MA]reentry.guide.housing.faq.backupPlan.header",
+            "content": "[US_MA]reentry.guide.housing.faq.backupPlan.content"
+          }
+        }
+      },
+      "idDocuments": {
+        "intro": "[US_MA]reentry.guide.idDocuments.intro",
+        "whyImportant": {
+          "heading": "[US_MA]reentry.guide.idDocuments.whyImportant.heading",
+          "callout": {
+            "heading": "[US_MA]reentry.guide.idDocuments.whyImportant.callout.heading",
+            "body": "[US_MA]reentry.guide.idDocuments.whyImportant.callout.body"
+          },
+          "body": "[US_MA]reentry.guide.idDocuments.whyImportant.body",
+          "tip": "[US_MA]reentry.guide.idDocuments.whyImportant.tip"
+        },
+        "steps": {
+          "heading": "[US_MA]reentry.guide.idDocuments.steps.heading",
+          "items": {
+            "birthCertificate": {
+              "heading": "[US_MA]reentry.guide.idDocuments.steps.items.birthCertificate.heading",
+              "when": "[US_MA]reentry.guide.idDocuments.steps.items.birthCertificate.when",
+              "whatToDo": "[US_MA]reentry.guide.idDocuments.steps.items.birthCertificate.whatToDo"
+            },
+            "socialSecurityCard": {
+              "heading": "[US_MA]reentry.guide.idDocuments.steps.items.socialSecurityCard.heading",
+              "when": "[US_MA]reentry.guide.idDocuments.steps.items.socialSecurityCard.when",
+              "whatToDo": "[US_MA]reentry.guide.idDocuments.steps.items.socialSecurityCard.whatToDo"
+            },
+            "stateId": {
+              "heading": "[US_MA]reentry.guide.idDocuments.steps.items.stateId.heading",
+              "when": "[US_MA]reentry.guide.idDocuments.steps.items.stateId.when",
+              "whatToDo": "[US_MA]reentry.guide.idDocuments.steps.items.stateId.whatToDo"
+            },
+            "confirmOnFile": {
+              "heading": "[US_MA]reentry.guide.idDocuments.steps.items.confirmOnFile.heading",
+              "when": "[US_MA]reentry.guide.idDocuments.steps.items.confirmOnFile.when",
+              "whatToDo": "[US_MA]reentry.guide.idDocuments.steps.items.confirmOnFile.whatToDo"
+            }
+          }
+        },
+        "documents": {
+          "heading": "[US_MA]reentry.guide.idDocuments.documents.heading",
+          "items": {
+            "birthCertificate": {
+              "tabLabel": "[US_MA]reentry.guide.idDocuments.documents.items.birthCertificate.tabLabel",
+              "heading": "[US_MA]reentry.guide.idDocuments.documents.items.birthCertificate.heading",
+              "body": "[US_MA]reentry.guide.idDocuments.documents.items.birthCertificate.body",
+              "howTo": {
+                "heading": "[US_MA]reentry.guide.idDocuments.documents.items.birthCertificate.howTo.heading",
+                "body": "[US_MA]reentry.guide.idDocuments.documents.items.birthCertificate.howTo.body"
+              }
+            },
+            "socialSecurityCard": {
+              "tabLabel": "[US_MA]reentry.guide.idDocuments.documents.items.socialSecurityCard.tabLabel",
+              "heading": "[US_MA]reentry.guide.idDocuments.documents.items.socialSecurityCard.heading",
+              "body": "[US_MA]reentry.guide.idDocuments.documents.items.socialSecurityCard.body",
+              "howTo": {
+                "heading": "[US_MA]reentry.guide.idDocuments.documents.items.socialSecurityCard.howTo.heading",
+                "body": "[US_MA]reentry.guide.idDocuments.documents.items.socialSecurityCard.howTo.body"
+              }
+            },
+            "stateId": {
+              "tabLabel": "[US_MA]reentry.guide.idDocuments.documents.items.stateId.tabLabel",
+              "heading": "[US_MA]reentry.guide.idDocuments.documents.items.stateId.heading",
+              "body": "[US_MA]reentry.guide.idDocuments.documents.items.stateId.body",
+              "howTo": {
+                "heading": "[US_MA]reentry.guide.idDocuments.documents.items.stateId.howTo.heading",
+                "body": "[US_MA]reentry.guide.idDocuments.documents.items.stateId.howTo.body"
+              }
+            },
+            "dd214": {
+              "tabLabel": "[US_MA]reentry.guide.idDocuments.documents.items.dd214.tabLabel",
+              "heading": "[US_MA]reentry.guide.idDocuments.documents.items.dd214.heading",
+              "body": "[US_MA]reentry.guide.idDocuments.documents.items.dd214.body",
+              "howTo": {
+                "heading": "[US_MA]reentry.guide.idDocuments.documents.items.dd214.howTo.heading",
+                "body": "[US_MA]reentry.guide.idDocuments.documents.items.dd214.howTo.body"
+              }
+            }
+          }
+        },
+        "faq": {
+          "whichDocuments": {
+            "header": "[US_MA]reentry.guide.idDocuments.faq.whichDocuments.header",
+            "content": "[US_MA]reentry.guide.idDocuments.faq.whichDocuments.content"
+          },
+          "waitUntilRelease": {
+            "header": "[US_MA]reentry.guide.idDocuments.faq.waitUntilRelease.header",
+            "content": "[US_MA]reentry.guide.idDocuments.faq.waitUntilRelease.content"
+          },
+          "whenSpecialist": {
+            "header": "[US_MA]reentry.guide.idDocuments.faq.whenSpecialist.header",
+            "content": "[US_MA]reentry.guide.idDocuments.faq.whenSpecialist.content"
+          }
+        }
+      }
     }
   }
 }
