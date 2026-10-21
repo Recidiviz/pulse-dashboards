@@ -16,18 +16,28 @@
 // =============================================================================
 
 import { useFeatureVariants } from "../../../../components/StoreProvider";
+import { UsTnReclassification2026FormV2 } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026FormV2";
 import { StyledFormButton } from "../../FormContainer";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
 
 export function UsTnReclassSubmitButton() {
   const trpcUtils = trpc.useUtils();
   const trpcClient = trpcUtils.client;
   const { usTnCafSubmissionButton } = useFeatureVariants();
+  const form = useOpportunityFormContext() as UsTnReclassification2026FormV2;
 
   if (!usTnCafSubmissionButton) return;
 
   const onClick = async () => {
-    const res = await trpcClient.reclass.query();
+    const { formData } = form;
+
+    if (!formData.omsId) return;
+
+    const res = await trpcClient.saveForm.mutate({
+      residentId: formData.omsId,
+      editor: "name@example.com",
+    });
 
     // eslint-disable-next-line no-console
     console.info(res);

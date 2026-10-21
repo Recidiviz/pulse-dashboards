@@ -25,6 +25,10 @@ RUN corepack enable
 RUN apk update && apk upgrade --no-cache
 RUN apk add --no-cache dumb-init
 
+# Copy over the scripts
+COPY --chown=node:node dist/apps/@modules/server/scripts ./scripts
+RUN chmod +x scripts/*.sh
+
 # Copy node_modules from builder stage
 COPY --chown=node:node --from=builder /usr/src/app .
 

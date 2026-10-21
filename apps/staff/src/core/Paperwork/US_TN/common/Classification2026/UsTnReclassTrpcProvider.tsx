@@ -28,6 +28,11 @@ import { useRootStore } from "../../../../../components/StoreProvider";
 
 export const trpc = createTRPCReact<UsTnReclassModuleRouter>();
 
+const USE_LOCAL = true;
+const DB_URL = USE_LOCAL
+  ? "http://localhost:3022"
+  : import.meta.env.VITE_MODULE_BACKEND_URL;
+
 const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;
 
 const queryClient = new QueryClient({
@@ -47,7 +52,7 @@ const UsTnReclassTrpcProvider: React.FC<{
       links: [
         subrouteScopedLink("usTnReclass"),
         httpBatchLink({
-          url: import.meta.env.VITE_MODULE_BACKEND_URL,
+          url: DB_URL,
           transformer: superjson,
           async headers() {
             return {

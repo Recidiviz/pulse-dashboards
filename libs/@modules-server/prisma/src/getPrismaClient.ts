@@ -15,13 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PrismaPg } from "@prisma/adapter-pg";
+
 import { PrismaClient } from "./client/client";
 
 let prismaClient: PrismaClient | undefined = undefined;
 
 export function getPrismaClient(): PrismaClient {
   if (prismaClient === undefined) {
-    prismaClient = new PrismaClient();
+    const dbUrl = process.env["DATABASE_URL"];
+    const adapter = new PrismaPg({ connectionString: dbUrl });
+    prismaClient = new PrismaClient({ adapter });
   }
 
   return prismaClient;

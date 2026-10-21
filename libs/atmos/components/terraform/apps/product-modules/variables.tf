@@ -97,3 +97,15 @@ variable "private_network" {
   description = "(Optional) The private network to use for the SQL instance"
   default     = null
 }
+
+variable "migrate_db_job_name" {
+  type        = string
+  description = "The name of service where migrations will be run"
+  default     = "product-modules-migrate-db"
+}
+
+variable "migrate_db_container_version" {
+  type        = string
+  description = "The name of service where migrations will be run"
+  default     = "latest"
+}

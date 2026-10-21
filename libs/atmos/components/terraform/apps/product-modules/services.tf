@@ -47,3 +47,10 @@ resource "google_project_iam_member" "artifactregistryreader" {
   role    = "roles/artifactregistry.reader"
   member  = "serviceAccount:${google_service_account.default.email}"
 }
+
+# Grant Cloud SQL client so the service account can connect to Cloud SQL
+resource "google_project_iam_member" "cloudsqlclient" {
+  project = var.project_id
+  role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}

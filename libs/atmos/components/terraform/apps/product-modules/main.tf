@@ -16,6 +16,8 @@
 # =============================================================================
 locals {
   server_image_name = "product-modules-server"
+  # migrations are packaged in the same image
+  migrate_db_image_name = "product-modules-server"
 }
 
 module "envs" {
@@ -60,5 +62,31 @@ module "server" {
     cloud_sql_instance = {
       instances = [module.database.connection_name]
     }
+  }]
+}
+
+# Configure a job that will migrate the database schema
+module "migrate_db_job" {
+  source                        = "../../vendor/cloud-run-job-exec"
+  exec                          = true
+  name                          = var.migrate_db_job_name
+  image                         = "${var.artifact_registry_repo}/${local.migrate_db_image_name}:${var.migrate_db_container_version}"
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = module.envs.env_vars_by_component["server"]
+  cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
+  container_command             = ["./scripts/migrate-dbs.sh"]
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
   }]
 }

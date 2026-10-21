@@ -93,6 +93,18 @@
       },
       "defaultConfiguration": "dev"
     },
+    "requires-sops-env:prisma-reset": {
+      "executor": "@nx-tools/nx-prisma:reset",
+      "dependsOn": ["local-dbs"],
+      "options": {
+        "schema": "{projectRoot}/prisma"
+      },
+      "configurations": {
+        "dev": {},
+        "test": {}
+      },
+      "defaultConfiguration": "dev"
+    },
     "requires-sops-env:prisma-studio": {
       "executor": "@nx-tools/nx-prisma:studio",
       "options": {

@@ -23,6 +23,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": ["create-base-package-json"],
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
@@ -30,7 +31,20 @@
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
-        "assets": ["{projectRoot}/src/assets", "{workspaceRoot}/.yarnrc.yml"],
+        "assets": [
+          {
+            "glob": "prisma/**/*.prisma",
+            "input": "{workspaceRoot}/libs/@modules-server/prisma",
+            "output": "."
+          },
+          {
+            "glob": "prisma/migrations/**/*",
+            "input": "{workspaceRoot}/libs/@modules-server/prisma",
+            "output": "."
+          },
+          "{projectRoot}/scripts/*",
+          "{workspaceRoot}/.yarnrc.yml"
+        ],
         "generatePackageJson": true,
         "minify": true,
         "target": "node22",
@@ -46,6 +60,14 @@
         "dev": {
           "minify": false
         },
+        "staging": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
         "production": {
           "esbuildOptions": {
             "sourcemap": false,
@@ -54,6 +76,13 @@
             }
           }
         }
+      }
+    },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
       }
     },
     "requires-sops-env:test": {

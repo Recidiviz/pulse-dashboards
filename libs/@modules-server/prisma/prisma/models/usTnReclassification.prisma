@@ -1,8 +1,70 @@
-model SavedForm {
-  stateCode    StateCode
-  lastEditedAt DateTime
-  lastEditedBy String
-  residentId   BigInt
+model UsTnCafForm {
+  stateCode              StateCode
+  offenderId             String
+  classificationType     String
+  classificationFormType String
+  assessmentDate         DateTime
 
-  @@id([stateCode, lastEditedAt, residentId])
+  lastModifiedDate DateTime
+  lastModifiedBy   String
+  updatedFields    String[]
+
+  lastClassificationDate           DateTime
+  question1                        Int
+  question1_notes                  String
+  question2                        Int
+  question2_notes                  String
+  question3                        Int
+  question3_notes                  String
+  question4                        Int
+  question4_notes                  String
+  question5                        Int
+  question5_notes                  String
+  question6                        Int
+  question6_notes                  String
+  question7                        Int
+  question7_notes                  String
+  overallScore                     Int
+  scoredCustodyLevel               String
+  counselorRecommendedOverride     String?
+  counselorRecommendedCustodyLevel String?
+  finalOverrideCode                String?
+  finalCustodyLevel                String?
+  dateOfApprovalAndEntry_CAF       DateTime?
+
+  trusteeFlag                                   String?
+  trustee_Question1                             String?
+  trustee_Question2                             String?
+  trustee_Question3                             String?
+  trustee_Question4                             String?
+  trustee_Question5                             String?
+  trustee_Question6                             String?
+  trustee_Question7                             String?
+  trustee_Question8                             String?
+  trustee_Question9                             String?
+  trustee_Question10                            String?
+  trustee_Question11                            String?
+  trustee_Question12                            String?
+  trustee_Question13                            String?
+  dateOfApprovalAndEntry_Trustee                DateTime?
+  trusteeApprovedOrDenied                       String?
+  trusteeEligible                               String?
+  trusteeDenialReasons                          String?
+  warden_TrusteeSignaturesAcquired              String?
+  warden_TrusteeSignaturesAcquiredDate          DateTime?
+  contractMonitor_TrusteeSignaturesAcquired     String?
+  contractMonitor_TrusteeSignaturesAcquiredDate DateTime?
+  ac_TrusteeSignaturesAcquired                  String?
+  ac_TrusteeSignaturesAcquiredDate              DateTime?
+  chiefCounselorFinalizingForm                  String?
+  trusteeChecklistComplete                      String?
+
+  dateOfFinalApprovalAndEntry DateTime?
+
+  summaryTrusteeEverConvictedOfFirstDegreeMurder String?
+  summaryTrusteeServingLifeSentence              String?
+  summaryTrusteeMoreThan10YearRemaining          String?
+  summaryTrusteeAllNoTrusteeCompleted            String?
+
+  @@id([stateCode, offenderId, classificationType, classificationFormType, assessmentDate])
 }
