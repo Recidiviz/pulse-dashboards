@@ -15,8 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export {
+  addMonths,
+  currentYearMonth,
+  daysInMonth,
+  isDateInMonth,
+  parseIsoDate,
+  todayIn,
+  weekdayOf,
+} from "./dates";
 export type { CalendarRulesErrorCode } from "./errors";
 export { CalendarRulesError } from "./errors";
+export { MAX_YEAR, MIN_YEAR } from "./plainDates";
+export {
+  everyNWeeksDates,
+  everyWeekdayDates,
+  expandPatternRules,
+} from "./recurring";
 export type {
   CalendarSettings,
   HolidayPolicy,
@@ -37,3 +52,4 @@ export {
   WEEKDAYS,
   WEEKS_OF_MONTH,
 } from "./types";
+export { firstFullWeekStart, resolvePatternRule } from "./weeks";
