@@ -1,0 +1,48 @@
+# Dependabot version updates. Options reference:
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+# Minor and patch bumps are grouped into one weekly PR per ecosystem, which
+# .github/workflows/automerge-dependabot.yml approves and auto-merges once CI
+# passes. Major bumps open as individual PRs and need a human review.
+#
+# Security updates are configured separately in the repository's
+# Code security settings.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "Type: Dependency Upgrade"
+      - "dependencies"
+      - "javascript"
+
+  - package-ecosystem: "uv"
+    directory: "/apps/@reentry/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      reentry-backend-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "Type: Dependency Upgrade"
+      - "dependencies"
+      - "python:uv"
