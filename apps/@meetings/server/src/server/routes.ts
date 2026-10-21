@@ -461,6 +461,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           const keywords = [...agencyKeywords, ...personNameTokens];
 
           const transcriptions = await handleTranscriptions({
+            stateCode,
             meetingId,
             recordingsGCSBucket: meeting.recordingsGCSBucket,
             finalRecordingGCSPath: meeting.finalRecordingGCSPath,

@@ -459,9 +459,9 @@ describe("tasks", () => {
       expect(JSON.parse(response.body)).toEqual(
         expect.objectContaining({
           error: "Internal Server Error",
-          message: `Both AssemblyAI and Deepgram transcriptions failed with these errors:
+          message: `Both the AssemblyAI and fallback transcriptions failed with these errors:
             AssemblyAI: Error: Assembly transcription failed
-            Deepgram: Error: Deepgram transcription failed`,
+            Fallback (Deepgram): Error: Deepgram transcription failed`,
         }),
       );
 
@@ -530,6 +530,126 @@ describe("tasks", () => {
           confidence: 0.46,
         }),
       );
+    });
+
+    describe("in US_CO", () => {
+      const transcribeCOMeeting = () =>
+        testServer.inject({
+          method: "POST",
+          url: "/transcribe-audio",
+          headers: { authorization: `Bearer token` },
+          body: {
+            stateCode: "US_CO",
+            meetingId: fakeMeeting.id,
+          },
+        });
+
+      test("Should retry AssemblyAI instead of calling Deepgram if AssemblyAI fails", async () => {
+        mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
+          throw new Error("Assembly transcription failed");
+        });
+
+        const response = await transcribeCOMeeting();
+
+        expect(response.statusCode).toBe(200);
+        expect(mockTranscribeAudioWithAssemblyAI).toHaveBeenCalledTimes(2);
+        expect(mockTranscribeAudioWithDeepgram).not.toHaveBeenCalled();
+
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: fakeMeeting.id },
+          include: { transcriptions: true },
+        });
+
+        expect(meeting.transcriptions).toHaveLength(1);
+        expect(meeting.transcriptions[0]).toEqual(
+          expect.objectContaining({
+            provider: TranscriptionProvider.ASSEMBLYAI,
+            confidence: FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT.confidence,
+          }),
+        );
+      });
+
+      test("Should keep the more confident AssemblyAI attempt if the first is low confidence", async () => {
+        mockTranscribeAudioWithAssemblyAI
+          .mockImplementationOnce(
+            vi.fn().mockResolvedValue({
+              ...FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+              confidence: 0.5,
+            }),
+          )
+          .mockImplementationOnce(
+            vi.fn().mockResolvedValue({
+              ...FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+              confidence: 0.7,
+            }),
+          );
+
+        const response = await transcribeCOMeeting();
+
+        expect(response.statusCode).toBe(200);
+        expect(mockTranscribeAudioWithAssemblyAI).toHaveBeenCalledTimes(2);
+        expect(mockTranscribeAudioWithDeepgram).not.toHaveBeenCalled();
+
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: fakeMeeting.id },
+          include: { transcriptions: true },
+        });
+
+        expect(meeting.transcriptions).toHaveLength(1);
+        expect(meeting.transcriptions[0]).toEqual(
+          expect.objectContaining({
+            provider: TranscriptionProvider.ASSEMBLYAI,
+            confidence: 0.7,
+          }),
+        );
+      });
+
+      test("Should keep the first AssemblyAI attempt if the retry is less confident", async () => {
+        mockTranscribeAudioWithAssemblyAI
+          .mockImplementationOnce(
+            vi.fn().mockResolvedValue({
+              ...FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+              confidence: 0.6,
+            }),
+          )
+          .mockImplementationOnce(async () => {
+            throw new Error("Assembly retry failed");
+          });
+
+        const response = await transcribeCOMeeting();
+
+        expect(response.statusCode).toBe(200);
+
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: fakeMeeting.id },
+          include: { transcriptions: true },
+        });
+
+        expect(meeting.transcriptions).toHaveLength(1);
+        expect(meeting.transcriptions[0].confidence).toBe(0.6);
+      });
+
+      test("Should return 500 if both AssemblyAI attempts fail", async () => {
+        mockTranscribeAudioWithAssemblyAI
+          .mockImplementationOnce(async () => {
+            throw new Error("Assembly transcription failed");
+          })
+          .mockImplementationOnce(async () => {
+            throw new Error("Assembly retry failed");
+          });
+
+        const response = await transcribeCOMeeting();
+
+        expect(response.statusCode).toBe(500);
+        expect(mockTranscribeAudioWithDeepgram).not.toHaveBeenCalled();
+        expect(JSON.parse(response.body)).toEqual(
+          expect.objectContaining({
+            message: `Both the AssemblyAI and fallback transcriptions failed with these errors:
+            AssemblyAI: Error: Assembly transcription failed
+            Fallback (AssemblyAI): Error: Assembly retry failed`,
+          }),
+        );
+      });
     });
 
     test("Should return 200 if at least one transcription passes and capture any errors", async () => {

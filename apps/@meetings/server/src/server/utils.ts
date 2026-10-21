@@ -23,6 +23,7 @@ import { Transcript } from "assemblyai";
 import {
   PostMeetingProcessingStatus,
   PrismaClient,
+  StateCode,
   TranscriptionProvider,
 } from "~@meetings/prisma/client";
 import env from "~@meetings/server/env";
@@ -35,7 +36,7 @@ import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { logger } from "~server-setup-plugin/logger";
 
-// The confidence threshold we use to determine when to try Deepgram
+// The confidence threshold we use to determine when to trigger fallback transcription behavior
 const MIN_CONFIDENCE_THRESHOLD = 0.9;
 
 // Of ~250 meetings, this is the deviation we've seen between AssemblyAI and Deepgram.
@@ -213,6 +214,7 @@ function mergeAdjacentSameSpeakerUtterances(
 }
 
 type HandleTranscriptionParams = {
+  stateCode: StateCode;
   meetingId: string;
   recordingsGCSBucket: string;
   finalRecordingGCSPath: string;
@@ -221,140 +223,144 @@ type HandleTranscriptionParams = {
 
 export async function handleTranscriptions(params: HandleTranscriptionParams) {
   const {
+    stateCode,
     meetingId,
     recordingsGCSBucket,
     finalRecordingGCSPath,
     keywords = [],
   } = params;
 
-  let assemblyAIResult:
-    | { status: "fulfilled"; value: Transcript }
-    | { status: "rejected"; reason: unknown };
-
-  let deepgramResult:
-    | { status: "fulfilled"; value: SyncPrerecordedResponse }
-    | { status: "rejected"; reason: unknown }
-    | null = null;
-
-  // Ideally, we only use AssemblyAI and not deepgram. Deepgram acts as a fallback for
-  // - Failing AssemblyAI transcription
-  // - An outlier of AssemblyAI confidence
+  let assemblyAITranscript: Transcript | undefined;
+  let assemblyAIError: unknown;
   try {
-    const assemblyTranscription = await transcribeAudioWithAssemblyAI(
+    assemblyAITranscript = await transcribeAudioWithAssemblyAI(
       recordingsGCSBucket,
       finalRecordingGCSPath,
       env.ASSEMBLYAI_API_KEY,
       keywords,
     );
-    assemblyAIResult = { status: "fulfilled", value: assemblyTranscription };
   } catch (error) {
-    assemblyAIResult = { status: "rejected", reason: error };
+    assemblyAIError = error;
   }
 
-  const tryDeepgram =
-    assemblyAIResult.status === "rejected" ||
-    (assemblyAIResult?.value?.confidence ?? 0.0) < MIN_CONFIDENCE_THRESHOLD;
+  // Ideally, we only run AssemblyAI once and don't need to fallback to Deepgram or a
+  // retry. We use fallback behavior to handle:
+  // - Failing AssemblyAI transcription
+  // - An outlier of AssemblyAI confidence
+  const shouldFallback =
+    !assemblyAITranscript ||
+    (assemblyAITranscript.confidence ?? 0.0) < MIN_CONFIDENCE_THRESHOLD;
 
-  if (tryDeepgram) {
+  // US_CO cannot send recordings to Deepgram, so it retries AssemblyAI instead.
+  const useDeepgram = stateCode !== StateCode.US_CO;
+  const fallbackName = useDeepgram ? "Deepgram" : "AssemblyAI";
+  let deepgramTranscript: SyncPrerecordedResponse | undefined;
+  let fallbackError: unknown;
+
+  if (shouldFallback) {
     logger.info(
-      "Trying Deepgram transcription because AssemblyAI wasn't sufficient",
+      `Trying ${fallbackName} fallback transcription because AssemblyAI wasn't sufficient`,
       {
         meetingId,
-        assemblyAIStatus: assemblyAIResult.status,
-        assemblyAIConfidence:
-          assemblyAIResult.status === "fulfilled"
-            ? assemblyAIResult.value.confidence
-            : undefined,
-        reason:
-          assemblyAIResult.status === "rejected"
-            ? "assemblyai_failed"
-            : "low_confidence",
+        fallbackProvider: fallbackName,
+        assemblyAIStatus: assemblyAITranscript ? "fulfilled" : "rejected",
+        assemblyAIConfidence: assemblyAITranscript?.confidence,
+        reason: assemblyAITranscript ? "low_confidence" : "assemblyai_failed",
       },
     );
 
     try {
-      const deepgramTranscription = await transcribeAudioWithDeepgram(
-        recordingsGCSBucket,
-        finalRecordingGCSPath,
-        env.DEEPGRAM_API_KEY,
-        keywords,
-      );
-
-      deepgramResult = { status: "fulfilled", value: deepgramTranscription };
+      if (useDeepgram) {
+        deepgramTranscript = await transcribeAudioWithDeepgram(
+          recordingsGCSBucket,
+          finalRecordingGCSPath,
+          env.DEEPGRAM_API_KEY,
+          keywords,
+        );
+      } else {
+        const retryTranscript = await transcribeAudioWithAssemblyAI(
+          recordingsGCSBucket,
+          finalRecordingGCSPath,
+          env.ASSEMBLYAI_API_KEY,
+          keywords,
+        );
+        // Only one AssemblyAI transcription is stored per meeting, so keep
+        // the more confident attempt.
+        if (
+          !assemblyAITranscript ||
+          (retryTranscript.confidence ?? 0) >
+            (assemblyAITranscript.confidence ?? 0)
+        ) {
+          assemblyAITranscript = retryTranscript;
+        }
+      }
     } catch (error) {
-      deepgramResult = { status: "rejected", reason: error };
+      fallbackError = error;
     }
   }
 
-  if (
-    assemblyAIResult.status === "rejected" &&
-    deepgramResult?.status === "rejected"
-  ) {
-    throw new Error(`Both AssemblyAI and Deepgram transcriptions failed with these errors:
-            AssemblyAI: ${assemblyAIResult.reason}
-            Deepgram: ${deepgramResult.reason}`);
+  if (!assemblyAITranscript && !deepgramTranscript) {
+    throw new Error(`Both the AssemblyAI and fallback transcriptions failed with these errors:
+            AssemblyAI: ${assemblyAIError}
+            Fallback (${fallbackName}): ${fallbackError}`);
+  }
+
+  if (assemblyAIError !== undefined) {
+    captureException("AssemblyAI transcription failed", {
+      tags: { meetingId },
+      extra: { error: assemblyAIError },
+    });
+  }
+
+  if (fallbackError !== undefined) {
+    captureException(`${fallbackName} transcription failed`, {
+      tags: { meetingId, attempt: "fallback" },
+      extra: { error: fallbackError },
+    });
   }
 
   const transcriptions = [];
-  if (assemblyAIResult.status === "fulfilled") {
-    const assemblyAiTransriptionResult = assemblyAIResult.value;
-    const cleanedAssemblyAIUtterances = (
-      assemblyAiTransriptionResult.utterances ?? []
-    ).map((utterance) => ({
-      text: utterance.text,
-      speaker: utterance.speaker ?? "unknown",
-      startTimeMs: utterance.start,
-      endTimeMs: utterance.end,
-      confidence: utterance.confidence,
-    }));
-
+  if (assemblyAITranscript) {
     transcriptions.push({
       provider: TranscriptionProvider.ASSEMBLYAI,
-      transcriptObject:
-        assemblyAiTransriptionResult as PrismaJson.TranscriptType,
-      confidence: assemblyAiTransriptionResult.confidence,
+      transcriptObject: assemblyAITranscript as PrismaJson.TranscriptType,
+      confidence: assemblyAITranscript.confidence,
       summary: null,
       utterances: {
         createMany: {
-          data: cleanedAssemblyAIUtterances,
+          data: (assemblyAITranscript.utterances ?? []).map((utterance) => ({
+            text: utterance.text,
+            speaker: utterance.speaker ?? "unknown",
+            startTimeMs: utterance.start,
+            endTimeMs: utterance.end,
+            confidence: utterance.confidence,
+          })),
         },
       },
     });
-  } else {
-    captureException("AssemblyAI transcription failed", {
-      tags: { meetingId },
-      extra: { error: assemblyAIResult.reason },
-    });
   }
 
-  if (deepgramResult?.status === "fulfilled") {
-    const deepgramTranscriptionResult = deepgramResult.value;
+  if (deepgramTranscript) {
     const cleanedDeepgramUtterances = mergeAdjacentSameSpeakerUtterances(
-      (deepgramTranscriptionResult.results.utterances ?? []).flatMap(
+      (deepgramTranscript.results.utterances ?? []).flatMap(
         splitDeepgramUtteranceBySpeaker,
       ),
     );
 
     const deepgramConfidence =
-      (deepgramTranscriptionResult.results.channels[0]?.alternatives[0]
-        ?.confidence ?? 0) - DEEPGRAM_CONFIDENCE_PENALTY;
+      (deepgramTranscript.results.channels[0]?.alternatives[0]?.confidence ??
+        0) - DEEPGRAM_CONFIDENCE_PENALTY;
 
     transcriptions.push({
       provider: TranscriptionProvider.DEEPGRAM,
-      transcriptObject:
-        deepgramTranscriptionResult as PrismaJson.TranscriptType,
+      transcriptObject: deepgramTranscript as PrismaJson.TranscriptType,
       confidence: deepgramConfidence,
-      summary: deepgramTranscriptionResult.results.summary?.result,
+      summary: deepgramTranscript.results.summary?.result,
       utterances: {
         createMany: {
           data: cleanedDeepgramUtterances,
         },
       },
-    });
-  } else if (deepgramResult !== null) {
-    captureException("Deepgram transcription failed", {
-      tags: { meetingId },
-      extra: { error: deepgramResult.reason },
     });
   }
 
