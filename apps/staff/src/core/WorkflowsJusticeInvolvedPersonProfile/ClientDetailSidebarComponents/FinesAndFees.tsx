@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { useFeatureVariants } from "../../../components/StoreProvider";
 import { formatAsCurrency, formatWorkflowsDate } from "../../../utils";
+import { WorkflowsBadgePill } from "../../BadgePill/BadgePill";
 import {
   DetailsHeading,
   DetailsList,
@@ -27,9 +30,22 @@ import {
 } from "../styles";
 import { ClientProfileProps } from "../types";
 
-export function FinesAndFees({
+// TN fines and fees data is unavailable during the TOMIS 2.0 cutover, so
+// usTnHideFinesAndFees keeps the section but replaces the values with a pill.
+export const FinesAndFees = observer(function FinesAndFees({
   client,
 }: ClientProfileProps): React.ReactElement<any> {
+  const { usTnHideFinesAndFees } = useFeatureVariants();
+
+  if (usTnHideFinesAndFees) {
+    return (
+      <DetailsSection>
+        <DetailsHeading>Fines and Fees</DetailsHeading>
+        <WorkflowsBadgePill text="Temporarily unavailable" palette="SLATE" />
+      </DetailsSection>
+    );
+  }
+
   return (
     <DetailsSection>
       <DetailsHeading>Fines and Fees</DetailsHeading>
@@ -54,4 +70,4 @@ export function FinesAndFees({
       </SecureDetailsContent>
     </DetailsSection>
   );
-}
+});

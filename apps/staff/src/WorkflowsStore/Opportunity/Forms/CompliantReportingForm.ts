@@ -29,6 +29,18 @@ export type {
   CompliantReportingTransformedETLFormInput,
 };
 
+// TN fines and fees data is unavailable during the TOMIS 2.0 cutover, so while
+// usTnHideFinesAndFees is on these fields are left blank for staff to fill in.
+export const US_TN_CR_BLANK_FEE_FIELDS = {
+  supervisionFeeAssessed: "",
+  supervisionFeeArrearaged: false,
+  supervisionFeeArrearagedAmount: "",
+  supervisionFeeWaived: "",
+  supervisionFeeExemptionType: "",
+  supervisionFeeExemptionExpirDate: "",
+  courtCostsPaid: false,
+} satisfies Partial<CompliantReportingDraftData>;
+
 export class CompliantReportingForm extends FormBase<
   CompliantReportingDraftData,
   UsTnCompliantReporting2025PolicyOpportunity
@@ -59,6 +71,14 @@ export class CompliantReportingForm extends FormBase<
 
   prefilledDataTransformer(): Partial<CompliantReportingDraftData> {
     if (!this.opportunity || !this.opportunity.record) return {};
-    return transform(this.person, this.opportunity.record, this.opportunity);
+    const prefilled = transform(
+      this.person,
+      this.opportunity.record,
+      this.opportunity,
+    );
+    if (!this.rootStore.userStore.activeFeatureVariants.usTnHideFinesAndFees) {
+      return prefilled;
+    }
+    return { ...prefilled, ...US_TN_CR_BLANK_FEE_FIELDS };
   }
 }

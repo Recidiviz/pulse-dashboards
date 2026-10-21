@@ -196,6 +196,12 @@ export class UsTnExpirationForm extends FormBase<
         gangAffiliation: displayString(form.gangAffiliationId),
       };
 
+      // TN fines and fees data is unavailable during the TOMIS 2.0 cutover, so
+      // staff fill in the fee history themselves.
+      if (this.rootStore.userStore.activeFeatureVariants.usTnHideFinesAndFees) {
+        prefilledFields.feeHistory = "";
+      }
+
       if (flags.enableTepeAdditionalFields) {
         prefilledFields.newOffenses = formatOffenseList(form.newOffenses);
         prefilledFields.alcoholDrugInformation = formatOffenseList(
