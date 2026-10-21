@@ -647,6 +647,27 @@ describe("SAR router", () => {
         });
       expect(updatedSAR?.address).toBe("123 Test St");
     });
+
+    // TODO(MO-13066): Drop isReportTypeLocked from this setup, and rename the
+    // test, when the column is removed.
+    test("should update the report type even when the import locked it", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { reportType: SARReportType.SAR, isReportTypeLocked: true },
+      });
+
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
+        id: fakeSAR.id,
+        attributes: { reportType: SARReportType.PSR, isVictimImpactOnly: true },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+      expect(updatedSAR?.reportType).toBe(SARReportType.PSR);
+      expect(updatedSAR?.isVictimImpactOnly).toBe(true);
+    });
   });
 
   describe("employment history CRUD", () => {

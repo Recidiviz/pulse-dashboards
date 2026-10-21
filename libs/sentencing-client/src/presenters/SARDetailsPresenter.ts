@@ -416,10 +416,6 @@ export class SARDetailsPresenter implements Hydratable {
     return this.SARData?.reportType;
   }
 
-  get isReportTypeLocked(): boolean | null | undefined {
-    return this.SARData?.isReportTypeLocked;
-  }
-
   get isPSRBuilderActive(): boolean {
     return Boolean(this.sentencingStore.activeFeatureVariants.PSRBuilder);
   }
@@ -435,9 +431,11 @@ export class SARDetailsPresenter implements Hydratable {
   /**
    * Whether the report type selection card should be shown instead of the
    * normal SAR sections: either no selection has been saved yet, or the
-   * officer is actively revisiting a saved one.
+   * officer is actively revisiting a saved one. Never shown on a completed
+   * report.
    */
   get showReportTypeCard(): boolean {
+    if (this.isLocked) return false;
     return (
       (this.reportType === "PSR" &&
         this.isVictimImpactOnly === null &&
@@ -489,6 +487,8 @@ export class SARDetailsPresenter implements Hydratable {
     return this.mostSevereCharges.length > 1;
   }
 
+  // TODO(MO-13053): Use the full lock state once SAR locking ships, so a
+  // downloaded report is locked and a reopened one is not.
   get isLocked(): boolean {
     return !!this.SARData?.completionDate;
   }

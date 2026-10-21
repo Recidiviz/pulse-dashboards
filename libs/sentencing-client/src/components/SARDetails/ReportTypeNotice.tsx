@@ -32,9 +32,10 @@ import * as Styled from "./ReportTypeNotice.styles";
  */
 export interface ReportTypeNoticeControls {
   reportType: SARDetailsPresenter["reportType"];
-  isReportTypeLocked: SARDetailsPresenter["isReportTypeLocked"];
   isVictimImpactOnly: SARDetailsPresenter["isVictimImpactOnly"];
   startReportTypeChange: SARDetailsPresenter["startReportTypeChange"];
+  isPSRBuilderActive: SARDetailsPresenter["isPSRBuilderActive"];
+  isLocked: SARDetailsPresenter["isLocked"];
 }
 
 interface ReportTypeNoticeProps {
@@ -53,17 +54,12 @@ function getReportTypeCopy(
 }
 
 /**
- * Shows which sections of the SAR the officer selected to fill out (when the
- * report was split via the PSR builder), with a link to reopen that choice.
+ * Shows which sections of the SAR the officer is filling out, with a link to
+ * change the report type. Hidden once the report is completed in OPII.
  */
 export const ReportTypeNotice: React.FC<ReportTypeNoticeProps> = observer(
   function ReportTypeNotice({ presenter }) {
-    if (
-      presenter.isReportTypeLocked === undefined ||
-      presenter.isReportTypeLocked === null ||
-      presenter.isReportTypeLocked === true
-    )
-      return null;
+    if (!presenter.isPSRBuilderActive || presenter.isLocked) return null;
 
     const copy = getReportTypeCopy(
       presenter.reportType,
