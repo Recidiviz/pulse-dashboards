@@ -28,16 +28,18 @@ import { AppliedFilters } from "../AppliedFilters/AppliedFilters";
 import { CollapsibleSection } from "../CollapsibleSection/CollapsibleSection";
 import { FilterSheet } from "../FilterSheet/FilterSheet";
 import { ResourceCard } from "../ResourceCard/ResourceCard";
+import { SearchButton } from "../SearchButton/SearchButton";
 import { getResourceChips, groupResourcesBySubcategory } from "../utils";
 import {
   AccordionItem,
   AccordionList,
   EmptyState,
+  Heading,
   PageHeader,
   PageSubtitle,
-  PageTitle,
   ResourceCount,
   ResourceList as ResourceListWrapper,
+  TitleRow,
   Wrapper,
 } from "./ResourceList.styles";
 
@@ -87,7 +89,10 @@ export const ResourceList = () => {
   return (
     <Wrapper>
       <PageHeader>
-        <PageTitle>{t(($) => $.reentry.resources.list.pageTitle)}</PageTitle>
+        <TitleRow>
+          <Heading>{t(($) => $.reentry.resources.list.pageTitle)}</Heading>
+          <SearchButton />
+        </TitleRow>
         <PageSubtitle>
           {t(($) => $.reentry.resources.list.subtitle)}
         </PageSubtitle>

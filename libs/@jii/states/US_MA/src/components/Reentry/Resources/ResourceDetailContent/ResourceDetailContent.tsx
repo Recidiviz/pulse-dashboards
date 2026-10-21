@@ -31,7 +31,7 @@ import { getKeyDetails } from "../KeyDetails/utils";
 import {
   BackButtonWrapper,
   ChipList,
-  PageTitle,
+  Heading,
   Section,
   SectionHeading,
 } from "./ResourceDetailContent.styles";
@@ -59,7 +59,7 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
 
   return (
     <>
-      <PageTitle>{name}</PageTitle>
+      <Heading>{name}</Heading>
 
       {subcategories.length > 0 && (
         <Section aria-labelledby="type-of-housing-heading">

@@ -149,11 +149,6 @@ export function getResourceChips(
   resource: ResourceSummary,
   t: UsMaTFunction,
 ): string[] {
-  const labelsFor = (options: FilterOption<string>[]) =>
-    options
-      .filter((option) => resource.tags.includes(option.match))
-      .map((option) => option.label(t));
-
   const housingChips =
     resource.categoryAttributes?.category === "Housing"
       ? [
@@ -163,10 +158,33 @@ export function getResourceChips(
       : [];
 
   return [
-    ...labelsFor(GENDER_OPTIONS),
+    ...tagLabels(resource, GENDER_OPTIONS, t),
     ...housingChips,
-    ...labelsFor(ACCEPTS_OPTIONS),
+    ...tagLabels(resource, ACCEPTS_OPTIONS, t),
   ];
+}
+
+/**
+ * Returns the labels of the tags that match the given resource's tags.
+ */
+export function getTagLabels(
+  resource: ResourceSummary,
+  t: UsMaTFunction,
+): string[] {
+  return [
+    ...tagLabels(resource, GENDER_OPTIONS, t),
+    ...tagLabels(resource, ACCEPTS_OPTIONS, t),
+  ];
+}
+
+function tagLabels(
+  resource: ResourceSummary,
+  options: FilterOption<string>[],
+  t: UsMaTFunction,
+): string[] {
+  return options
+    .filter((option) => resource.tags.includes(option.match))
+    .map((option) => option.label(t));
 }
 
 /**

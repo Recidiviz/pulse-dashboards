@@ -65,6 +65,12 @@ function mockGetResource(queryFn: () => Promise<unknown>) {
                 .fn()
                 .mockReturnValue({ queryKey: ["resource"], queryFn }),
             },
+            getResources: {
+              queryOptions: vi.fn().mockReturnValue({
+                queryKey: ["resources"],
+                queryFn: async () => [resource],
+              }),
+            },
           },
         },
       },

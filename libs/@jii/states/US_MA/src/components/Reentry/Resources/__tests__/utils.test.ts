@@ -21,6 +21,7 @@ import {
   getLengthOfStayChip,
   getRentChip,
   getResourceChips,
+  getTagLabels,
   groupResourcesBySubcategory,
   sanitizeBackTarget,
 } from "../utils";
@@ -93,6 +94,20 @@ describe("getLengthOfStayChip", () => {
     expect(getLengthOfStayChip({ category: "Housing", ...attributes }, t)).toBe(
       expected,
     );
+  });
+});
+
+describe("getTagLabels", () => {
+  test("returns gender then Accepts labels, without housing chips or unknown tags", () => {
+    const resource = makeResource(1, {
+      tags: ["Parolees Accepted", "Female", "Spanish"],
+      categoryAttributes: {
+        category: "Housing",
+        weeklyRent: { min: 150, max: 200 },
+      },
+    });
+
+    expect(getTagLabels(resource, t)).toEqual(["Female", "Parolees Accepted"]);
   });
 });
 

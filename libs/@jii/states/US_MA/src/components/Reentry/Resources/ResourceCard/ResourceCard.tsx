@@ -28,6 +28,7 @@ export type ResourceCardProps = {
   to: string;
   primaryContact?: string;
   chips?: string[];
+  onClick?: () => void;
 };
 
 export const ResourceCard: FC<ResourceCardProps> = ({
@@ -35,11 +36,12 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   to,
   primaryContact,
   chips,
+  onClick,
 }) => {
   const { t } = useUsMaTranslations();
 
   return (
-    <Card to={to}>
+    <Card to={to} onClick={onClick}>
       <CardName>{name}</CardName>
       {primaryContact ? (
         <CardContact>

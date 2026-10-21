@@ -817,6 +817,17 @@
           "basedOnIncome": "[US_MA]reentry.resources.filters.rent.basedOnIncome",
           "notListed": "[US_MA]reentry.resources.filters.rent.notListed"
         }
+      },
+      "search": {
+        "trigger": "[US_MA]reentry.resources.search.trigger",
+        "ariaLabel": "[US_MA]reentry.resources.search.ariaLabel",
+        "placeholder": "[US_MA]reentry.resources.search.placeholder",
+        "clear": "[US_MA]reentry.resources.search.clear",
+        "close": "[US_MA]reentry.resources.search.close",
+        "noMatches": "[US_MA]reentry.resources.search.noMatches",
+        "browseByCategory": "[US_MA]reentry.resources.search.browseByCategory",
+        "resultCount_one": "[US_MA]reentry.resources.search.resultCount_one",
+        "resultCount_other": "[US_MA]reentry.resources.search.resultCount_other"
       }
     },
     "guide": {

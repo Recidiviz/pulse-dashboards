@@ -39,10 +39,17 @@ export const PageHeader = styled.div`
   gap: ${rem(spacing.sm)};
 `;
 
-export const PageTitle = styled.h1`
-  ${typography.Serif34}
+export const TitleRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: ${rem(spacing.md)};
+`;
 
-  color: ${palette.pine1};
+export const Heading = styled.h1`
+  ${typography.Serif24}
+
+  color: ${palette.pine2};
   margin: 0;
 `;
 

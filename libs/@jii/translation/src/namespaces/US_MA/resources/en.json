@@ -817,6 +817,17 @@
           "basedOnIncome": "Based on income",
           "notListed": "Rent not listed"
         }
+      },
+      "search": {
+        "trigger": "Search",
+        "ariaLabel": "Search resources",
+        "placeholder": "Search resources by name or description",
+        "clear": "Clear text",
+        "close": "Close",
+        "noMatches": "No resources match “{{query}}”.",
+        "browseByCategory": "Browse by category instead:",
+        "resultCount_one": "{{count}} result found",
+        "resultCount_other": "{{count}} results found"
       }
     },
     "guide": {

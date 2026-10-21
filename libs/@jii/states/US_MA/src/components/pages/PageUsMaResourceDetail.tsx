@@ -25,7 +25,11 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { ResourceDetailContent } from "../Reentry/Resources/ResourceDetailContent/ResourceDetailContent";
-import { Wrapper } from "../Reentry/Resources/ResourceDetailContent/ResourceDetailContent.styles";
+import {
+  HeaderRow,
+  Wrapper,
+} from "../Reentry/Resources/ResourceDetailContent/ResourceDetailContent.styles";
+import { SearchButton } from "../Reentry/Resources/SearchButton/SearchButton";
 import { sanitizeBackTarget } from "../Reentry/Resources/utils";
 import { SuspenseQueryBoundary } from "../Reentry/SuspenseQueryBoundary";
 
@@ -47,9 +51,12 @@ export const PageUsMaResourceDetail = () => {
 
   return (
     <Wrapper>
-      <GoLink back to={backPath}>
-        {t(($) => $.reentry.resources.detail.back)}
-      </GoLink>
+      <HeaderRow>
+        <GoLink back to={backPath}>
+          {t(($) => $.reentry.resources.detail.back)}
+        </GoLink>
+        <SearchButton />
+      </HeaderRow>
       <SuspenseQueryBoundary>
         <ResourceDetailContent
           resourceId={resourceId}

@@ -32,7 +32,7 @@ import {
 import { matchesFilters } from "../components/Reentry/Resources/filters/matching";
 import { SelectedFilters } from "../components/Reentry/Resources/filters/types";
 
-const ONE_HOUR_MS = 60 * 60 * 1000;
+export const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export function useResources() {
   const {
