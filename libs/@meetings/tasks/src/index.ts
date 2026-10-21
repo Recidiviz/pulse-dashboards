@@ -18,6 +18,7 @@
 export * from "~@meetings/tasks/label-studio";
 export * from "~@meetings/tasks/label-studio-client";
 export * from "~@meetings/tasks/label-studio-llmaj-triage";
+export * from "~@meetings/tasks/label-studio-llmaj-triage-task";
 export * from "~@meetings/tasks/llm";
 export * from "~@meetings/tasks/types";
 export * from "~@meetings/tasks/utils";

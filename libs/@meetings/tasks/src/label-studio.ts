@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-
-import { Storage } from "@google-cloud/storage";
-
 import type { Prisma, StateCode } from "~@meetings/prisma/client";
 import { formatTranscripts } from "~@meetings/tasks/llm/utils";
+import { writeMeetingTaskFile } from "~@meetings/tasks/meeting-task-file";
 
 // =============================================================================
 // The full-review task: a Label Studio task asking a QA rater to grade a
@@ -267,29 +262,10 @@ export async function exportLabelStudioTask(
   needsRecidivizReview = false,
 ): Promise<void> {
   const task = buildLabelStudioTask(meeting, stateCode, needsRecidivizReview);
-  const taskJson = JSON.stringify(task, null, 2);
-  const fileName = LABEL_STUDIO_TASK_FILENAME;
-
-  if (process.env["IS_LOCAL_MODE"] === "true") {
-    const localStorageDir =
-      process.env["LOCAL_STORAGE_DIR"] ??
-      path.join(os.tmpdir(), "meetings-local");
-    const meetingDir = path.join(localStorageDir, meeting.recordingsFolderPath);
-    if (!fs.existsSync(meetingDir)) {
-      fs.mkdirSync(meetingDir, { recursive: true });
-    }
-    const filePath = path.join(meetingDir, fileName);
-    fs.writeFileSync(filePath, taskJson);
-    console.log(`Label Studio task exported: ${filePath}`);
-    return;
-  }
-
-  const outputPath = `${meeting.recordingsFolderPath}/${fileName}`;
-  const storage = new Storage();
-  const file = storage.bucket(meeting.recordingsGCSBucket).file(outputPath);
-  await file.save(taskJson, { contentType: "application/json" });
-
-  console.log(
-    `Label Studio task exported: gs://${meeting.recordingsGCSBucket}/${outputPath}`,
+  const location = await writeMeetingTaskFile(
+    meeting,
+    LABEL_STUDIO_TASK_FILENAME,
+    task,
   );
+  console.log(`Label Studio task exported: ${location}`);
 }
