@@ -138,7 +138,7 @@ const SignatureField = observer(function SignatureField({
     placeholderText =
       signatureFieldType === "officer"
         ? "Supervising Officer's Signature"
-        : "Director's Signature";
+        : "District Supervisor's Signature";
   }
 
   const officerSignatureButton = displaySignatureButton ? (

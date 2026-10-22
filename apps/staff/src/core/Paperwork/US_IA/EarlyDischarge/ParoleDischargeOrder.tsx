@@ -306,7 +306,7 @@ function Signatures({ form }: { form: UsIaEarlyDischargeForm }) {
             }}
           />
         </div>
-        <div>&nbsp;District Director</div>
+        <div>&nbsp;District Supervisor</div>
         <div>
           &nbsp;Date{" "}
           <FormUsIaEarlyDischargeInput
