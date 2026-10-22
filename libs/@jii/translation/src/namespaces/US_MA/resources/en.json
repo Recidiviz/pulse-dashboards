@@ -143,8 +143,8 @@
       "link": "View full Program List"
     }
   },
-  "spanishLaunchBanner": {
-    "message": "**Program list now available in Spanish** \n\n**Ahora en español **\n\nLa Lista de Programas ahora está disponible en español.\nPara cambiar, toque “English” en la parte superior de su tableta Orijin y elija “Español”."
+  "showHideLaunchBanner": {
+    "message": "**New feature: Toggle to hide your dates**\n\nYou can now toggle to hide the sentence dates shown in Opportunities if you’d rather not see them. Use the same toggle to turn them back on anytime. This only changes what you see, your dates stay the same.\n\nQuestions about your dates? Talk to your CPO."
   },
   "sentenceDates": {
     "dates": {

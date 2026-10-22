@@ -220,14 +220,9 @@ export class SegmentClient implements IntakeAnalytics {
   trackEdovoReferralSent(metadata: { type: EdovoReferralType }) {
     this.track("frontend_edovo_referral_sent", metadata);
   }
+
   trackEdovoReturnFailed() {
     this.track("frontend_edovo_return_failed");
-  }
-
-  /* US_MA Spanish Program List launch announcement */
-
-  trackUsMaSpanishLaunchBannerViewed() {
-    this.track("frontend_us_ma_spanish_launch_banner_viewed");
   }
 
   trackAetCalloutImpression(metadata: { placement: AetCalloutPlacement }) {

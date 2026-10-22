@@ -37,7 +37,7 @@ import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepage
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
 import { ReentryCtaSection } from "./ReentryCtaSection/ReentryCtaSection";
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
-import { SpanishLaunchBanner } from "./SpanishLaunchBanner";
+import { ShowHideLaunchBanner } from "./ShowHideLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
 
@@ -59,7 +59,7 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomepagePresenter }> =
             lastUpdatedDate: presenter.lastUpdatedDate,
           })}
         />
-        <SpanishLaunchBanner />
+        {residentFlags.usMaSentenceDatesV1 && <ShowHideLaunchBanner />}
         <ProgramsCtaSection stateCode="US_MA" />
 
         <ReentryCtaSection />

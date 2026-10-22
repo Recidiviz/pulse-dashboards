@@ -143,6 +143,9 @@
       "link": "Ver la lista completa de programas"
     }
   },
+  "showHideLaunchBanner": {
+    "message": "**Nueva función: botón para ocultar sus fechas** \n\nAhora puede ocultar las fechas de liberación que aparecen en Opportunities, si prefiere no verlas. Use el mismo botón para verlas otra vez. Esto solo cambia lo que usted ve; sus fechas no cambian.\n\n¿Tiene preguntas sobre sus fechas? Hable con su CPO (oficial de programas)."
+  },
   "sentenceDates": {
     "dates": {
       "rts": {

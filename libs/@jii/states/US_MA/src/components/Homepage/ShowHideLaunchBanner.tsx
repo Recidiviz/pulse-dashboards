@@ -15,26 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, useEffect } from "react";
+import { FC } from "react";
 
 import { AnnouncementBanner } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
 import { useUsMaTranslations } from "~@jii/translation";
 
 /**
- * Announces that the Program List is now available in Spanish.
+ * Announces that you can now toggle on/off your dates
  */
-export const SpanishLaunchBanner: FC = () => {
+export const ShowHideLaunchBanner: FC = () => {
   const { t } = useUsMaTranslations();
-  const {
-    userStore: { segmentClient },
-  } = useRootStore();
-
-  useEffect(() => {
-    segmentClient.trackUsMaSpanishLaunchBannerViewed();
-  }, [segmentClient]);
-
   return (
-    <AnnouncementBanner message={t(($) => $.spanishLaunchBanner.message)} />
+    <AnnouncementBanner message={t(($) => $.showHideLaunchBanner.message)} />
   );
 };

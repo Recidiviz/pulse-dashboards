@@ -30,4 +30,7 @@ export const usMaResidentsConfig: ResidentsConfig = {
   enabledUserFlags: {
     useNewResidentData: parseISO("2026-10-08T12:00:00-07:00"),
   },
+  enabledResidentFlags: {
+    usMaSentenceDatesV1: parseISO("2026-10-28T09:00:00-04:00"),
+  },
 };

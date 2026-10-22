@@ -143,8 +143,8 @@
       "link": "[US_MA]programs.homepageCta.link"
     }
   },
-  "spanishLaunchBanner": {
-    "message": "[US_MA]spanishLaunchBanner.message"
+  "showHideLaunchBanner": {
+    "message": "[US_MA]showHideLaunchBanner.message"
   },
   "sentenceDates": {
     "dates": {
