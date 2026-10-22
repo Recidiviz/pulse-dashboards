@@ -17,8 +17,23 @@
 
 import { FC } from "react";
 
+import { useResidentMetadata } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
+
 import { PolicyExplainerCard } from "./PolicyExplainerCard";
+import { PROGRAMS_NAV_BAR_HEIGHT } from "./ProgramsNavBar/ProgramsNavBar.styles";
 
 export const UsArOnMyTablet: FC = () => {
-  return <PolicyExplainerCard />;
+  const metadata = useResidentMetadata("US_AR");
+
+  return (
+    <>
+      {/* TODO(JII2-110): swap to the Edovo freshness date */}
+      <LastUpdatedBanner
+        lastUpdatedDate={metadata.lastUpdatedDate}
+        stickyOffset={PROGRAMS_NAV_BAR_HEIGHT}
+      />
+      <PolicyExplainerCard />
+    </>
+  );
 };
