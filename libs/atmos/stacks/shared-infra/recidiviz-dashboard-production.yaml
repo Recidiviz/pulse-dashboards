@@ -26,6 +26,10 @@ components:
       vars:
         deploy_environment: production
 
+    vertex-ai-cache-config:
+      vars:
+        region: "{{ .settings.context.location }}"
+
     apps/shared-infra:
       vars:
         location: "{{ .settings.context.location }}"
