@@ -98,6 +98,21 @@ const cniHousingFieldsSchema = z
   .partial()
   .extend({ primaryStatus: cniFieldSchema });
 
+const cniPaymentFieldsSchema = z.object({
+  payments: z.array(
+    z
+      .object({
+        amountOwed: cniFieldSchema,
+        amountPaid: cniFieldSchema,
+        paymentPlanAmount: cniFieldSchema,
+        paymentPlanFrequency: cniFieldSchema,
+        abilityToPay: cniFieldSchema,
+      })
+      .partial()
+      .extend({ paymentType: cniFieldSchema, paymentStatus: cniFieldSchema }),
+  ),
+});
+
 const cniFeedbackSnapshotSchema = z.object({
   displayText: z.string(),
   summarySnapshots: z
@@ -107,6 +122,7 @@ const cniFeedbackSnapshotSchema = z.object({
         cniSnapshot: z.union([
           cniEmploymentFieldsSchema,
           cniHousingFieldsSchema,
+          cniPaymentFieldsSchema,
         ]),
       }),
     )

@@ -141,9 +141,33 @@ const cniHousingSchema = z.object({
     .pipe(cniHousingFieldsSchema),
 });
 
+const cniPaymentFieldsSchema = z.object({
+  payments: z.array(
+    z
+      .object({
+        amountOwed: cniFieldSchema,
+        amountPaid: cniFieldSchema,
+        paymentPlanAmount: cniFieldSchema,
+        paymentPlanFrequency: cniFieldSchema,
+        abilityToPay: cniFieldSchema,
+      })
+      .partial()
+      .extend({ paymentType: cniFieldSchema, paymentStatus: cniFieldSchema }),
+  ),
+});
+
+const cniPaymentSchema = z.object({
+  category: z.literal("payments"),
+  cni_fields: z
+    .record(z.string(), z.unknown())
+    .transform(camelCaseObject)
+    .pipe(cniPaymentFieldsSchema),
+});
+
 const cniFieldsSchema = z.discriminatedUnion("category", [
   cniEmploymentSchema,
   cniHousingSchema,
+  cniPaymentSchema,
 ]);
 
 export const caseNoteInsightsImportSchema = cniFieldsSchema.and(

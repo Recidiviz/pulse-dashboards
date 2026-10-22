@@ -57,7 +57,18 @@ declare global {
       unhousedLocation: CNIField;
       address: CNIField;
     }> & { primaryStatus: CNIField };
-    type CNIFields = CNIEmploymentFields | CNIHousingFields;
+    type CNIPaymentFields = {
+      payments: Array<
+        Partial<{
+          amountOwed: CNIField;
+          amountPaid: CNIField;
+          paymentPlanAmount: CNIField;
+          paymentPlanFrequency: CNIField;
+          abilityToPay: CNIField;
+        }> & { paymentType: CNIField; paymentStatus: CNIField }
+      >;
+    };
+    type CNIFields = CNIEmploymentFields | CNIHousingFields | CNIPaymentFields;
 
     type CNIFeedbackSnapshot = {
       displayText: string;

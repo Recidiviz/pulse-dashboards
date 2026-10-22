@@ -36,6 +36,8 @@ export const STAFF_FILE_NAME = "staff.json";
 export const CNI_EMPLOYMENT_FILE_NAME =
   "case_note_insights_employment_summary.json";
 export const CNI_HOUSING_FILE_NAME = "case_note_insights_housing_summary.json";
+export const CNI_PAYMENTS_FILE_NAME =
+  "case_note_insights_payments_summary.json";
 
 // Exclude CNI files from the default list so they will only be imported via a
 // manual command (prevents import job errors when CNI files don't exist in GCS yet,
@@ -66,6 +68,10 @@ export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     loaderFn: transformAndLoadCaseNoteInsightsSummaryData,
   },
   [CNI_HOUSING_FILE_NAME]: {
+    schema: caseNoteInsightsImportSchema,
+    loaderFn: transformAndLoadCaseNoteInsightsSummaryData,
+  },
+  [CNI_PAYMENTS_FILE_NAME]: {
     schema: caseNoteInsightsImportSchema,
     loaderFn: transformAndLoadCaseNoteInsightsSummaryData,
   },

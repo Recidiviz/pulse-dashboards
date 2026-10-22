@@ -20,12 +20,14 @@ import { describe, expect, test } from "vitest";
 import {
   CNI_EMPLOYMENT_FILE_NAME,
   CNI_HOUSING_FILE_NAME,
+  CNI_PAYMENTS_FILE_NAME,
 } from "~@meetings/import/constants";
 import { getImportHandler } from "~@meetings/import/handler";
 import { testPrismaClient } from "~@meetings/import/test/setup";
 import {
   TEST_CNI_EMPLOYMENT_FILE_NAME,
   TEST_CNI_HOUSING_FILE_NAME,
+  TEST_CNI_PAYMENTS_FILE_NAME,
   TEST_STATE_CODE,
 } from "~@meetings/import/test/setup/constants";
 import { fakeClient } from "~@meetings/import/test/setup/seed";
@@ -67,6 +69,34 @@ const rawHousingCniFields = {
   },
 };
 
+const rawPaymentsCniFields = {
+  payments: [
+    {
+      payment_type: {
+        field_value: "restitution",
+        quotes: ["I pay restitution every month"],
+        last_verified_date: "2024-03-01",
+        extractor_version_id: "extractor-v1",
+        document_id: "doc-hash-1",
+      },
+      payment_status: {
+        field_value: "partial",
+        quotes: ["I pay restitution every month"],
+        last_verified_date: "2024-03-01",
+        extractor_version_id: "extractor-v1",
+        document_id: "doc-hash-1",
+      },
+      amount_owed: {
+        field_value: "500",
+        quotes: ["I still owe 500 dollars"],
+        last_verified_date: "2024-03-01",
+        extractor_version_id: "extractor-v1",
+        document_id: "doc-hash-1",
+      },
+    },
+  ],
+};
+
 // The camelCase shape we expect to be stored in the db after import.
 const processedEmploymentCniFields = {
   primaryStatus: {
@@ -97,6 +127,34 @@ const processedHousingCniFields = {
     extractorVersionId: "extractor-v1",
     documentId: "doc-hash-1",
   },
+};
+
+const processedPaymentsCniFields = {
+  payments: [
+    {
+      paymentType: {
+        fieldValue: "restitution",
+        quotes: ["I pay restitution every month"],
+        lastVerifiedDate: "2024-03-01",
+        extractorVersionId: "extractor-v1",
+        documentId: "doc-hash-1",
+      },
+      paymentStatus: {
+        fieldValue: "partial",
+        quotes: ["I pay restitution every month"],
+        lastVerifiedDate: "2024-03-01",
+        extractorVersionId: "extractor-v1",
+        documentId: "doc-hash-1",
+      },
+      amountOwed: {
+        fieldValue: "500",
+        quotes: ["I still owe 500 dollars"],
+        lastVerifiedDate: "2024-03-01",
+        extractorVersionId: "extractor-v1",
+        documentId: "doc-hash-1",
+      },
+    },
+  ],
 };
 
 describe("import case note insights employment data", () => {
@@ -361,5 +419,80 @@ describe("import case note insights housing data", () => {
     const dbSummaries =
       await testPrismaClient.caseNoteInsightsSummary.findMany();
     expect(dbSummaries).toHaveLength(601);
+  });
+});
+
+describe("import case note insights payments data", () => {
+  beforeAll(async () => {
+    importHandler = getImportHandler();
+  });
+
+  test("should upsert existing summaries and insert new ones", async () => {
+    const newClient = await testPrismaClient.client.create({
+      data: {
+        stateCode: StateCode.US_NE,
+        personId: BigInt(2),
+        stablePersonExternalId: "client-ext-2",
+        stablePersonExternalIdType: "client-ext-type-1",
+        pseudonymizedId: "client-pid-2",
+        displayPersonExternalId: "client-display-ext-2",
+        givenNames: "New",
+        middleNames: "",
+        surname: "Client",
+        suffix: "",
+        supervisionType: "PAROLE",
+        staffEmails: [],
+        lastImportedAt: new Date(0),
+      },
+    });
+
+    await testPrismaClient.caseNoteInsightsSummary.create({
+      data: {
+        stateCode: StateCode.US_NE,
+        clientId: fakeClient.personId,
+        category: "payments",
+        cniFields: { payments: [] },
+        lastImportedAt: new Date(0),
+      },
+    });
+
+    dataProviderSingleton.setData(TEST_CNI_PAYMENTS_FILE_NAME, [
+      // Update to the existing summary
+      {
+        state_code: StateCode.US_NE,
+        // person_id is a string in the import file
+        person_id: fakeClient.personId.toString(),
+        category: "payments",
+        cni_fields: rawPaymentsCniFields,
+      },
+      // New summary for a new client + category pair
+      {
+        state_code: StateCode.US_NE,
+        person_id: newClient.personId.toString(),
+        category: "payments",
+        cni_fields: rawPaymentsCniFields,
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [CNI_PAYMENTS_FILE_NAME]);
+
+    const dbSummaries = await testPrismaClient.caseNoteInsightsSummary.findMany(
+      {
+        orderBy: { clientId: "asc" },
+      },
+    );
+
+    expect(dbSummaries).toEqual([
+      expect.objectContaining({
+        clientId: fakeClient.personId,
+        category: "payments",
+        cniFields: processedPaymentsCniFields,
+      }),
+      expect.objectContaining({
+        clientId: newClient.personId,
+        category: "payments",
+        cniFields: processedPaymentsCniFields,
+      }),
+    ]);
   });
 });

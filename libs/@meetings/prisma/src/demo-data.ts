@@ -1299,7 +1299,18 @@ type CNIHousingFields = Partial<{
   address: CNIField;
   temporaryHousingType: CNIField;
 }> & { primaryStatus: CNIField };
-type CNIFields = CNIEmploymentFields | CNIHousingFields;
+type CNIPaymentFields = {
+  payments: Array<
+    Partial<{
+      amountOwed: CNIField;
+      amountPaid: CNIField;
+      paymentPlanAmount: CNIField;
+      paymentPlanFrequency: CNIField;
+      abilityToPay: CNIField;
+    }> & { paymentType: CNIField; paymentStatus: CNIField }
+  >;
+};
+type CNIFields = CNIEmploymentFields | CNIHousingFields | CNIPaymentFields;
 
 export type DemoCNISummary = {
   category: string;
@@ -1361,6 +1372,59 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
               quotes: ["it's part time work"],
               lastVerifiedDate: "2026-07-20",
               documentId: "doc-employment-1",
+              extractorVersionId: "demo-extractor-v1",
+            },
+          },
+        ],
+      },
+    },
+    {
+      category: "payments",
+      fields: {
+        payments: [
+          {
+            paymentType: {
+              fieldValue: "restitution",
+              quotes: ["$1,200 in restitution"],
+              lastVerifiedDate: "2026-07-22",
+              documentId: "doc-payments-1",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            paymentStatus: {
+              fieldValue: "partial",
+              quotes: ["She has been chipping away at her restitution"],
+              lastVerifiedDate: "2026-07-22",
+              documentId: "doc-payments-1",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            paymentPlanAmount: {
+              fieldValue: "50",
+              quotes: ["$50 a month toward restitution"],
+              lastVerifiedDate: "2026-07-22",
+              documentId: "doc-payments-1",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            paymentPlanFrequency: {
+              fieldValue: "monthly",
+              quotes: ["$50 a month toward restitution"],
+              lastVerifiedDate: "2026-07-22",
+              documentId: "doc-payments-1",
+              extractorVersionId: "demo-extractor-v1",
+            },
+          },
+          {
+            paymentType: {
+              fieldValue: "drug_testing_fee",
+              quotes: ["Her drug testing fees are paid up"],
+              lastVerifiedDate: "2026-07-22",
+              documentId: "doc-payments-1",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            paymentStatus: {
+              fieldValue: "paid",
+              quotes: ["Her drug testing fees are paid up"],
+              lastVerifiedDate: "2026-07-22",
+              documentId: "doc-payments-1",
               extractorVersionId: "demo-extractor-v1",
             },
           },
@@ -1436,6 +1500,59 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
               ],
               lastVerifiedDate: "2026-07-20",
               documentId: "doc-employment-2",
+              extractorVersionId: "demo-extractor-v1",
+            },
+          },
+        ],
+      },
+    },
+    {
+      category: "payments",
+      fields: {
+        payments: [
+          {
+            paymentType: {
+              fieldValue: "court_costs",
+              quotes: ["owes $800 in court costs"],
+              lastVerifiedDate: "2026-07-25",
+              documentId: "doc-payments-2",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            paymentStatus: {
+              fieldValue: "unpaid",
+              quotes: ["She hasn't started paying her court costs"],
+              lastVerifiedDate: "2026-07-25",
+              documentId: "doc-payments-2",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            amountOwed: {
+              fieldValue: "800",
+              quotes: ["owes $800 in court costs"],
+              lastVerifiedDate: "2026-07-25",
+              documentId: "doc-payments-2",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            abilityToPay: {
+              fieldValue: "unable",
+              quotes: ["Money is tight until the new position comes through"],
+              lastVerifiedDate: "2026-07-25",
+              documentId: "doc-payments-2",
+              extractorVersionId: "demo-extractor-v1",
+            },
+          },
+          {
+            paymentType: {
+              fieldValue: "electronic_monitoring_fee",
+              quotes: ["Her electronic monitoring fee was waived"],
+              lastVerifiedDate: "2026-07-25",
+              documentId: "doc-payments-2",
+              extractorVersionId: "demo-extractor-v1",
+            },
+            paymentStatus: {
+              fieldValue: "waived",
+              quotes: ["Her electronic monitoring fee was waived"],
+              lastVerifiedDate: "2026-07-25",
+              documentId: "doc-payments-2",
               extractorVersionId: "demo-extractor-v1",
             },
           },
