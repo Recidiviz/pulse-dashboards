@@ -23,6 +23,7 @@ import { ProgramCatalog, UsArMoreInformation } from "~@jii/paths";
 
 import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./Programs/ProgramsNavBar/ProgramsNavBar.styles";
+import { UsArOnMyTablet } from "./Programs/UsArOnMyTablet";
 import { UsArProgramCatalog } from "./Programs/UsArProgramCatalog";
 import { UsArProgramsLayout } from "./Programs/UsArProgramsLayout";
 import { UsArSingleResidentHome } from "./UsArSingleResidentHome";
@@ -48,10 +49,9 @@ export function UsArRouter() {
               />
             }
           />
-          {/* TODO(JII2-118): replace the placeholder with the On my tablet page */}
           <Route
             path={ProgramCatalog.OnMyTablet.path}
-            element={<div>On my tablet</div>}
+            element={<UsArOnMyTablet />}
           />
         </Route>
       ) : (

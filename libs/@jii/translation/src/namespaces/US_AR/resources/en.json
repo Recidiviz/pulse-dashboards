@@ -43,6 +43,13 @@
     "navBar": {
       "inPerson": "In person",
       "onMyTablet": "On my tablet"
+    },
+    "onMyTablet": {
+      "coursesButton": "Go to my courses",
+      "progressExplainer": "The progress bar tracks how many hours of Edovo courses you have completed and passed this month. Only courses count — not resources. This updates once a day.",
+      "carryOverUnder": "Under 16 hours? They all carry over to next month.",
+      "carryOverOver": "Over 16 hours? Only 2 hours carry over.",
+      "learnMore": "Learn more about the tablet programming policy"
     }
   }
 }

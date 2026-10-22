@@ -68,8 +68,12 @@ function parentEdovoOrigin() {
  */
 export function sendEdovoReferral(): boolean {
   const edovoOrigin = parentEdovoOrigin();
-  if (!edovoOrigin || !isEdovoEnv() || !windowIsIframe()) return false;
-
+  if (!edovoOrigin || !isEdovoEnv() || !windowIsIframe()) {
+    console.warn(
+      "sendEdovoReferral: skipped because the app is not running inside Edovo's iframe",
+    );
+    return false;
+  }
   const sessionResumeId = crypto.randomUUID();
   const returnState = {
     sessionResumeId,

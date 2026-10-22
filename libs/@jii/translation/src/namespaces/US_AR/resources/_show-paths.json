@@ -37,6 +37,13 @@
     "navBar": {
       "inPerson": "[US_AR]programs.navBar.inPerson",
       "onMyTablet": "[US_AR]programs.navBar.onMyTablet"
+    },
+    "onMyTablet": {
+      "coursesButton": "[US_AR]programs.onMyTablet.coursesButton",
+      "progressExplainer": "[US_AR]programs.onMyTablet.progressExplainer",
+      "carryOverUnder": "[US_AR]programs.onMyTablet.carryOverUnder",
+      "carryOverOver": "[US_AR]programs.onMyTablet.carryOverOver",
+      "learnMore": "[US_AR]programs.onMyTablet.learnMore"
     }
   }
 }
