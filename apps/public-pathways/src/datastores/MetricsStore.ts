@@ -22,6 +22,7 @@ import { makeAutoObservable } from "mobx";
 import { isHydrationFinished, isHydrationUntouched } from "~hydration-utils";
 import {
   AdmissionsAndReleasesOverTimeMetric,
+  AdmissionsAndReleasesSnapshotMetric,
   downloadChartAsData,
   FILTER_TYPES,
   MetricRecord,
@@ -41,6 +42,7 @@ import {
   fetchPublicPathwaysFile,
 } from "../api/metricsClient";
 import { PUBLIC_PATHWAYS_TENANT } from "../tenantId";
+import { EVENT_SPECIFIC_FILTERS } from "./eventTypes";
 import type { RootStore } from "./RootStore";
 
 const INDIVIDUAL_LEVEL_SNAPSHOT_ENDPOINT = "PrisonPopulationIndividualLevel";
@@ -364,50 +366,55 @@ export default class MetricsStore implements PathwaysMetricStore {
       endpoint: "AdmissionsAndReleasesOverTime",
       store: this,
       fetchMetrics: this.fetchMetrics,
+      eventSpecificFilters: EVENT_SPECIFIC_FILTERS,
     });
   }
 
-  get releasesByCommunitySupervision(): SnapshotMetric {
-    return new SnapshotMetric({
+  get releasesByCommunitySupervision(): AdmissionsAndReleasesSnapshotMetric {
+    return new AdmissionsAndReleasesSnapshotMetric({
       id: "releasesByCommunitySupervision",
       endpoint: "AdmissionsAndReleasesByDimensionCount",
       store: this,
       fetchMetrics: this.fetchMetrics,
+      eventSpecificFilters: EVENT_SPECIFIC_FILTERS,
       accessor: "communitySupervision" as keyof SnapshotDataRecord,
       isHorizontal: true,
     });
   }
 
-  get releasesByType(): SnapshotMetric {
-    return new SnapshotMetric({
+  get releasesByType(): AdmissionsAndReleasesSnapshotMetric {
+    return new AdmissionsAndReleasesSnapshotMetric({
       id: "releasesByType",
       endpoint: "AdmissionsAndReleasesByDimensionCount",
       store: this,
       fetchMetrics: this.fetchMetrics,
+      eventSpecificFilters: EVENT_SPECIFIC_FILTERS,
       accessor: "releaseType" as keyof SnapshotDataRecord,
       accessorIsNotFilterType: true,
       isHorizontal: true,
     });
   }
 
-  get admissionsByType(): SnapshotMetric {
-    return new SnapshotMetric({
+  get admissionsByType(): AdmissionsAndReleasesSnapshotMetric {
+    return new AdmissionsAndReleasesSnapshotMetric({
       id: "admissionsByType",
       endpoint: "AdmissionsAndReleasesByDimensionCount",
       store: this,
       fetchMetrics: this.fetchMetrics,
+      eventSpecificFilters: EVENT_SPECIFIC_FILTERS,
       accessor: "admissionType" as keyof SnapshotDataRecord,
       accessorIsNotFilterType: true,
       isHorizontal: true,
     });
   }
 
-  get admissionsAndReleasesByCustodyStatus(): SnapshotMetric {
-    return new SnapshotMetric({
+  get admissionsAndReleasesByCustodyStatus(): AdmissionsAndReleasesSnapshotMetric {
+    return new AdmissionsAndReleasesSnapshotMetric({
       id: "admissionsAndReleasesByCustodyStatus",
       endpoint: "AdmissionsAndReleasesByDimensionCount",
       store: this,
       fetchMetrics: this.fetchMetrics,
+      eventSpecificFilters: EVENT_SPECIFIC_FILTERS,
       accessor: "custodyStatus" as keyof SnapshotDataRecord,
       isHorizontal: true,
     });

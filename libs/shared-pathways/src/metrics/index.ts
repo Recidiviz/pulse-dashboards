@@ -16,6 +16,7 @@
 // =============================================================================
 
 export { default as AdmissionsAndReleasesOverTimeMetric } from "./AdmissionsAndReleasesOverTimeMetric";
+export { default as AdmissionsAndReleasesSnapshotMetric } from "./AdmissionsAndReleasesSnapshotMetric";
 export { default as OverTimeMetric } from "./OverTimeMetric";
 export { default as PathwaysNewBackendMetric } from "./PathwaysNewBackendMetric";
 export { default as PersonLevelMetric } from "./PersonLevelMetric";

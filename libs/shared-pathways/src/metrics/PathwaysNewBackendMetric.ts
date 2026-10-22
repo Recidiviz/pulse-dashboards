@@ -86,11 +86,13 @@ export default abstract class PathwaysNewBackendMetric<
   readonly accessorIsNotFilterType: boolean;
 
   /**
-   * Filters this metric takes more than one value for, even though the filter
-   * itself is single-select by default. A filter's own `isSingleSelect` is
-   * fixed per tenant, but one chart can need several values of it where the
-   * rest need exactly one — the over-time chart draws every calendar year the
-   * reader picks, while each bar chart counts a single year.
+   * Filters the reader can pick several options of on this metric's chart,
+   * although they are single-select everywhere else.
+   *
+   * Whether a filter is single-select is set once per state, for every chart.
+   * List a filter here when one chart needs several of its options and the
+   * other charts need one, e.g. an over-time chart that draws several years
+   * next to bar charts that each count one year.
    */
   readonly multiSelectFilters: readonly string[];
 

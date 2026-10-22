@@ -140,6 +140,11 @@ const EVENT_TYPE_FILTER_RULES: Readonly<
   },
 };
 
+/** The filters that describe only one event type, read from the rules above. */
+export const EVENT_SPECIFIC_FILTERS: readonly string[] = Object.keys(
+  EVENT_TYPE_FILTER_RULES,
+);
+
 /**
  * Returns the filters the given event type leaves nothing to filter, each with
  * the reason the panel shows.

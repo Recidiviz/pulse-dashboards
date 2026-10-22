@@ -26,6 +26,10 @@ import {
 } from "../types";
 import { getRecordDate } from "../utils";
 import {
+  appendClearedEventSpecificFilters,
+  hasClearedFilterForEveryRecord,
+} from "./admissionsAndReleasesFilters";
+import {
   fillMissingMonths,
   pivotMonthlyCounts,
 } from "./admissionsAndReleasesTimeSeries";
@@ -40,6 +44,8 @@ type ConstructorOptions = Omit<
   "fetchMetrics"
 > & {
   fetchMetrics: MetricsFetcher<AdmissionsAndReleasesMonthlyCountRecord>;
+  /** The filters that describe only one event type, e.g. admission type. */
+  eventSpecificFilters: readonly string[];
 };
 
 /**
@@ -52,7 +58,13 @@ type ConstructorOptions = Omit<
 export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBackendMetric<AdmissionsAndReleasesTimeSeriesRecord> {
   override readonly isOverTime = true;
 
-  constructor({ fetchMetrics, ...props }: ConstructorOptions) {
+  readonly eventSpecificFilters: readonly string[];
+
+  constructor({
+    fetchMetrics,
+    eventSpecificFilters,
+    ...props
+  }: ConstructorOptions) {
     super({
       ...props,
       fetchMetrics: async (endpoint, params, signal) => {
@@ -67,12 +79,30 @@ export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBack
     });
 
     this.dataTransformer = fillMissingMonths;
+    this.eventSpecificFilters = eventSpecificFilters;
+  }
+
+  /** Clearing an event-specific filter keeps the other event type's line. */
+  override get hasEmptyFilterSelection(): boolean {
+    return hasClearedFilterForEveryRecord(this.eventSpecificFilterState);
   }
 
   override getQueryParams(): URLSearchParams {
     const queryParams = super.getQueryParams();
     queryParams.append("group", MONTHLY_COUNT_GROUP);
+    appendClearedEventSpecificFilters(
+      queryParams,
+      this.eventSpecificFilterState,
+    );
     return queryParams;
+  }
+
+  private get eventSpecificFilterState() {
+    return {
+      filterValues: this.store.filters,
+      enabledFilters: this.filters.enabledFilters,
+      eventSpecificFilters: this.eventSpecificFilters,
+    };
   }
 
   get dataSeries(): AdmissionsAndReleasesTimeSeriesRecord[] {

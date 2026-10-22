@@ -223,6 +223,78 @@ describe("Admissions & Releases filters", () => {
 
       expect(metric.hasEmptyFilterSelection).toBe(true);
     });
+
+    it("still asks the backend when every admission type is cleared", async () => {
+      // Admission type narrows admissions only, so the releases still match.
+      const metric = metricsStore.current;
+
+      mockRootStore.filtersStore.setFilters({
+        [FILTER_TYPES.ADMISSION_TYPE]: [],
+      });
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      expect(metric.hasEmptyFilterSelection).toBe(false);
+      expect(metric.records?.length).toBeGreaterThan(0);
+      // A query string cannot carry an empty list, so it sends one empty value.
+      expect(
+        requestedParams().at(-1)?.getAll("filters[admission_type]"),
+      ).toEqual([""]);
+    });
+
+    it("sends no value for an event-specific filter that still has options picked", () => {
+      const params = metricsStore.current.getQueryParams();
+
+      expect(params.has("filters[admission_type]")).toBe(false);
+    });
+  });
+
+  describe("a chart's filter on its own dimension", () => {
+    it.each([
+      [
+        "releasesByType",
+        FILTER_TYPES.RELEASE_TYPE,
+        "release_type",
+        "incarcerated_individual|parole",
+      ],
+      [
+        "admissionsByType",
+        FILTER_TYPES.ADMISSION_TYPE,
+        "admission_type",
+        "incarcerated_parolee|other",
+      ],
+      [
+        "admissionsAndReleasesByCustodyStatus",
+        FILTER_TYPES.CUSTODY_STATUS,
+        "custody_status",
+        "incarcerated_parolee",
+      ],
+      [
+        "releasesByCommunitySupervision",
+        FILTER_TYPES.COMMUNITY_SUPERVISION,
+        "community_supervision",
+        "released_to_community_supervision",
+      ],
+    ] as const)(
+      "is left to the backend on the %s chart",
+      (metricId, filterType, queryKey, value) => {
+        mockRootStore.filtersStore.setFilters({ [filterType]: [value] });
+
+        const params = metricsStore[metricId].getQueryParams();
+
+        expect(params.getAll(`filters[${queryKey}]`)).toEqual([value]);
+      },
+    );
+
+    it("is still dropped on a Population Under Custody chart", () => {
+      // The shared SnapshotMetric is unchanged: a PUC chart filters its own
+      // bars, so its request leaves that filter out.
+      mockRootStore.filtersStore.setFilters({ [FILTER_TYPES.RACE]: ["WHITE"] });
+
+      const params = metricsStore.prisonPopulationByRace.getQueryParams();
+
+      expect(params.has("filters[race]")).toBe(false);
+    });
   });
 
   describe("zero-fill and compound filter values", () => {
