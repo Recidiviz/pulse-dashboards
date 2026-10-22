@@ -25,12 +25,6 @@ import { ParoleOfflineAPIClient } from "../../api/ParoleOfflineAPIClient";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleDocketPresenter } from "../ParoleDocketPresenter";
 
-// This presenter is tested against ParoleOfflineAPIClient's fixture data
-// regardless of which tenants ParoleAPIClient supports for real data --
-// force offline mode directly so that holds as SUPPORTED_TENANT_IDS grows
-// (see ParoleAPIClient.ts).
-import.meta.env["VITE_IS_OFFLINE"] = "true";
-
 // Dated relative to today so they sit inside US_CO's docket window -- these
 // exercise search and filter behavior, not the window (which has its own
 // tests below).
@@ -63,6 +57,14 @@ const TEST_HEARINGS: Array<ParoleHearing> = [
     facility: "Facility B",
   },
 ];
+
+beforeEach(() => {
+  // This presenter is tested against ParoleOfflineAPIClient's fixture data
+  // regardless of which tenants ParoleAPIClient supports for real data --
+  // force offline mode directly so that holds as SUPPORTED_TENANT_IDS grows
+  // (see ParoleAPIClient.ts).
+  vi.stubEnv("VITE_IS_OFFLINE", "true");
+});
 
 describe("ParoleDocketPresenter", () => {
   let paroleStore: ParoleStore;

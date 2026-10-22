@@ -382,7 +382,7 @@ describe("setLastViewed", () => {
   });
 
   test("ignores Recidiviz users in prod", () => {
-    import.meta.env.VITE_DEPLOY_ENV = "production";
+    vi.stubEnv("VITE_DEPLOY_ENV", "production");
 
     mockHydration();
 

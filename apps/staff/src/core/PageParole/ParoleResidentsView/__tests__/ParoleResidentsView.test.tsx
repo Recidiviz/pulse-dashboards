@@ -30,12 +30,11 @@ import { ParoleResidentsView } from "../ParoleResidentsView";
 vi.mock("../../../../components/StoreProvider");
 vi.mock("../../../../hooks/useIsMobile");
 
-// See ParoleDocketView.test.tsx: tested against the offline client's fixtures.
-import.meta.env["VITE_IS_OFFLINE"] = "true";
-
 let paroleStore: ParoleStore;
 
 beforeEach(() => {
+  // See ParoleDocketView.test.tsx: tested against the offline client's fixtures.
+  vi.stubEnv("VITE_IS_OFFLINE", "true");
   vi.mocked(useIsMobile).mockReturnValue({ isMobile: false, isTablet: false });
   // A full RootStore, since the DOC ID cell (PersonId) reads the tenant and
   // analytics stores.

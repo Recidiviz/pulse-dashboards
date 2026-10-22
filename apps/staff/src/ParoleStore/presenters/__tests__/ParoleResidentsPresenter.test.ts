@@ -22,10 +22,6 @@ import { ParoleOfflineAPIClient } from "../../api/ParoleOfflineAPIClient";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleResidentsPresenter } from "../ParoleResidentsPresenter";
 
-// See ParoleDocketPresenter.test.ts: tested against the offline client
-// regardless of which tenants have real data.
-import.meta.env["VITE_IS_OFFLINE"] = "true";
-
 const TEST_FACILITIES: Array<ParoleFacility> = [
   { facilityId: "FAC_A", name: "Facility A" },
   { facilityId: "FAC_B", name: "Facility B" },
@@ -52,6 +48,10 @@ describe("ParoleResidentsPresenter", () => {
   let presenter: ParoleResidentsPresenter;
 
   beforeEach(() => {
+    // See ParoleDocketPresenter.test.ts: tested against the offline client
+    // regardless of which tenants have real data.
+    vi.stubEnv("VITE_IS_OFFLINE", "true");
+
     const rootStore = new RootStore();
     rootStore.tenantStore.currentTenantId = "US_CO";
     paroleStore = new ParoleStore(rootStore);

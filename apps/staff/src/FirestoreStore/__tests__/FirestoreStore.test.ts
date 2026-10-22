@@ -61,7 +61,7 @@ vi.mock("~client-env-utils");
 const { VITE_TEST_ENV } = vi.hoisted(() => {
   const VITE_TEST_ENV = import.meta.env.VITE_TEST_ENV;
   // Delete test env var to test firestore emulator connection
-  import.meta.env.VITE_TEST_ENV = "";
+  vi.stubEnv("VITE_TEST_ENV", "");
 
   return { VITE_TEST_ENV };
 });
@@ -94,7 +94,7 @@ vi.mock("../../api/fetchFirebaseToken", () => {
 });
 
 afterAll(() => {
-  import.meta.env.VITE_TEST_ENV = VITE_TEST_ENV;
+  vi.stubEnv("VITE_TEST_ENV", VITE_TEST_ENV);
 });
 
 describe("FirestoreStore", () => {

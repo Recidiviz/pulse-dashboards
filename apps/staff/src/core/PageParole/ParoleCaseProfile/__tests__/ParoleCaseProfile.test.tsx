@@ -33,17 +33,17 @@ vi.mock("../../downloadParoleReport", () => ({
   downloadParoleReportZip: vi.fn(),
 }));
 
-// This page is tested against ParoleOfflineAPIClient's fixture data, and
-// the tenants it mocks below are real-data tenants now. Force offline mode
-// so ParoleStore keeps handing out the fixture client (see
-// ParoleAPIClient.ts).
-import.meta.env["VITE_IS_OFFLINE"] = "true";
-
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
 
 let rootStore: RootStore;
 
 beforeEach(() => {
+  // This page is tested against ParoleOfflineAPIClient's fixture data, and
+  // the tenants it mocks below are real-data tenants now. Force offline mode
+  // so ParoleStore keeps handing out the fixture client (see
+  // ParoleAPIClient.ts). Stubbed per test because the config's `unstubEnvs`
+  // resets env stubs before each one.
+  vi.stubEnv("VITE_IS_OFFLINE", "true");
   rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = "US_CO";
   const paroleStore = new ParoleStore(rootStore);
