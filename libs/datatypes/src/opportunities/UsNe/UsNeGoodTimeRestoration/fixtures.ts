@@ -55,7 +55,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "60", almostEligibleForJiiApp: false },
+    metadata: { numberOfDaysEligibleFor: "60" },
   }),
   eligibleLowGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -88,7 +88,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "30", almostEligibleForJiiApp: false },
+    metadata: { numberOfDaysEligibleFor: "30" },
   }),
   eligibleHighGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -121,7 +121,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "90", almostEligibleForJiiApp: false },
+    metadata: { numberOfDaysEligibleFor: "90" },
   }),
   eligibleModerateGoodTime: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -154,7 +154,7 @@ export const usNeGoodTimeRestorationFixtures = {
       },
     },
     ineligibleCriteria: {},
-    metadata: { numberOfDaysEligibleFor: "90", almostEligibleForJiiApp: false },
+    metadata: { numberOfDaysEligibleFor: "90" },
   }),
   almostEligibleRecentIdcMr: makeRecordFixture(usNeGoodTimeRestorationSchema, {
     stateCode: "US_NE",
@@ -193,7 +193,6 @@ export const usNeGoodTimeRestorationFixtures = {
       nextMonthAfterLatestGoodTimeRestorationOrDenialDate: relativeFixtureDate({
         months: -1,
       }),
-      almostEligibleForJiiApp: true,
     },
   }),
   almostEligibleRecentClass1Mr: makeRecordFixture(
@@ -237,7 +236,6 @@ export const usNeGoodTimeRestorationFixtures = {
           relativeFixtureDate({
             months: 1,
           }),
-        almostEligibleForJiiApp: false,
       },
     },
   ),

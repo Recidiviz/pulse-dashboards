@@ -37,7 +37,6 @@ export const usNeGoodTimeRestorationSchema = opportunitySchemaBase.extend({
     .passthrough(),
   metadata: z
     .object({
-      almostEligibleForJiiApp: z.boolean(),
       numberOfDaysEligibleFor: z
         .string()
         .transform((val) => parseInt(val))
