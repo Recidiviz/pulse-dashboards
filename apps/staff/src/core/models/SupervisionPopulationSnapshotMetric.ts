@@ -28,6 +28,7 @@ import {
   DownloadableDataset,
   OrderKeys,
   PopulationFilterLabels,
+  SnapshotMetric,
   SupervisionPopulationSnapshotRecord,
   TimePeriod,
 } from "~shared-pathways";
@@ -40,6 +41,12 @@ import { filterRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
   accessor: keyof SupervisionPopulationSnapshotRecord;
+
+  /**
+   * Always empty, since the old backend sends no value labels. The shared
+   * VizPopulationSnapshot reads it for an accessor no filter covers.
+   */
+  readonly dimensionValueLabels: SnapshotMetric["dimensionValueLabels"] = {};
 
   constructor(
     props: BaseMetricConstructorOptions<SupervisionPopulationSnapshotRecord> & {

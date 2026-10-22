@@ -48,6 +48,7 @@ type MetricOverrides = {
   accessor?: string;
   dataSeries?: Record<string, unknown>[];
   accessorIsNotFilterType?: boolean;
+  dimensionValueLabels?: Record<string, Record<string, string>>;
 };
 
 type FilterStoreOverrides = {
@@ -66,6 +67,7 @@ function buildMetric(overrides: MetricOverrides = {}): SnapshotMetric {
     accessor: overrides.accessor ?? "facility",
     accessorIsNotFilterType: overrides.accessorIsNotFilterType ?? false,
     dataSeries: overrides.dataSeries ?? [],
+    dimensionValueLabels: overrides.dimensionValueLabels ?? {},
     enableMetricModeToggle: false,
     supervisionLevelOrder: undefined,
     offenseTypeOrder: undefined,
@@ -229,6 +231,33 @@ describe("VizPopulationSnapshot data composition", () => {
 
     expect(data.map((d) => d.accessorValue)).toEqual(["0-3", "3-6"]);
     expect(data.map((d) => Number(d.value))).toEqual([7, 2]);
+  });
+
+  it("labels a dimension no filter covers from the metric's metadata labels", () => {
+    const metric = buildMetric({
+      accessor: "releaseType",
+      accessorIsNotFilterType: true,
+      dataSeries: [
+        { releaseType: "conditional_release", count: 7 },
+        { releaseType: "not_in_the_metadata", count: 2 },
+      ],
+      dimensionValueLabels: {
+        releaseType: { conditional_release: "Conditional Release" },
+      },
+    });
+
+    const data = renderViz(metric, buildFiltersStore());
+    const byValue = Object.fromEntries(data.map((d) => [d.accessorValue, d]));
+
+    expect(byValue["conditional_release"].accessorLabel).toBe(
+      "Conditional Release",
+    );
+    expect(byValue["conditional_release"].tooltipLabel).toBe(
+      "Conditional Release",
+    );
+    expect(byValue["not_in_the_metadata"].accessorLabel).toBe(
+      "not_in_the_metadata",
+    );
   });
 
   it("falls back to dataSeries when no filterOptions exist for the accessor", () => {

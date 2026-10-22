@@ -15,59 +15,90 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AdmissionsAndReleasesTimeSeriesRecord } from "../../types";
-import { fillMissingYears } from "../admissionsAndReleasesTimeSeries";
+import {
+  AdmissionsAndReleasesMonthlyCountRecord,
+  AdmissionsAndReleasesTimeSeriesRecord,
+} from "../../types";
+import {
+  fillMissingMonths,
+  pivotMonthlyCounts,
+} from "../admissionsAndReleasesTimeSeries";
 
 const record = (
   year: number,
+  month: number,
   admissionsCount: number,
   releasesCount: number,
 ): AdmissionsAndReleasesTimeSeriesRecord => ({
   year,
-  month: 1,
+  month,
   admissionsCount,
   releasesCount,
 });
 
-describe("fillMissingYears", () => {
+const row = (
+  movementDate: string,
+  eventType: string,
+  count: number,
+): AdmissionsAndReleasesMonthlyCountRecord => ({
+  movementDate,
+  eventType,
+  count,
+});
+
+describe("pivotMonthlyCounts", () => {
+  it("puts both event counts for a month on one record", () => {
+    expect(
+      pivotMonthlyCounts([
+        row("2024-02-01", "admission", 5),
+        row("2024-02-01", "release", 7),
+      ]),
+    ).toEqual([record(2024, 2, 5, 7)]);
+  });
+
+  it("counts zero for an event type a month has no row for", () => {
+    expect(pivotMonthlyCounts([row("2024-03-01", "release", 4)])).toEqual([
+      record(2024, 3, 0, 4),
+    ]);
+  });
+
+  it("reads the month from the date string, whatever the reader's time zone", () => {
+    // new Date("2024-01-01") is midnight UTC, which is still December 31 in
+    // any time zone west of UTC.
+    expect(pivotMonthlyCounts([row("2024-01-01", "admission", 1)])).toEqual([
+      record(2024, 1, 1, 0),
+    ]);
+  });
+
+  it("throws on an event type it does not know, rather than dropping the count", () => {
+    expect(() =>
+      pivotMonthlyCounts([row("2024-01-01", "ADMISSIONS", 1)]),
+    ).toThrow(/ADMISSIONS/);
+  });
+});
+
+describe("fillMissingMonths", () => {
   it("returns nothing for no records", () => {
-    expect(fillMissingYears([])).toEqual([]);
+    expect(fillMissingMonths([])).toEqual([]);
   });
 
-  it("leaves consecutive years untouched", () => {
-    const records = [record(2023, 10, 20), record(2024, 11, 21)];
+  it("leaves consecutive months untouched", () => {
+    const records = [record(2023, 12, 10, 20), record(2024, 1, 11, 21)];
 
-    expect(fillMissingYears(records)).toEqual(records);
+    expect(fillMissingMonths(records)).toEqual(records);
   });
 
-  it("fills a skipped year with zeros rather than joining across it", () => {
-    const filled = fillMissingYears([
-      record(2023, 10, 20),
-      record(2025, 12, 22),
+  it("fills a skipped month with zeros rather than joining across it", () => {
+    const filled = fillMissingMonths([
+      record(2023, 11, 10, 20),
+      record(2024, 1, 12, 22),
     ]);
 
-    expect(filled.map((r) => r.year)).toEqual([2023, 2024, 2025]);
-    expect(filled[1]).toEqual(record(2024, 0, 0));
-  });
-
-  it("steps by year, not by month, for annual figures", () => {
-    // A monthly walk across the same span would return 25 rows, nearly all of
-    // them zero, which would draw as spikes with gaps between them.
-    const filled = fillMissingYears([
-      record(2023, 10, 20),
-      record(2025, 12, 22),
+    expect(filled.map((r) => [r.year, r.month])).toEqual([
+      [2023, 11],
+      [2023, 12],
+      [2024, 1],
     ]);
-
-    expect(filled).toHaveLength(3);
-  });
-
-  it("keeps one row per year, so two event counts never share a date", () => {
-    const filled = fillMissingYears([
-      record(2023, 10, 20),
-      record(2024, 11, 21),
-      record(2025, 12, 22),
-    ]);
-
-    expect(new Set(filled.map((r) => r.year)).size).toBe(3);
+    expect(filled[1]).toEqual(record(2023, 12, 0, 0));
   });
 });

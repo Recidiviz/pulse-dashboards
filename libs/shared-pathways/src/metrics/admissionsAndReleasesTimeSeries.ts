@@ -15,36 +15,88 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { eachYearOfInterval } from "date-fns";
+import { eachMonthOfInterval } from "date-fns";
 
-import { AdmissionsAndReleasesTimeSeriesRecord } from "../types";
+import { RECORD_EVENT_TYPES } from "../constants";
+import {
+  AdmissionsAndReleasesMonthlyCountRecord,
+  AdmissionsAndReleasesTimeSeriesRecord,
+} from "../types";
+
+const monthKey = (year: number, month: number) => `${year}-${month}`;
 
 /**
- * Returns one record per year across the range the data covers, so that a year
- * the backend reports nothing for is drawn as zero rather than joining the
- * years either side of it into one straight line.
+ * Returns one record per month, carrying both event counts, from the API's
+ * one row per month per event type.
  *
- * This steps by year rather than by month, because these figures are annual.
- * A monthly walk would return a row for every month in the span and zero out
- * all but one per year, which draws as spikes separated by gaps.
+ * @example
+ * // [{ movementDate: "2024-02-01", eventType: "admission", count: 5 },
+ * //  { movementDate: "2024-02-01", eventType: "release", count: 7 }]
+ * // becomes
+ * // [{ year: 2024, month: 2, admissionsCount: 5, releasesCount: 7 }]
  */
-export function fillMissingYears(
+export function pivotMonthlyCounts(
+  rows: AdmissionsAndReleasesMonthlyCountRecord[],
+): AdmissionsAndReleasesTimeSeriesRecord[] {
+  const recordsByMonth = new Map<
+    string,
+    AdmissionsAndReleasesTimeSeriesRecord
+  >();
+
+  rows.forEach(({ movementDate, eventType, count }) => {
+    // Split the ISO date rather than parse it, so the month never shifts with
+    // the reader's time zone.
+    const [year, month] = movementDate.split("-").map(Number);
+    const key = monthKey(year, month);
+    const record = recordsByMonth.get(key) ?? {
+      year,
+      month,
+      admissionsCount: 0,
+      releasesCount: 0,
+    };
+
+    if (eventType === RECORD_EVENT_TYPES.ADMISSION) {
+      record.admissionsCount += count;
+    } else if (eventType === RECORD_EVENT_TYPES.RELEASE) {
+      record.releasesCount += count;
+    } else {
+      throw new Error(
+        `Unexpected eventType "${eventType}" on an admissions and releases row for ${movementDate}.`,
+      );
+    }
+    recordsByMonth.set(key, record);
+  });
+
+  return [...recordsByMonth.values()];
+}
+
+/**
+ * Returns one record per month across the range the data covers, so that a
+ * month the backend reports nothing for is drawn as zero rather than joining
+ * the months either side of it into one straight line.
+ */
+export function fillMissingMonths(
   records: AdmissionsAndReleasesTimeSeriesRecord[],
 ): AdmissionsAndReleasesTimeSeriesRecord[] {
   if (!records.length) return [];
 
-  const recordsByYear = new Map(records.map((record) => [record.year, record]));
-  const years = records.map((record) => record.year);
+  const recordsByMonth = new Map(
+    records.map((record) => [monthKey(record.year, record.month), record]),
+  );
+  const dates = records.map(
+    (record) => new Date(record.year, record.month - 1, 1),
+  );
 
-  return eachYearOfInterval({
-    start: new Date(Math.min(...years), 0, 1),
-    end: new Date(Math.max(...years), 0, 1),
+  return eachMonthOfInterval({
+    start: new Date(Math.min(...dates.map(Number))),
+    end: new Date(Math.max(...dates.map(Number))),
   }).map((date) => {
     const year = date.getFullYear();
+    const month = date.getMonth() + 1;
     return (
-      recordsByYear.get(year) ?? {
+      recordsByMonth.get(monthKey(year, month)) ?? {
         year,
-        month: 1,
+        month,
         admissionsCount: 0,
         releasesCount: 0,
       }

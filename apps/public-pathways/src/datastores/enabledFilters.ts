@@ -29,7 +29,6 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   admissionsAndReleasesOverTime: {
     enabledFilters: [
       FILTER_TYPES.CUSTODY_STATUS,
-      FILTER_TYPES.CALENDAR_YEAR,
       FILTER_TYPES.ADMISSION_TYPE,
       FILTER_TYPES.RELEASE_TYPE,
       FILTER_TYPES.COMMUNITY_SUPERVISION,
@@ -38,7 +37,6 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   admissionsAndReleasesByCustodyStatus: {
     enabledFilters: [
       FILTER_TYPES.CUSTODY_STATUS,
-      FILTER_TYPES.CALENDAR_YEAR,
       FILTER_TYPES.ADMISSION_TYPE,
       FILTER_TYPES.RELEASE_TYPE,
       FILTER_TYPES.COMMUNITY_SUPERVISION,
@@ -47,7 +45,6 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   admissionsByType: {
     enabledFilters: [
       FILTER_TYPES.CUSTODY_STATUS,
-      FILTER_TYPES.CALENDAR_YEAR,
       FILTER_TYPES.ADMISSION_TYPE,
       FILTER_TYPES.RELEASE_TYPE,
       FILTER_TYPES.COMMUNITY_SUPERVISION,
@@ -56,7 +53,6 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   releasesByType: {
     enabledFilters: [
       FILTER_TYPES.CUSTODY_STATUS,
-      FILTER_TYPES.CALENDAR_YEAR,
       FILTER_TYPES.ADMISSION_TYPE,
       FILTER_TYPES.RELEASE_TYPE,
       FILTER_TYPES.COMMUNITY_SUPERVISION,
@@ -65,7 +61,6 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   releasesByCommunitySupervision: {
     enabledFilters: [
       FILTER_TYPES.CUSTODY_STATUS,
-      FILTER_TYPES.CALENDAR_YEAR,
       FILTER_TYPES.ADMISSION_TYPE,
       FILTER_TYPES.RELEASE_TYPE,
       FILTER_TYPES.COMMUNITY_SUPERVISION,

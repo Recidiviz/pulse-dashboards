@@ -30,10 +30,13 @@ import { castToError, HydrationState } from "~hydration-utils";
 
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import {
+  dimensionLabelMapToAccessors,
+  DimensionLabelMetadataKey,
   dynamicFilterOptionMapToFilterType,
   DynamicFilterOptionMetadata,
   DynamicFilterOptionMetadataKey,
   DynamicFilterOptions,
+  FilterOption,
   Filters,
   HydratablePathwaysMetric,
   MetricContent,
@@ -106,6 +109,13 @@ export default abstract class PathwaysNewBackendMetric<
 
   dynamicFilterOptions: Partial<DynamicFilterOptions>;
 
+  /**
+   * Labels for the values of a record field that no filter covers, keyed by
+   * field and then by value, e.g. admissionType → court_commitment → "Court
+   * Commitment". Read from the same metadata as the filter options.
+   */
+  dimensionValueLabels: Partial<Record<string, Record<string, string>>>;
+
   protected abortController?: AbortController;
 
   private readonly fetchMetrics: MetricsFetcher<RecordFormat>;
@@ -139,6 +149,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.accessorIsNotFilterType = accessorIsNotFilterType;
     this.multiSelectFilters = multiSelectFilters;
     this.dynamicFilterOptions = {};
+    this.dimensionValueLabels = {};
 
     makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -269,20 +280,41 @@ export default abstract class PathwaysNewBackendMetric<
   private parseDynamicFilterOptions(
     options: Partial<DynamicFilterOptionMetadata>,
   ): void {
-    (
-      Object.entries(options) as [DynamicFilterOptionMetadataKey, string][]
-    ).forEach(([nameMapKey, optionValues]) => {
-      const filterType = dynamicFilterOptionMapToFilterType[nameMapKey];
+    (Object.entries(options) as [string, string][]).forEach(
+      ([nameMapKey, optionValues]) => {
+        if (!optionValues) return;
 
-      if (!filterType || !optionValues) return;
+        const labelledAccessors =
+          dimensionLabelMapToAccessors[nameMapKey as DimensionLabelMetadataKey];
+        if (labelledAccessors) {
+          const labelOptions: FilterOption[] = JSON.parse(optionValues);
+          if (!validateDynamicFilterOptions(labelOptions))
+            throw new Error(
+              `Invalid dimension labels for ${this.id}: ${nameMapKey}`,
+            );
+          const labelsByValue = Object.fromEntries(
+            labelOptions.map(({ value, label }) => [value, label]),
+          );
+          labelledAccessors.forEach((accessor) => {
+            this.dimensionValueLabels[accessor] = labelsByValue;
+          });
+          return;
+        }
 
-      const filterOptions = JSON.parse(optionValues);
-      if (!validateDynamicFilterOptions(filterOptions))
-        throw new Error(
-          `Invalid dynamic filter option for ${this.id}: ${filterType}`,
-        );
-      this.dynamicFilterOptions[filterType] = filterOptions;
-    });
+        const filterType =
+          dynamicFilterOptionMapToFilterType[
+            nameMapKey as DynamicFilterOptionMetadataKey
+          ];
+        if (!filterType) return;
+
+        const filterOptions = JSON.parse(optionValues);
+        if (!validateDynamicFilterOptions(filterOptions))
+          throw new Error(
+            `Invalid dynamic filter option for ${this.id}: ${filterType}`,
+          );
+        this.dynamicFilterOptions[filterType] = filterOptions;
+      },
+    );
   }
 
   protected async fetchNewMetrics(

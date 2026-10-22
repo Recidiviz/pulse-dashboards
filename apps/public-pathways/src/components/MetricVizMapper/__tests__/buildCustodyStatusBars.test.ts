@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SnapshotDataRecord } from "~shared-pathways";
+import { RECORD_EVENT_TYPES, SnapshotDataRecord } from "~shared-pathways";
 
 import {
   ADMISSIONS_COLOR,
@@ -31,14 +31,22 @@ const record = (
 ): SnapshotDataRecord =>
   ({ eventType, custodyStatus, count }) as unknown as SnapshotDataRecord;
 
-const individuals = "Incarcerated Individual";
-const parolees = "Incarcerated Parolee";
+const { ADMISSION, RELEASE } = RECORD_EVENT_TYPES;
+
+const individuals = "incarcerated_individual";
+const parolees = "incarcerated_parolee";
+
+const STATUS_LABELS: Record<string, string> = {
+  [individuals]: "Incarcerated Individual",
+  [parolees]: "Incarcerated Parolee",
+};
+const labelForStatus = (status: string) => STATUS_LABELS[status] ?? status;
 
 const allRecords = [
-  record(EVENT_TYPES.RELEASES, parolees, 30),
-  record(EVENT_TYPES.ADMISSIONS, individuals, 100),
-  record(EVENT_TYPES.RELEASES, individuals, 120),
-  record(EVENT_TYPES.ADMISSIONS, parolees, 20),
+  record(RELEASE, parolees, 30),
+  record(ADMISSION, individuals, 100),
+  record(RELEASE, individuals, 120),
+  record(ADMISSION, parolees, 20),
 ];
 
 const labelsOf = (bars: ReturnType<typeof buildCustodyStatusBars>) =>
@@ -46,22 +54,30 @@ const labelsOf = (bars: ReturnType<typeof buildCustodyStatusBars>) =>
 
 describe("buildCustodyStatusBars", () => {
   it("returns no bars for no records", () => {
-    expect(buildCustodyStatusBars([], EVENT_TYPES.ALL)).toEqual([]);
+    expect(buildCustodyStatusBars([], EVENT_TYPES.ALL, labelForStatus)).toEqual(
+      [],
+    );
   });
 
   it("draws both event types per status, admissions first", () => {
     expect(
-      labelsOf(buildCustodyStatusBars(allRecords, EVENT_TYPES.ALL)),
+      labelsOf(
+        buildCustodyStatusBars(allRecords, EVENT_TYPES.ALL, labelForStatus),
+      ),
     ).toEqual([
-      `${individuals} — Admissions`,
-      `${individuals} — Releases`,
-      `${parolees} — Admissions`,
-      `${parolees} — Releases`,
+      "Incarcerated Individual — Admissions",
+      "Incarcerated Individual — Releases",
+      "Incarcerated Parolee — Admissions",
+      "Incarcerated Parolee — Releases",
     ]);
   });
 
   it("colors each bar by the event type it counts", () => {
-    const bars = buildCustodyStatusBars(allRecords, EVENT_TYPES.ALL);
+    const bars = buildCustodyStatusBars(
+      allRecords,
+      EVENT_TYPES.ALL,
+      labelForStatus,
+    );
 
     expect(bars.map((bar) => bar.point.barColor)).toEqual([
       ADMISSIONS_COLOR,
@@ -74,12 +90,13 @@ describe("buildCustodyStatusBars", () => {
   it("orders statuses by total count, largest first", () => {
     const bars = buildCustodyStatusBars(
       [
-        record(EVENT_TYPES.ADMISSIONS, individuals, 5),
-        record(EVENT_TYPES.RELEASES, individuals, 5),
-        record(EVENT_TYPES.ADMISSIONS, parolees, 40),
-        record(EVENT_TYPES.RELEASES, parolees, 40),
+        record(ADMISSION, individuals, 5),
+        record(RELEASE, individuals, 5),
+        record(ADMISSION, parolees, 40),
+        record(RELEASE, parolees, 40),
       ],
       EVENT_TYPES.ALL,
+      labelForStatus,
     );
 
     expect(bars.map((bar) => bar.point.accessorValue)).toEqual([
@@ -92,12 +109,22 @@ describe("buildCustodyStatusBars", () => {
 
   it("drops the event type from the label for a single event type", () => {
     expect(
-      labelsOf(buildCustodyStatusBars(allRecords, EVENT_TYPES.RELEASES)),
-    ).toEqual([individuals, parolees]);
+      labelsOf(
+        buildCustodyStatusBars(
+          allRecords,
+          EVENT_TYPES.RELEASES,
+          labelForStatus,
+        ),
+      ),
+    ).toEqual(["Incarcerated Individual", "Incarcerated Parolee"]);
   });
 
   it("counts only the event type in view", () => {
-    const bars = buildCustodyStatusBars(allRecords, EVENT_TYPES.ADMISSIONS);
+    const bars = buildCustodyStatusBars(
+      allRecords,
+      EVENT_TYPES.ADMISSIONS,
+      labelForStatus,
+    );
 
     expect(bars.map((bar) => bar.point.value)).toEqual(["100", "20"]);
     expect(bars.every((bar) => bar.point.barColor === ADMISSIONS_COLOR)).toBe(
@@ -106,7 +133,11 @@ describe("buildCustodyStatusBars", () => {
   });
 
   it("numbers the bars so each one indexes its own record", () => {
-    const bars = buildCustodyStatusBars(allRecords, EVENT_TYPES.ALL);
+    const bars = buildCustodyStatusBars(
+      allRecords,
+      EVENT_TYPES.ALL,
+      labelForStatus,
+    );
 
     bars.forEach((bar, index) => {
       expect(bar.point.index).toBe(index);
@@ -114,13 +145,24 @@ describe("buildCustodyStatusBars", () => {
     });
   });
 
+  it("matches records by the API's event type, not the selector's", () => {
+    const bars = buildCustodyStatusBars(
+      [record(EVENT_TYPES.ADMISSIONS, individuals, 100)],
+      EVENT_TYPES.ADMISSIONS,
+      labelForStatus,
+    );
+
+    expect(bars).toEqual([]);
+  });
+
   it("leaves out a record with no custody status", () => {
     const bars = buildCustodyStatusBars(
       [
-        record(EVENT_TYPES.ADMISSIONS, individuals, 100),
-        { eventType: EVENT_TYPES.ADMISSIONS, count: 5 } as SnapshotDataRecord,
+        record(ADMISSION, individuals, 100),
+        { eventType: ADMISSION, count: 5 } as SnapshotDataRecord,
       ],
       EVENT_TYPES.ADMISSIONS,
+      labelForStatus,
     );
 
     expect(bars).toHaveLength(1);

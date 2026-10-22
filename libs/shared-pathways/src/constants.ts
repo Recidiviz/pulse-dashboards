@@ -98,3 +98,9 @@ export const filtersOrder = [
   FILTER_TYPES.RELEASE_TYPE,
   FILTER_TYPES.COMMUNITY_SUPERVISION,
 ];
+
+/** The `eventType` values the Admissions & Releases endpoints send. */
+export const RECORD_EVENT_TYPES = {
+  ADMISSION: "admission",
+  RELEASE: "release",
+} as const;

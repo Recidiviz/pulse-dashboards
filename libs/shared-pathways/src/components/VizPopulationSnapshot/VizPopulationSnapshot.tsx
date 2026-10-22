@@ -123,14 +123,20 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       const accessorValue = String(
         (d as Record<string, unknown>)[accessor as string] ?? "",
       );
+      // A dimension no filter covers can still have labels in the metadata.
+      // A value without one shows as itself, so a gap stays visible.
+      const metadataLabel = isNotFilter
+        ? metric.dimensionValueLabels[accessor as string]?.[accessorValue]
+        : undefined;
       const filterLabel = isNotFilter
-        ? accessorValue
+        ? metadataLabel ?? accessorValue
         : getFilterLabel(
             accessor as keyof PopulationFilterLabels,
             accessorValue,
           ) ?? accessorValue;
       const filterLongLabel = isNotFilter
-        ? getDimensionLabel(accessor as Dimension, accessorValue)
+        ? metadataLabel ??
+          getDimensionLabel(accessor as Dimension, accessorValue)
         : getFilterLongLabel(
             accessor as keyof PopulationFilterLabels,
             accessorValue,

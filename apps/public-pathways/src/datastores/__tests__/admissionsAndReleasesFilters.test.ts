@@ -24,10 +24,62 @@ import {
   PATHWAYS_SECTIONS,
 } from "~shared-pathways";
 
+import { callPublicPathwaysApi } from "../../api/metricsClient";
 import { disabledFiltersForEventType, EVENT_TYPES } from "../eventTypes";
 import FiltersStore from "../FiltersStore";
 import MetricsStore from "../MetricsStore";
 import type { RootStore } from "../RootStore";
+
+vi.mock("../../api/metricsClient", () => ({
+  callPublicPathwaysApi: vi.fn(),
+  fetchPublicPathwaysFile: vi.fn(),
+}));
+
+/**
+ * The metadata as the export writes it: keyed by the export's own column
+ * names, with each value a JSON string inside a JSON string.
+ */
+const API_METADATA = {
+  lastUpdated: "2026-09-30",
+  dynamicFilterOptions: JSON.stringify({
+    custody_type_id_name_map: JSON.stringify([
+      { value: "incarcerated_individual", label: "Incarcerated Individual" },
+      { value: "incarcerated_parolee", label: "Incarcerated Parolee" },
+    ]),
+    release_to_community_supervision_indicator_id_name_map: JSON.stringify([
+      {
+        value: "released_to_community_supervision",
+        label: "Released to Community Supervision",
+      },
+    ]),
+    movement_type_id_name_map: JSON.stringify([
+      { value: "court_commitment", label: "Court Commitment" },
+      { value: "conditional_release", label: "Conditional Release" },
+    ]),
+  }),
+};
+
+const BY_DIMENSION_ROWS = [
+  {
+    eventType: "admission",
+    custodyStatus: "incarcerated_individual",
+    count: 3,
+  },
+  { eventType: "release", custodyStatus: "incarcerated_parolee", count: 1 },
+];
+
+const MONTHLY_ROWS = [
+  { movementDate: "2024-01-01", eventType: "admission", count: 5 },
+  { movementDate: "2024-01-01", eventType: "release", count: 7 },
+  { movementDate: "2024-03-01", eventType: "release", count: 2 },
+];
+
+const requestedParams = () =>
+  vi
+    .mocked(callPublicPathwaysApi)
+    .mock.calls.map(
+      ([endpoint]) => new URLSearchParams(endpoint.split("?")[1]),
+    );
 
 const mockRootStore = {
   currentTenantId: "US_NY",
@@ -38,34 +90,49 @@ const mockRootStore = {
 mockRootStore.filtersStore = new FiltersStore({ rootStore: mockRootStore });
 
 /**
- * These cover the whole path from the stub's metadata to the options a reader
- * sees. The metadata is double-encoded and keyed by `<dimension>_id_name_map`,
- * and a key the metric cannot map is skipped in silence — so a stub that emits
- * the wrong shape yields an empty filter panel with no error anywhere.
+ * These cover the whole path from the API's metadata to the options a reader
+ * sees. A metadata key the metric cannot map is skipped in silence, so a key
+ * name that drifts yields an empty filter panel with no error anywhere.
  */
 describe("Admissions & Releases filters", () => {
   let metricsStore: MetricsStore;
 
   beforeEach(() => {
+    // restoreMocks wipes the implementation before every test, so set it here.
+    vi.mocked(callPublicPathwaysApi).mockImplementation(async (endpoint) => ({
+      data: endpoint.includes("/AdmissionsAndReleasesOverTime?")
+        ? MONTHLY_ROWS
+        : BY_DIMENSION_ROWS,
+      metadata: API_METADATA,
+    }));
     mockRootStore.filtersStore.resetFilters();
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
     mockRootStore.metricsStore = metricsStore;
   });
 
-  it("turns the stub's metadata into options keyed by filter type", async () => {
+  it("turns the export's metadata keys into options keyed by filter type", async () => {
     const metric = metricsStore.current;
     metric.hydrate();
     await when(() => isHydrated(metric));
 
     expect(Object.keys(metric.dynamicFilterOptions).sort()).toEqual(
-      [
-        FILTER_TYPES.ADMISSION_TYPE,
-        FILTER_TYPES.CALENDAR_YEAR,
-        FILTER_TYPES.COMMUNITY_SUPERVISION,
-        FILTER_TYPES.CUSTODY_STATUS,
-        FILTER_TYPES.RELEASE_TYPE,
-      ].sort(),
+      [FILTER_TYPES.COMMUNITY_SUPERVISION, FILTER_TYPES.CUSTODY_STATUS].sort(),
     );
+  });
+
+  it("labels admission and release types from the export's movement type map", async () => {
+    const metric = metricsStore.admissionsByType;
+    metric.hydrate();
+    await when(() => isHydrated(metric));
+
+    const labels = {
+      court_commitment: "Court Commitment",
+      conditional_release: "Conditional Release",
+    };
+    expect(metric.dimensionValueLabels).toEqual({
+      admissionType: labels,
+      releaseType: labels,
+    });
   });
 
   it("offers the reader every custody status the charts draw, plus All", async () => {
@@ -81,6 +148,11 @@ describe("Admissions & Releases filters", () => {
 
     expect(options.map((o) => o.value)).toEqual([
       "ALL",
+      "incarcerated_individual",
+      "incarcerated_parolee",
+    ]);
+    expect(options.map((o) => o.label)).toEqual([
+      "All",
       "Incarcerated Individual",
       "Incarcerated Parolee",
     ]);
@@ -91,7 +163,6 @@ describe("Admissions & Releases filters", () => {
       expect([...metric.filters.enabledFilters].sort()).toEqual(
         [
           FILTER_TYPES.CUSTODY_STATUS,
-          FILTER_TYPES.CALENDAR_YEAR,
           FILTER_TYPES.ADMISSION_TYPE,
           FILTER_TYPES.RELEASE_TYPE,
           FILTER_TYPES.COMMUNITY_SUPERVISION,
@@ -113,12 +184,17 @@ describe("Admissions & Releases filters", () => {
     });
   });
 
-  it("lets only the over-time chart take more than one calendar year", () => {
-    const overTime = metricsStore.admissionsAndReleasesOverTime;
-    const snapshot = metricsStore.admissionsAndReleasesByCustodyStatus;
+  it("asks for monthly rows and draws both event counts on each month", async () => {
+    const metric = metricsStore.admissionsAndReleasesOverTime;
+    metric.hydrate();
+    await when(() => isHydrated(metric));
 
-    expect(overTime.multiSelectFilters).toContain(FILTER_TYPES.CALENDAR_YEAR);
-    expect(snapshot.multiSelectFilters).toEqual([]);
+    expect(requestedParams()[0].get("group")).toBe("movement_date_event_type");
+    expect(metric.dataSeries).toEqual([
+      { year: 2024, month: 1, admissionsCount: 5, releasesCount: 7 },
+      { year: 2024, month: 2, admissionsCount: 0, releasesCount: 0 },
+      { year: 2024, month: 3, admissionsCount: 0, releasesCount: 2 },
+    ]);
   });
 
   describe("clearing every option of a filter", () => {

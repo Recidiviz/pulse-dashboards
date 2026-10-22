@@ -20,9 +20,11 @@ import React from "react";
 
 import {
   ChartLegendItem,
+  FILTER_TYPES,
   FiltersStoreBase,
   NoDataViz,
   PopulationSnapshotChart,
+  RECORD_EVENT_TYPES,
   SnapshotDataPoint,
   SnapshotDataRecord,
   SnapshotMetric,
@@ -61,6 +63,12 @@ const BAR_EVENT_TYPE_COLORS: Record<BarEventType, string> = {
   [EVENT_TYPES.RELEASES]: RELEASES_COLOR,
 };
 
+/** The `eventType` a record carries for each bar's event type. */
+const BAR_RECORD_EVENT_TYPES: Record<BarEventType, string> = {
+  [EVENT_TYPES.ADMISSIONS]: RECORD_EVENT_TYPES.ADMISSION,
+  [EVENT_TYPES.RELEASES]: RECORD_EVENT_TYPES.RELEASE,
+};
+
 /** One bar, and the record it counts. The two share an index. */
 type CustodyStatusBar = {
   record: SnapshotDataRecord;
@@ -77,13 +85,19 @@ type CustodyStatusBar = {
  *
  * The statuses are ordered by total count, largest first, so the order does
  * not depend on the order the records arrive in.
+ *
+ * @param labelForStatus Returns the reader-facing name for a custody status
+ * code, e.g. "Incarcerated Individual" for "incarcerated_individual".
  */
 export function buildCustodyStatusBars(
   records: SnapshotDataRecord[],
   eventType: EventType,
+  labelForStatus: (status: string) => string,
 ): CustodyStatusBar[] {
   const barEventTypes = BAR_EVENT_TYPES[eventType];
-  const eventTypesInView = new Set<string>(barEventTypes);
+  const eventTypesInView = new Set<string>(
+    barEventTypes.map((barEventType) => BAR_RECORD_EVENT_TYPES[barEventType]),
+  );
   const namesEventType = barEventTypes.length > 1;
 
   const rows = records.filter(
@@ -106,13 +120,16 @@ export function buildCustodyStatusBars(
   statuses.forEach((status) => {
     barEventTypes.forEach((barEventType) => {
       const record = rows.find(
-        (row) => row.custodyStatus === status && row.eventType === barEventType,
+        (row) =>
+          row.custodyStatus === status &&
+          row.eventType === BAR_RECORD_EVENT_TYPES[barEventType],
       );
       if (!record) return;
 
+      const statusLabel = labelForStatus(status);
       const label = namesEventType
-        ? `${status} — ${BAR_EVENT_TYPE_LABELS[barEventType]}`
-        : status;
+        ? `${statusLabel} — ${BAR_EVENT_TYPE_LABELS[barEventType]}`
+        : statusLabel;
 
       bars.push({
         record,
@@ -139,7 +156,13 @@ type Props = {
 const VizCustodyStatusSnapshot: React.FC<Props> = observer(
   function VizCustodyStatusSnapshot({ metric, filtersStore }) {
     const { eventType } = useRootStore();
-    const bars = buildCustodyStatusBars(metric.dataSeries, eventType);
+    const bars = buildCustodyStatusBars(
+      metric.dataSeries,
+      eventType,
+      (status) =>
+        filtersStore.getFilterLabel(FILTER_TYPES.CUSTODY_STATUS, status) ||
+        status,
+    );
     const chartTitle = chartTitleForEventType(metric.content, eventType);
     const legendItems: ChartLegendItem[] = BAR_EVENT_TYPES[eventType].map(
       (barEventType) => ({

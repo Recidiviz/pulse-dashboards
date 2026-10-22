@@ -364,7 +364,6 @@ export default class MetricsStore implements PathwaysMetricStore {
       endpoint: "AdmissionsAndReleasesOverTime",
       store: this,
       fetchMetrics: this.fetchMetrics,
-      multiSelectFilters: [FILTER_TYPES.CALENDAR_YEAR],
     });
   }
 

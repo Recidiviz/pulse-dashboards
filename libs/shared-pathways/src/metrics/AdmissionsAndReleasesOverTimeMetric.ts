@@ -19,34 +19,60 @@ import { format } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import {
+  AdmissionsAndReleasesMonthlyCountRecord,
   AdmissionsAndReleasesTimeSeriesRecord,
   DownloadableData,
   DownloadableDataset,
 } from "../types";
 import { getRecordDate } from "../utils";
-import { fillMissingYears } from "./admissionsAndReleasesTimeSeries";
+import {
+  fillMissingMonths,
+  pivotMonthlyCounts,
+} from "./admissionsAndReleasesTimeSeries";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
-import { SharedMetricConstructorOptions } from "./types";
+import { MetricsFetcher, SharedMetricConstructorOptions } from "./types";
+
+/** The composite dimension that returns one row per month per event type. */
+const MONTHLY_COUNT_GROUP = "movement_date_event_type";
+
+type ConstructorOptions = Omit<
+  SharedMetricConstructorOptions<AdmissionsAndReleasesTimeSeriesRecord>,
+  "fetchMetrics"
+> & {
+  fetchMetrics: MetricsFetcher<AdmissionsAndReleasesMonthlyCountRecord>;
+};
 
 /**
- * Admissions and releases counted per calendar year, as two counts on each
- * record. Keeping both counts together lets one chart draw them as two lines,
- * and keeps one row per year, which the yearly gap filling below relies on.
+ * Admissions and releases counted per month, as two counts on each record, so
+ * one chart can draw them as two lines.
+ *
+ * The API returns one row per month per event type. This metric pivots those
+ * rows as they arrive, so nothing past the fetch sees the API's shape.
  */
 export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBackendMetric<AdmissionsAndReleasesTimeSeriesRecord> {
   override readonly isOverTime = true;
 
-  constructor(
-    props: SharedMetricConstructorOptions<AdmissionsAndReleasesTimeSeriesRecord>,
-  ) {
-    super(props);
+  constructor({ fetchMetrics, ...props }: ConstructorOptions) {
+    super({
+      ...props,
+      fetchMetrics: async (endpoint, params, signal) => {
+        const response = await fetchMetrics(endpoint, params, signal);
+        return { ...response, data: pivotMonthlyCounts(response.data) };
+      },
+    });
 
     makeObservable<AdmissionsAndReleasesOverTimeMetric>(this, {
       dataSeries: computed,
       downloadableData: computed,
     });
 
-    this.dataTransformer = fillMissingYears;
+    this.dataTransformer = fillMissingMonths;
+  }
+
+  override getQueryParams(): URLSearchParams {
+    const queryParams = super.getQueryParams();
+    queryParams.append("group", MONTHLY_COUNT_GROUP);
+    return queryParams;
   }
 
   get dataSeries(): AdmissionsAndReleasesTimeSeriesRecord[] {
@@ -72,7 +98,7 @@ export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBack
         Admissions: Math.round(record.admissionsCount),
         Releases: Math.round(record.releasesCount),
       });
-      labels.push(format(getRecordDate(record), "yyyy"));
+      labels.push(format(getRecordDate(record), "MMM yyyy"));
     });
 
     const datasets: DownloadableDataset[] = [{ data, label: "" }];
@@ -81,7 +107,7 @@ export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBack
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: "Calendar year",
+      dataExportLabel: "Month",
     };
   }
 }

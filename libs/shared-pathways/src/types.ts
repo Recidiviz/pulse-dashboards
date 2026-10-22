@@ -165,8 +165,8 @@ export type TimeSeriesDataRecord = {
 };
 
 /**
- * One calendar period with both event counts on it, so a chart can draw
- * admissions and releases as two lines without pairing rows up itself.
+ * One month with both event counts on it, so a chart can draw admissions and
+ * releases as two lines without pairing rows up itself.
  */
 export type AdmissionsAndReleasesTimeSeriesRecord = {
   year: number;
@@ -176,9 +176,22 @@ export type AdmissionsAndReleasesTimeSeriesRecord = {
 };
 
 /**
+ * One row from `AdmissionsAndReleasesOverTime`: the count of one event type in
+ * one month. `movementDate` is always the 1st, because the source records a
+ * month and no day.
+ *
+ * @example { movementDate: "2024-02-01", eventType: "release", count: 412 }
+ */
+export type AdmissionsAndReleasesMonthlyCountRecord = {
+  movementDate: string;
+  eventType: string;
+  count: number;
+};
+
+/**
  * One row from `AdmissionsAndReleasesByDimensionCount`: the count of one
- * event type, for one calendar year, broken down by one value of whichever
- * dimension the `group` query param asked for.
+ * event type, broken down by one value of whichever dimension the `group`
+ * query param asked for.
  *
  * Only the field named by `group` is guaranteed to be set — e.g. a row for
  * `group=community_supervision` sets `communitySupervision` and leaves the
@@ -190,7 +203,6 @@ export type AdmissionsAndReleasesTimeSeriesRecord = {
 export type AdmissionsAndReleasesSnapshotRecord = {
   count: number;
   eventType: string;
-  calendarYear: number;
   custodyStatus: string;
   admissionType: string;
   releaseType: string;
@@ -217,6 +229,7 @@ export type MetricRecord =
   | LibertyPopulationSnapshotRecord
   | TimeSeriesDataRecord
   | AdmissionsAndReleasesTimeSeriesRecord
+  | AdmissionsAndReleasesMonthlyCountRecord
   | SnapshotDataRecord
   | PersonLevelDataRecord;
 

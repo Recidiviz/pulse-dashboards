@@ -80,11 +80,10 @@ export type DynamicFilterOptionMetadataKey =
   | "religion_id_name_map"
   | "marital_status_id_name_map"
   | "months_at_facility_id_name_map"
-  | "custody_status_id_name_map"
-  | "calendar_year_id_name_map"
+  | "custody_type_id_name_map"
   | "admission_type_id_name_map"
   | "release_type_id_name_map"
-  | "community_supervision_id_name_map";
+  | "release_to_community_supervision_indicator_id_name_map";
 export type DynamicFilterOptionKeyToFilterTypeMap = {
   [key in DynamicFilterOptionMetadataKey]: FilterType;
 };
@@ -104,12 +103,27 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
     religion_id_name_map: "religion",
     marital_status_id_name_map: "maritalStatus",
     months_at_facility_id_name_map: "monthsAtFacility",
-    custody_status_id_name_map: "custodyStatus",
-    calendar_year_id_name_map: "calendarYear",
+    custody_type_id_name_map: "custodyStatus",
     admission_type_id_name_map: "admissionType",
     release_type_id_name_map: "releaseType",
-    community_supervision_id_name_map: "communitySupervision",
+    release_to_community_supervision_indicator_id_name_map:
+      "communitySupervision",
   };
+
+/** Metadata keys that label a chart dimension's values without feeding a filter. */
+export type DimensionLabelMetadataKey = "movement_type_id_name_map";
+
+/**
+ * The record fields each label-only metadata key labels. The Admissions &
+ * Releases export keeps admission and release types in one movement_type
+ * column, so its one map labels both.
+ */
+export const dimensionLabelMapToAccessors: Record<
+  DimensionLabelMetadataKey,
+  readonly string[]
+> = {
+  movement_type_id_name_map: ["admissionType", "releaseType"],
+};
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;
 

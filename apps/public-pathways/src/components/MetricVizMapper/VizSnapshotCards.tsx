@@ -23,6 +23,7 @@ import styled from "styled-components";
 import { spacing } from "~design-system";
 import {
   FiltersStoreBase,
+  PopulationFilters,
   SnapshotDataRecord,
   SnapshotMetric,
   VizPopulationSnapshot,
@@ -110,7 +111,12 @@ const VizSnapshotCards: React.FC<Props> = observer(function VizSnapshotCards({
             metric={metric}
             filtersStore={filtersStore}
             records={records}
-            title={`${metric.chartTitle} — ${value}`}
+            title={`${metric.chartTitle} — ${
+              filtersStore.getFilterLabel(
+                splitDimension as keyof PopulationFilters,
+                value,
+              ) || value
+            }`}
             barColor={barColor}
           />
         </MetricVizCard>

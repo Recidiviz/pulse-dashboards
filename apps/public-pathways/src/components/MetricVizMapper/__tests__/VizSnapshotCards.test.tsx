@@ -25,11 +25,16 @@ import {
 
 import VizSnapshotCards from "../VizSnapshotCards";
 
+const renderedTitles: string[] = [];
+
 vi.mock("~shared-pathways", async () => {
   const actual = await vi.importActual("~shared-pathways");
   return {
     ...actual,
-    VizPopulationSnapshot: () => null,
+    VizPopulationSnapshot: ({ title }: { title: string }) => {
+      renderedTitles.push(title);
+      return null;
+    },
   };
 });
 
@@ -44,24 +49,55 @@ function buildMetric(dataSeries: SnapshotDataRecord[]): SnapshotMetric {
   } as unknown as SnapshotMetric;
 }
 
-const filtersStore = {} as unknown as FiltersStoreBase;
+const STATUS_LABELS: Record<string, string> = {
+  incarcerated_individual: "Incarcerated Individual",
+};
+
+const filtersStore = {
+  getFilterLabel: (_filterType: string, value: string) =>
+    STATUS_LABELS[value] ?? "",
+} as unknown as FiltersStoreBase;
 
 describe("VizSnapshotCards", () => {
+  beforeEach(() => {
+    renderedTitles.length = 0;
+  });
+
   it("renders one card per value of the split dimension", () => {
     const metric = buildMetric([
-      record("Incarcerated Individual", 10),
-      record("Incarcerated Parolee", 5),
+      record("incarcerated_individual", 10),
+      record("incarcerated_parolee", 5),
     ]);
 
-    expect(() =>
-      render(
-        <VizSnapshotCards
-          metric={metric}
-          filtersStore={filtersStore}
-          splitDimension="custodyStatus"
-        />,
-      ),
-    ).not.toThrow();
+    render(
+      <VizSnapshotCards
+        metric={metric}
+        filtersStore={filtersStore}
+        splitDimension="custodyStatus"
+      />,
+    );
+
+    expect(renderedTitles).toHaveLength(2);
+  });
+
+  it("titles each card with the value's label, or the value when it has none", () => {
+    const metric = buildMetric([
+      record("incarcerated_individual", 10),
+      record("incarcerated_parolee", 5),
+    ]);
+
+    render(
+      <VizSnapshotCards
+        metric={metric}
+        filtersStore={filtersStore}
+        splitDimension="custodyStatus"
+      />,
+    );
+
+    expect(renderedTitles).toEqual([
+      "Test Chart — Incarcerated Individual",
+      "Test Chart — incarcerated_parolee",
+    ]);
   });
 
   it("renders nothing for no records, without throwing", () => {
