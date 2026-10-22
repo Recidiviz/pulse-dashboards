@@ -148,6 +148,7 @@ const OVERRIDES_WITHOUT_FIXTURES = [
   // list that decides this.
   "UsMoOverdueRestrictiveHousingOpportunityBase",
   "UsIaSupervisionLevelDowngradeOpportunity",
+  "UsTxRemovalFromElectronicMonitoringOpportunity",
 ];
 
 function personStub() {

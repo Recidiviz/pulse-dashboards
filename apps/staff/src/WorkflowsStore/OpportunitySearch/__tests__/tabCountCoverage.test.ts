@@ -51,6 +51,7 @@ const UNCHECKABLE = [
   "usAzTransferToAdministrativeSupervision",
   "usAzTransferToAdministrativeSupervisionV2",
   "usIaCompleteSupervisionLevelDowngrade",
+  "usTxRemovalFromElectronicMonitoring",
 ];
 
 /** The class that actually owns `tabTitle`, anywhere up the chain. */

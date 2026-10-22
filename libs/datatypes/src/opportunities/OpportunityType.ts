@@ -113,6 +113,7 @@ export const constructedOpportunityTypes = [
   "usTxEarlyReleaseFromSupervision",
   "usTxAnnualReportStatusV2",
   "usTxEarlyReleaseFromSupervisionV2",
+  "usTxRemovalFromElectronicMonitoring",
 
   // US_UT
   "usUtEarlyTermination",

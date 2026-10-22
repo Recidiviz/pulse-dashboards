@@ -104,6 +104,7 @@ import { UsTxAnnualReportStatusOpportunity } from "./UsTx/UsTxAnnualReportStatus
 import { UsTxAnnualReportStatusV2Opportunity } from "./UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2Opportunity";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
 import { UsTxEarlyReleaseFromSupervisionV2Opportunity } from "./UsTx/UsTxEarlyReleaseFromSupervisionV2Opportunity/UsTxEarlyReleaseFromSupervisionV2Opportunity";
+import { UsTxRemovalFromElectronicMonitoringOpportunity } from "./UsTx/UsTxRemovalFromElectronicMonitoringOpportunity/UsTxRemovalFromElectronicMonitoringOpportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
 
 export const opportunityConstructors = {
@@ -223,6 +224,8 @@ export const opportunityConstructors = {
   usTxAnnualReportStatusV2: UsTxAnnualReportStatusV2Opportunity,
   usTxEarlyReleaseFromSupervisionV2:
     UsTxEarlyReleaseFromSupervisionV2Opportunity,
+  usTxRemovalFromElectronicMonitoring:
+    UsTxRemovalFromElectronicMonitoringOpportunity,
 
   // US_UT
   usUtEarlyTermination: UsUtEarlyTerminationOpportunity,
