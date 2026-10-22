@@ -19,6 +19,7 @@ import {
   CaseNoteInsightsSummary,
   EmploymentSummary,
   HousingSummary,
+  PaymentSummary,
 } from "../model/types";
 
 function isHousing(
@@ -33,11 +34,18 @@ function isEmployment(
   return summary.category === "employment";
 }
 
+function isPayments(
+  summary: CaseNoteInsightsSummary,
+): summary is PaymentSummary {
+  return summary.category === "payments";
+}
+
 export function getCategorizedSummaries(summaries?: CaseNoteInsightsSummary[]) {
   const housing = summaries?.find(isHousing);
   const employment = summaries?.find(isEmployment);
+  const payments = summaries?.find(isPayments);
 
-  if (!housing && !employment) return null;
+  if (!housing && !employment && !payments) return null;
 
-  return { housing, employment };
+  return { housing, employment, payments };
 }

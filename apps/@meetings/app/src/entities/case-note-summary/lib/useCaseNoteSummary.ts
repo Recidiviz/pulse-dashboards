@@ -48,5 +48,15 @@ export function useCaseNoteSummary({ person, isClient, showCNI }: Params) {
     return getCaseNoteSummarySegments({ ...categorized, person });
   }, [summaries, person, enabled]);
 
-  return { segments, summaries, enabled };
+  // Each category is imported separately, so a client's summaries can carry
+  // different timestamps. Report the oldest so the data never looks fresher than it is.
+  const lastUpdatedAt = useMemo(() => {
+    if (!summaries?.length) return undefined;
+    const importTimes = summaries.map(({ lastImportedAt }) =>
+      lastImportedAt.getTime(),
+    );
+    return new Date(Math.min(...importTimes));
+  }, [summaries]);
+
+  return { segments, summaries, enabled, lastUpdatedAt };
 }

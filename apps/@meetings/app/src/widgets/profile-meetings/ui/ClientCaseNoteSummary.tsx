@@ -19,10 +19,10 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import clsx from "clsx";
 import { useRef } from "react";
 import { View } from "react-native";
-import SparklesIcon from "react-native-heroicons/solid/SparklesIcon";
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
+  CaseNoteSummaryAiGeneratedLabel,
   CaseNoteSummaryCard,
   CaseNoteSummarySheet,
   CaseNoteSummaryWithTooltips,
@@ -56,7 +56,7 @@ export function ClientCaseNoteSummary({ person }: Props) {
     agencyConfigs[selectedStateCode].showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
 
-  const { segments, summaries, enabled } = useCaseNoteSummary({
+  const { segments, summaries, enabled, lastUpdatedAt } = useCaseNoteSummary({
     person,
     isClient,
     showCNI,
@@ -70,10 +70,12 @@ export function ClientCaseNoteSummary({ person }: Props) {
         <CaseNoteSummaryCard
           segments={segments}
           onPress={() => sheetRef.current?.present()}
+          lastUpdatedAt={lastUpdatedAt}
         />
         <CaseNoteSummarySheet
           ref={sheetRef}
           segments={segments}
+          lastUpdatedAt={lastUpdatedAt}
           footer={
             <CaseNoteSummaryFeedbackButtons
               person={person}
@@ -91,15 +93,7 @@ export function ClientCaseNoteSummary({ person }: Props) {
       <View className="gap-3 rounded-2xl border border-subtle bg-primary p-4">
         <View className="flex-row items-center justify-between">
           <Typography variant="body-m-medium">Client Context</Typography>
-          <View className="flex-row items-center gap-1">
-            <SparklesIcon className="size-4 text-brand" />
-            <Typography className="text-sm text-brand">AI generated</Typography>
-          </View>
-        </View>
-        <View className="flex-row justify-start gap-3">
-          <Typography variant="body-s-regular">
-            Generated from recent case notes
-          </Typography>
+          <CaseNoteSummaryAiGeneratedLabel lastUpdatedAt={lastUpdatedAt} />
         </View>
         <View className="flex-row gap-3">
           <View className="flex-1">

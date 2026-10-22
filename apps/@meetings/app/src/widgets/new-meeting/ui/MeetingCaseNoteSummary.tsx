@@ -45,7 +45,7 @@ export function MeetingCaseNoteSummary({ person }: Props) {
     agencyConfigs[selectedStateCode].showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
 
-  const { segments, enabled } = useCaseNoteSummary({
+  const { segments, enabled, lastUpdatedAt } = useCaseNoteSummary({
     person,
     isClient,
     showCNI,
@@ -70,8 +70,13 @@ export function MeetingCaseNoteSummary({ person }: Props) {
       <CaseNoteSummaryCard
         segments={segments}
         onPress={() => sheetRef.current?.present()}
+        lastUpdatedAt={lastUpdatedAt}
       />
-      <CaseNoteSummarySheet ref={sheetRef} segments={segments} />
+      <CaseNoteSummarySheet
+        ref={sheetRef}
+        segments={segments}
+        lastUpdatedAt={lastUpdatedAt}
+      />
     </>
   );
 }

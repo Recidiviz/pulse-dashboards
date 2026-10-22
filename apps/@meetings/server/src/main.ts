@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// Touching this file marks @meetings/server as nx-affected, so CI creates a
+// preview DB (m-db-preview-$VERSION) for this PR instead of leaving the
+// meetings preview import job pointed at the shared staging DB.
 import { buildServer } from "~@meetings/server/server";
 import { cleanupStaleLocalFiles } from "~@meetings/tasks";
 import { startServer } from "~server-setup-plugin";

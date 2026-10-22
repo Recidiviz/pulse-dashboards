@@ -21,6 +21,7 @@ export type {
   CaseNoteSummarySegment,
   CniCitation,
 } from "./model/types";
+export { CaseNoteSummaryAiGeneratedLabel } from "./ui/CaseNoteSummaryAiGeneratedLabel";
 export { CaseNoteSummaryCard } from "./ui/CaseNoteSummaryCard";
 export { CaseNoteSummaryPreview } from "./ui/CaseNoteSummaryPreview";
 export { CaseNoteSummarySelectable } from "./ui/CaseNoteSummarySelectable";

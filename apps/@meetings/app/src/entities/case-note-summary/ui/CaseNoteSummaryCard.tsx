@@ -16,30 +16,30 @@
 // =============================================================================
 
 import { View } from "react-native";
-import SparklesIcon from "react-native-heroicons/solid/SparklesIcon";
 
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { CaseNoteSummarySegment } from "../model/types";
+import { CaseNoteSummaryAiGeneratedLabel } from "./CaseNoteSummaryAiGeneratedLabel";
 import { CaseNoteSummaryPreview } from "./CaseNoteSummaryPreview";
 
 type Props = {
   segments: CaseNoteSummarySegment[];
   onPress: () => void;
+  lastUpdatedAt?: Date;
 };
 
-export function CaseNoteSummaryCard({ segments, onPress }: Props) {
+export function CaseNoteSummaryCard({
+  segments,
+  onPress,
+  lastUpdatedAt,
+}: Props) {
   return (
     <View className="gap-3 rounded-2xl bg-primary p-3">
       <View className="flex-row items-center justify-between">
         <Typography variant="body-m-medium">Client context</Typography>
-        <View className="flex-row items-center gap-1">
-          <SparklesIcon className="size-4 text-brand" />
-          <Typography variant="body-s-regular" className="!text-brand">
-            AI generated
-          </Typography>
-        </View>
+        <CaseNoteSummaryAiGeneratedLabel lastUpdatedAt={lastUpdatedAt} />
       </View>
       <View className="flex-row gap-2">
         <View className="flex-1">

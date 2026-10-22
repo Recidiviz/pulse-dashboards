@@ -23,6 +23,7 @@ import {
   CaseNoteSummarySegment,
   EmploymentSummary,
   HousingSummary,
+  PaymentSummary,
 } from "../model/types";
 import { getCaseNoteSummarySegments } from "./getCaseNoteSummarySegments";
 
@@ -44,6 +45,8 @@ const employmentSummary = (cniFields: unknown) =>
   ({ cniFields }) as EmploymentSummary;
 const housingSummary = (cniFields: unknown) =>
   ({ cniFields }) as HousingSummary;
+const paymentSummary = (cniFields: unknown) =>
+  ({ cniFields }) as PaymentSummary;
 
 const employment = employmentSummary({
   primaryStatus: field("employed"),
@@ -94,6 +97,42 @@ describe("getCaseNoteSummarySegments", () => {
         ?.filter((segment) => segment.citation)
         .map(({ content }) => content),
     ).toEqual(["is employed", "part-time", " at Diner"]);
+  });
+
+  describe("payments", () => {
+    const payments = paymentSummary({
+      payments: [
+        {
+          paymentType: field("restitution"),
+          paymentStatus: field("unpaid"),
+          amountOwed: field("500"),
+        },
+        {
+          paymentType: field("court_costs"),
+          paymentStatus: field("waived"),
+        },
+      ],
+    });
+
+    it("appends payment sentences that say 'They' after the lead sentence", () => {
+      const result = getCaseNoteSummarySegments({
+        employment,
+        payments,
+        person,
+      });
+
+      expect(render(result)).toBe(
+        "Mike Woods is employed part-time at Diner. Court costs have been waived. They owe $500 in restitution.",
+      );
+    });
+
+    it("names the client in a payment sentence when nothing else rendered", () => {
+      const result = getCaseNoteSummarySegments({ payments, person });
+
+      expect(render(result)).toBe(
+        "Court costs have been waived. Mike Woods owes $500 in restitution.",
+      );
+    });
   });
 
   describe("missing data", () => {

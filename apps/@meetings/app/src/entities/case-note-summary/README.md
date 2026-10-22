@@ -16,11 +16,12 @@ from, which is what the tooltip UI underlines.
 ```
 useCaseNoteSummary({ summaries, person, isClient, showCNI })
   └─ gate                           returns null unless the person is a client and CNI is on
-  └─ getCategorizedSummaries()      picks the "employment" and "housing" summaries
-  └─ getCaseNoteSummarySegments()   "{fullName} " + employment + ", " + housing + "."
+  └─ getCategorizedSummaries()      picks the "employment", "housing", and "payments" summaries
+  └─ getCaseNoteSummarySegments()   "{fullName} " + employment + ", " + housing + "." + " " + payments
        ├─ getEmploymentSegments()   spec section 1
        ├─ getHousingSegments()      spec section 2
-       └─ segmentBuilders           field → segment primitives shared by both
+       ├─ getPaymentSegments()      spec section 3
+       └─ segmentBuilders           field → segment primitives shared by all three
 ```
 
 Each builder returns `CaseNoteSummarySegment[]` — `{ content, citation? }` — or `null` when
@@ -166,3 +167,63 @@ generic phrase stays — otherwise the client would just be `is housed`.
 ### 2d. `primaryStatus` absent or unrecognized
 
 Returns `null` and warns.
+
+## Section 3 — Payments (`getPaymentSegments`)
+
+Unlike employment and housing, payments render as their own sentences after the lead
+sentence: one per entry in `payments`, ordered by `paymentType`, joined with spaces.
+
+The first sentence with a subject uses the client's name, unless the employment/housing
+sentence already did; every later one says "They" (with plural verbs: "They owe",
+"They have paid"). Waived sentences have no subject, so they never consume the name.
+
+> Mike Woods is employed part-time at Diner. Court costs have been waived. They owe $500
+> in restitution, paying $100 monthly.
+
+| `paymentType`               | paid / partial label        | waived label                | unpaid label                 |
+| --------------------------- | --------------------------- | --------------------------- | ---------------------------- |
+| `fine`                      | `fine`                      | `The fine`                  | `a fine` / `a $Y fine`       |
+| `restitution`               | `restitution`               | `Restitution`               | `restitution`                |
+| `court_costs`               | `court costs`               | `Court costs` (`have`)      | `court costs`                |
+| `supervision_fee`           | `supervision fee`           | `Supervision fee`           | `supervision fees`           |
+| `programming_fee`           | `programming fee`           | `Programming fee`           | `programming fees`           |
+| `drug_testing_fee`          | `drug testing fee`          | `Drug testing fee`          | `drug testing fees`          |
+| `electronic_monitoring_fee` | `electronic monitoring fee` | `Electronic monitoring fee` | `electronic monitoring fees` |
+| unknown                     | raw value + `warn`          | raw value + `warn`          | raw value + `warn`           |
+
+Amounts render only when `fieldValue` parses as a number, formatted as `$1,200` / `$12.50`.
+
+### 3b. `paymentStatus = 'paid'`, or `amountOwed = 0`
+
+`"{Subject} has paid their {label} in full."`. A zero balance cites `amountOwed` rather
+than the status, whose quote may say otherwise.
+
+### 3c. `paymentStatus = 'waived'`
+
+`"{label} has been waived."` (`have` for court costs). Checked before the zero-balance
+rule, so a waived obligation with nothing owed still reads as waived.
+
+### 3d. `paymentStatus = 'partial'`
+
+`"{Subject} has partially paid their {label}[ ($X of $Y paid) | ($X paid) | ($Y remaining)][, PLAN_FRAG]."`
+
+### 3e. `paymentStatus = 'unpaid'`
+
+`"{Subject} owes[ $Y in | a] {label}[, PLAN_FRAG][ and has {ABILITY_FRAG}]."`
+
+| `paymentPlanFrequency` | PLAN_FRAG (needs a numeric `paymentPlanAmount`) |
+| ---------------------- | ----------------------------------------------- |
+| `weekly`               | `paying $X weekly`                              |
+| `bi_weekly`            | `paying $X bi-weekly`                           |
+| `monthly`              | `paying $X monthly`                             |
+| `quarterly`            | `paying $X quarterly`                           |
+| absent / unknown       | `paying $X` (unknown also `warn`s)              |
+
+| `abilityToPay` | ABILITY_FRAG              |
+| -------------- | ------------------------- |
+| `unable`       | `stated inability to pay` |
+| `limited`      | `limited ability to pay`  |
+
+### 3f. `paymentStatus` absent or unrecognized
+
+That payment is dropped with a `warn`; the others still render.

@@ -24,7 +24,6 @@ import { ReactNode, RefObject, useState } from "react";
 import { View } from "react-native";
 import LightBulbIcon from "react-native-heroicons/outline/LightBulbIcon";
 import XIcon from "react-native-heroicons/outline/XIcon";
-import SparklesIcon from "react-native-heroicons/solid/SparklesIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BackgroundPressable } from "~@meetings/app/shared/ui/BackgroundPressable";
@@ -32,6 +31,7 @@ import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { CaseNoteSummarySegment } from "../model/types";
+import { CaseNoteSummaryAiGeneratedLabel } from "./CaseNoteSummaryAiGeneratedLabel";
 import { CaseNoteSummarySelectable } from "./CaseNoteSummarySelectable";
 import { CitationCard } from "./CitationCard";
 
@@ -40,9 +40,15 @@ type Props = {
   ref: RefObject<BottomSheetModal | null>;
   /** Rendered above the close button, e.g. the feedback controls. */
   footer?: ReactNode;
+  lastUpdatedAt?: Date;
 };
 
-export function CaseNoteSummarySheet({ segments, ref, footer }: Props) {
+export function CaseNoteSummarySheet({
+  segments,
+  ref,
+  footer,
+  lastUpdatedAt,
+}: Props) {
   const { top: topSafeArea, bottom: bottomSafeArea } = useSafeAreaInsets();
   const [selectedIndex, setSelectedIndex] = useState<number>();
 
@@ -88,12 +94,7 @@ export function CaseNoteSummarySheet({ segments, ref, footer }: Props) {
                 }}
               />
             </View>
-            <View className="flex-row items-center gap-1">
-              <SparklesIcon className="size-4 text-brand" />
-              <Typography variant="body-s-medium" className="!text-brand">
-                AI generated
-              </Typography>
-            </View>
+            <CaseNoteSummaryAiGeneratedLabel lastUpdatedAt={lastUpdatedAt} />
           </View>
 
           <CaseNoteSummarySelectable

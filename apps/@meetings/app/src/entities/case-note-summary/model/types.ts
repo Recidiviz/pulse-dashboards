@@ -29,6 +29,10 @@ export type HousingSummary = CaseNoteInsightsSummary & {
   cniFields: PrismaJson.CNIHousingFields;
 };
 
+export type PaymentSummary = CaseNoteInsightsSummary & {
+  cniFields: PrismaJson.CNIPaymentFields;
+};
+
 export type CniCitation = {
   quotes: string[];
   lastVerifiedDate?: Date;
@@ -37,5 +41,5 @@ export type CniCitation = {
 export type CaseNoteSummarySegment = {
   content: string;
   citation?: CniCitation;
-  category?: "employment" | "housing";
+  category?: "employment" | "housing" | "payments";
 };

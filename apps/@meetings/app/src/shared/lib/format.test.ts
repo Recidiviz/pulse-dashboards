@@ -15,7 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatDurationHoursMinutes, formatDurationNumeric } from "./format";
+import {
+  formatDurationHoursMinutes,
+  formatDurationNumeric,
+  formatPersonName,
+} from "./format";
+
+describe("formatPersonName", () => {
+  it("title cases each word", () => {
+    expect(formatPersonName("JANE DOE")).toBe("Jane Doe");
+  });
+
+  it("keeps accented letters", () => {
+    expect(formatPersonName("JOSÉ NUÑEZ")).toBe("José Nuñez");
+  });
+
+  it("keeps hyphens and apostrophes and capitalizes after them", () => {
+    expect(formatPersonName("MARY-JANE O'BRIEN")).toBe("Mary-Jane O'Brien");
+  });
+});
 
 describe("formatDurationNumeric", () => {
   it("formats zero as 0:00", () => {

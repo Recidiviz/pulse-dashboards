@@ -18,10 +18,10 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
-import SparklesIcon from "react-native-heroicons/solid/SparklesIcon";
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
+  CaseNoteSummaryAiGeneratedLabel,
   CaseNoteSummaryWithTooltips,
   useCaseNoteSummary,
 } from "~@meetings/app/entities/case-note-summary";
@@ -65,7 +65,11 @@ export function MeetingSidebar({
   const showCNI =
     agencyConfigs[selectedStateCode]?.showCNI || isVariantActive("showCNI");
   const isClient = personType === "client";
-  const { segments, enabled: isCaseNoteSummaryEnabled } = useCaseNoteSummary({
+  const {
+    segments,
+    enabled: isCaseNoteSummaryEnabled,
+    lastUpdatedAt,
+  } = useCaseNoteSummary({
     person,
     isClient,
     showCNI,
@@ -137,15 +141,11 @@ export function MeetingSidebar({
                 <Typography variant="body-m-medium">
                   Case Note Summary
                 </Typography>
-                <View className="flex-row items-center gap-1">
-                  <SparklesIcon className="size-3.5 text-brand" />
-                  <Typography
-                    variant="caption-s-medium"
-                    className="!text-brand"
-                  >
-                    AI generated
-                  </Typography>
-                </View>
+                <CaseNoteSummaryAiGeneratedLabel
+                  size="small"
+                  isInsideModal
+                  lastUpdatedAt={lastUpdatedAt}
+                />
               </View>
               <CaseNoteSummaryWithTooltips
                 segments={segments}

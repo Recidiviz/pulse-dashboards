@@ -19,28 +19,37 @@ import * as Sentry from "@sentry/react-native";
 import { compact } from "lodash";
 
 import { Person } from "~@meetings/app/shared/api";
+import { formatPersonName } from "~@meetings/app/shared/lib/format";
 
-import { EmploymentSummary, HousingSummary } from "../model/types";
+import {
+  EmploymentSummary,
+  HousingSummary,
+  PaymentSummary,
+} from "../model/types";
 import { getEmploymentSegments } from "./getEmploymentSegments";
 import { getHousingSegments } from "./getHousingSegments";
+import { getPaymentSegments } from "./getPaymentSegments";
 import { CniWarn, toSegment } from "./segmentBuilders";
 
 type Args = {
   housing?: HousingSummary;
   employment?: EmploymentSummary;
+  payments?: PaymentSummary;
   person: Person;
 };
 
 /**
- * Composes a client's case note insights into one renderable sentence:
- * `[ClientName] [EmploymentFragment][, HousingFragment].`
+ * Composes a client's case note insights into renderable sentences:
+ * "[ClientName] [EmploymentFragment][, HousingFragment]. [PaymentSentences]"
  */
 export function getCaseNoteSummarySegments({
   housing,
   employment,
+  payments,
   person,
 }: Args) {
   const clientId = String(person.personId ?? "unknown");
+  const clientName = formatPersonName(person.fullName);
 
   const warn: CniWarn = (reason) =>
     Sentry.logger.warn("case_note_summary.template_gap", { clientId, reason });
@@ -55,10 +64,28 @@ export function getCaseNoteSummarySegments({
     index === 0 ? fragment : [toSegment(", "), ...fragment],
   );
 
-  if (joined.length === 0) {
+  const leadSentence =
+    joined.length > 0
+      ? [toSegment(`${clientName} `), ...joined, toSegment(".")]
+      : undefined;
+
+  // Payment sentences name the client only when no lead sentence already did
+  const paymentSentences = payments
+    ? getPaymentSegments(
+        payments.cniFields,
+        warn,
+        leadSentence ? undefined : clientName,
+      )
+    : undefined;
+
+  const sentences = compact([leadSentence, paymentSentences]);
+
+  if (sentences.length === 0) {
     warn("no sentence template matched any summary category");
     return null;
   }
 
-  return [toSegment(`${person.fullName} `), ...joined, toSegment(".")];
+  return sentences.flatMap((sentence, index) =>
+    index === 0 ? sentence : [toSegment(" "), ...sentence],
+  );
 }

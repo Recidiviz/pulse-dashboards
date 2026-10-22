@@ -62,6 +62,17 @@ export const formatDurationHoursMinutes = (ms: number) => {
 export const humanReadableTitleCase = (str: string): string =>
   startCase(str.toLowerCase());
 
+// Unlike humanReadableTitleCase, keeps accents, hyphens, and apostrophes,
+// e.g. "JOSÉ O'BRIEN-NUÑEZ" -> "José O'Brien-Nuñez".
+export const formatPersonName = (name: string): string =>
+  name
+    .toLowerCase()
+    .replace(
+      /(^|[\s\-'’])(\p{L})/gu,
+      (_, separator: string, letter: string) =>
+        separator + letter.toUpperCase(),
+    );
+
 export const formatRelativeTime = (date: Date): string => {
   const now = new Date();
   const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
