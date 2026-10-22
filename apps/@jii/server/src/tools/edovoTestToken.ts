@@ -44,11 +44,17 @@ parser.add_argument("-l", "--lang", {
   default: "en",
   help: "The language preference to include in the payload. Defaults to English.",
 });
+parser.add_argument("-f", "--facility", {
+  dest: "facility_name",
+  required: false,
+  help: "The facility name to include in the payload.",
+});
 
 type Args = {
   inmate_id: string;
   facility_state: string;
   language: string;
+  facility_name: string;
 };
 
 const args = parser.parse_args() as Args;
@@ -64,8 +70,8 @@ async function main() {
   ).export({ type: "pkcs8", format: "pem" });
 
   // simulates a token signed by the Edovo private key. This will only be usable in dev environments
-  const { inmate_id, facility_state, language } = args;
-  const payload = { inmate_id, facility_state, language };
+  const { inmate_id, facility_state, language, facility_name } = args;
+  const payload = { inmate_id, facility_state, language, facility_name };
   const signedToken = JWT.sign(payload, privateSigningKey, {
     keyid: SIGNING_KEY_ID,
     algorithm: "RS256",

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 import { tokenAuthResponseSchema } from "~@jii/auth";
 
@@ -36,7 +37,14 @@ import { decryptToken, verifyToken } from "./tokenHandlers";
 // all of the verification logic just lives with this route
 export const edovoToken = baseProcedure.query(async ({ ctx: { req } }) => {
   const { decryptedToken, encryptedToken } = await decryptToken(req);
-  const payload = await verifyToken(decryptedToken);
+  const securusFacilitiesSchema = z
+    .string()
+    .transform((s) => JSON.parse(s))
+    .pipe(z.array(z.string()));
+  const securusFacilities = securusFacilitiesSchema.parse(
+    process.env["SECURUS_TEST_FACILITIES"],
+  );
+  const payload = await verifyToken(decryptedToken, securusFacilities);
 
   let firebaseToken: string;
   let isRecidiviz = false;
@@ -46,7 +54,7 @@ export const edovoToken = baseProcedure.query(async ({ ctx: { req } }) => {
 
   // we start with these dedicated test accounts so collisions don't result in
   // escalation of privilege (because their IDs are just numbers that resemble real data)
-  let userProfile = await securusTestIdentity(payload);
+  let userProfile = await securusTestIdentity(payload, securusFacilities);
   if (!userProfile) {
     userProfile = await lookupResident(payload);
   }

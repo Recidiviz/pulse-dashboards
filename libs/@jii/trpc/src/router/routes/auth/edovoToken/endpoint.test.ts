@@ -251,6 +251,73 @@ describe("NY facility state disambiguation", () => {
   });
 });
 
+describe("unrecognized facility state", () => {
+  test("succeeds for Securus test accounts", async () => {
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "ZZ",
+        facility_name: "securus-test-1",
+      }),
+    );
+
+    expect(await authCaller.edovoToken()).toEqual({
+      firebaseToken: mockFirebaseTokenValue,
+      user: {
+        stateCode: "US_AZ",
+        permissions: [],
+        externalId: "RES001",
+        pseudonymizedId: "anonres001",
+      },
+    });
+    expect(getFirebaseToken).toHaveBeenCalledWith(
+      "US_AZ_123456",
+      expect.anything(),
+    );
+    expect(checkResidentsRoster).not.toHaveBeenCalled();
+  });
+
+  test("fails for accounts outside Securus test facilities", async () => {
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "ZZ",
+        facility_name: "some-other-facility",
+      }),
+    );
+
+    await expect(authCaller.edovoToken).rejects.toThrow();
+    expect(checkResidentsRoster).not.toHaveBeenCalled();
+    expect(getFirebaseToken).not.toHaveBeenCalled();
+  });
+
+  test("fails when the token has no facility name", async () => {
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "ZZ",
+      }),
+    );
+
+    await expect(authCaller.edovoToken).rejects.toThrow();
+    expect(getFirebaseToken).not.toHaveBeenCalled();
+  });
+
+  test("fails for Securus facilities when none are configured", async () => {
+    vi.stubEnv("SECURUS_TEST_FACILITIES", "[]");
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "ZZ",
+        facility_name: "securus-test-1",
+      }),
+    );
+
+    await expect(authCaller.edovoToken).rejects.toThrow();
+    expect(getFirebaseToken).not.toHaveBeenCalled();
+  });
+});
+
 test("unknown user", async () => {
   // case where all roster lookups fail
   vi.mocked(checkResidentsRoster).mockResolvedValue(undefined);

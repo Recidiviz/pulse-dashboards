@@ -48,19 +48,12 @@ export async function checkRecidivizEmployeeRoster(
   return getRecidivizUserProfile(email);
 }
 
-const securusSecretSchema = z
-  .string()
-  .transform((s) => JSON.parse(s))
-  .pipe(z.array(z.string()));
-
 export async function securusTestIdentity(
   userData: EdovoIdTokenPayload,
+  securusFacilities: string[],
 ): Promise<AuthorizedUserProfile | undefined> {
   if (!userData.facility_name) return;
 
-  const securusFacilities = securusSecretSchema.parse(
-    process.env["SECURUS_TEST_FACILITIES"],
-  );
   if (securusFacilities.includes(userData.facility_name)) {
     // all securus test accounts are mapped to the same test data, for consistency
     return {

@@ -44,8 +44,8 @@ export async function decryptToken(req: TRPCFastifyRequest) {
 /**
  * Verifies a decrypted token using Edovo's JWKS and returns the validated payload.
  */
-export async function verifyToken(token: string) {
-  return edovoIdTokenPayloadSchema.parse(
+export async function verifyToken(token: string, securusFacilities: string[]) {
+  return edovoIdTokenPayloadSchema(securusFacilities).parse(
     await jwksVerifier({
       token,
       jwksUri: process.env["EDOVO_JWKS_URL"] ?? "",

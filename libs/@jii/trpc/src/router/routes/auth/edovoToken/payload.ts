@@ -19,52 +19,73 @@ import { z } from "zod";
 
 import { stateCodes } from "~@jii/configs";
 
-export const edovoIdTokenPayloadSchema = z
-  .object({
-    inmate_id: z.string(),
-    facility_state: z
-      .string()
-      .toUpperCase()
-      .transform((s) => `US_${s}`),
-    facility_name: z.string().optional(),
-    language: z.string().optional(),
-  })
-  .transform((user) => {
-    let facilityState = user.facility_state;
+export function edovoIdTokenPayloadSchema(securusFacilities: string[]) {
+  return z
+    .object({
+      inmate_id: z.string(),
+      facility_state: z
+        .string()
+        .toUpperCase()
+        .transform((s) => `US_${s}`),
+      facility_name: z.string().optional(),
+      language: z.string().optional(),
+    })
+    .transform((user) => {
+      let facilityState = user.facility_state;
 
-    // Edovo uses "NY" for all NY facilities; since our state code for NYC is `US_NYC`,
-    // we use facility_name to distinguish it from a future NYDOC deployment
-    if (
-      user.facility_state === "US_NY" &&
-      user.facility_name?.startsWith("NYC DOC")
-    ) {
-      facilityState = "US_NYC";
-    }
+      // Edovo uses "NY" for all NY facilities; since our state code for NYC is `US_NYC`,
+      // we use facility_name to distinguish it from a future NYDOC deployment
+      if (
+        user.facility_state === "US_NY" &&
+        user.facility_name?.startsWith("NYC DOC")
+      ) {
+        facilityState = "US_NYC";
+      }
 
-    const normalizedUser = {
-      ...user,
-      facility_state: stateCodes.parse(facilityState),
-    };
+      let normalizedUser;
+      try {
+        normalizedUser = {
+          ...user,
+          facility_state: stateCodes.parse(facilityState),
+        };
+      } catch (error) {
+        // Accept any state code for Securus test users, mapping them to the
+        // US_AZ identity that securusTestIdentity assigns them
+        if (
+          user.facility_name &&
+          securusFacilities.includes(user.facility_name)
+        ) {
+          normalizedUser = {
+            ...user,
+            facility_state: stateCodes.Enum.US_AZ,
+          };
+        } else {
+          throw error;
+        }
+      }
 
-    // For these states, Edovo's IDs here are zero-padded but ours are not
-    if (["US_NE", "US_AZ"].includes(normalizedUser.facility_state)) {
-      return {
-        ...normalizedUser,
-        inmate_id: normalizedUser.inmate_id.replace(/^0+/, ""),
-      };
-    }
-    // For these states, our IDs are zero-padded but Edovo's are not
-    if (["US_CO"].includes(normalizedUser.facility_state)) {
-      return {
-        ...normalizedUser,
-        inmate_id: normalizedUser.inmate_id.padStart(6, "0"),
-      };
-    }
+      // For these states, Edovo's IDs here are zero-padded but ours are not
+      if (["US_NE", "US_AZ"].includes(normalizedUser.facility_state)) {
+        return {
+          ...normalizedUser,
+          inmate_id: normalizedUser.inmate_id.replace(/^0+/, ""),
+        };
+      }
+      // For these states, our IDs are zero-padded but Edovo's are not
+      if (["US_CO"].includes(normalizedUser.facility_state)) {
+        return {
+          ...normalizedUser,
+          inmate_id: normalizedUser.inmate_id.padStart(6, "0"),
+        };
+      }
 
-    return normalizedUser;
-  });
+      return normalizedUser;
+    });
+}
 
-export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
+export type EdovoIdTokenPayload = z.infer<
+  ReturnType<typeof edovoIdTokenPayloadSchema>
+>;
 
 /**
  * This is for use cases where we need a unique ID that doesn't depend on successful mapping to our ingested data.

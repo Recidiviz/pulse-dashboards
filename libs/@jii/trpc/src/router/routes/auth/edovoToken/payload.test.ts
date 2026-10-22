@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ZodError } from "zod";
+
 import { stateCodes } from "~@jii/configs";
 
 import { edovoIdTokenPayloadSchema } from "./payload";
@@ -38,7 +40,7 @@ test.each([...stateCodes.options] as const)(
     }
 
     expect(
-      edovoIdTokenPayloadSchema.parse({
+      edovoIdTokenPayloadSchema([]).parse({
         inmate_id: incomingId,
         // edovo payloads don't have the US_ prefix
         facility_state: stateCode.substring(3),
@@ -49,3 +51,31 @@ test.each([...stateCodes.options] as const)(
     });
   },
 );
+
+describe("unrecognized facility state", () => {
+  const securusFacilities = ["securus-test-1"];
+
+  test("maps Securus test users to US_AZ", () => {
+    expect(
+      edovoIdTokenPayloadSchema(securusFacilities).parse({
+        inmate_id: "1234",
+        facility_state: "ZZ",
+        facility_name: "securus-test-1",
+      }),
+    ).toEqual({
+      inmate_id: "1234",
+      facility_state: "US_AZ",
+      facility_name: "securus-test-1",
+    });
+  });
+
+  test("rejects users outside Securus test facilities", () => {
+    expect(() =>
+      edovoIdTokenPayloadSchema(securusFacilities).parse({
+        inmate_id: "1234",
+        facility_state: "ZZ",
+        facility_name: "some-other-facility",
+      }),
+    ).toThrow(ZodError);
+  });
+});
