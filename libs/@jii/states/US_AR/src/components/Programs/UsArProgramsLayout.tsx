@@ -15,26 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-import { FC } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { Outlet } from "react-router-dom";
 
-import { State } from "~@jii/paths";
-import { ProgramCatalog } from "~@jii/program-catalog";
+import { ProgramsNavBar } from "./ProgramsNavBar/ProgramsNavBar";
 
-export const UsArProgramCatalog: FC = () => {
-  const pathParams = useTypedParams(State.Resident);
-  return (
-    <ProgramCatalog
-      stateCode="US_AR"
-      showCredits={false}
-      showStars={true}
-      dataLoadBaselineDate={parseISO("2026-02-02")}
-      backHref={State.Resident.buildPath(pathParams)}
-      learnMoreHref={State.Resident.UsArMoreInformation.ImportantDates.buildPath(
-        pathParams,
-        { backTarget: "programs" },
-      )}
-    />
-  );
-};
+export const UsArProgramsLayout = () => (
+  <>
+    <ProgramsNavBar />
+    <Outlet />
+  </>
+);

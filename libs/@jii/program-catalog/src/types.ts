@@ -74,4 +74,10 @@ export type ProgramCatalogProps = {
    * Defaults to true.
    */
   defaultExpanded?: boolean;
+
+  /**
+   * What offset to use for the sticky LastUpdatedBanner if additional
+   * sticky banners have been added
+   */
+  bannerStickyOffset?: number;
 };

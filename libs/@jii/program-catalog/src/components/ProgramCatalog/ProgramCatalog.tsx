@@ -74,6 +74,7 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
       learnMoreHref,
       backHref,
       defaultExpanded = true,
+      bannerStickyOffset,
     } = presenter.config;
 
     const handleToggleStar = (program: Program) => {
@@ -83,6 +84,7 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
     return (
       <PageContainer>
         <LastUpdatedBanner
+          stickyOffset={bannerStickyOffset}
           overrideCopy={t(($) => $.programs.lastUpdated, {
             date: presenter.lastUpdatedDate,
           })}

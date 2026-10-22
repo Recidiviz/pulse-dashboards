@@ -33,6 +33,10 @@
   "programs": {
     "pageDescription": "[US_AR]programs.pageDescription",
     "learnMoreLink": "[US_AR]programs.learnMoreLink",
-    "modalCallToAction": "[US_AR]programs.modalCallToAction"
+    "modalCallToAction": "[US_AR]programs.modalCallToAction",
+    "navBar": {
+      "inPerson": "[US_AR]programs.navBar.inPerson",
+      "onMyTablet": "[US_AR]programs.navBar.onMyTablet"
+    }
   }
 }

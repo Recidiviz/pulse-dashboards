@@ -53,7 +53,14 @@ export const EGT = route(
   },
 );
 
-export const ProgramCatalog = route("programs");
+export const ProgramCatalog = route(
+  "programs",
+  {},
+  {
+    InPerson: route(""),
+    OnMyTablet: route("on-my-tablet"),
+  },
+);
 
 export const UsTnMoreInformation = route(
   "more-information",

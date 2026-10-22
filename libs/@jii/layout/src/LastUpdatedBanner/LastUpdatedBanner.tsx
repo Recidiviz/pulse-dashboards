@@ -21,7 +21,7 @@ import { useCommonTranslations } from "~@jii/translation";
 
 import { FullWidthBanner } from "./FullWidthBanner";
 
-type LastUpdatedBannerProps =
+type LastUpdatedBannerProps = { stickyOffset?: number } & (
   | {
       lastUpdatedDate: Date | undefined;
       noDateCopy?: string;
@@ -31,7 +31,8 @@ type LastUpdatedBannerProps =
       lastUpdatedDate?: never;
       noDateCopy?: never;
       overrideCopy: string;
-    };
+    }
+);
 
 /**
  * A top-of-page banner about when information was last updated.
@@ -48,21 +49,30 @@ export const LastUpdatedBanner = observer(function LastUpdatedBanner({
   lastUpdatedDate,
   noDateCopy,
   overrideCopy,
+  stickyOffset,
 }: LastUpdatedBannerProps) {
   const { t } = useCommonTranslations();
 
   if (overrideCopy) {
-    return <FullWidthBanner>{overrideCopy}</FullWidthBanner>;
+    return (
+      <FullWidthBanner stickyOffset={stickyOffset}>
+        {overrideCopy}
+      </FullWidthBanner>
+    );
   }
 
   if (!lastUpdatedDate) {
     if (!noDateCopy) return null;
 
-    return <FullWidthBanner>{noDateCopy}</FullWidthBanner>;
+    return (
+      <FullWidthBanner stickyOffset={stickyOffset}>
+        {noDateCopy}
+      </FullWidthBanner>
+    );
   }
 
   return (
-    <FullWidthBanner>
+    <FullWidthBanner stickyOffset={stickyOffset}>
       {t(($) => $.lastUpdated, { lastUpdatedDate })}
     </FullWidthBanner>
   );

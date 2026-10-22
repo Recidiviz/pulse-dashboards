@@ -39,6 +39,10 @@
   "programs": {
     "pageDescription": "This page helps you find programs and activities that can provide Good Time off of your Parole/Transfer/Release Eligibility Date. \n\nThis list will update from time to time—look for the “New” label to see what was recently updated. If you are eligible for a particular program, please follow your facility’s process for signing up.",
     "learnMoreLink": "Learn about Good Time and Programs",
-    "modalCallToAction": "Sound interesting? Reach out to your unit’s program services to see if this might be a good fit."
+    "modalCallToAction": "Sound interesting? Reach out to your unit’s program services to see if this might be a good fit.",
+    "navBar": {
+      "inPerson": "In person",
+      "onMyTablet": "On my tablet"
+    }
   }
 }

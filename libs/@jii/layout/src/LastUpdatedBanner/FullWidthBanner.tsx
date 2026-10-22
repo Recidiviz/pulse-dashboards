@@ -31,15 +31,17 @@ import {
 import { useRootStore } from "~@jii/data";
 import { palette } from "~design-system";
 
-const Container = styled.div<{ $hideHeader: boolean }>`
+const Container = styled.div<{ $hideHeader: boolean; $stickyOffset: number }>`
   ${typography.Sans14}
 
   background: ${palette.marble3};
   color: ${palette.slate85};
   text-align: center;
   ${stickyHeader}
-  top: ${({ $hideHeader }: { $hideHeader: boolean }) =>
-    $hideHeader ? `-${rem(HIDDEN_HEADER_OFFSET)}` : rem(HEADER_HEIGHT)};
+  top: ${({ $hideHeader, $stickyOffset }) =>
+    $hideHeader
+      ? `-${rem(HIDDEN_HEADER_OFFSET)}`
+      : rem(HEADER_HEIGHT + $stickyOffset)};
   z-index: ${STICKY_HEADER_ZINDEX - 1};
 
   ${PageContainer} {
@@ -50,17 +52,19 @@ const Container = styled.div<{ $hideHeader: boolean }>`
 
 interface FullWidthBannerProps {
   children: ReactNode;
+  stickyOffset?: number;
 }
 
 export const FullWidthBanner = observer(function FullWidthBanner({
   children,
+  stickyOffset = 0,
 }: FullWidthBannerProps) {
   const {
     uiStore: { hideHeaderBar },
   } = useRootStore();
 
   return (
-    <Container $hideHeader={hideHeaderBar}>
+    <Container $hideHeader={hideHeaderBar} $stickyOffset={stickyOffset}>
       <PageContainer>{children}</PageContainer>
     </Container>
   );

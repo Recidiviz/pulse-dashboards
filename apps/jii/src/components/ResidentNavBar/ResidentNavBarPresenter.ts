@@ -95,6 +95,7 @@ export class ResidentNavBarPresenter {
         {
           navKey: "programsLink",
           to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
+          activeOnSubroutes: true,
         },
       ];
     }

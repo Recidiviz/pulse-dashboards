@@ -18,13 +18,17 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { ProgramCatalog, UsArMoreInformation } from "~@jii/paths";
 
 import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
-import { UsArProgramCatalog } from "./UsArProgramCatalog";
+import { PROGRAMS_NAV_BAR_HEIGHT } from "./Programs/ProgramsNavBar/ProgramsNavBar.styles";
+import { UsArProgramCatalog } from "./Programs/UsArProgramCatalog";
+import { UsArProgramsLayout } from "./Programs/UsArProgramsLayout";
 import { UsArSingleResidentHome } from "./UsArSingleResidentHome";
 
 export function UsArRouter() {
+  const { residentFlags } = useSingleResidentContext();
   return (
     <Routes>
       <Route index element={<UsArSingleResidentHome />} />
@@ -34,7 +38,25 @@ export function UsArRouter() {
           element={<PageMoreInformationImportantDates />}
         />
       </Route>
-      <Route path={ProgramCatalog.path} element={<UsArProgramCatalog />} />
+      {residentFlags.usArEdovoCredits ? (
+        <Route path={ProgramCatalog.path} element={<UsArProgramsLayout />}>
+          <Route
+            index
+            element={
+              <UsArProgramCatalog
+                bannerStickyOffset={PROGRAMS_NAV_BAR_HEIGHT}
+              />
+            }
+          />
+          {/* TODO(JII2-118): replace the placeholder with the On my tablet page */}
+          <Route
+            path={ProgramCatalog.OnMyTablet.path}
+            element={<div>On my tablet</div>}
+          />
+        </Route>
+      ) : (
+        <Route path={ProgramCatalog.path} element={<UsArProgramCatalog />} />
+      )}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
