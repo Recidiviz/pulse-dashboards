@@ -16,30 +16,12 @@
 // =============================================================================
 
 import {
+  conditionIsMet,
   conditionsOf,
   reentryChecklistConfig,
   ReentryChecklistItemId,
   ReentryQuestionnaireAnswers,
-  ShowIfCondition,
 } from "~@jii/configs";
-
-export function conditionIsMet(
-  condition: ShowIfCondition<keyof ReentryQuestionnaireAnswers>,
-  answers: ReentryQuestionnaireAnswers,
-): boolean {
-  const answer = answers[condition.questionId];
-  if (answer === undefined) return false;
-
-  // TODO(REE-176): Read the question's format from reentryQuestionnaireConfig
-  // instead of inferring it from the answer's shape. The config can't be used
-  // here until ~@jii/configs stops exporting the dummy spec under the same name.
-  const isEqual = Array.isArray(answer)
-    ? // CHECKBOX: "equals" means that option is checked
-      answer.includes(condition.value)
-    : answer === condition.value;
-
-  return condition.operator === "equals" ? isEqual : !isEqual;
-}
 
 /**
  * Whether a single checklist item should be shown, given a resident's current

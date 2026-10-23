@@ -18,58 +18,9 @@
 import { reentryChecklistConfig, reentryChecklistItemIds } from "~@jii/configs";
 
 import {
-  conditionIsMet,
   getApplicableReentryChecklistItems,
   isReentryChecklistItemApplicable,
 } from "./reentryChecklistApplicability";
-
-describe("conditionIsMet", () => {
-  // No checklist item uses notEquals yet, so these test the condition directly
-  const radioNotEqualsYes = {
-    questionId: "HEALTHCARE_NEEDED",
-    operator: "notEquals",
-    value: "YES",
-  } as const;
-  const checkboxNotEqualsOwnCar = {
-    questionId: "TRANSPORTATION",
-    operator: "notEquals",
-    value: "OWN_CAR",
-  } as const;
-
-  it("is met when a RADIO answer differs from a notEquals value", () => {
-    expect(conditionIsMet(radioNotEqualsYes, { HEALTHCARE_NEEDED: "NO" })).toBe(
-      true,
-    );
-  });
-
-  it("is not met when a RADIO answer matches a notEquals value", () => {
-    expect(
-      conditionIsMet(radioNotEqualsYes, { HEALTHCARE_NEEDED: "YES" }),
-    ).toBe(false);
-  });
-
-  it("is met when a CHECKBOX answer doesn't include a notEquals value", () => {
-    expect(
-      conditionIsMet(checkboxNotEqualsOwnCar, { TRANSPORTATION: ["BIKE"] }),
-    ).toBe(true);
-    expect(
-      conditionIsMet(checkboxNotEqualsOwnCar, { TRANSPORTATION: [] }),
-    ).toBe(true);
-  });
-
-  it("is not met when a CHECKBOX answer includes a notEquals value", () => {
-    expect(
-      conditionIsMet(checkboxNotEqualsOwnCar, {
-        TRANSPORTATION: ["BIKE", "OWN_CAR"],
-      }),
-    ).toBe(false);
-  });
-
-  it("is not met for a notEquals condition on an unanswered question", () => {
-    expect(conditionIsMet(radioNotEqualsYes, {})).toBe(false);
-    expect(conditionIsMet(checkboxNotEqualsOwnCar, {})).toBe(false);
-  });
-});
 
 describe("isReentryChecklistItemApplicable", () => {
   it("is always applicable when the item has no showIf", () => {

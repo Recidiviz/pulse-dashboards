@@ -23,6 +23,7 @@ export * from "./usMaReentryChecklistSpec";
 export * from "./usMaReentryChecklistValidation";
 export * from "./usMaReentryQuestionnaireResponseSchema";
 export * from "./usMaReentryQuestionnaireSpec";
+export * from "./usMaReentryUtils";
 export * from "./usNcRNAFormSpec";
 export * from "./usNcRNASchema";
 export * from "./usNeCheckInToolSchema";
