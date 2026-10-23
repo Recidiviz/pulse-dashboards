@@ -23,8 +23,8 @@ import {
   buildQuestionDisplay,
   buildQuestionnaireDisplay,
   formatAnswerText,
+  fromStoredAnswers,
   getEditQuestionIds,
-  getInitialAnswers,
   getInitialStep,
   getVisibleQuestions,
   isAnswered,
@@ -357,9 +357,9 @@ describe("formatAnswerText", () => {
   });
 });
 
-describe("getInitialAnswers", () => {
+describe("fromStoredAnswers", () => {
   test("wraps stored RADIO strings in a list", () => {
-    expect(getInitialAnswers(questions, { needsCare: "YES" })).toEqual({
+    expect(fromStoredAnswers(questions, { needsCare: "YES" })).toEqual({
       needsCare: ["YES"],
     });
   });
@@ -369,7 +369,7 @@ describe("getInitialAnswers", () => {
       needsCare: 42,
       careDetails: ["MEDS"],
     };
-    expect(getInitialAnswers(questions, stored)).toEqual({
+    expect(fromStoredAnswers(questions, stored)).toEqual({
       careDetails: ["MEDS"],
     });
   });

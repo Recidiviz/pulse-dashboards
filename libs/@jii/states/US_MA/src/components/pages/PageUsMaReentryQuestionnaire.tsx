@@ -15,36 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  reentryQuestionnaireConfig,
-  reentryQuestionnaireQuestionIds,
-} from "~@jii/configs";
-import { useUsMaTranslations } from "~@jii/translation";
-
 import { ReentryQuestionnaire } from "../Reentry/Questionnaire/ReentryQuestionnaire";
-import { buildQuestionnaireDisplay } from "../Reentry/Questionnaire/utils";
 
-export const PageUsMaReentryQuestionnaire = () => {
-  const { t } = useUsMaTranslations();
-
-  const { domainCopy, questionCopy, optionCopy, standardOptionCopy } = t(
-    ($) => $.reentry.questionnaire,
-    { returnObjects: true },
-  );
-  // Widened so the config's option ids (plain strings) can index the copy.
-  // A question with no optionCopy entry uses standardOptionCopy's labels.
-  const questionOptionCopy: Partial<Record<string, Record<string, string>>> =
-    optionCopy;
-  const standardOptionLabels: Record<string, string> = standardOptionCopy;
-
-  const questionnaire = buildQuestionnaireDisplay({
-    questionIds: reentryQuestionnaireQuestionIds,
-    config: reentryQuestionnaireConfig,
-    getSectionLabel: (domain) => domainCopy[domain],
-    getQuestionCopy: (questionId) => questionCopy[questionId],
-    getOptionCopy: (questionId, optionId) =>
-      (questionOptionCopy[questionId] ?? standardOptionLabels)[optionId],
-  });
-
-  return <ReentryQuestionnaire {...questionnaire} />;
-};
+export const PageUsMaReentryQuestionnaire = () => <ReentryQuestionnaire />;

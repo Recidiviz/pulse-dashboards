@@ -22,6 +22,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { useReentryQuestionnaire } from "../../../hooks/useReentryQuestionnaire";
+import { useReentryQuestionnaireDisplay } from "../../../hooks/useReentryQuestionnaireDisplay";
 import { useQuestionnaireFlow } from "./hooks/useQuestionnaireFlow";
 import { QuestionnaireCancelModal } from "./QuestionnaireCancelModal/QuestionnaireCancelModal";
 import { QuestionnaireCompletion } from "./QuestionnaireCompletion/QuestionnaireCompletion";
@@ -29,13 +30,10 @@ import { QuestionnaireForm } from "./QuestionnaireForm/QuestionnaireForm";
 import { QuestionnaireIntro } from "./QuestionnaireIntro/QuestionnaireIntro";
 import { QuestionnaireLayout } from "./QuestionnaireLayout/QuestionnaireLayout";
 import { QuestionnaireReview } from "./QuestionnaireReview/QuestionnaireReview";
-import { QuestionnaireDisplay } from "./types";
 
-export const ReentryQuestionnaire = ({
-  questions,
-  sections,
-}: QuestionnaireDisplay) => {
+export const ReentryQuestionnaire = () => {
   const { t } = useUsMaTranslations();
+  const { questions, sections } = useReentryQuestionnaireDisplay();
 
   const navigate = useNavigate();
   const routeParams = useTypedParams(State.Resident);

@@ -23,7 +23,7 @@ import {
   answersMatch,
   applyExclusiveOptions,
   formatAnswerText,
-  getInitialAnswers,
+  fromStoredAnswers,
   getInitialStep,
   getVisibleQuestions,
   isAnswered,
@@ -51,7 +51,7 @@ export function useQuestionnaireFlow({
   onGoToChecklist,
 }: UseQuestionnaireFlowParams): QuestionnaireScreen {
   const [answers, setAnswers] = useState(() =>
-    getInitialAnswers(allQuestions, storedAnswers),
+    fromStoredAnswers(allQuestions, storedAnswers),
   );
   const [step, setStep] = useState<FlowStep>(() =>
     getInitialStep(status, allQuestions, answers),
@@ -72,7 +72,7 @@ export function useQuestionnaireFlow({
   const visibleQuestions = getVisibleQuestions(allQuestions, answers);
 
   // The answers as last saved, which cancelling an edit reverts to.
-  const getSavedAnswers = () => getInitialAnswers(allQuestions, storedAnswers);
+  const getSavedAnswers = () => fromStoredAnswers(allQuestions, storedAnswers);
 
   const closeAction: QuestionnaireHeaderAction = {
     kind: "close",

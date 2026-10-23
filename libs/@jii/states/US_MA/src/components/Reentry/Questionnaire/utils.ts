@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type {
-  ReentryQuestionnaireQuestionConfig,
-  ShowIf,
-  ShowIfCondition,
+import {
+  conditionsOf,
+  type ReentryQuestionnaireQuestionConfig,
 } from "~@jii/configs";
 
 import { ReentryQuestionnaireStatus } from "../types";
@@ -35,15 +34,6 @@ import {
 } from "./types";
 
 /**
- * Extracts the showIf conditions from a question's showIf property,
- * normalizing them into an array of ShowIfCondition objects.
- */
-const getShowIfConditions = (showIf: ShowIf | undefined): ShowIfCondition[] => {
-  if (!showIf) return [];
-  return "any" in showIf ? showIf.any : [showIf];
-};
-
-/**
  * Determines if a question is visible based on its showIf conditions and the current answers.
  */
 export function isQuestionVisible(
@@ -51,7 +41,7 @@ export function isQuestionVisible(
   answers: QuestionnaireAnswers,
 ): boolean {
   if (!question.showIf) return true;
-  return getShowIfConditions(question.showIf).some((condition) => {
+  return conditionsOf(question.showIf).some((condition) => {
     const answer = answers[condition.questionId];
     if (!answer?.length) return false;
 
@@ -124,7 +114,7 @@ export function isFollowUpOf(
   question: QuestionDisplay,
   questionIds: Set<string>,
 ): boolean {
-  return getShowIfConditions(question.showIf).some((condition) =>
+  return conditionsOf(question.showIf).some((condition) =>
     questionIds.has(condition.questionId),
   );
 }
@@ -186,10 +176,11 @@ export function formatAnswerText(
 }
 
 /**
- * Returns the initial answers for all questions based on stored answers.
+ * Returns the stored answers as lists of option values, leaving out
+ * unanswered questions. The reverse of toStoredAnswers.
  */
-export function getInitialAnswers(
-  questions: QuestionnaireQuestion[],
+export function fromStoredAnswers(
+  questions: QuestionDisplay[],
   storedAnswers: Record<string, unknown>,
 ): QuestionnaireAnswers {
   return Object.fromEntries(
