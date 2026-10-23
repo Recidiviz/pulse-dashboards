@@ -425,9 +425,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         ...allFeatureVariants,
         // Off for Recidiviz users during phase 1 build-out — opt in per-user
         // via the admin panel to actually see the new Typesense search bar.
-        typesenseCaseloadSearch: undefined,
+        typesenseCaseloadSearch: { activeTenants: ["US_NE"] },
         // Off during phase 2 build-out.
-        typesenseHomepage: undefined,
+        typesenseHomepage: { activeTenants: ["US_NE"] },
         // Off for Recidiviz users during phase 1 build-out — opt in per-user
         // via the admin panel to actually see the new Typesense person search.
         typesensePersonSearch: undefined,
