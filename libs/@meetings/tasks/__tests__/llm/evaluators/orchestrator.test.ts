@@ -82,12 +82,19 @@ describe("runAllEvaluators", () => {
   });
 
   test("should return all scores when every evaluator succeeds", async () => {
-    vi.spyOn(agents, "runTranscriptComparison").mockResolvedValue(
-      GOOD_COMPARISON,
+    vi.spyOn(
+      agents.tracedEvaluators,
+      "runTranscriptComparison",
+    ).mockResolvedValue(GOOD_COMPARISON);
+    vi.spyOn(agents.tracedEvaluators, "runCaseNote").mockResolvedValue(
+      GOOD_TEXT,
     );
-    vi.spyOn(agents, "runCaseNote").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
+    vi.spyOn(agents.tracedEvaluators, "runActionItems").mockResolvedValue(
+      GOOD_TEXT,
+    );
+    vi.spyOn(agents.tracedEvaluators, "runOverall").mockResolvedValue(
+      GOOD_TEXT,
+    );
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
 
@@ -102,12 +109,19 @@ describe("runAllEvaluators", () => {
   });
 
   test("should return null for transcriptComparison when it fails", async () => {
-    vi.spyOn(agents, "runTranscriptComparison").mockRejectedValue(
-      new Error("audio upload failed"),
+    vi.spyOn(
+      agents.tracedEvaluators,
+      "runTranscriptComparison",
+    ).mockRejectedValue(new Error("audio upload failed"));
+    vi.spyOn(agents.tracedEvaluators, "runCaseNote").mockResolvedValue(
+      GOOD_TEXT,
     );
-    vi.spyOn(agents, "runCaseNote").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
+    vi.spyOn(agents.tracedEvaluators, "runActionItems").mockResolvedValue(
+      GOOD_TEXT,
+    );
+    vi.spyOn(agents.tracedEvaluators, "runOverall").mockResolvedValue(
+      GOOD_TEXT,
+    );
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
 
@@ -118,14 +132,19 @@ describe("runAllEvaluators", () => {
   });
 
   test("should return null for caseNote when it fails", async () => {
-    vi.spyOn(agents, "runTranscriptComparison").mockResolvedValue(
-      GOOD_COMPARISON,
-    );
-    vi.spyOn(agents, "runCaseNote").mockRejectedValue(
+    vi.spyOn(
+      agents.tracedEvaluators,
+      "runTranscriptComparison",
+    ).mockResolvedValue(GOOD_COMPARISON);
+    vi.spyOn(agents.tracedEvaluators, "runCaseNote").mockRejectedValue(
       new Error("Gemini timeout"),
     );
-    vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
+    vi.spyOn(agents.tracedEvaluators, "runActionItems").mockResolvedValue(
+      GOOD_TEXT,
+    );
+    vi.spyOn(agents.tracedEvaluators, "runOverall").mockResolvedValue(
+      GOOD_TEXT,
+    );
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
 
@@ -135,12 +154,19 @@ describe("runAllEvaluators", () => {
   });
 
   test("should return null for all scores when all evaluators fail", async () => {
-    vi.spyOn(agents, "runTranscriptComparison").mockRejectedValue(
+    vi.spyOn(
+      agents.tracedEvaluators,
+      "runTranscriptComparison",
+    ).mockRejectedValue(new Error("fail"));
+    vi.spyOn(agents.tracedEvaluators, "runCaseNote").mockRejectedValue(
       new Error("fail"),
     );
-    vi.spyOn(agents, "runCaseNote").mockRejectedValue(new Error("fail"));
-    vi.spyOn(agents, "runActionItems").mockRejectedValue(new Error("fail"));
-    vi.spyOn(agents, "runOverall").mockRejectedValue(new Error("fail"));
+    vi.spyOn(agents.tracedEvaluators, "runActionItems").mockRejectedValue(
+      new Error("fail"),
+    );
+    vi.spyOn(agents.tracedEvaluators, "runOverall").mockRejectedValue(
+      new Error("fail"),
+    );
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
 
@@ -153,17 +179,18 @@ describe("runAllEvaluators", () => {
   });
 
   test("should still run remaining evaluators after an earlier one fails", async () => {
-    vi.spyOn(agents, "runTranscriptComparison").mockRejectedValue(
-      new Error("fail"),
-    );
+    vi.spyOn(
+      agents.tracedEvaluators,
+      "runTranscriptComparison",
+    ).mockRejectedValue(new Error("fail"));
     const caseNoteSpy = vi
-      .spyOn(agents, "runCaseNote")
+      .spyOn(agents.tracedEvaluators, "runCaseNote")
       .mockResolvedValue(GOOD_TEXT);
     const actionItemsSpy = vi
-      .spyOn(agents, "runActionItems")
+      .spyOn(agents.tracedEvaluators, "runActionItems")
       .mockResolvedValue(GOOD_TEXT);
     const overallSpy = vi
-      .spyOn(agents, "runOverall")
+      .spyOn(agents.tracedEvaluators, "runOverall")
       .mockResolvedValue(GOOD_TEXT);
 
     await runAllEvaluators(mockClients, baseInputs);
@@ -175,13 +202,17 @@ describe("runAllEvaluators", () => {
 
   test("should pass timeout from clients to each agent call", async () => {
     const transcriptSpy = vi
-      .spyOn(agents, "runTranscriptComparison")
+      .spyOn(agents.tracedEvaluators, "runTranscriptComparison")
       .mockResolvedValue(GOOD_COMPARISON);
     const caseNoteSpy = vi
-      .spyOn(agents, "runCaseNote")
+      .spyOn(agents.tracedEvaluators, "runCaseNote")
       .mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
+    vi.spyOn(agents.tracedEvaluators, "runActionItems").mockResolvedValue(
+      GOOD_TEXT,
+    );
+    vi.spyOn(agents.tracedEvaluators, "runOverall").mockResolvedValue(
+      GOOD_TEXT,
+    );
 
     const clientsWithTimeout: EvaluatorClients = {
       ...mockClients,
@@ -198,11 +229,17 @@ describe("runAllEvaluators", () => {
 
   test("should pass inputs correctly to runTranscriptComparison", async () => {
     const transcriptSpy = vi
-      .spyOn(agents, "runTranscriptComparison")
+      .spyOn(agents.tracedEvaluators, "runTranscriptComparison")
       .mockResolvedValue(GOOD_COMPARISON);
-    vi.spyOn(agents, "runCaseNote").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
+    vi.spyOn(agents.tracedEvaluators, "runCaseNote").mockResolvedValue(
+      GOOD_TEXT,
+    );
+    vi.spyOn(agents.tracedEvaluators, "runActionItems").mockResolvedValue(
+      GOOD_TEXT,
+    );
+    vi.spyOn(agents.tracedEvaluators, "runOverall").mockResolvedValue(
+      GOOD_TEXT,
+    );
 
     await runAllEvaluators(mockClients, baseInputs);
 
@@ -230,7 +267,7 @@ describe("createEvaluatorClients", () => {
   test("should throw when GOOGLE_CLOUD_PROJECT is not set", () => {
     vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
 
-    expect(() => createEvaluatorClients()).toThrow(
+    expect(() => createEvaluatorClients("US_NE")).toThrow(
       "Missing GOOGLE_CLOUD_PROJECT environment variable",
     );
   });
@@ -238,9 +275,16 @@ describe("createEvaluatorClients", () => {
   test("should return clients when GOOGLE_CLOUD_PROJECT is set", () => {
     vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
 
-    const clients = createEvaluatorClients();
+    const clients = createEvaluatorClients("US_NE");
 
     expect(clients.gemini).toBeDefined();
     expect(clients.timeout).toBe(1800000);
+  });
+
+  test("should turn off tracing for US_CO only", () => {
+    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+
+    expect(createEvaluatorClients("US_CO").tracingEnabled).toBe(false);
+    expect(createEvaluatorClients("US_NE").tracingEnabled).toBe(true);
   });
 });

@@ -102,6 +102,8 @@ export type ZodGenerateContentOptions<T extends ZodSchema> = {
   modelName?: string;
   /** Request timeout in milliseconds. Defaults to the Gemini SDK default. */
   timeout?: number;
+  /** Set to false to skip the LangSmith trace for this call. Defaults to true. */
+  tracingEnabled?: boolean;
 };
 
 /**
@@ -137,10 +139,17 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   return schema.parse(JSON.parse(content));
 };
 
-export const generateContentWithZodSchema = traceable(
+const generateContentWithZodSchemaTraced = traceable(
   generateContentWithZodSchemaInternal,
   { name: "gemini-generate-content", run_type: "llm" },
 );
+
+export const generateContentWithZodSchema = <T extends ZodSchema>(
+  options: ZodGenerateContentOptions<T>,
+): Promise<T["_output"]> =>
+  options.tracingEnabled === false
+    ? generateContentWithZodSchemaInternal(options)
+    : generateContentWithZodSchemaTraced(options);
 
 /**
  * Returns a content part that points Gemini at meeting audio in Cloud Storage.

@@ -15,7 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, MockInstance, test, vi } from "vitest";
+import { RunTree } from "langsmith";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  MockInstance,
+  test,
+  vi,
+} from "vitest";
 
 import { AgencyConfig } from "~@meetings/config/types";
 import type { PrismaClient } from "~@meetings/prisma/client";
@@ -853,6 +862,56 @@ describe("ProductionPipeline", () => {
           message: "Drafting timeout",
         }),
       );
+    });
+  });
+
+  describe("LangSmith tracing", () => {
+    const shortTranscript: TranscriptInput = {
+      rawText: "Too short",
+      startTime: "2025-01-15T15:00:00.000Z",
+      durationSeconds: 10,
+      poNotes: "",
+    };
+    let postRun: MockInstance<RunTree["postRun"]>;
+    let patchRun: MockInstance<RunTree["patchRun"]>;
+
+    beforeEach(() => {
+      vi.stubEnv("LANGCHAIN_TRACING_V2", "true");
+      postRun = vi
+        .spyOn(RunTree.prototype, "postRun")
+        .mockResolvedValue(undefined);
+      patchRun = vi
+        .spyOn(RunTree.prototype, "patchRun")
+        .mockResolvedValue(undefined);
+    });
+
+    afterEach(() => {
+      vi.unstubAllEnvs();
+      postRun.mockRestore();
+      patchRun.mockRestore();
+    });
+
+    test("traces the pipeline for other states", async () => {
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+
+      await expect(
+        pipeline.run(mockAgency, mockClient, shortTranscript, "test-meeting"),
+      ).rejects.toThrow();
+      expect(postRun).toHaveBeenCalledTimes(1);
+    });
+
+    test("does not trace the pipeline for US_CO", async () => {
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+
+      await expect(
+        pipeline.run(
+          mockAgency,
+          { ...mockClient, stateCode: "US_CO" },
+          shortTranscript,
+          "test-meeting",
+        ),
+      ).rejects.toThrow();
+      expect(postRun).not.toHaveBeenCalled();
     });
   });
 });

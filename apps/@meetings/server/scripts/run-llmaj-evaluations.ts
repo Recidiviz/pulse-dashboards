@@ -403,7 +403,7 @@ async function evaluateForStateCode(
       `\n${c.bold}${c.blue}${stateCode}${c.reset}  ${c.dim}${pipelineRuns.length} pipeline run(s) to evaluate${c.reset}`,
     );
 
-    const evaluatorClients = createEvaluatorClients();
+    const evaluatorClients = createEvaluatorClients(stateCode);
 
     let success = 0;
     let skipped = 0;

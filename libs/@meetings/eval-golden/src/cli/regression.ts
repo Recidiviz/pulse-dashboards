@@ -39,6 +39,7 @@ import {
   summarize,
   validateDatasets,
 } from "~@meetings/eval-golden/experiments";
+import { EVAL_PERSON } from "~@meetings/eval-golden/stubs";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 
 type Result = [name: string, result: ExperimentRunResult];
@@ -90,7 +91,7 @@ async function main(): Promise<void> {
   const selected = process.env["EVAL_SUITE"] ?? "all";
   const cfg = configFromEnv();
   const client = new Client({ apiKey });
-  const core = SpecialistCore.factory();
+  const core = SpecialistCore.factory(EVAL_PERSON.stateCode);
 
   const examplesBySuite = Object.fromEntries(
     await Promise.all(

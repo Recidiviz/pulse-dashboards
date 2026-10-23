@@ -52,6 +52,7 @@ import {
   VerificationOutput,
   VerificationPayloadSchema,
 } from "~@meetings/tasks/llm/schemas";
+import { isTracingEnabledForState } from "~@meetings/tasks/llm/tracing";
 import { formatMeetingStartForPrompt } from "~@meetings/tasks/llm/utils";
 import {
   buildWriterUserVariables,
@@ -135,8 +136,14 @@ function buildDraftingOutputSchema(
 export class SpecialistCore {
   private openai: OpenAI;
   private gemini: GoogleGenAI;
+  private tracingEnabled: boolean;
 
-  static factory(): SpecialistCore {
+  /**
+   * Returns a SpecialistCore for meetings in stateCode, which traces its LLM
+   * calls in LangSmith only when LangSmith is configured and the state allows
+   * it.
+   */
+  static factory(stateCode: string): SpecialistCore {
     const openaiKey = process.env["OPENAI_API_KEY"];
 
     if (!openaiKey) {
@@ -149,9 +156,10 @@ export class SpecialistCore {
     // - LANGSMITH_API_KEY or LANGCHAIN_API_KEY: API key for LangSmith (either name enables tracing)
     // - LANGCHAIN_PROJECT: Project name (e.g., "Meetings Module (development)")
     // - LANGCHAIN_TRACING_V2: Set to "true" to enable tracing
-    const langsmithEnabled = Boolean(
-      process.env["LANGSMITH_API_KEY"] ?? process.env["LANGCHAIN_API_KEY"],
-    );
+    const langsmithEnabled =
+      Boolean(
+        process.env["LANGSMITH_API_KEY"] ?? process.env["LANGCHAIN_API_KEY"],
+      ) && isTracingEnabledForState(stateCode);
 
     const baseOpenAI = new OpenAI({
       apiKey: openaiKey,
@@ -166,15 +174,26 @@ export class SpecialistCore {
     return new SpecialistCore({
       openai: langsmithEnabled ? wrapOpenAI(baseOpenAI) : baseOpenAI,
       gemini: createVertexGeminiClient(),
+      tracingEnabled: langsmithEnabled,
     });
   }
 
-  constructor({ openai, gemini }: { openai: OpenAI; gemini: GoogleGenAI }) {
+  constructor({
+    openai,
+    gemini,
+    tracingEnabled = true,
+  }: {
+    openai: OpenAI;
+    gemini: GoogleGenAI;
+    /** Whether the Gemini calls are traced in LangSmith. Defaults to true. */
+    tracingEnabled?: boolean;
+  }) {
     if (openai.baseURL != "https://us.api.openai.com/v1") {
       throw new Error("Must use US-based OpenAI client");
     }
     this.openai = openai;
     this.gemini = gemini;
+    this.tracingEnabled = tracingEnabled;
   }
 
   /**
@@ -360,6 +379,7 @@ export class SpecialistCore {
         systemInstruction: PROMPTS.AUDITOR.SYSTEM(),
         parts: userMessage,
         schema: VerificationPayloadSchema,
+        tracingEnabled: this.tracingEnabled,
       });
 
       // Re-attach evidence

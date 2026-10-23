@@ -38,6 +38,7 @@ async function runTranscriptComparisonInternal(
     "audioBucket" | "audioPath" | "transcriptsByProvider" | "meetingContext"
   >,
   timeout?: number,
+  tracingEnabled = true,
 ): Promise<TranscriptComparisonOutput> {
   const assemblyAiTranscript = inputs.transcriptsByProvider["assemblyai"];
   const deepgramTranscript = inputs.transcriptsByProvider["deepgram"];
@@ -78,6 +79,7 @@ async function runTranscriptComparisonInternal(
     parts,
     schema: TranscriptComparisonOutputSchema,
     timeout,
+    tracingEnabled,
   });
 }
 
@@ -88,6 +90,7 @@ async function runCaseNoteInternal(
     "bestTranscript" | "caseNote" | "meetingContext"
   >,
   timeout?: number,
+  tracingEnabled = true,
 ): Promise<TextEvaluatorOutput> {
   return generateContentWithZodSchema({
     client: gemini,
@@ -99,6 +102,7 @@ async function runCaseNoteInternal(
     }),
     schema: TextEvaluatorOutputSchema,
     timeout,
+    tracingEnabled,
   });
 }
 
@@ -109,6 +113,7 @@ async function runActionItemsInternal(
     "bestTranscript" | "actionItems" | "meetingContext"
   >,
   timeout?: number,
+  tracingEnabled = true,
 ): Promise<TextEvaluatorOutput> {
   return generateContentWithZodSchema({
     client: gemini,
@@ -120,6 +125,7 @@ async function runActionItemsInternal(
     }),
     schema: TextEvaluatorOutputSchema,
     timeout,
+    tracingEnabled,
   });
 }
 
@@ -130,6 +136,7 @@ async function runOverallInternal(
     "bestTranscript" | "caseNote" | "actionItems" | "meetingContext"
   >,
   timeout?: number,
+  tracingEnabled = true,
 ): Promise<TextEvaluatorOutput> {
   return generateContentWithZodSchema({
     client: gemini,
@@ -142,6 +149,7 @@ async function runOverallInternal(
     }),
     schema: TextEvaluatorOutputSchema,
     timeout,
+    tracingEnabled,
   });
 }
 
@@ -167,3 +175,53 @@ export const runOverall = traceable(runOverallInternal, {
   name: "evaluator-overall",
   run_type: "chain",
 });
+
+type Evaluator<
+  Internal extends (
+    gemini: GoogleGenAI,
+    inputs: never,
+    timeout?: number,
+    tracingEnabled?: boolean,
+  ) => unknown,
+> = (
+  gemini: GoogleGenAI,
+  inputs: Parameters<Internal>[1],
+  timeout?: number,
+) => ReturnType<Internal>;
+
+/**
+ * The evaluators that runAllEvaluators runs. Both tracedEvaluators and
+ * untracedEvaluators have this type, so a new evaluator has to be added to
+ * both.
+ */
+export type Evaluators = {
+  runTranscriptComparison: Evaluator<typeof runTranscriptComparisonInternal>;
+  runCaseNote: Evaluator<typeof runCaseNoteInternal>;
+  runActionItems: Evaluator<typeof runActionItemsInternal>;
+  runOverall: Evaluator<typeof runOverallInternal>;
+};
+
+/**
+ * The evaluators, traced in LangSmith.
+ */
+export const tracedEvaluators: Evaluators = {
+  runTranscriptComparison,
+  runCaseNote,
+  runActionItems,
+  runOverall,
+};
+
+/**
+ * The evaluators without LangSmith tracing, for states where
+ * isTracingEnabledForState is false.
+ */
+export const untracedEvaluators: Evaluators = {
+  runTranscriptComparison: (gemini, inputs, timeout) =>
+    runTranscriptComparisonInternal(gemini, inputs, timeout, false),
+  runCaseNote: (gemini, inputs, timeout) =>
+    runCaseNoteInternal(gemini, inputs, timeout, false),
+  runActionItems: (gemini, inputs, timeout) =>
+    runActionItemsInternal(gemini, inputs, timeout, false),
+  runOverall: (gemini, inputs, timeout) =>
+    runOverallInternal(gemini, inputs, timeout, false),
+};

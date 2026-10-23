@@ -89,4 +89,6 @@ export interface EvaluatorClients {
   gemini: GoogleGenAI;
   /** Request timeout in milliseconds passed to each generateContentWithZodSchema call. */
   timeout?: number;
+  /** Whether the evaluators are traced in LangSmith. Defaults to true. */
+  tracingEnabled?: boolean;
 }

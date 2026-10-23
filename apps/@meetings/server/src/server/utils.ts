@@ -31,7 +31,11 @@ import {
   transcribeAudioWithAssemblyAI,
   transcribeAudioWithDeepgram,
 } from "~@meetings/tasks";
-import { ProductionPipeline, TranscriptInput } from "~@meetings/tasks/llm";
+import {
+  ProductionPipeline,
+  SpecialistCore,
+  TranscriptInput,
+} from "~@meetings/tasks/llm";
 import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { logger } from "~server-setup-plugin/logger";
@@ -573,7 +577,10 @@ export async function handleNotetakingProcessing(
   }
 
   // Run the LLM pipeline
-  const pipeline = new ProductionPipeline(prisma);
+  const pipeline = new ProductionPipeline(
+    prisma,
+    SpecialistCore.factory(meetingPerson.stateCode),
+  );
   const result = await pipeline.run(
     agencyConfig,
     meetingPerson,

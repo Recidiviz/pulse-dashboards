@@ -127,7 +127,7 @@ describe("SpecialistCore", () => {
       vi.stubEnv("OPENAI_API_KEY", "");
       vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
 
-      expect(() => SpecialistCore.factory()).toThrow(
+      expect(() => SpecialistCore.factory("US_NE")).toThrow(
         "Missing API key. Set the OPENAI_API_KEY environment variable.",
       );
     });
@@ -136,7 +136,7 @@ describe("SpecialistCore", () => {
       vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
       vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
 
-      expect(() => SpecialistCore.factory()).toThrow(
+      expect(() => SpecialistCore.factory("US_NE")).toThrow(
         "Missing GOOGLE_CLOUD_PROJECT environment variable",
       );
     });
@@ -145,7 +145,7 @@ describe("SpecialistCore", () => {
       vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
       vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
 
-      const instance = SpecialistCore.factory();
+      const instance = SpecialistCore.factory("US_NE");
 
       expect(instance).toBeInstanceOf(SpecialistCore);
     });

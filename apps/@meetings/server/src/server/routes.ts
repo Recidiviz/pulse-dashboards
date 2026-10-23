@@ -818,7 +818,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
         };
 
-        const evaluatorClients = createEvaluatorClients();
+        const evaluatorClients = createEvaluatorClients(stateCode);
         const { scores, langsmithTraceId } = await runAllEvaluators(
           evaluatorClients,
           inputs,
