@@ -30,6 +30,7 @@ import {
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityTab, OpportunityTabGroup } from "../types";
+import { getDynamicCaseNoteHeaders } from "./UsTxArsErsSharedUtils";
 
 export abstract class UsTxArsErsV2OpportunityBase<
   ReferralRecord extends DocumentData,
@@ -43,6 +44,11 @@ export abstract class UsTxArsErsV2OpportunityBase<
       .usTxArsErsV2OpportunityId
       ? this.record.opportunityId
       : undefined;
+  }
+
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  get caseNoteHeaders(): string[] {
+    return getDynamicCaseNoteHeaders(this);
   }
 
   get submittedForReviewDate(): string | undefined {

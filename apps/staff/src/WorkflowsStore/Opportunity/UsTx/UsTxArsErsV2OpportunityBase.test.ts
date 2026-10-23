@@ -78,3 +78,41 @@ describe.each([
     expect(opp.firestoreUpdateDocId).toBe(type);
   });
 });
+
+describe.each([
+  ["usTxAnnualReportStatusV2", UsTxAnnualReportStatusV2Opportunity],
+  [
+    "usTxEarlyReleaseFromSupervisionV2",
+    UsTxEarlyReleaseFromSupervisionV2Opportunity,
+  ],
+] as const)("%s caseNoteHeaders", (_type, OpportunityClass) => {
+  const note = {
+    noteTitle: "Supervision",
+    noteBody: "$21.00",
+    eventDate: "2026-06-03",
+  };
+
+  test("lists Current Fees before Most Recent Payments when fees are present", () => {
+    const opp = new OpportunityClass(createClient({}), {
+      ...record,
+      caseNotes: {
+        "Most Recent Payments": [note],
+        "Current Fees": [note],
+      },
+    });
+
+    expect(opp.caseNoteHeaders).toEqual([
+      "Current Fees",
+      "Most Recent Payments",
+    ]);
+  });
+
+  test("returns no headers when fees are absent", () => {
+    const opp = new OpportunityClass(createClient({}), {
+      ...record,
+      caseNotes: { "Other Notes": [note] },
+    });
+
+    expect(opp.caseNoteHeaders).toEqual([]);
+  });
+});
