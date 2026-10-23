@@ -1,3 +1,9 @@
 # Aurora
 # Google Workflows are allowed for orchestration but cannot process DOC data
 libs/atmos/components/terraform/**/*.workflows.yaml @Recidiviz/aurora
+
+# Cosmos
+# Require approval for any changes to the core module infra
+/apps/@modules/ @Recidiviz/cosmos
+/libs/atmos/components/terraform/modules/ @Recidiviz/cosmos
+/libs/@modules-server/ @Recidiviz/cosmos
