@@ -1,7 +1,7 @@
 {
-  "name": "@modules/UsTnReclassification",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@modules/UsTnReclassification/src",
+  "name": "@modules/UsTnReclassification/router",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@modules/UsTnReclassification/router/src",
   "projectType": "library",
   "tags": ["scope:server"],
   "targets": {

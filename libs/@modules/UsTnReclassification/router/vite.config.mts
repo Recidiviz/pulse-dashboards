@@ -21,7 +21,8 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@modules-server/prisma",
+  cacheDir:
+    "../../../../node_modules/.vite/libs/@modules/UsTnReclassification/router",
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
   test: {
     mockReset: true,
@@ -29,14 +30,15 @@ export default defineConfig(() => ({
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],
     passWithNoTests: true,
-    name: "@modules-server/prisma",
+    name: "@modules/UsTnReclassification/router",
     watch: false,
     globals: true,
     environment: "jsdom",
     include: ["{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@modules-server/prisma",
+      reportsDirectory:
+        "../../../../coverage/libs/@modules/UsTnReclassification/router",
       provider: "v8" as const,
     },
   },

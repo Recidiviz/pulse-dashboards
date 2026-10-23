@@ -90,10 +90,12 @@
         "./libs/@modules/Calendar/rules/src/index.ts"
       ],
       "~@modules/Calendar/rules/*": ["./libs/@modules/Calendar/rules/src/*"],
-      "~@modules/UsTnReclassification": [
-        "./libs/@modules/UsTnReclassification/src/index.ts"
+      "~@modules/UsTnReclassification/prisma": [
+        "./libs/@modules/UsTnReclassification/prisma/src/index.ts"
       ],
-      "~@modules-server/prisma": ["./libs/@modules-server/prisma/src/index.ts"],
+      "~@modules/UsTnReclassification/router": [
+        "./libs/@modules/UsTnReclassification/router/src/index.ts"
+      ],
       "~@modules-server/trpc-base": [
         "./libs/@modules-server/trpc-base/src/index.ts"
       ],

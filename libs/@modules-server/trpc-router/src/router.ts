@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { moduleRouter } from "~@modules/UsTnReclassification";
+import { moduleRouter } from "~@modules/UsTnReclassification/router";
 import {
   auth0Procedure,
   baseProcedure,

@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { getPrismaClient } from "~@modules-server/prisma";
+import { getPrismaClient } from "~@modules/UsTnReclassification/prisma";
 import { auth0Procedure, router } from "~@modules-server/trpc-base";
 
 const saveArgs = z.object({

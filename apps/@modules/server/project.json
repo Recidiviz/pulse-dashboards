@@ -34,13 +34,13 @@
         "assets": [
           {
             "glob": "prisma/**/*.prisma",
-            "input": "{workspaceRoot}/libs/@modules-server/prisma",
-            "output": "."
+            "input": "{workspaceRoot}/libs/@modules/UsTnReclassification/prisma",
+            "output": "modules/UsTnReclassification"
           },
           {
             "glob": "prisma/migrations/**/*",
-            "input": "{workspaceRoot}/libs/@modules-server/prisma",
-            "output": "."
+            "input": "{workspaceRoot}/libs/@modules/UsTnReclassification/prisma",
+            "output": "modules/UsTnReclassification"
           },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
@@ -89,7 +89,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@modules-server/prisma"],
+          "projects": ["@modules/UsTnReclassification/prisma"],
           "target": "prisma-generate"
         }
       ],
