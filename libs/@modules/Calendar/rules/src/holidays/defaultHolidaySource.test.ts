@@ -25,10 +25,10 @@ function rulesError(code: string) {
 const DHR_RANGE = { start: "2026-01-01", end: "2027-06-30" };
 
 describe("getDefaultHolidaySource", () => {
-  it("serves the DHR holiday table for US-CO", () => {
+  it("serves date-holidays for US-CO, matching the DHR holiday table", () => {
     const source = getDefaultHolidaySource("US-CO");
 
-    expect(source.id).toBe("dhr-static:2026-01-01..2027-06-30");
+    expect(source.id).toBe("date-holidays@3.37.0:US-CO");
     expect(getHolidays(source, DHR_RANGE)).toEqual([
       { date: "2026-01-01", name: "New Year's Day" },
       { date: "2026-01-19", name: "Martin Luther King Jr. Day" },
@@ -56,7 +56,13 @@ describe("getDefaultHolidaySource", () => {
     expect(getHolidays(source, DHR_RANGE)).toEqual([]);
   });
 
-  it.each(["US-TX", "us-co", ""])(
+  it("serves any region date-holidays knows", () => {
+    expect(getDefaultHolidaySource("US-TX").id).toBe(
+      "date-holidays@3.37.0:US-TX",
+    );
+  });
+
+  it.each(["US-ZZ", "us-co", ""])(
     "throws INVALID_SETTINGS for the region %j",
     (region) => {
       expect(() => getDefaultHolidaySource(region)).toThrow(

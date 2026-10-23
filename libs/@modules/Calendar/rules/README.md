@@ -38,6 +38,12 @@ Dates cross the public API as `"YYYY-MM-DD"` strings (`IsoDate`). Inside, the li
 
 With `FIRST_FULL_WEEK`, the week start changes results in some months. With Sunday weeks, the 1st Monday of February 2027 is Feb 8; with Monday weeks it's Feb 1.
 
+## Holidays
+
+`getHolidays` and `staticHolidaySource` are public. The default source, `getDefaultHolidaySource(holidayRegion)`, is server-only: import it from `~@modules/Calendar/rules/holidays/defaultHolidaySource`, never from `index.ts`. It computes a calendar's public weekday holidays with [date-holidays](https://github.com/commenthol/date-holidays), pinned to an exact version, for any region the package knows, such as `US-CO`. The package bundles data for every country, so it must stay out of client bundles. A test pins the `US-CO` result to Colorado DHR's published list in `dhrHolidays.ts` (RFC B).
+
+Holiday data from [date-holidays](https://github.com/commenthol/date-holidays) by commenthol and contributors, drawn largely from Wikipedia articles, which its `LICENSE` file lists. The package's `LICENSE` puts the data under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/); its `package.json` declares CC-BY-3.0. The library code is ISC.
+
 ## Commands
 
 ```bash

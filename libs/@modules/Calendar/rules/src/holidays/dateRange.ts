@@ -18,14 +18,17 @@
 import { Temporal } from "temporal-polyfill";
 
 import { CalendarRulesError } from "../errors";
-import { toPlainDate } from "../plainDates";
+import { MAX_YEAR, MIN_YEAR, toPlainDate } from "../plainDates";
 import { DateRange } from "./types";
 
 /**
  * Validates both ends of range and returns them in canonical form.
  *
  * Throws INVALID_DATE when either end isn't a real "YYYY-MM-DD" date, and
- * INVALID_DATE_RANGE when start is after end.
+ * INVALID_DATE_RANGE when start is after end or either end is outside the
+ * years MIN_YEAR to MAX_YEAR. Holiday sources loop over every year in the
+ * range, so the year check keeps a mistyped year from running thousands of
+ * lookups.
  */
 export function parseDateRange(range: DateRange): DateRange {
   const start = toPlainDate(range.start);
@@ -34,6 +37,12 @@ export function parseDateRange(range: DateRange): DateRange {
     throw new CalendarRulesError(
       "INVALID_DATE_RANGE",
       `Range start ${start} is after its end ${end}`,
+    );
+  }
+  if (start.year < MIN_YEAR || end.year > MAX_YEAR) {
+    throw new CalendarRulesError(
+      "INVALID_DATE_RANGE",
+      `Range ${start} to ${end} is outside the years ${MIN_YEAR} to ${MAX_YEAR}`,
     );
   }
   return { start: start.toString(), end: end.toString() };

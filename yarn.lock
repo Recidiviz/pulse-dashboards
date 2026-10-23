@@ -26092,6 +26092,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"argparse@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "argparse@npm:3.0.3"
+  checksum: 10c0/8d715f1c4bb0aa14a8b8ee749d6ab6f12d380caba33139d527cac79988af152cfd160f152c3964c76c7ea473f1899bd0989bd1e9cfdba22e68f50b6a4b5c9d0d
+  languageName: node
+  linkType: hard
+
 "aria-hidden@npm:^1.2.4":
   version: 1.2.6
   resolution: "aria-hidden@npm:1.2.6"
@@ -26474,6 +26481,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.1"
   checksum: 10c0/abcc49e42eb921a7ebc013d5bec1154651fb6dbc3f497541d488859e681256901b2990b954d530ba0da4d0851271d484f7057d5eff5e07cb73e8b10909f711bf
+  languageName: node
+  linkType: hard
+
+"astronomia@npm:^4.1.0, astronomia@npm:^4.1.1":
+  version: 4.2.0
+  resolution: "astronomia@npm:4.2.0"
+  checksum: 10c0/789592cb9fdb52db2203968452bbae1f01971313ed08a6f71013796c79714ae402db08defaf8de97f075611d8305bb0b73bf31ad0145cea36e3fa889cc1d9c66
   languageName: node
   linkType: hard
 
@@ -28113,6 +28127,15 @@ __metadata:
     hookified: "npm:^1.7.0"
     keyv: "npm:^5.2.3"
   checksum: 10c0/24e0f93782015be75b1ec9fe3fb151b2921f61c282091b873f78a0efeb141e95a21d8aa5f4c6bd99a8acb0b485deb5801aa32b4ecf4b666efa7446739368588b
+  languageName: node
+  linkType: hard
+
+"caldate@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "caldate@npm:2.0.5"
+  dependencies:
+    moment-timezone: "npm:^0.5.43"
+  checksum: 10c0/82743439c538982a9751be3ddf153784e765a709391c3342d6328b7f86aee230f7c50cda295020d209434fc3e8c57e0ea9f1b53832b77a9909c2c428b51613a5
   languageName: node
   linkType: hard
 
@@ -31404,6 +31427,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-bengali-revised@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "date-bengali-revised@npm:2.0.2"
+  checksum: 10c0/c0a83ed6333a7871385a1b1bdddc992f35c69af6ba1231d28562669992916fbc1672022313213ddb34df9478973b2a2b30a931967e55acfc0d9a8200d596fd40
+  languageName: node
+  linkType: hard
+
+"date-chinese@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "date-chinese@npm:2.1.4"
+  dependencies:
+    astronomia: "npm:^4.1.0"
+  checksum: 10c0/1ab1e94d0dcb7fa524d0c4ce54249c3b341779870dbd9c26c008c2a17ae72668b109106cd7e9ac8d6e37d7d3bb796b48f7406b755d3aae3f1c06fdf760714610
+  languageName: node
+  linkType: hard
+
+"date-easter@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "date-easter@npm:1.0.3"
+  checksum: 10c0/08734502a3264fb8c5073c22ab13e6624e7981293c72b5e3c37ea88bceae75db9ec8cd25443ea3729b096f5e062469d934f9ebf072a30229b313d1ba28e5d204
+  languageName: node
+  linkType: hard
+
 "date-fns@npm:^2.23.0":
   version: 2.30.0
   resolution: "date-fns@npm:2.30.0"
@@ -31424,6 +31470,36 @@ __metadata:
   version: 4.0.14
   resolution: "date-format@npm:4.0.14"
   checksum: 10c0/1c67a4d77c677bb880328c81d81f5b9ed7fbf672bdaff74e5a0f7314b21188f3a829b06acf120c70cc1df876a7724e3e5c23d511e86d64656a3035a76ac3930b
+  languageName: node
+  linkType: hard
+
+"date-holidays-parser@npm:^3.4.7":
+  version: 3.4.7
+  resolution: "date-holidays-parser@npm:3.4.7"
+  dependencies:
+    astronomia: "npm:^4.1.1"
+    caldate: "npm:^2.0.5"
+    date-bengali-revised: "npm:^2.0.2"
+    date-chinese: "npm:^2.1.4"
+    date-easter: "npm:^1.0.3"
+    deepmerge: "npm:^4.3.1"
+    jalaali-js: "npm:^1.2.7"
+    moment-timezone: "npm:^0.5.47"
+  checksum: 10c0/2e65cf1fa0b350bf0a659729a8ce1ed3fc84789fb64a2b6e1ede68758c233ce7255bb493dd0ea558ef66685b14d777b9bd8319b8fca1d0541a7b5e53c66f5bd1
+  languageName: node
+  linkType: hard
+
+"date-holidays@npm:3.37.0":
+  version: 3.37.0
+  resolution: "date-holidays@npm:3.37.0"
+  dependencies:
+    date-holidays-parser: "npm:^3.4.7"
+    js-yaml: "npm:^5.3.0"
+    lodash: "npm:^4.18.1"
+    prepin: "npm:^1.0.3"
+  bin:
+    holidays2json: scripts/holidays2json.cjs
+  checksum: 10c0/77a1a3895191000c9102a1f13d0cb3c1fd615bf9c5d0966c731a6ee09d73f3488ded4b884ef4e85492a136db7cab8f5656a59d30f4e4a492d1e13f16864286b7
   languageName: node
   linkType: hard
 
@@ -41070,6 +41146,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jalaali-js@npm:^1.2.7":
+  version: 1.2.8
+  resolution: "jalaali-js@npm:1.2.8"
+  checksum: 10c0/a90e314b61a2c2eb644633659d95838ef0fed1ccd8b551482868dd5e902df683579a336893eca1215b58ae2410139185de51ebe1b7aecd6790ae4a5aa868877f
+  languageName: node
+  linkType: hard
+
 "jay-peg@npm:^1.1.1":
   version: 1.1.1
   resolution: "jay-peg@npm:1.1.1"
@@ -42406,6 +42489,17 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: 10c0/6746baaaeac312c4db8e75fa22331d9a04cccb7792d126ed8ce6a0bbcfef0cedaddd0c5098fade53db067c09fe00aa1c957674b4765610a8b06a5a189e46433b
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:^5.3.0":
+  version: 5.5.0
+  resolution: "js-yaml@npm:5.5.0"
+  dependencies:
+    argparse: "npm:^3.0.3"
+  bin:
+    js-yaml: bin/js-yaml.mjs
+  checksum: 10c0/311619f44dd788657e9b81d4b5c60ff367441f364045e3796bc604a41f25819852748fb173ae82f2553d53cb609d7fdb79e0a74148892cb2c085eebe91839b53
   languageName: node
   linkType: hard
 
@@ -47134,6 +47228,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"moment-timezone@npm:^0.5.43, moment-timezone@npm:^0.5.47":
+  version: 0.5.48
+  resolution: "moment-timezone@npm:0.5.48"
+  dependencies:
+    moment: "npm:^2.29.4"
+  checksum: 10c0/ab14ec9d94bc33f29ac18e5417b7f8aca0b17130b952c5cc9697b8fea839e5ece9313af5fd3c9703a05db472b1560ddbfc7ad2aa24aac9afd047d6da6c3c6033
+  languageName: node
+  linkType: hard
+
 "moment-timezone@npm:^0.5.45":
   version: 0.5.46
   resolution: "moment-timezone@npm:0.5.46"
@@ -51307,6 +51410,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prepin@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "prepin@npm:1.0.3"
+  bin:
+    prepin: ./bin/prepin.js
+  checksum: 10c0/fecef4ee90499f26b7db532146f29612f47383b32965b5bab86b5dfde208cd6a1926edc7c6c1113b062f7c26e5d39cd6bd414721663b3d57aabe175cd58d14a5
+  languageName: node
+  linkType: hard
+
 "prettier-plugin-tailwindcss@npm:^0.5.11":
   version: 0.5.14
   resolution: "prettier-plugin-tailwindcss@npm:0.5.14"
@@ -54103,6 +54215,7 @@ __metadata:
     d3-scale: "npm:^3.2.3"
     d3-shape: "npm:^2.1.0"
     date-fns: "npm:^2.23.0"
+    date-holidays: "npm:3.37.0"
     debug: "npm:~2.6.9"
     dedent: "npm:^0.7.0"
     devtools: "npm:^7.27.0"

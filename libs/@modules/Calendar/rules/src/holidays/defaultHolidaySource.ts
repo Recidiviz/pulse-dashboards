@@ -16,25 +16,21 @@
 // =============================================================================
 
 // Server-only. Import it through ~@modules/Calendar/rules/holidays/defaultHolidaySource,
-// and keep it out of index.ts. Browsers get holidays from the calendar API, and
-// once CO-851 switches this module to date-holidays, exporting it from index.ts
-// would pull that package's holiday data for every country into client bundles.
+// and keep it out of index.ts. Browsers get holidays from the calendar API;
+// exporting this from index.ts would pull date-holidays' data for every
+// country into client bundles.
 
-import { CalendarRulesError } from "../errors";
-import { DHR_HOLIDAYS } from "./dhrHolidays";
+import { createDateHolidaysSource } from "./dateHolidaysSource";
 import { staticHolidaySource } from "./staticHolidaySource";
 import { HolidaySource } from "./types";
 
 /**
  * Returns the holiday source for a calendar's holidayRegion column.
  *
- * "US-CO" gets the static DHR list for 2026-01-01 to 2027-06-30, and null gets
- * a source with no holidays. Any other region throws INVALID_SETTINGS, because
- * no source covers it.
- *
- * The US-CO source is a stopgap: CO-851 replaces it with date-holidays 3.37.0
- * (RFC B). Until then, dates after 2027-06-30 get no holidays, so drafts for
- * July 2027 or later show no holiday flags.
+ * Any region date-holidays knows, such as "US-CO", gets that region's public
+ * weekday holidays, and null gets a source with no holidays. The region alone
+ * picks the holidays, so no state needs code of its own here (D30). Any other
+ * region throws INVALID_SETTINGS.
  */
 export function getDefaultHolidaySource(
   holidayRegion: string | null,
@@ -42,14 +38,5 @@ export function getDefaultHolidaySource(
   if (holidayRegion === null) {
     return staticHolidaySource([], "none");
   }
-  if (holidayRegion === "US-CO") {
-    return staticHolidaySource(
-      DHR_HOLIDAYS,
-      "dhr-static:2026-01-01..2027-06-30",
-    );
-  }
-  throw new CalendarRulesError(
-    "INVALID_SETTINGS",
-    `No holiday source covers holidayRegion ${JSON.stringify(holidayRegion)}`,
-  );
+  return createDateHolidaysSource(holidayRegion);
 }

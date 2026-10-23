@@ -22,13 +22,11 @@ import { Holiday } from "./types";
  * holiday table lists them. A holiday that falls on a weekend appears on its
  * weekday observed date.
  *
- * This list is the US-CO default only until CO-851 switches the default to
- * date-holidays 3.37.0, the source RFC B chose. After that it stays as the
- * reference the pin test checks date-holidays against, so edit it only to
- * match DHR's published list.
- *
- * DHR hasn't published FY 2027-28, so the list ends on 2027-06-30. Dates after
- * that get no holiday flags, and CO-851 must land before drafts reach July 2027.
+ * The calendar computes holidays with date-holidays (dateHolidaysSource.ts).
+ * This list is the reference its pin test checks US-CO against, so a
+ * date-holidays upgrade that changes Colorado's holidays fails CI. Edit it
+ * only to match DHR's published list, and extend it when DHR publishes
+ * FY 2027-28.
  */
 export const DHR_HOLIDAYS: readonly Holiday[] = [
   { date: "2026-01-01", name: "New Year's Day" },

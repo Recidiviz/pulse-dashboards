@@ -91,6 +91,12 @@ describe("getHolidays", () => {
     ).toThrow(rulesError("INVALID_DATE_RANGE"));
   });
 
+  it("throws INVALID_DATE_RANGE for a range past the year 5000", () => {
+    expect(() =>
+      getHolidays(dhr, { start: "2026-09-01", end: "5001-01-01" }),
+    ).toThrow(rulesError("INVALID_DATE_RANGE"));
+  });
+
   it.each([
     { start: "2026-09-31", end: "2026-10-31" },
     { start: "2026-09-01", end: "2026-9-30" },
