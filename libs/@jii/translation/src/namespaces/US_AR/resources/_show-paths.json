@@ -45,5 +45,9 @@
       "carryOverOver": "[US_AR]programs.onMyTablet.carryOverOver",
       "learnMore": "[US_AR]programs.onMyTablet.learnMore"
     }
+  },
+  "edovoBanner": {
+    "message": "[US_AR]edovoBanner.message",
+    "linkText": "[US_AR]edovoBanner.linkText"
   }
 }

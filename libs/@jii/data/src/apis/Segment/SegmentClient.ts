@@ -225,6 +225,15 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_edovo_return_failed");
   }
 
+  trackEdovoBannerImpression() {
+    this.track("frontend_edovo_banner_impression");
+  }
+
+  trackEdovoBannerClicked() {
+    this.track("frontend_edovo_banner_clicked");
+  }
+
+  // TODO(JII2-131): Merge the aet_callout events into the Edovo banner events above
   trackAetCalloutImpression(metadata: { placement: AetCalloutPlacement }) {
     this.track("frontend_aet_callout_impression", metadata);
   }

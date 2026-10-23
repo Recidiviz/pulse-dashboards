@@ -19,11 +19,12 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { usePageTitle } from "~@jii/common-ui";
-import { useResidentMetadata } from "~@jii/data";
+import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
 import { spacing } from "~design-system";
 
+import { UsArEdovoBanner } from "./UsArEdovoBanner";
 import { UsArImportantDates } from "./UsArImportantDates";
 
 const Wrapper = styled.div`
@@ -33,10 +34,15 @@ const Wrapper = styled.div`
 export function UsArSingleResidentHome() {
   usePageTitle("Home");
   const metadata = useResidentMetadata("US_AR");
+  const { residentFlags } = useSingleResidentContext();
+
+  // TODO(JII2-112) also require isEligibleForEdovoCredit
+  const showBanner = residentFlags.usArEdovoCredits;
 
   return (
     <Wrapper>
       <LastUpdatedBanner lastUpdatedDate={metadata.lastUpdatedDate} />
+      {showBanner && <UsArEdovoBanner />}
       <UsArImportantDates metadata={metadata} />
       <ProgramsCtaSection stateCode="US_AR" />
     </Wrapper>

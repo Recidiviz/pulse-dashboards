@@ -51,5 +51,9 @@
       "carryOverOver": "Over 16 hours? Only 2 hours carry over.",
       "learnMore": "Learn more about the tablet programming policy"
     }
+  },
+  "edovoBanner": {
+    "message": "**Courses on Edovo now earn programming credit**\n\nEvery 16 hours of Edovo courses you complete and pass earns 1 program unit, up to 1 a month.",
+    "linkText": "See my progress"
   }
 }
