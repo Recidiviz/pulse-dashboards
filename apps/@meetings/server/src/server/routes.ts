@@ -49,7 +49,9 @@ import {
 } from "~@meetings/server/server/utils";
 import {
   exportLabelStudioTask,
+  exportLlmajTriageTask,
   labelStudioMeetingInclude,
+  type LlmajGradedOutputs,
   stitchAudio,
 } from "~@meetings/tasks";
 import { TranscriptValidationError } from "~@meetings/tasks/errors";
@@ -824,7 +826,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           inputs,
         );
 
-        await prisma.notetakingEvaluationRun.create({
+        const evaluationRun = await prisma.notetakingEvaluationRun.create({
           data: {
             pipelineRunId: pipelineRun.id,
             evaluatorVersion: EVALUATOR_VERSION,
@@ -833,19 +835,36 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
         });
 
-        // Export Label Studio task JSON to GCS, with the following conditions:
-        // 1. We only export tasks corresponding to the state's configured sample
-        //    percentage (by default, sample size is 100% of meetings).
-        // 2. All BAD-graded meetings get a task.
-        // 3. PARTIAL-graded meetings get a task when labelStudioAlwaysReviewPartial
-        //    is set to true in the agency config.
-        // 4. Skip US_DEMO in production only —
-        //    staging US_DEMO meetings should still flow to Label Studio.
+        const llmajSuccessMessage = "LLMAJ evaluation completed successfully";
+
+        // Exports are fully skipped for US_DEMO in production — staging US_DEMO
+        // meetings should still flow to Label Studio.
+        if (
+          stateCode === StateCode.US_DEMO &&
+          env.DEPLOY_ENV === "production"
+        ) {
+          return reply.code(200).send(llmajSuccessMessage);
+        }
+
+        // Two label studio task export paths exist:
+        // 1. Full review (label-studio-task.json): a random sample excluding
+        //    meetings that LLMAJ graded BAD, (see labelStudioReviewPercent, default
+        //    100%) to be graded from scratch, which is how the judge's miss rate
+        //    is measured.
+        //
+        //    TODO(MM-674): remove labelStudioAlwaysReviewPartial
+        //    PARTIAL-graded meetings are also forced in when
+        //    labelStudioAlwaysReviewPartial is set.
+        //
+        // 2. LLMAJ triage (llmaj-triage-task.json): every BAD-graded meeting.
+        //
+        // Because BAD-graded meetings are excluded from full-review, a given meeting
+        // can generate at most ONE labeling task.
 
         const agencyConfig = await getAgencyConfig(stateCode).catch((e) => {
           // Catch any errors from fetching/parsing the agency config and
-          // assume default behavior (100% sample, and mark PARTIAL for review)
-          // to avoid losing the label studio task.
+          // assume default behavior (100% sample) to avoid losing the full
+          // review task.
           captureException(e);
           console.error("Failed to fetch agency config", e);
           return undefined;
@@ -865,23 +884,38 @@ export function registerTaskRoutes(app: FastifyInstance) {
           scores.overall,
         ].some((s) => s?.grade === "PARTIAL");
         const alwaysReviewPartial =
-          agencyConfig?.labelStudioAlwaysReviewPartial ?? true;
+          agencyConfig?.labelStudioAlwaysReviewPartial ?? false;
 
-        const forcedReview =
-          gradedBad || (alwaysReviewPartial && gradedPartial);
+        const forcedFullReview = alwaysReviewPartial && gradedPartial;
 
-        if (
-          (stateCode !== StateCode.US_DEMO ||
-            env.DEPLOY_ENV !== "production") &&
-          (sampledForReview || forcedReview)
-        ) {
+        // Path for full-review Label Studio task
+        if (!gradedBad && (sampledForReview || forcedFullReview)) {
           exportLabelStudioTask(meeting, stateCode, gradedBad).catch((e) => {
             captureException(e);
             console.error("Failed to export Label Studio task to GCS", e);
           });
         }
 
-        reply.code(200).send("LLMAJ evaluation completed successfully");
+        // Path for LLMAJ triage task
+        if (gradedBad) {
+          const gradedOutputs: LlmajGradedOutputs = {
+            caseNote: draftingOutput.caseNote,
+            actionItems: verificationOutput.actionItems.map(
+              ({ task, assignee, deadline }) => ({ task, assignee, deadline }),
+            ),
+          };
+          exportLlmajTriageTask(
+            meeting,
+            evaluationRun,
+            stateCode,
+            gradedOutputs,
+          ).catch((e) => {
+            captureException(e);
+            console.error("Failed to export LLMAJ triage task to GCS", e);
+          });
+        }
+
+        reply.code(200).send(llmajSuccessMessage);
       });
     },
   });

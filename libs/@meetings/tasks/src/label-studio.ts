@@ -177,6 +177,7 @@ export function formatLabelStudioActionItems(
 export function buildLabelStudioTask(
   meeting: LabelStudioMeeting,
   stateCode: StateCode,
+  // TODO(MM-674): remove needsRecidivizReview since it's obsolete
   needsRecidivizReview = false,
 ) {
   const person = meeting.client ?? meeting.resident;
@@ -217,6 +218,7 @@ export function buildLabelStudioTask(
     case_note: meeting.caseNote ?? null,
     action_items: formatLabelStudioActionItems(meeting),
 
+    // TODO(MM-674): remove needs_recidiviz_review since it's obsolete
     needs_recidiviz_review: needsRecidivizReview,
 
     // ── Meta (human-readable labels for Label Studio <Table> widget) ────

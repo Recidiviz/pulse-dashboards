@@ -25,6 +25,7 @@ import {
 } from "~@meetings/server/jobs/meeting-artifact-cleanup";
 import { testPrismaClient } from "~@meetings/server/test/setup";
 import { fakeClient, fakeStaff } from "~@meetings/server/test/setup/seed";
+import { NOT_AVAILABLE } from "~@meetings/tasks";
 import { getAgencyConfigs } from "~@meetings/trpc/routes/config/utils";
 
 const mockGetPrismaClientForStateCode = vi.hoisted(() => vi.fn());
@@ -320,6 +321,49 @@ describe("cleanupStateData", () => {
     expect(savedJson.case_note).toBe("Some notes");
     expect(savedJson.audio).toBe(
       "gs://test-bucket/meetings/expired-scrub-ls/final.m4a",
+    );
+  });
+
+  test("scrubs transcript and staff_notes from the LLMAJ triage task JSON when cleaning transcripts", async () => {
+    const meeting = await createExpiredMeeting("expired-scrub-triage", 60);
+    await testPrismaClient.transcription.create({
+      data: {
+        meetingId: meeting.id,
+        provider: TranscriptionProvider.ASSEMBLYAI,
+        transcriptObject: {} as PrismaJson.TranscriptType,
+        confidence: 0.95,
+      },
+    });
+
+    const originalTask = {
+      audio: "gs://test-bucket/meetings/expired-scrub-triage/final.m4a",
+      transcript: "[A]: Hello",
+      staff_notes: "Ask about bus pass",
+      case_note: "Some notes",
+      meta: { "Meeting ID": meeting.id },
+    };
+    // The full-review task file doesn't exist for this meeting; the triage file does.
+    mockFileExists.mockResolvedValueOnce([false]);
+    mockFileExists.mockResolvedValueOnce([true]);
+    mockFileDownload.mockResolvedValueOnce([
+      Buffer.from(JSON.stringify(originalTask)),
+    ]);
+
+    await cleanupStateData(
+      STATE_CODE,
+      AUDIO_TTL_DAYS,
+      TRANSCRIPT_TTL_DAYS,
+      false,
+    );
+
+    expect(mockFileSave).toHaveBeenCalled();
+    const savedJson = JSON.parse(mockFileSave.mock.calls[0][0]);
+    expect(savedJson.transcript).toBe(NOT_AVAILABLE);
+    expect(savedJson.staff_notes).toBe(NOT_AVAILABLE);
+    // Non-transcript fields should be preserved
+    expect(savedJson.case_note).toBe("Some notes");
+    expect(savedJson.audio).toBe(
+      "gs://test-bucket/meetings/expired-scrub-triage/final.m4a",
     );
   });
 

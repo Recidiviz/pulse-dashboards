@@ -19,7 +19,11 @@ import { Storage } from "@google-cloud/storage";
 import { subDays } from "date-fns";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
-import { LABEL_STUDIO_TASK_FILENAME } from "~@meetings/tasks";
+import {
+  LABEL_STUDIO_TASK_FILENAME,
+  LLMAJ_TRIAGE_TASK_FILENAME,
+  NOT_AVAILABLE,
+} from "~@meetings/tasks";
 import { getAgencyConfigs } from "~@meetings/trpc/routes/config/utils";
 import { logger } from "~server-setup-plugin/logger";
 
@@ -146,6 +150,46 @@ async function scrubTranscriptsFromLabelStudioTask(
   logger.info(`Scrubbed transcripts from gs://${bucket}/${filePath}`);
 }
 
+/**
+ * Remove the transcript and staff notes from the LLMAJ triage task JSON in
+ * GCS. Unlike the full-review task, the triage schema forbids null on
+ * displayed fields (Label Studio rejects the whole import), so these are
+ * scrubbed to NOT_AVAILABLE instead of null.
+ */
+async function scrubTranscriptFromLlmajTriageTask(
+  storage: Storage,
+  bucket: string,
+  recordingsFolderPath: string,
+  dryRun: boolean,
+): Promise<void> {
+  const filePath = `${recordingsFolderPath}/${LLMAJ_TRIAGE_TASK_FILENAME}`;
+  const file = storage.bucket(bucket).file(filePath);
+
+  const [exists] = await file.exists();
+  if (!exists) {
+    return;
+  }
+
+  if (dryRun) {
+    logger.info(
+      `[DRY RUN] Would scrub transcript from gs://${bucket}/${filePath}`,
+    );
+    return;
+  }
+
+  const [content] = await file.download();
+  const task = JSON.parse(content.toString());
+
+  task.transcript = NOT_AVAILABLE;
+  task.staff_notes = NOT_AVAILABLE;
+
+  await file.save(JSON.stringify(task, null, 2), {
+    contentType: "application/json",
+  });
+
+  logger.info(`Scrubbed transcript from gs://${bucket}/${filePath}`);
+}
+
 interface MeetingCleanupResult {
   meetingId: string;
   success: boolean;
@@ -246,6 +290,14 @@ async function cleanupMeeting(
 
     // Scrub transcript data from the Label Studio task JSON in GCS
     await scrubTranscriptsFromLabelStudioTask(
+      storage,
+      meeting.recordingsGCSBucket,
+      meeting.recordingsFolderPath,
+      dryRun,
+    );
+
+    // Scrub transcript data from the LLMAJ triage task JSON in GCS, if any
+    await scrubTranscriptFromLlmajTriageTask(
       storage,
       meeting.recordingsGCSBucket,
       meeting.recordingsFolderPath,

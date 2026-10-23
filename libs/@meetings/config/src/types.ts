@@ -152,11 +152,12 @@ export const AgencyConfigFileSchema = z
       .describe(
         "Percent of completed meetings randomly sampled for a Label Studio review task",
       ),
+    // TODO(MM-674): Remove this field, it is no longer in use.
     labelStudioAlwaysReviewPartial: z
       .boolean()
       .optional()
       .describe(
-        "Whether a grade of PARTIAL from the LLMAJ requires a Label Studio review task for the meeting; BAD scores always require a review task",
+        "Whether a grade of PARTIAL from the LLMAJ requires a Label Studio review task for the meeting; a BAD grade always gets an LLMAJ triage task instead",
       ),
     /** Replaces base keywords entirely */
     keywords: z
@@ -256,7 +257,7 @@ export const AgencyConfigSchema = z.object({
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   labelStudioReviewPercent: z.number().min(0).max(100).default(100),
-  labelStudioAlwaysReviewPartial: z.boolean().default(true),
+  labelStudioAlwaysReviewPartial: z.boolean().default(false),
   keywords: z.array(z.string()).default([]),
   meetingTypes: z.array(MeetingTypeSchema).default([]),
   labels: LabelsSchema,

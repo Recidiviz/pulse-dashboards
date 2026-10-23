@@ -98,6 +98,7 @@ const mockTranscribeAudioWithDeepgram = vi.spyOn(
   "transcribeAudioWithDeepgram",
 );
 const mockExportLabelStudioTask = vi.spyOn(tasks, "exportLabelStudioTask");
+const mockExportLlmajTriageTask = vi.spyOn(tasks, "exportLlmajTriageTask");
 const mockRunAllEvaluators = vi.spyOn(evaluators, "runAllEvaluators");
 const mockGetAgencyConfig = vi.spyOn(configUtils, "getAgencyConfig");
 vi.spyOn(evaluators, "createEvaluatorClients").mockReturnValue(
@@ -111,6 +112,7 @@ mockStitchAudio.mockImplementation(async () => {
 mockExportLabelStudioTask.mockImplementation(
   vi.fn().mockResolvedValue(undefined),
 );
+mockExportLlmajTriageTask.mockImplementation(vi.fn().mockResolvedValue(true));
 mockRunAllEvaluators.mockImplementation(
   vi.fn().mockResolvedValue({
     scores: {
@@ -122,6 +124,34 @@ mockRunAllEvaluators.mockImplementation(
     langsmithTraceId: undefined,
   }),
 );
+const BAD_CASE_NOTE_EVALUATION = {
+  scores: {
+    transcriptComparison: null,
+    caseNote: {
+      rationale: "Contains errors",
+      grade: "BAD" as const,
+      hallucinations: [],
+      omissions: [],
+    },
+    actionItems: null,
+    overall: null,
+  },
+  langsmithTraceId: undefined,
+};
+const PARTIAL_ACTION_ITEMS_EVALUATION = {
+  scores: {
+    transcriptComparison: null,
+    caseNote: null,
+    actionItems: {
+      rationale: "Missed a follow-up date",
+      grade: "PARTIAL" as const,
+      hallucinations: [],
+      omissions: [],
+    },
+    overall: null,
+  },
+  langsmithTraceId: undefined,
+};
 mockTranscribeAudioWithAssemblyAI.mockImplementation(
   vi.fn().mockResolvedValue(FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT),
 );
@@ -2090,7 +2120,15 @@ describe("tasks", () => {
     };
 
     const FAKE_VERIFICATION_OUTPUT = {
-      actionItems: [],
+      actionItems: [
+        {
+          assignee: "Client",
+          task: "Bring proof of address",
+          deadline: null,
+          context: null,
+          evidenceQuotes: [],
+        },
+      ],
       entities: [],
     };
 
@@ -2269,386 +2307,518 @@ describe("tasks", () => {
       expect(mockRunAllEvaluators).not.toHaveBeenCalled();
     });
 
-    test("Should export Label Studio task with needs_recidiviz_review=false when no BAD scores", async () => {
-      const meeting =
-        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-export");
-      mockExportLabelStudioTask.mockClear();
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/run-llmaj-evaluation",
-        headers: { authorization: `Bearer token` },
-        body: { stateCode: "US_NE", meetingId: meeting.id },
+    describe("full review random sampling", () => {
+      beforeEach(() => {
+        mockExportLabelStudioTask.mockClear();
       });
 
-      expect(response.statusCode).toBe(200);
-      expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-        expect.objectContaining({ id: meeting.id }),
-        "US_NE",
-        false,
-      );
-    });
+      test("Should export Label Studio task with needs_recidiviz_review=false when no BAD scores", async () => {
+        const meeting =
+          await createMeetingWithSuccessfulPipelineRun("llmaj-ls-export");
 
-    test("Should export Label Studio task with needs_recidiviz_review=true when any score is BAD", async () => {
-      const meeting =
-        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-bad-score");
-      mockExportLabelStudioTask.mockClear();
-      mockRunAllEvaluators.mockResolvedValueOnce({
-        scores: {
-          transcriptComparison: null,
-          caseNote: {
-            rationale: "Contains errors",
-            grade: "BAD",
-            hallucinations: [],
-            omissions: [],
-          },
-          actionItems: null,
-          overall: null,
-        },
-        langsmithTraceId: undefined,
-      });
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/run-llmaj-evaluation",
-        headers: { authorization: `Bearer token` },
-        body: { stateCode: "US_NE", meetingId: meeting.id },
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-        expect.objectContaining({ id: meeting.id }),
-        "US_NE",
-        true,
-      );
-    });
-
-    test("Should not export Label Studio task for US_DEMO in production", async () => {
-      const meeting =
-        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-demo-prod");
-      mockExportLabelStudioTask.mockClear();
-
-      const originalDeployEnv = env.DEPLOY_ENV;
-      env.DEPLOY_ENV = "production";
-
-      try {
         const response = await testServer.inject({
           method: "POST",
           url: "/run-llmaj-evaluation",
           headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_DEMO", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
-      } finally {
-        env.DEPLOY_ENV = originalDeployEnv;
-      }
-    });
-
-    test("Should export Label Studio task for US_DEMO outside of production", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-ls-demo-staging",
-      );
-      mockExportLabelStudioTask.mockClear();
-
-      const originalDeployEnv = env.DEPLOY_ENV;
-      env.DEPLOY_ENV = "staging";
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_DEMO", meetingId: meeting.id },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
         });
 
         expect(response.statusCode).toBe(200);
         expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
           expect.objectContaining({ id: meeting.id }),
-          "US_DEMO",
+          "US_NE",
           false,
         );
-      } finally {
-        env.DEPLOY_ENV = originalDeployEnv;
-      }
-    });
-
-    test("Should return 200 if Label Studio export fails after evaluation", async () => {
-      mockExportLabelStudioTask.mockRejectedValueOnce(
-        new Error("GCS upload failed"),
-      );
-      const meeting =
-        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-fail");
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/run-llmaj-evaluation",
-        headers: { authorization: `Bearer token` },
-        body: { stateCode: "US_NE", meetingId: meeting.id },
       });
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toContain(
-        "LLMAJ evaluation completed successfully",
-      );
-    });
+      test("Should not export Label Studio task for US_DEMO in production", async () => {
+        const meeting =
+          await createMeetingWithSuccessfulPipelineRun("llmaj-ls-demo-prod");
 
-    test("Should still export Label Studio task and report to Sentry when agency config fetch fails", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-agency-config-fail",
-      );
-      mockExportLabelStudioTask.mockClear();
-      mockGetAgencyConfig.mockRejectedValueOnce(
-        new Error("agency config DB error"),
-      );
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
 
-      // US_TN's real labelStudioReviewPercent is 10% - 0.5 falls outside that, but a
-      // failed config fetch should use the 100% default rather than losing the task.
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_DEMO", meetingId: meeting.id },
+          });
 
-      try {
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+
+      test("Should export Label Studio task for US_DEMO outside of production", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-ls-demo-staging",
+        );
+
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "staging";
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_DEMO", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            "US_DEMO",
+            false,
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+
+      test("Should return 200 if Label Studio export fails after evaluation", async () => {
+        mockExportLabelStudioTask.mockRejectedValueOnce(
+          new Error("GCS upload failed"),
+        );
+        const meeting =
+          await createMeetingWithSuccessfulPipelineRun("llmaj-ls-fail");
+
         const response = await testServer.inject({
           method: "POST",
           url: "/run-llmaj-evaluation",
           headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_TN", meetingId: meeting.id },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
         });
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toContain(
           "LLMAJ evaluation completed successfully",
         );
-        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+      });
+
+      test("Should still export Label Studio task and report to Sentry when agency config fetch fails", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-agency-config-fail",
+        );
+        mockGetAgencyConfig.mockRejectedValueOnce(
+          new Error("agency config DB error"),
+        );
+
+        // US_TN's real labelStudioReviewPercent is 10% - 0.5 falls outside that, but a
+        // failed config fetch should use the 100% default rather than losing the task.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toContain(
+            "LLMAJ evaluation completed successfully",
+          );
+          expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            "US_TN",
+            false,
+          );
+
+          const sentryReports = await testAndGetSentryReports();
+          expect(sentryReports[0].error?.message).toContain(
+            "agency config DB error",
+          );
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should not export Label Studio task when not sampled and no scores are PARTIAL/BAD", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-ls-not-sampled",
+        );
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should export Label Studio task when sampled even with no PARTIAL/BAD scores", async () => {
+        const meeting =
+          await createMeetingWithSuccessfulPipelineRun("llmaj-ls-sampled");
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.05 lands inside that sample.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.05);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            "US_TN",
+            false,
+          );
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should export Label Studio task when not sampled but a score is PARTIAL", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-ls-partial-not-sampled",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(
+          PARTIAL_ACTION_ITEMS_EVALUATION,
+        );
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            "US_TN",
+            false,
+          );
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should not export Label Studio task for a PARTIAL score when the state excludes PARTIAL from review", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-ls-partial-excluded",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(
+          PARTIAL_ACTION_ITEMS_EVALUATION,
+        );
+
+        // US_CO's labelStudioReviewPercent is 10 — 0.5 lands outside that sample,
+        // and US_CO's labelStudioAlwaysReviewPartial is false, so the PARTIAL
+        // grade doesn't force a task either.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_CO", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should not export Label Studio task when not sampled and score is BAD", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-ls-bad-not-sampled",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample.
+        // BAD grades go to the triage task and don't force a full review.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should not export Label Studio task when sampled and any score is BAD", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-ls-bad-sampled",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.05 lands inside that sample.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.05);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLabelStudioTask).not.toHaveBeenCalledWith();
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+    });
+
+    describe("LLMAJ triage", () => {
+      beforeEach(() => {
+        mockExportLlmajTriageTask.mockClear();
+      });
+
+      test("Should export LLMAJ triage task when not sampled but a score is BAD", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-bad-not-sampled",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLlmajTriageTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            expect.anything(),
+            "US_TN",
+            expect.anything(),
+          );
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should export LLMAJ triage task when sampled and a score is BAD", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-bad-sampled",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        // US_TN's labelStudioReviewPercent is 10 — 0.05 lands inside that sample.
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.05);
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLlmajTriageTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            expect.anything(),
+            "US_TN",
+            expect.anything(),
+          );
+        } finally {
+          randomSpy.mockRestore();
+        }
+      });
+
+      test("Should export the original outputs that were graded by LLMAJ, not staff-edited versions", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-graded-outputs",
+        );
+        await testPrismaClient.meeting.update({
+          where: { id: meeting.id },
+          data: {
+            caseNote: "Staff-edited case note",
+            caseNoteEditedAt: new Date(),
+            actionItems: {
+              create: {
+                assignee: "Staff Member",
+                generatedTask: "Bring proof of address",
+                editedTask: "Bring proof of address and a pay stub",
+                completed: false,
+                deleted: false,
+                evidenceQuotes: [],
+                pipelineRunId: `${meeting.id}-run`,
+              },
+            },
+          },
+        });
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_TN", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLlmajTriageTask).toHaveBeenCalledWith(
           expect.objectContaining({ id: meeting.id }),
+          expect.objectContaining({ pipelineRunId: `${meeting.id}-run` }),
           "US_TN",
-          false,
+          {
+            caseNote: FAKE_DRAFTING_OUTPUT.caseNote,
+            actionItems: [
+              {
+                assignee: "Client",
+                task: "Bring proof of address",
+                deadline: null,
+              },
+            ],
+          },
+        );
+      });
+
+      test("Should not export LLMAJ triage task when no scores are BAD", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-no-bad",
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLlmajTriageTask).not.toHaveBeenCalled();
+      });
+
+      test("Should not export LLMAJ triage task when a score is PARTIAL", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-partial",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(
+          PARTIAL_ACTION_ITEMS_EVALUATION,
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(mockExportLlmajTriageTask).not.toHaveBeenCalled();
+      });
+
+      test("Should not export LLMAJ triage task for US_DEMO in production", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-demo-prod",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_DEMO", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLlmajTriageTask).not.toHaveBeenCalled();
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+
+      test("Should export LLMAJ triage task for US_DEMO outside of production", async () => {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(
+          "llmaj-triage-demo-staging",
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "staging";
+
+        try {
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_DEMO", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLlmajTriageTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            expect.anything(),
+            "US_DEMO",
+            expect.anything(),
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+
+      test("Should return 200 and report to Sentry if LLMAJ triage export fails after evaluation", async () => {
+        mockExportLlmajTriageTask.mockRejectedValueOnce(
+          new Error("GCS upload failed"),
+        );
+        mockRunAllEvaluators.mockResolvedValueOnce(BAD_CASE_NOTE_EVALUATION);
+        const meeting =
+          await createMeetingWithSuccessfulPipelineRun("llmaj-triage-fail");
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toContain(
+          "LLMAJ evaluation completed successfully",
         );
 
         const sentryReports = await testAndGetSentryReports();
-        expect(sentryReports[0].error?.message).toContain(
-          "agency config DB error",
-        );
-      } finally {
-        randomSpy.mockRestore();
-      }
-    });
-
-    test("Should not export Label Studio task when not sampled and no scores are PARTIAL/BAD", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-ls-not-sampled",
-      );
-      mockExportLabelStudioTask.mockClear();
-
-      // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample.
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_TN", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
-      } finally {
-        randomSpy.mockRestore();
-      }
-    });
-
-    test("Should export Label Studio task when sampled even with no PARTIAL/BAD scores", async () => {
-      const meeting =
-        await createMeetingWithSuccessfulPipelineRun("llmaj-ls-sampled");
-      mockExportLabelStudioTask.mockClear();
-
-      // US_TN's labelStudioReviewPercent is 10 — 0.05 lands inside that sample.
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.05);
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_TN", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-          expect.objectContaining({ id: meeting.id }),
-          "US_TN",
-          false,
-        );
-      } finally {
-        randomSpy.mockRestore();
-      }
-    });
-
-    test("Should export Label Studio task when not sampled but a score is PARTIAL", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-ls-partial-not-sampled",
-      );
-      mockExportLabelStudioTask.mockClear();
-      mockRunAllEvaluators.mockResolvedValueOnce({
-        scores: {
-          transcriptComparison: null,
-          caseNote: null,
-          actionItems: {
-            rationale: "Missed a follow-up date",
-            grade: "PARTIAL", // PARTIAL llmaj eval
-            hallucinations: [],
-            omissions: [],
-          },
-          overall: null,
-        },
-        langsmithTraceId: undefined,
+        expect(sentryReports[0].error?.message).toContain("GCS upload failed");
       });
-
-      // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample,
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_TN", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-          expect.objectContaining({ id: meeting.id }),
-          "US_TN",
-          false,
-        );
-      } finally {
-        randomSpy.mockRestore();
-      }
-    });
-    test("Should export Label Studio task when not sampled but a score is BAD", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-ls-bad-not-sampled",
-      );
-      mockExportLabelStudioTask.mockClear();
-      mockRunAllEvaluators.mockResolvedValueOnce({
-        scores: {
-          transcriptComparison: null,
-          caseNote: null,
-          actionItems: {
-            rationale: "Missed a follow-up date",
-            grade: "BAD", // BAD llmaj eval
-            hallucinations: [],
-            omissions: [],
-          },
-          overall: null,
-        },
-        langsmithTraceId: undefined,
-      });
-
-      // US_TN's labelStudioReviewPercent is 10 — 0.5 lands outside that sample,
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_TN", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-          expect.objectContaining({ id: meeting.id }),
-          "US_TN",
-          true,
-        );
-      } finally {
-        randomSpy.mockRestore();
-      }
-    });
-
-    test("Should not export Label Studio task for a PARTIAL score when the state excludes PARTIAL from review", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-ls-partial-excluded",
-      );
-      mockExportLabelStudioTask.mockClear();
-      mockRunAllEvaluators.mockResolvedValueOnce({
-        scores: {
-          transcriptComparison: null,
-          caseNote: null,
-          actionItems: {
-            rationale: "Missed a follow-up date",
-            grade: "PARTIAL",
-            hallucinations: [],
-            omissions: [],
-          },
-          overall: null,
-        },
-        langsmithTraceId: undefined,
-      });
-
-      // US_CO's labelStudioReviewPercent is 10 — 0.5 lands outside that sample,
-      // and US_CO's labelStudioAlwaysReviewPartial is false, so the PARTIAL
-      // grade doesn't force a task either.
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_CO", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
-      } finally {
-        randomSpy.mockRestore();
-      }
-    });
-
-    test("Should still export Label Studio task for a BAD score when the state excludes PARTIAL from review", async () => {
-      const meeting = await createMeetingWithSuccessfulPipelineRun(
-        "llmaj-ls-bad-partial-excluded",
-      );
-      mockExportLabelStudioTask.mockClear();
-      mockRunAllEvaluators.mockResolvedValueOnce({
-        scores: {
-          transcriptComparison: null,
-          caseNote: null,
-          actionItems: {
-            rationale: "Fabricated a follow-up date",
-            grade: "BAD",
-            hallucinations: [],
-            omissions: [],
-          },
-          overall: null,
-        },
-        langsmithTraceId: undefined,
-      });
-
-      // US_CO's labelStudioReviewPercent is 10 — 0.5 lands outside that sample,
-      // but BAD grades always force a task regardless of labelStudioAlwaysReviewPartial.
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
-
-      try {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/run-llmaj-evaluation",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_CO", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(mockExportLabelStudioTask).toHaveBeenCalledWith(
-          expect.objectContaining({ id: meeting.id }),
-          "US_CO",
-          true,
-        );
-      } finally {
-        randomSpy.mockRestore();
-      }
     });
   });
 });
