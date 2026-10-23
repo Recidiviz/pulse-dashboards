@@ -44,7 +44,11 @@ export type QuestionnaireSectionDisplay = {
 
 export type QuestionAnswerValue = string[];
 
-export type SaveErrorKind = "next" | "saveAndUpdate" | "saveAndExit" | "submit";
+type QuestionSaveErrorKind = "next" | "saveAndUpdate" | "saveAndExit";
+
+export type SaveErrorKind = QuestionSaveErrorKind | "submit";
+
+export type QuestionErrorKind = QuestionSaveErrorKind | "missingAnswer";
 
 export type QuestionnaireAnswers = Record<string, QuestionAnswerValue>;
 
@@ -59,8 +63,8 @@ export type QuestionnaireDisplay = {
 
 export type FlowStep =
   | { kind: "intro" }
-  | { kind: "question"; questionId: string }
-  | { kind: "review" }
+  | { kind: "question"; questionId: string; error?: QuestionErrorKind }
+  | { kind: "review"; error?: "submit" }
   | { kind: "completion" };
 
 export type QuestionnaireReviewEntry = {

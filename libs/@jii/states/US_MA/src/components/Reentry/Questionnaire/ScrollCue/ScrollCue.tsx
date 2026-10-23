@@ -18,19 +18,8 @@
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
+import { scrollToBottom } from "../scrollToBottom";
 import { ChevronButton, Fade, Wrapper } from "./ScrollCue.styles";
-
-// Animates the scroll, unless the resident has asked their device to reduce
-// motion.
-const scrollToBottom = () => {
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-  window.scrollTo({
-    top: document.documentElement.scrollHeight,
-    behavior: prefersReducedMotion ? "auto" : "smooth",
-  });
-};
 
 export const ScrollCue = () => {
   const { t } = useUsMaTranslations();

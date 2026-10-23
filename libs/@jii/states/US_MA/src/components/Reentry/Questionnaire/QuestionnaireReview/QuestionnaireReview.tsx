@@ -155,7 +155,11 @@ export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
       </EntryList>
 
       {!isEditing && (
-        <QuestionnaireFooter onBack={props.onBack} saveError={props.saveError}>
+        <QuestionnaireFooter
+          onBack={props.onBack}
+          saveError={props.saveError}
+          isSaving={props.isSaving}
+        >
           <Button
             kind="primary"
             onClick={props.onSubmit}

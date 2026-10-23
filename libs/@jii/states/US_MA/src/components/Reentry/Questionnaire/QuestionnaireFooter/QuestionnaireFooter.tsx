@@ -39,6 +39,7 @@ type QuestionnaireFooterProps = {
   onBack?: () => void;
   onCancel?: () => void;
   saveError?: SaveErrorKind;
+  isSaving?: boolean;
   children: ReactNode;
 };
 
@@ -46,6 +47,7 @@ export const QuestionnaireFooter = ({
   onBack,
   onCancel,
   saveError,
+  isSaving,
   children,
 }: QuestionnaireFooterProps) => {
   const { t } = useUsMaTranslations();
@@ -80,12 +82,12 @@ export const QuestionnaireFooter = ({
         <Row>
           <LeadingActions>
             {onBack && (
-              <BackLinkButton kind="link" onClick={onBack}>
+              <BackLinkButton kind="link" onClick={onBack} disabled={isSaving}>
                 {t(($) => $.reentry.questionnaire.footer.back)}
               </BackLinkButton>
             )}
             {onCancel && (
-              <Button kind="secondary" onClick={onCancel}>
+              <Button kind="secondary" onClick={onCancel} disabled={isSaving}>
                 {t(($) => $.reentry.questionnaire.footer.cancel)}
               </Button>
             )}

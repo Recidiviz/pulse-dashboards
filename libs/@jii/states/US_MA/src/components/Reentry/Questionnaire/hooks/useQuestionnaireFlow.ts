@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 
-import { FlowStep, QuestionAnswerValue, SaveErrorKind } from "../types";
+import { FlowStep, QuestionAnswerValue } from "../types";
 import {
   allAnswersMatch,
   answersMatch,
@@ -61,8 +61,6 @@ export function useQuestionnaireFlow({
   // changes against.
   const [initialAnswers] = useState(answers);
   const [isSavedBannerVisible, setIsSavedBannerVisible] = useState(false);
-  // The failed save to report on the current screen.
-  const [saveError, setSaveError] = useState<SaveErrorKind>();
 
   const edit = useEditSession();
   const editSession = edit.session;
@@ -78,31 +76,15 @@ export function useQuestionnaireFlow({
     kind: "close",
     onClick: onExit,
   };
-  const saveAndExitAction: QuestionnaireHeaderAction = {
-    kind: "saveAndExit",
-    onClick: () => {
-      setSaveError(undefined);
-      save(
-        { answers, isCompleted: false },
-        { onSuccess: onExit, onError: () => setSaveError("saveAndExit") },
-      );
-    },
-  };
-
-  // Every screen change starts without a save error.
-  const goToStep = (nextStep: FlowStep) => {
-    setSaveError(undefined);
-    setStep(nextStep);
-  };
 
   const goToQuestion = (questionId: string) => {
     setIsSectionListOpen(false);
-    goToStep({ kind: "question", questionId });
+    setStep({ kind: "question", questionId });
   };
 
   const goToReview = () => {
     edit.end();
-    goToStep({ kind: "review" });
+    setStep({ kind: "review" });
   };
 
   const backFromReview = () =>
@@ -111,12 +93,13 @@ export function useQuestionnaireFlow({
   const start = () => goToQuestion(visibleQuestions[0].id);
 
   const submit = () => {
-    setSaveError(undefined);
+    // Clears the last failed submit's error while this one saves.
+    setStep({ kind: "review", error: undefined });
     save(
       { answers, isCompleted: true },
       {
-        onSuccess: () => goToStep({ kind: "completion" }),
-        onError: () => setSaveError("submit"),
+        onSuccess: () => setStep({ kind: "completion" }),
+        onError: () => setStep({ kind: "review", error: "submit" }),
       },
     );
   };
@@ -176,10 +159,32 @@ export function useQuestionnaireFlow({
           [question.id]: updatedAnswer,
         });
         setAnswers(updatedAnswers);
+        setStep({ ...step, error: undefined });
+      };
+
+      const saveAndExitAction: QuestionnaireHeaderAction = {
+        kind: "saveAndExit",
+        onClick: () => {
+          // Clears the last failed save's error while this one saves.
+          setStep({ ...step, error: undefined });
+          save(
+            { answers, isCompleted: false },
+            {
+              onSuccess: onExit,
+              onError: () => setStep({ ...step, error: "saveAndExit" }),
+            },
+          );
+        },
       };
 
       const next = () => {
-        setSaveError(undefined);
+        if (!isAnswered(currentAnswer)) {
+          setStep({ ...step, error: "missingAnswer" });
+          return;
+        }
+        // Clears the last failed save's error while this one saves.
+        setStep({ ...step, error: undefined });
+
         const goToNextStep = () => {
           if (upcomingQuestion) {
             goToQuestion(upcomingQuestion.id);
@@ -202,13 +207,16 @@ export function useQuestionnaireFlow({
                 setIsSavedBannerVisible(true);
                 goToNextStep();
               },
-              onError: () => setSaveError("saveAndUpdate"),
+              onError: () => setStep({ ...step, error: "saveAndUpdate" }),
             },
           );
         } else {
           save(
             { answers, isCompleted: false },
-            { onSuccess: goToNextStep, onError: () => setSaveError("next") },
+            {
+              onSuccess: goToNextStep,
+              onError: () => setStep({ ...step, error: "next" }),
+            },
           );
         }
       };
@@ -217,7 +225,7 @@ export function useQuestionnaireFlow({
         if (previousQuestion) {
           goToQuestion(previousQuestion.id);
         } else {
-          goToStep({ kind: "intro" });
+          setStep({ kind: "intro" });
         }
       };
 
@@ -248,8 +256,7 @@ export function useQuestionnaireFlow({
           onChange: answer,
           onNext: next,
           onBack: isEditStartQuestion ? undefined : back,
-          canGoNext: isAnswered(currentAnswer),
-          saveError,
+          error: step.error,
           editing,
         },
       };
@@ -283,7 +290,7 @@ export function useQuestionnaireFlow({
           entries,
           onBack: backFromReview,
           onSubmit: submit,
-          saveError,
+          saveError: step.error,
         },
       };
     }

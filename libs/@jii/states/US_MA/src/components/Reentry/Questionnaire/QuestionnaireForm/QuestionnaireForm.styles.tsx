@@ -73,7 +73,7 @@ export const OptionsList = styled.div`
   gap: ${rem(spacing.md)};
 `;
 
-export const OptionCard = styled.div<{ $selected: boolean }>`
+export const OptionCard = styled.div<{ $selected: boolean; $invalid: boolean }>`
   border: 2px solid ${palette.slate80};
   border-radius: ${rem(8)};
   font-weight: 400;
@@ -92,6 +92,12 @@ export const OptionCard = styled.div<{ $selected: boolean }>`
     css`
       background: ${rgba(palette.pine4, 0.12)};
       border-color: ${palette.pine3};
+    `}
+
+  ${({ $invalid }) =>
+    $invalid &&
+    css`
+      border-color: ${palette.signal.error};
     `}
 `;
 

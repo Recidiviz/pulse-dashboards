@@ -276,6 +276,7 @@
         "saveError": "[US_MA]reentry.questionnaire.form.saveError",
         "saveAndUpdateError": "[US_MA]reentry.questionnaire.form.saveAndUpdateError",
         "saveAndExitError": "[US_MA]reentry.questionnaire.form.saveAndExitError",
+        "missingAnswerError": "[US_MA]reentry.questionnaire.form.missingAnswerError",
         "whyWeAskLabel": "[US_MA]reentry.questionnaire.form.whyWeAskLabel"
       },
       "review": {

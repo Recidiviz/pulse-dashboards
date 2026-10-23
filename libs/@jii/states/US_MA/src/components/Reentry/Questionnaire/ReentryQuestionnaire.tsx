@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
@@ -54,6 +55,13 @@ export const ReentryQuestionnaire = () => {
     onExit: exit,
     onGoToChecklist: goToChecklist,
   });
+
+  // Each new screen starts at the top.
+  const screenId =
+    screen.kind === "question" ? screen.props.question.id : screen.kind;
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [screenId]);
 
   const headerActionLabels = {
     close: t(($) => $.reentry.questionnaire.header.close),

@@ -177,12 +177,24 @@ describe("answering and navigating", () => {
     expect(questionIdOf(result)).toBe("needsCare");
   });
 
-  test("Next is disabled until the question is answered", () => {
+  test("Next without an answer shows the missing answer error, without saving or moving on", () => {
     const { result } = render();
     act(() => screenOf(result, "intro").props.onStart());
-    expect(screenOf(result, "question").props.canGoNext).toBe(false);
+    act(() => screenOf(result, "question").props.onNext());
+    expect(screenOf(result, "question").props.error).toBe("missingAnswer");
+    // Still on the same question
+    expect(questionIdOf(result)).toBe("needsCare");
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  test("picking an answer clears the missing answer error", () => {
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    act(() => screenOf(result, "question").props.onNext());
+    // Starts from the missing answer error
+    expect(screenOf(result, "question").props.error).toBe("missingAnswer");
     act(() => screenOf(result, "question").props.onChange(["YES"]));
-    expect(screenOf(result, "question").props.canGoNext).toBe(true);
+    expect(screenOf(result, "question").props.error).toBeUndefined();
   });
 
   test("an answer that reveals a follow-up routes into it", () => {
@@ -339,25 +351,43 @@ describe("saving", () => {
   });
 
   test("a failed save on Next shows the error and stays on the question", () => {
+    // Fails every save, so Next shows the "next" save error.
     save.mockImplementation((_input, options) => options?.onError?.());
     const { result } = render();
     act(() => screenOf(result, "intro").props.onStart());
     act(() => screenOf(result, "question").props.onChange(["NO"]));
     act(() => screenOf(result, "question").props.onNext());
-    expect(screenOf(result, "question").props.saveError).toBe("next");
+    expect(screenOf(result, "question").props.error).toBe("next");
     expect(questionIdOf(result)).toBe("needsCare");
   });
 
+  test("changing the answer clears a save error", () => {
+    // Fails every save, so Next shows the "next" save error.
+    save.mockImplementation((_input, options) => options?.onError?.());
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    act(() => screenOf(result, "question").props.onChange(["NO"]));
+    act(() => screenOf(result, "question").props.onNext());
+    // Starts from a failed save
+    expect(screenOf(result, "question").props.error).toBe("next");
+    act(() => screenOf(result, "question").props.onChange(["YES"]));
+    expect(screenOf(result, "question").props.error).toBeUndefined();
+  });
+
   test("a failed save at the end of an edit shows the error and stays on the question", () => {
+    // Fails every save, so Save and update profile shows the "saveAndUpdate"
+    // save error.
     save.mockImplementation((_input, options) => options?.onError?.());
     const { result } = startEditing("COMPLETED", "benefits");
     act(() => screenOf(result, "question").props.onChange(["NO"]));
     act(() => screenOf(result, "question").props.onNext());
-    expect(screenOf(result, "question").props.saveError).toBe("saveAndUpdate");
+    expect(screenOf(result, "question").props.error).toBe("saveAndUpdate");
     expect(questionIdOf(result)).toBe("benefits");
   });
 
   test("the save error clears once Next succeeds", () => {
+    // Fails only the first save, so the first Next shows the "next" save error
+    // and the second succeeds.
     save.mockImplementationOnce((_input, options) => options?.onError?.());
     const { result } = render();
     act(() => screenOf(result, "intro").props.onStart());
@@ -365,10 +395,11 @@ describe("saving", () => {
     act(() => screenOf(result, "question").props.onNext());
     act(() => screenOf(result, "question").props.onNext());
     expect(questionIdOf(result)).toBe("benefits");
-    expect(screenOf(result, "question").props.saveError).toBeUndefined();
+    expect(screenOf(result, "question").props.error).toBeUndefined();
   });
 
   test("a failed submit shows the error and stays on Review", () => {
+    // Fails every save, so Submit shows the "submit" save error.
     save.mockImplementation((_input, options) => options?.onError?.());
     const { result } = render("IN_PROGRESS", {
       needsCare: "NO",
@@ -733,19 +764,21 @@ describe("header action", () => {
   });
 
   test("a failed Save and exit shows the error and stays on the question", () => {
+    // Fails every save, so Save and exit shows the "saveAndExit" save error.
     save.mockImplementation((_input, options) => options?.onError?.());
     const { result } = render("IN_PROGRESS", { needsCare: "NO" });
     act(() => result.current.headerAction?.onClick());
     expect(onExit).not.toHaveBeenCalled();
-    expect(screenOf(result, "question").props.saveError).toBe("saveAndExit");
+    expect(screenOf(result, "question").props.error).toBe("saveAndExit");
   });
 
   test("the save error clears when moving to another question", () => {
+    // Fails every save, so Save and exit shows the "saveAndExit" save error.
     save.mockImplementation((_input, options) => options?.onError?.());
     const { result } = render("IN_PROGRESS", { needsCare: "NO" });
     act(() => result.current.headerAction?.onClick());
     act(() => screenOf(result, "question").props.onBack?.());
     expect(questionIdOf(result)).toBe("needsCare");
-    expect(screenOf(result, "question").props.saveError).toBeUndefined();
+    expect(screenOf(result, "question").props.error).toBeUndefined();
   });
 });

@@ -276,6 +276,7 @@
         "saveError": "Couldn't save your answer. Tap **Next** to retry.",
         "saveAndUpdateError": "Couldn't save your answer. Tap **Save and update profile** to retry.",
         "saveAndExitError": "Couldn't save your answer. Tap **Save and exit** again to retry.",
+        "missingAnswerError": "You must select at least one option to continue",
         "whyWeAskLabel": "Why we ask this"
       },
       "review": {

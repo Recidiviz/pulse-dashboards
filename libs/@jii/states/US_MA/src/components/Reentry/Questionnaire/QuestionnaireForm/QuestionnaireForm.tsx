@@ -15,11 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useUsMaTranslations } from "~@jii/translation";
-import { Checkbox, CheckboxGroup, Radio, RadioGroup } from "~design-system";
+import { useEffect } from "react";
 
+import { useUsMaTranslations } from "~@jii/translation";
+import {
+  Checkbox,
+  CheckboxGroup,
+  Icon,
+  Radio,
+  RadioGroup,
+} from "~design-system";
+
+import { Callout } from "../../Callout/Callout";
 import { QuestionnaireFooter } from "../QuestionnaireFooter/QuestionnaireFooter";
-import { QuestionAnswerValue, QuestionDisplay, SaveErrorKind } from "../types";
+import { scrollToBottom } from "../scrollToBottom";
+import {
+  QuestionAnswerValue,
+  QuestionDisplay,
+  QuestionErrorKind,
+} from "../types";
 import {
   Heading,
   NextButton,
@@ -39,9 +53,8 @@ export type QuestionnaireFormProps = {
   onChange: (value: QuestionAnswerValue) => void;
   onNext: () => void;
   onBack?: () => void;
-  canGoNext: boolean;
   isSaving?: boolean;
-  saveError?: SaveErrorKind;
+  error?: QuestionErrorKind;
   // Set when editing a completed profile via "Change" on Review.
   editing?: {
     onCancel: () => void;
@@ -56,12 +69,19 @@ export const QuestionnaireForm = ({
   onChange,
   onNext,
   onBack,
-  canGoNext,
   isSaving,
-  saveError,
+  error,
   editing,
 }: QuestionnaireFormProps) => {
   const { t } = useUsMaTranslations();
+
+  const isAnswerMissing = error === "missingAnswer";
+
+  // The missing answer error shows below the options, out of view on a screen
+  // with many options that overflows.
+  useEffect(() => {
+    if (isAnswerMissing) scrollToBottom();
+  }, [isAnswerMissing]);
 
   const isSaveAndUpdate = !!editing?.isLastQuestionBeforeReview;
   const nextLabel = t(($) => $.reentry.questionnaire.form.next);
@@ -82,6 +102,7 @@ export const QuestionnaireForm = ({
         <OptionCard
           key={option.value}
           $selected={selected.includes(option.value)}
+          $invalid={isAnswerMissing}
         >
           <OptionControl value={option.value}>{option.label}</OptionControl>
         </OptionCard>
@@ -124,10 +145,22 @@ export const QuestionnaireForm = ({
         </RadioGroup>
       )}
 
+      {isAnswerMissing && (
+        <Callout
+          tone="error"
+          role="alert"
+          icon={<Icon kind="Error" size={24} />}
+          description={t(
+            ($) => $.reentry.questionnaire.form.missingAnswerError,
+          )}
+        />
+      )}
+
       <QuestionnaireFooter
         onBack={onBack}
         onCancel={editing?.onCancel}
-        saveError={saveError}
+        saveError={isAnswerMissing ? undefined : error}
+        isSaving={isSaving}
       >
         {!editing && (
           <SaveHint>
@@ -138,7 +171,7 @@ export const QuestionnaireForm = ({
         <NextButton
           kind="primary"
           onClick={onNext}
-          disabled={!canGoNext || isSaving}
+          disabled={isSaving}
           aria-busy={isSaving}
         >
           {buttonLabel}
