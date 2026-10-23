@@ -37,6 +37,7 @@ import {
 } from "~@meetings/trpc/routes/meeting.helpers";
 import { AuthUser } from "~@meetings/trpc/types";
 
+// Remember to bump the buster version in AuthenticatedApp when adding new fields
 const querySelect = {
   givenNames: true,
   surname: true,

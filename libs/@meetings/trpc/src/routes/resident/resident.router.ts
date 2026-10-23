@@ -32,6 +32,7 @@ import {
   listSortSchema,
 } from "~@meetings/trpc/routes/resident/resident.schema";
 
+// Remember to bump the buster version in AuthenticatedApp when adding new fields
 const querySelect = {
   givenNames: true,
   surname: true,

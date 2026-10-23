@@ -232,6 +232,10 @@ const AuthenticatedApp: React.FC = () => {
           persistOptions={{
             persister: queryCachePersister,
             maxAge: ONE_WEEK_MS,
+            // Update this field to bust cache (whenever a
+            // procedure's output gains, renames, or retypes a field, so that old
+            // cached results are dropped that don't match the new shape).
+            buster: "v1",
           }}
         >
           <AgencyConfigProvider>
