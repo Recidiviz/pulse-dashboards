@@ -27,6 +27,9 @@ export {
 export { describePatternRules } from "./describePattern";
 export type { CalendarRulesErrorCode } from "./errors";
 export { CalendarRulesError } from "./errors";
+export { getHolidays } from "./holidays/getHolidays";
+export { staticHolidaySource } from "./holidays/staticHolidaySource";
+export type { DateRange, Holiday, HolidaySource } from "./holidays/types";
 export { MAX_YEAR, MIN_YEAR } from "./plainDates";
 export {
   everyNWeeksDates,

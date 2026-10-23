@@ -21,9 +21,12 @@
  */
 export type CalendarRulesErrorCode =
   | "INVALID_DATE"
+  | "INVALID_DATE_RANGE"
   | "INVALID_YEAR_MONTH"
+  | "INVALID_ENTRY"
   | "INVALID_RULE"
   | "ANCHOR_WEEKDAY_MISMATCH"
+  | "INVALID_SETTINGS"
   | "INVALID_TIME_ZONE";
 
 /** Thrown by every public function in this library when its input is invalid. */
