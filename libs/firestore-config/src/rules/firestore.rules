@@ -95,6 +95,63 @@ service cloud.firestore {
       && overrideDistrictIdsPreserved());
   }
 
+  // `actionHistory` on an opportunity update lists officer requests (for a
+  // grant or snooze), each of which a supervisor may answer with a
+  // `supervisorResponse`. The app rewrites the whole list on every change, so a
+  // client could otherwise rewrite any entry, or write a response under a
+  // supervisor's name. The new list is checked against the stored one:
+  //   - every entry but the latest is unchanged
+  //   - the latest entry may only be marked stale or gain its first response
+  //   - at most one entry is appended, and it has no response yet
+  //   - each new request and response carries `byUid`, the writer's own uid
+  //     (the staff token endpoint sets it to the user's email)
+  // `by` and `updateById` are display labels the rules cannot verify; `byUid`
+  // is the attribution they can. Removing the field or the document clears the
+  // history, as the app's revert flow does.
+  function actionHistoryWriteIsValid() {
+    let before = resource == null ? [] : resource.data.get("actionHistory", []);
+    return request.resource == null ||
+      !("actionHistory" in request.resource.data) ||
+      request.resource.data.actionHistory == before ||
+      actionHistoryChangeIsValid(before, request.resource.data.actionHistory);
+  }
+
+  function actionHistoryChangeIsValid(before, after) {
+    return (
+        after.size() == before.size() + 1 &&
+        firstEntriesMatch(before, after, before.size()) &&
+        appendedActionIsValid(after[before.size()])
+      ) || (
+        before.size() > 0 &&
+        after.size() == before.size() &&
+        firstEntriesMatch(before, after, before.size() - 1) &&
+        latestActionChangeIsValid(before[before.size() - 1], after[after.size() - 1])
+      );
+  }
+
+  // An empty slice (`list[0:0]`) is an error, not an empty list.
+  function firstEntriesMatch(before, after, count) {
+    return count == 0 || after[0:count] == before[0:count];
+  }
+
+  function appendedActionIsValid(action) {
+    return !("supervisorResponse" in action) && isWrittenByRequester(action);
+  }
+
+  function latestActionChangeIsValid(before, after) {
+    let changedKeys = after.diff(before).affectedKeys();
+    return changedKeys.hasOnly(["isStale", "supervisorResponse"]) &&
+      (!("isStale" in changedKeys) || after.isStale == true) &&
+      (
+        !("supervisorResponse" in changedKeys) ||
+        (!("supervisorResponse" in before) && isWrittenByRequester(after.supervisorResponse))
+      );
+  }
+
+  function isWrittenByRequester(log) {
+    return log.get("byUid", null) == request.auth.uid;
+  }
+
   function stateCodeIncludedInRecidivizAllowedStates(clientId) {
     return (clientId.upper()[0:5] in request.auth.token.recidivizAllowedStates);
   }
@@ -237,7 +294,8 @@ service cloud.firestore {
         (
           appIsStaff() && !isDemoOnlyAccount() && (recidivizUserHasAccess(clientId) || stateCodeMatchesPrefix(clientId))
         );
-      allow write: if appIsStaff() && !isDemoOnlyAccount() && allowPersonUpdates(clientId);
+      allow write: if appIsStaff() && !isDemoOnlyAccount() && allowPersonUpdates(clientId) &&
+        actionHistoryWriteIsValid();
     }
 
     // collectionGroup rule required for querying clientOpportunityUpdates across by currentReviewerId.
@@ -266,7 +324,7 @@ service cloud.firestore {
 
     match /DEMO_clientUpdatesV2/{clientId}/{document=**} {
       allow read: if appIsStaff() && (isRecidiviz() || stateCodeMatchesPrefix(clientId));
-      allow write: if appIsStaff() && allowPersonUpdates(clientId);
+      allow write: if appIsStaff() && allowPersonUpdates(clientId) && actionHistoryWriteIsValid();
     }
 
     match /DEMO2_featureVariants/{record} {
@@ -280,7 +338,7 @@ service cloud.firestore {
 
     match /DEMO2_clientUpdatesV2/{clientId}/{document=**} {
       allow read: if appIsStaff() && (isRecidiviz() || stateCodeMatchesPrefix(clientId));
-      allow write: if appIsStaff() && allowPersonUpdates(clientId);
+      allow write: if appIsStaff() && allowPersonUpdates(clientId) && actionHistoryWriteIsValid();
     }
   }
 }
