@@ -701,6 +701,7 @@
         "back": "[US_MA]reentry.resources.detail.back",
         "typeOfHousingHeading": "[US_MA]reentry.resources.detail.typeOfHousingHeading",
         "backToAllResources": "[US_MA]reentry.resources.detail.backToAllResources",
+        "sources": "[US_MA]reentry.resources.detail.sources",
         "keyDetails": {
           "accepts": {
             "yes": "[US_MA]reentry.resources.detail.keyDetails.accepts.yes",
@@ -724,7 +725,8 @@
             "withBeds_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_other",
             "bedsOnly_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_one",
             "bedsOnly_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_other"
-          }
+          },
+          "disclaimer": "[US_MA]reentry.resources.detail.keyDetails.disclaimer"
         },
         "contact": {
           "heading": "[US_MA]reentry.resources.detail.contact.heading",

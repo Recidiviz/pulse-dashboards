@@ -701,6 +701,7 @@
         "back": "Back",
         "typeOfHousingHeading": "Type of housing",
         "backToAllResources": "Back to all resources",
+        "sources": "Sources: Massachusetts DOC",
         "keyDetails": {
           "accepts": {
             "yes": "Yes",
@@ -724,7 +725,8 @@
             "withBeds_other": "{{gender}} ({{count}} beds)",
             "bedsOnly_one": "{{count}} bed",
             "bedsOnly_other": "{{count}} beds"
-          }
+          },
+          "disclaimer": "Organization details change often. Always confirm with a Reentry Specialist."
         },
         "contact": {
           "heading": "Address and contact details",

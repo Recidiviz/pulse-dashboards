@@ -40,10 +40,23 @@ export const HeaderRow = styled.div`
   gap: ${rem(spacing.md)};
 `;
 
+export const TitleBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.sm)};
+`;
+
 export const Heading = styled.h1`
   ${typography.Serif24}
 
   color: ${palette.pine2};
+  margin: 0;
+`;
+
+export const Subtitle = styled.p`
+  ${typography.Sans14}
+
+  color: ${palette.slate80};
   margin: 0;
 `;
 
@@ -57,6 +70,13 @@ export const SectionHeading = styled.h2`
   ${typography.Sans16}
 
   color: ${palette.pine1};
+  margin: 0;
+`;
+
+export const Disclaimer = styled.p`
+  ${typography.Sans14}
+
+  color: ${palette.slate80};
   margin: 0;
 `;
 

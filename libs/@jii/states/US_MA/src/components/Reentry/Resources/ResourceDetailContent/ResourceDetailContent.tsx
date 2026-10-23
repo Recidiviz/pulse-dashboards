@@ -31,9 +31,12 @@ import { getKeyDetails } from "../KeyDetails/utils";
 import {
   BackButtonWrapper,
   ChipList,
+  Disclaimer,
   Heading,
   Section,
   SectionHeading,
+  Subtitle,
+  TitleBlock,
 } from "./ResourceDetailContent.styles";
 
 export type ResourceDetailContentProps = {
@@ -59,7 +62,10 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
 
   return (
     <>
-      <Heading>{name}</Heading>
+      <TitleBlock>
+        <Heading>{name}</Heading>
+        <Subtitle>{t(($) => $.reentry.resources.detail.sources)}</Subtitle>
+      </TitleBlock>
 
       {subcategories.length > 0 && (
         <Section aria-labelledby="type-of-housing-heading">
@@ -82,6 +88,9 @@ export const ResourceDetailContent: FC<ResourceDetailContentProps> = ({
           <KeyDetails
             details={getKeyDetails({ tags }, categoryAttributes, t)}
           />
+          <Disclaimer>
+            {t(($) => $.reentry.resources.detail.keyDetails.disclaimer)}
+          </Disclaimer>
         </Section>
       )}
 
