@@ -26,6 +26,7 @@ import {
   fromStoredAnswers,
   getEditQuestionIds,
   getInitialStep,
+  getQuestionCountRange,
   getVisibleQuestions,
   isAnswered,
   isFollowUpOf,
@@ -215,6 +216,12 @@ describe("getVisibleQuestions", () => {
     expect(
       getVisibleQuestions(questions, { needsCare: ["YES"] }).map((q) => q.id),
     ).toEqual(["needsCare", "careDetails"]);
+  });
+});
+
+describe("getQuestionCountRange", () => {
+  test("min is the always-shown questions, max includes follow-ups", () => {
+    expect(getQuestionCountRange(questions)).toEqual({ min: 1, max: 2 });
   });
 });
 

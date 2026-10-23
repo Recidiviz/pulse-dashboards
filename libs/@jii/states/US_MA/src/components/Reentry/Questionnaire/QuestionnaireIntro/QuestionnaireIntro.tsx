@@ -32,12 +32,14 @@ import {
 } from "./QuestionnaireIntro.styles";
 
 export type QuestionnaireIntroProps = {
-  totalQuestionCount: number;
+  minQuestionCount: number;
+  maxQuestionCount: number;
   onStart: () => void;
 };
 
 export const QuestionnaireIntro = ({
-  totalQuestionCount,
+  minQuestionCount,
+  maxQuestionCount,
   onStart,
 }: QuestionnaireIntroProps) => {
   const { t } = useUsMaTranslations();
@@ -52,10 +54,10 @@ export const QuestionnaireIntro = ({
     afterDescription,
     cta,
   } = t(($) => $.reentry.questionnaire.intro, { returnObjects: true });
-  // returnObjects returns every plural form, even with a count, instead of
-  // picking one, so the count needs its own call.
+  // The count needs its own call to fill in min and max.
   const questionCount = t(($) => $.reentry.questionnaire.intro.questionCount, {
-    count: totalQuestionCount,
+    min: minQuestionCount,
+    max: maxQuestionCount,
   });
 
   const steps = [

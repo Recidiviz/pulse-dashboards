@@ -25,6 +25,7 @@ import {
   formatAnswerText,
   fromStoredAnswers,
   getInitialStep,
+  getQuestionCountRange,
   getVisibleQuestions,
   isAnswered,
   pruneHiddenAnswers,
@@ -124,12 +125,18 @@ export function useQuestionnaireFlow({
   };
 
   switch (step.kind) {
-    case "intro":
+    case "intro": {
+      const { min, max } = getQuestionCountRange(allQuestions);
       return {
         kind: "intro",
         headerAction: closeAction,
-        props: { totalQuestionCount: allQuestions.length, onStart: start },
+        props: {
+          minQuestionCount: min,
+          maxQuestionCount: max,
+          onStart: start,
+        },
       };
+    }
 
     case "question": {
       const {

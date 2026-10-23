@@ -63,6 +63,21 @@ export function getVisibleQuestions<T extends QuestionDisplay>(
 }
 
 /**
+ * Returns the fewest and most questions a resident can be asked: min counts
+ * the questions that always show, and max counts every question (assuming every
+ * follow-up question will appear).
+ */
+export function getQuestionCountRange(questions: QuestionDisplay[]): {
+  min: number;
+  max: number;
+} {
+  return {
+    min: questions.filter((question) => !question.showIf).length,
+    max: questions.length,
+  };
+}
+
+/**
  * Keeps answers only for questions that are visible based on the current answers.
  * If a changed answer hides a follow-up question, its answer is cleared.
  */

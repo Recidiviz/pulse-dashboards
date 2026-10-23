@@ -252,8 +252,7 @@
         "answerEachQuestion": "Answer each question to the best of your ability",
         "saveProgress": "You can save your progress at any time using the \"Save and exit\" button. Your answers are also saved as you progress through the form.",
         "resumeWhereLeftOff": "Pick up where you left off when you return",
-        "questionCount_one": "There is {{count}} question total and it takes about 10 minutes",
-        "questionCount_other": "There are {{count}} questions total and it takes about 10 minutes",
+        "questionCount": "There are {{min}} to {{max}} questions and it takes about 10 minutes.",
         "afterHeading": "What happens after I finish answering?",
         "afterDescription": "Your answers set up your checklist. Your reentry specialist will not get a message when you finish. If you want to talk about your answers, tell them.",
         "cta": "Start answering"
