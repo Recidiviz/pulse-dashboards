@@ -200,6 +200,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
+      ...this.byUidField,
       isStale: false,
       ...officerActionParams,
     };
@@ -253,6 +254,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     const supervisorResponse = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
+      ...this.byUidField,
       ...supervisorResponseParams,
     } as SupervisorResponse;
 

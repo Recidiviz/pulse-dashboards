@@ -1622,6 +1622,9 @@ describe("setOfficerAction", () => {
       "Test Officer",
     );
     vi.spyOn(opp, "userId", "get").mockReturnValue("test-external-id");
+    vi.spyOn(root.firestoreStore, "currentUserUid", "get").mockReturnValue(
+      "user@recidiviz.org",
+    );
   });
   test("sets approval action", async () => {
     await opp.setOfficerAction({ type: "APPROVAL" });
@@ -1630,6 +1633,7 @@ describe("setOfficerAction", () => {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
       updateById: "test-external-id",
+      byUid: "user@recidiviz.org",
       isStale: false,
       type: "APPROVAL",
     };
@@ -1643,6 +1647,17 @@ describe("setOfficerAction", () => {
       stateCode: "US_XX",
     });
   });
+  test("omits byUid before Firebase sign-in", async () => {
+    vi.spyOn(root.firestoreStore, "currentUserUid", "get").mockReturnValue(
+      undefined,
+    );
+    await opp.setOfficerAction({ type: "APPROVAL" });
+
+    const [{ actionHistory }] = vi.mocked(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).mock.calls[0];
+    expect(actionHistory[0]).not.toHaveProperty("byUid");
+  });
   test("sets indefinite snooze denial action", async () => {
     const testAction = {
       type: "DENIAL",
@@ -1655,6 +1670,7 @@ describe("setOfficerAction", () => {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
       updateById: "test-external-id",
+      byUid: "user@recidiviz.org",
       isStale: false,
       ...testAction,
     };
@@ -1682,6 +1698,7 @@ describe("setOfficerAction", () => {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
       updateById: "test-external-id",
+      byUid: "user@recidiviz.org",
       isStale: false,
       ...testAction,
     };
@@ -1719,6 +1736,7 @@ describe("setOfficerAction", () => {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
       updateById: "test-external-id",
+      byUid: "user@recidiviz.org",
       isStale: false,
       ...testAction,
     };
@@ -1744,6 +1762,7 @@ describe("setOfficerAction", () => {
       date: Timestamp.fromDate(new Date()),
       by: "Test Officer",
       updateById: "test-external-id",
+      byUid: "user@recidiviz.org",
       isStale: false,
       ...testAction,
     };
@@ -1950,6 +1969,9 @@ describe("setSupervisorResponse", () => {
       "Test Supervisor",
     );
     vi.spyOn(opp, "userId", "get").mockReturnValue("test-external-id");
+    vi.spyOn(root.firestoreStore, "currentUserUid", "get").mockReturnValue(
+      "user@recidiviz.org",
+    );
   });
 
   test("throws error if actionHistory is empty", async () => {
@@ -1985,6 +2007,7 @@ describe("setSupervisorResponse", () => {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
         updateById: "test-external-id",
+        byUid: "user@recidiviz.org",
         type: "APPROVAL",
       },
     };
@@ -2022,6 +2045,7 @@ describe("setSupervisorResponse", () => {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
         updateById: "test-external-id",
+        byUid: "user@recidiviz.org",
         type: "DENIAL",
       },
     };
@@ -2057,6 +2081,7 @@ describe("setSupervisorResponse", () => {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
         updateById: "test-external-id",
+        byUid: "user@recidiviz.org",
         type: "APPROVAL",
       },
     };
@@ -2092,6 +2117,7 @@ describe("setSupervisorResponse", () => {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
         updateById: "test-external-id",
+        byUid: "user@recidiviz.org",
         type: "DENIAL",
       },
     };
@@ -2130,6 +2156,7 @@ describe("setSupervisorResponse", () => {
         date: Timestamp.fromDate(new Date()),
         by: "Test Supervisor",
         updateById: "test-external-id",
+        byUid: "user@recidiviz.org",
         type: "REVISION",
         reviewerId: "reviewer-123",
       },

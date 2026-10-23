@@ -172,7 +172,11 @@ export default class FirestoreStore {
   private db: Firestore;
 
   constructor({ rootStore }: { rootStore: typeof RootStore }) {
-    makeAutoObservable(this, { useOfflineFirestore: false, rootStore: false });
+    makeAutoObservable(this, {
+      useOfflineFirestore: false,
+      rootStore: false,
+      currentUserUid: false,
+    });
 
     this.rootStore = rootStore;
 
@@ -186,6 +190,14 @@ export default class FirestoreStore {
   get useOfflineFirestore() {
     // demo- is a Firebase-reserved prefix that will only work with local emulators
     return this.rootStore.firebaseAuthClient.projectId.startsWith("demo-");
+  }
+
+  /**
+   * The signed-in Firebase user's uid (for staff, their email address), or
+   * undefined before sign-in.
+   */
+  get currentUserUid(): string | undefined {
+    return this.rootStore.firebaseAuthClient.auth.currentUser?.uid;
   }
 
   /* Authenticate with Firebase for users with based on metadata */

@@ -1189,6 +1189,7 @@ export class OpportunityBase<
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
       updateById: this.userId,
+      ...this.byUidField,
       isStale: false,
       ...officerActionParams,
     };
@@ -1308,6 +1309,7 @@ export class OpportunityBase<
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
       updateById: this.userId,
+      ...this.byUidField,
       ...supervisorResponseParams,
     } as SupervisorResponse;
 
@@ -1381,6 +1383,16 @@ export class OpportunityBase<
       return this.stableUserId;
     }
     return userStore.externalId;
+  }
+
+  /**
+   * Returns the `byUid` attribution recorded on each officer request and
+   * supervisor response, for Firestore rules to check against the signed-in
+   * user. Empty when signed out, since Firestore rejects undefined values.
+   */
+  get byUidField(): Pick<UpdateLog, "byUid"> {
+    const uid = this.rootStore.firestoreStore.currentUserUid;
+    return uid ? { byUid: uid } : {};
   }
 
   /**

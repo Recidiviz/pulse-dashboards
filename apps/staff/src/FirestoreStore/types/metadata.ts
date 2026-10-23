@@ -21,6 +21,10 @@ export type UpdateLog = {
   date: Timestamp;
   by: string;
   updateById?: string | undefined;
+  // The writer's Firebase uid, recorded on each officer request and supervisor
+  // response in `actionHistory` so Firestore rules can check it against the
+  // signed-in user, since `by` and `updateById` cannot be verified.
+  byUid?: string;
 };
 
 export type ExternalSystemRequestStatus =
