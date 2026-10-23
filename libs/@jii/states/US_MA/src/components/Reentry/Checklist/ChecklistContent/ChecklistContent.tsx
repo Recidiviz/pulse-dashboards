@@ -15,25 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Chip } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { useReentryChecklist } from "../../../../hooks/useReentryChecklist";
 import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
-import { toChecklistSections } from "../../../../hooks/utils";
+import { useReentryQuestionnaireDisplay } from "../../../../hooks/useReentryQuestionnaireDisplay";
+import {
+  getPersonalizationReasons,
+  toChecklistSections,
+} from "../../../../hooks/utils";
 import { ChecklistItem } from "../ChecklistItem/ChecklistItem";
 import { ChecklistSection } from "../ChecklistSection/ChecklistSection";
 import { PersonalizationBanner } from "../PersonalizationBanner/PersonalizationBanner";
+import { PersonalizedBadge } from "../PersonalizedBadge/PersonalizedBadge";
 import { UpdateProfileCard } from "../UpdateProfileCard/UpdateProfileCard";
 
 export const ChecklistContent = () => {
   const { t } = useUsMaTranslations();
-  const { status } = useReentryQuestionnaire();
+
+  const { status, answers } = useReentryQuestionnaire();
+  const { questions } = useReentryQuestionnaireDisplay();
+
   const { items, personalizedItemCount, setChecked } = useReentryChecklist();
 
   const isProfileCompleted = status === "COMPLETED";
   const sections = toChecklistSections(items);
-  const personalizedBadge = t(($) => $.reentry.checklist.personalizedBadge);
   const itemSaveError = t(($) => $.reentry.checklist.itemSaveError);
 
   return (
@@ -72,7 +78,13 @@ export const ChecklistContent = () => {
                   onCheckedChange={(checked) => setChecked(item.id, checked)}
                   badge={
                     item.isPersonalized && (
-                      <Chip color="blue">{personalizedBadge}</Chip>
+                      <PersonalizedBadge
+                        reasons={getPersonalizationReasons(
+                          item.id,
+                          questions,
+                          answers,
+                        )}
+                      />
                     )
                   }
                   error={error}

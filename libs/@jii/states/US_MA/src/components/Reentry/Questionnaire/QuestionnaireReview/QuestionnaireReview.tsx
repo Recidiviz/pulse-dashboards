@@ -15,6 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTypedHash } from "react-router-typesafe-routes/dom";
+
+import { useScrollToHash } from "~@jii/layout";
+import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Button, Icon } from "~design-system";
 
@@ -57,6 +63,29 @@ export type QuestionnaireReviewProps = SubmitReviewProps | EditReviewProps;
 export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
   const { entries, isEditing } = props;
   const { t } = useUsMaTranslations();
+  const navigate = useNavigate();
+
+  // The question the URL hash points at, set by the checklist's "Change
+  // answer" links.
+  const questionIdFromHash = useTypedHash(
+    State.Resident.UsMaReentry.Questionnaire,
+  );
+  const hashTargetRef = useRef<HTMLDivElement>(null);
+
+  useScrollToHash();
+
+  // Focuses the hash target's row so screen readers start there.
+  useEffect(() => {
+    if (!questionIdFromHash) return;
+    hashTargetRef.current?.focus({ preventScroll: true });
+  }, [questionIdFromHash]);
+
+  const changeAnswer = (onEdit: () => void) => {
+    // Clears the hash before editing, so the Review page doesn't scroll
+    // back to and highlight that question afterward.
+    navigate({ hash: "" }, { replace: true });
+    onEdit();
+  };
 
   const savedBanner = isEditing ? props.savedBanner : undefined;
 
@@ -92,24 +121,37 @@ export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
       </Description>
 
       <EntryList>
-        {entries.map((entry) => (
-          <Entry key={entry.questionId}>
-            <EntryText>
-              <EntryQuestion>{entry.heading}</EntryQuestion>
-              <EntryAnswerRow>
-                <EntryAnswer>{entry.answerText}</EntryAnswer>
-                {entry.isUpdated && (
-                  <UpdatedBadge>
-                    {t(($) => $.reentry.questionnaire.review.answerUpdated)}
-                  </UpdatedBadge>
-                )}
-              </EntryAnswerRow>
-            </EntryText>
-            <ChangeLink kind="link" onClick={entry.onEdit}>
-              {t(($) => $.reentry.questionnaire.review.change)}
-            </ChangeLink>
-          </Entry>
-        ))}
+        {entries.map((entry) => {
+          const isHashTarget = entry.questionId === questionIdFromHash;
+
+          return (
+            <Entry
+              key={entry.questionId}
+              id={entry.questionId}
+              ref={isHashTarget ? hashTargetRef : undefined}
+              tabIndex={isHashTarget ? -1 : undefined}
+              $isHashTarget={isHashTarget}
+            >
+              <EntryText>
+                <EntryQuestion>{entry.heading}</EntryQuestion>
+                <EntryAnswerRow>
+                  <EntryAnswer>{entry.answerText}</EntryAnswer>
+                  {entry.isUpdated && (
+                    <UpdatedBadge>
+                      {t(($) => $.reentry.questionnaire.review.answerUpdated)}
+                    </UpdatedBadge>
+                  )}
+                </EntryAnswerRow>
+              </EntryText>
+              <ChangeLink
+                kind="link"
+                onClick={() => changeAnswer(entry.onEdit)}
+              >
+                {t(($) => $.reentry.questionnaire.review.change)}
+              </ChangeLink>
+            </Entry>
+          );
+        })}
       </EntryList>
 
       {!isEditing && (

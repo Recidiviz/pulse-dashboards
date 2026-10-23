@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "~design-system";
+
 export const QUESTIONNAIRE_FOOTER_HEIGHT = 80;
 
 // The extra height the footer's error banner adds when it shows: the banner
@@ -22,3 +24,5 @@ export const QUESTIONNAIRE_FOOTER_HEIGHT = 80;
 export const QUESTIONNAIRE_FOOTER_ERROR_HEIGHT = 64;
 
 export const QUESTIONNAIRE_CONTENT_MAX_WIDTH = 600;
+
+export const QUESTIONNAIRE_CONTENT_SIDE_PADDING = spacing.xl;

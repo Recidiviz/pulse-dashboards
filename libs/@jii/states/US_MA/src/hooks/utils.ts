@@ -16,15 +16,24 @@
 // =============================================================================
 
 import {
+  conditionIsMet,
+  conditionsOf,
   reentryChecklistConfig,
   type ReentryChecklistItemId,
   reentryChecklistItemIds,
   reentryChecklistSectionIds,
+  type ReentryQuestionnaireAnswers,
   type ReentryQuestionnaireQuestionFormat,
 } from "~@jii/configs";
 
+import { QuestionDisplay } from "../components/Reentry/Questionnaire/types";
+import {
+  formatAnswerText,
+  fromStoredAnswers,
+} from "../components/Reentry/Questionnaire/utils";
 import { ReentryQuestionnaireStatus } from "../components/Reentry/types";
 import {
+  PersonalizationReason,
   ReentryChecklistChange,
   ReentryChecklistItem,
   ReentryChecklistSection,
@@ -83,6 +92,33 @@ export function toChecklistSections(
   }));
 
   return sections.filter((section) => section.items.length > 0);
+}
+
+/**
+ * Returns the resident's answers that put a checklist item on their list: one
+ * entry for each question whose answer meets one of the item's showIf
+ * conditions, in questionnaire order. An item with no showIf returns [].
+ */
+export function getPersonalizationReasons(
+  itemId: ReentryChecklistItemId,
+  questions: QuestionDisplay[],
+  storedAnswers: ReentryQuestionnaireAnswers,
+): PersonalizationReason[] {
+  const matchedConditions = conditionsOf(
+    reentryChecklistConfig[itemId].showIf,
+  ).filter((condition) => conditionIsMet(condition, storedAnswers));
+  const matchedQuestionIds = new Set<string>(
+    matchedConditions.map((condition) => condition.questionId),
+  );
+  const answers = fromStoredAnswers(questions, storedAnswers);
+
+  return questions
+    .filter((question) => matchedQuestionIds.has(question.id))
+    .map((question) => ({
+      questionId: question.id,
+      heading: question.heading,
+      answerText: formatAnswerText(question, answers[question.id]),
+    }));
 }
 
 /**

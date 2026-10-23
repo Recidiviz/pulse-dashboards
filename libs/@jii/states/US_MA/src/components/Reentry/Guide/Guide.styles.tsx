@@ -27,7 +27,7 @@ export const Wrapper = styled(PageContainer)`
   flex-direction: column;
   gap: ${rem(64)};
   padding-bottom: ${rem(spacing.xxl)};
-  padding-top: ${rem(spacing.xl)};
+  padding-top: ${rem(spacing.md)};
 `;
 
 export const GuideCopy = styled(CopyWrapper)`

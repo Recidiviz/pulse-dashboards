@@ -467,6 +467,13 @@
       },
       "progress": "{{done}} of {{total}} done",
       "personalizedBadge": "Based on your profile",
+      "personalizationReasons": {
+        "heading": "This task is based on answers in your Reentry profile:",
+        "close": "Close",
+        "question": "Question",
+        "yourAnswer": "Your answer:",
+        "changeAnswer": "Change answer"
+      },
       "itemSaveError": "Something went wrong. Tap the option again to retry.",
       "sections": {
         "ANYTIME": {

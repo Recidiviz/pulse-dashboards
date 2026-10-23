@@ -37,6 +37,12 @@ export type ReentryChecklistSection = {
   items: ReentryChecklistItem[];
 };
 
+export type PersonalizationReason = {
+  questionId: string;
+  heading: string;
+  answerText: string;
+};
+
 export type SaveAnswersInput = {
   answers: Record<string, string[]>;
   isCompleted: boolean;

@@ -28,6 +28,7 @@ import { palette, spacing, typography } from "~design-system";
 
 import {
   QUESTIONNAIRE_CONTENT_MAX_WIDTH,
+  QUESTIONNAIRE_CONTENT_SIDE_PADDING,
   QUESTIONNAIRE_FOOTER_ERROR_HEIGHT,
   QUESTIONNAIRE_FOOTER_HEIGHT,
 } from "../constants";
@@ -83,7 +84,7 @@ export const Content = styled.main`
   flex: 1;
   background: ${palette.marble1};
   margin: 0 auto;
-  padding: ${rem(spacing.lg)} ${rem(spacing.xl)};
+  padding: ${rem(spacing.lg)} ${rem(QUESTIONNAIRE_CONTENT_SIDE_PADDING)};
   padding-bottom: calc(
     ${rem(QUESTIONNAIRE_FOOTER_HEIGHT)} +
       ${rem(QUESTIONNAIRE_FOOTER_ERROR_HEIGHT)} + ${rem(spacing.lg)}

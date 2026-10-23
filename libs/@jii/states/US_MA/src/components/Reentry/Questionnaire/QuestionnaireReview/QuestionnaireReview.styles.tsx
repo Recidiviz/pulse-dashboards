@@ -16,9 +16,12 @@
 // =============================================================================
 
 import { rem, rgba } from "polished";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
+import { HIDDEN_HEADER_OFFSET } from "~@jii/common-ui";
 import { Button, palette, spacing, typography } from "~design-system";
+
+import { QUESTIONNAIRE_CONTENT_SIDE_PADDING } from "../constants";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -45,12 +48,31 @@ export const EntryList = styled.div`
   flex-direction: column;
 `;
 
-export const Entry = styled.div`
+export const Entry = styled.div<{ $isHashTarget: boolean }>`
   display: flex;
   justify-content: space-between;
   gap: ${rem(spacing.md)};
   border-top: 1px solid ${palette.slate20};
   padding: ${rem(spacing.md)} 0;
+  scroll-margin-top: ${rem(HIDDEN_HEADER_OFFSET)};
+
+  ${({ $isHashTarget }) =>
+    $isHashTarget &&
+    css`
+      isolation: isolate;
+      outline: none;
+      position: relative;
+
+      /* Extends the highlight across the page's side padding, edge to edge. */
+      &::before {
+        background: ${palette.slate05};
+        border-left: ${rem(spacing.xs)} solid ${palette.pine4};
+        content: "";
+        inset: 0 -${rem(QUESTIONNAIRE_CONTENT_SIDE_PADDING)};
+        position: absolute;
+        z-index: -1;
+      }
+    `}
 `;
 
 export const EntryText = styled.div`

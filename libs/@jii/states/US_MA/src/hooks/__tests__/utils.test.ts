@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { QuestionDisplay } from "../../components/Reentry/Questionnaire/types";
 import {
+  getPersonalizationReasons,
   getQuestionnaireStatus,
   toChecklistItems,
   toChecklistSections,
@@ -226,5 +228,65 @@ describe("toStoredAnswers", () => {
         removedQuestion: ["YES"],
       }),
     ).toEqual({ housing: "OWN_PLACE" });
+  });
+});
+
+describe("getPersonalizationReasons", () => {
+  // DISCUSSED_SSI_SSDI_ELIGIBILITY_WITH_SPECIALIST shows if WORK_PLANS is
+  // DISABLED or SSI_SSDI_ELIGIBILITY is UNSURE.
+  const itemId = "DISCUSSED_SSI_SSDI_ELIGIBILITY_WITH_SPECIALIST";
+  const questions: QuestionDisplay[] = [
+    {
+      id: "SSI_SSDI_ELIGIBILITY",
+      format: "RADIO",
+      heading: "Have you received SSI or SSDI?",
+      options: [{ value: "UNSURE", label: "I'm not sure" }],
+    },
+    {
+      id: "WORK_PLANS",
+      format: "RADIO",
+      heading: "Do you plan to work?",
+      options: [
+        { value: "DISABLED", label: "No, I am disabled" },
+        { value: "RETIRED", label: "No, I am retired" },
+      ],
+    },
+  ];
+
+  test("lists each question whose answer put the item on the list, in questionnaire order", () => {
+    expect(
+      getPersonalizationReasons(itemId, questions, {
+        SSI_SSDI_ELIGIBILITY: "UNSURE",
+        WORK_PLANS: "DISABLED",
+      }),
+    ).toEqual([
+      {
+        questionId: "SSI_SSDI_ELIGIBILITY",
+        heading: "Have you received SSI or SSDI?",
+        answerText: "I'm not sure",
+      },
+      {
+        questionId: "WORK_PLANS",
+        heading: "Do you plan to work?",
+        answerText: "No, I am disabled",
+      },
+    ]);
+  });
+
+  test("leaves out questions whose answer doesn't meet a condition", () => {
+    expect(
+      getPersonalizationReasons(itemId, questions, {
+        SSI_SSDI_ELIGIBILITY: "UNSURE",
+        WORK_PLANS: "RETIRED",
+      }).map((reason) => reason.questionId),
+    ).toEqual(["SSI_SSDI_ELIGIBILITY"]);
+  });
+
+  test("returns nothing for an item with no showIf", () => {
+    expect(
+      getPersonalizationReasons("KNOWS_REQUIRED_PROGRAMS", questions, {
+        WORK_PLANS: "DISABLED",
+      }),
+    ).toEqual([]);
   });
 });

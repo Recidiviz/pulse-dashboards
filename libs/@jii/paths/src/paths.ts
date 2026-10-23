@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  hashValues,
   number,
   route,
   string,
@@ -171,7 +172,7 @@ export const UsMaReentry = route(
   {},
   {
     Overview: route(""),
-    Questionnaire: route("questionnaire"),
+    Questionnaire: route("questionnaire", { hash: hashValues() }),
     Checklist: route("checklist"),
     Guide: route("guide/:topicSlug", {
       params: {

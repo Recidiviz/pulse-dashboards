@@ -467,6 +467,13 @@
       },
       "progress": "[US_MA]reentry.checklist.progress",
       "personalizedBadge": "[US_MA]reentry.checklist.personalizedBadge",
+      "personalizationReasons": {
+        "heading": "[US_MA]reentry.checklist.personalizationReasons.heading",
+        "close": "[US_MA]reentry.checklist.personalizationReasons.close",
+        "question": "[US_MA]reentry.checklist.personalizationReasons.question",
+        "yourAnswer": "[US_MA]reentry.checklist.personalizationReasons.yourAnswer",
+        "changeAnswer": "[US_MA]reentry.checklist.personalizationReasons.changeAnswer"
+      },
       "itemSaveError": "[US_MA]reentry.checklist.itemSaveError",
       "sections": {
         "ANYTIME": {
