@@ -60,7 +60,8 @@ export interface YearMonth {
 }
 
 /**
- * One rule of a CalendarEntryPattern. patternRulesSchema is its zod twin.
+ * One rule of a CalendarEntryPattern. patternRuleSchema in rules.ts is its zod
+ * twin.
  *
  * For everyNWeeks, intervalWeeks is MIN_INTERVAL_WEEKS to MAX_INTERVAL_WEEKS
  * and anchorDate falls on weekday.
@@ -92,7 +93,10 @@ export type WeekNumbering = (typeof WEEK_NUMBERINGS)[number];
 export const HOLIDAY_POLICIES = ["WARN", "BLOCK"] as const;
 export type HolidayPolicy = (typeof HOLIDAY_POLICIES)[number];
 
-/** The settings on a Calendar row. */
+/**
+ * A calendar's behaviour settings. Each state's code supplies them as a typed
+ * constant; the Calendar row stores none of them (D36).
+ */
 export interface CalendarSettings {
   /** First day of a pattern week, e.g. "SUNDAY". */
   weekStartsOn: Weekday;
@@ -103,10 +107,6 @@ export interface CalendarSettings {
   /** Holiday region, e.g. "US-CO". Null means the calendar shows no holidays. */
   holidayRegion: string | null;
   holidayPolicy: HolidayPolicy;
-  /** Whether the public procedure serves this calendar's publications. */
-  publicEnabled: boolean;
-  /** Months after the current one in the public window, 0 to 12. */
-  publicMonthsAhead: number;
 }
 
 /** The settings that decide which date a weekOfMonth rule resolves to. */

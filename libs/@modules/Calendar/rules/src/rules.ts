@@ -15,74 +15,126 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
+import { parseIsoDate, weekdayOf } from "./dates";
 import { CalendarRulesError } from "./errors";
-import { isWeekday, plainDateWeekday, toPlainDate } from "./plainDates";
 import {
   MAX_INTERVAL_WEEKS,
   MIN_INTERVAL_WEEKS,
   PatternRule,
+  WEEKDAYS,
+  WeekOfMonth,
   WEEKS_OF_MONTH,
 } from "./types";
+import { describeZodIssues } from "./zodIssues";
 
-/**
- * Throws INVALID_RULE unless rule is a well-formed PatternRule, and
- * ANCHOR_WEEKDAY_MISMATCH when an everyNWeeks anchor isn't on its weekday.
- */
-export function assertValidPatternRule(rule: PatternRule): void {
-  const invalid = (reason: string) =>
-    new CalendarRulesError(
-      "INVALID_RULE",
-      `${reason}: ${JSON.stringify(rule)}`,
-    );
+const weekdaySchema = z.enum(WEEKDAYS);
 
-  if (typeof rule !== "object" || rule === null) {
-    throw invalid("Rule must be an object");
-  }
-  if (!isWeekday(rule.weekday)) {
-    throw invalid("Unknown weekday");
-  }
-  switch (rule.type) {
-    case "weekOfMonth":
-      if (!(WEEKS_OF_MONTH as readonly number[]).includes(rule.week)) {
-        throw invalid(`week must be one of ${WEEKS_OF_MONTH.join(", ")}`);
-      }
-      return;
-    case "everyWeekday":
-      return;
-    case "everyNWeeks": {
-      const { intervalWeeks } = rule;
-      if (
-        !Number.isInteger(intervalWeeks) ||
-        intervalWeeks < MIN_INTERVAL_WEEKS ||
-        intervalWeeks > MAX_INTERVAL_WEEKS
-      ) {
-        throw invalid(
-          `intervalWeeks must be ${MIN_INTERVAL_WEEKS} to ${MAX_INTERVAL_WEEKS}`,
-        );
-      }
-      const anchorWeekday = plainDateWeekday(toPlainDate(rule.anchorDate));
-      if (anchorWeekday !== rule.weekday) {
-        throw new CalendarRulesError(
-          "ANCHOR_WEEKDAY_MISMATCH",
-          `anchorDate ${rule.anchorDate} is a ${anchorWeekday}, not a ${rule.weekday}`,
-        );
-      }
-      return;
-    }
-    default:
-      throw invalid("Unknown rule type");
+function isIsoDate(value: string): boolean {
+  try {
+    return parseIsoDate(value) === value;
+  } catch {
+    return false;
   }
 }
 
-/** Returns a string that is equal for two rules exactly when their fields are equal. */
-function patternRuleKey(rule: PatternRule): string {
+const isoDateSchema = z
+  .string()
+  .refine(isIsoDate, { message: "Expected a real YYYY-MM-DD date" });
+
+const weekOfMonthRuleSchema = z
+  .object({
+    type: z.literal("weekOfMonth"),
+    // z.custom keeps WeekOfMonth as the input type too, so tRPC callers get
+    // a compile error for a week outside WEEKS_OF_MONTH.
+    week: z.custom<WeekOfMonth>(
+      (week) => (WEEKS_OF_MONTH as readonly unknown[]).includes(week),
+      { message: `Expected one of ${WEEKS_OF_MONTH.join(", ")}` },
+    ),
+    weekday: weekdaySchema,
+  })
+  .strict();
+
+const everyWeekdayRuleSchema = z
+  .object({
+    type: z.literal("everyWeekday"),
+    weekday: weekdaySchema,
+  })
+  .strict();
+
+const everyNWeeksRuleSchema = z
+  .object({
+    type: z.literal("everyNWeeks"),
+    weekday: weekdaySchema,
+    intervalWeeks: z
+      .number()
+      .int()
+      .min(MIN_INTERVAL_WEEKS)
+      .max(MAX_INTERVAL_WEEKS),
+    anchorDate: isoDateSchema,
+  })
+  .strict();
+
+/**
+ * The zod schema for one PatternRule, and the only definition of a valid
+ * rule: assertValidPatternRule and the stored rules column both check rules
+ * with it. Unknown keys are rejected, and an everyNWeeks anchorDate must be a
+ * real date on the rule's weekday.
+ */
+export const patternRuleSchema = z
+  .discriminatedUnion("type", [
+    weekOfMonthRuleSchema,
+    everyWeekdayRuleSchema,
+    everyNWeeksRuleSchema,
+  ])
+  .superRefine((rule, ctx) => {
+    // zod still runs this refinement when isoDateSchema has already rejected
+    // the anchor, so skip anchors that aren't real dates.
+    if (rule.type !== "everyNWeeks" || !isIsoDate(rule.anchorDate)) return;
+    const anchorWeekday = weekdayOf(rule.anchorDate);
+    if (anchorWeekday !== rule.weekday) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["anchorDate"],
+        message: `${rule.anchorDate} is a ${anchorWeekday}, not a ${rule.weekday}`,
+      });
+    }
+  });
+
+/**
+ * Throws INVALID_RULE, naming the rule and each failing field, unless rule
+ * passes patternRuleSchema. An everyNWeeks anchorDate on the wrong weekday is
+ * INVALID_RULE too, with a message such as
+ * "anchorDate: 2026-09-05 is a SATURDAY, not a FRIDAY".
+ */
+export function assertValidPatternRule(rule: PatternRule): void {
+  const result = patternRuleSchema.safeParse(rule);
+  if (!result.success) {
+    throw new CalendarRulesError(
+      "INVALID_RULE",
+      `Invalid pattern rule ${JSON.stringify(rule)}: ${describeZodIssues(result.error)}`,
+    );
+  }
+}
+
+/**
+ * Returns a string that is equal for two valid rules exactly when their fields
+ * are equal.
+ *
+ * Must not parse anchorDate: patternRulesSchema's repeat check still runs on
+ * rules that failed patternRuleSchema, so a throw here would escape safeParse
+ * instead of becoming an issue. Comparing the raw string is enough, because
+ * patternRuleSchema only accepts anchors in canonical YYYY-MM-DD form.
+ */
+export function patternRuleKey(rule: PatternRule): string {
   switch (rule.type) {
     case "weekOfMonth":
       return `${rule.type}:${rule.week}:${rule.weekday}`;
     case "everyWeekday":
       return `${rule.type}:${rule.weekday}`;
     case "everyNWeeks":
-      return `${rule.type}:${rule.weekday}:${rule.intervalWeeks}:${toPlainDate(rule.anchorDate).toString()}`;
+      return `${rule.type}:${rule.weekday}:${rule.intervalWeeks}:${rule.anchorDate}`;
   }
 }
 

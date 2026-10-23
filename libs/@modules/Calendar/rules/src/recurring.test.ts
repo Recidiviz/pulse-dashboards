@@ -109,13 +109,20 @@ describe("everyNWeeksDates", () => {
     },
   );
 
-  it("throws ANCHOR_WEEKDAY_MISMATCH when the anchor isn't on the weekday", () => {
+  it("throws INVALID_RULE naming the anchor's weekday when it isn't the rule's", () => {
     expect(() =>
       everyNWeeksDates(ym("2026-09"), {
         ...BUSINESS_MEETING,
         anchorDate: "2026-09-03",
       }),
-    ).toThrow(expect.objectContaining({ code: "ANCHOR_WEEKDAY_MISMATCH" }));
+    ).toThrow(
+      expect.objectContaining({
+        code: "INVALID_RULE",
+        message: expect.stringContaining(
+          "anchorDate: 2026-09-03 is a THURSDAY, not a FRIDAY",
+        ),
+      }),
+    );
   });
 
   it.each([1, 9, 2.5])(
@@ -130,13 +137,23 @@ describe("everyNWeeksDates", () => {
     },
   );
 
-  it("throws INVALID_DATE for an anchor that isn't a real date", () => {
+  it.each(["2026-09-31", "2026-9-4", ""])(
+    "throws INVALID_RULE for anchor %j, which isn't a real YYYY-MM-DD date",
+    (anchorDate) => {
+      expect(() =>
+        everyNWeeksDates(ym("2026-09"), { ...BUSINESS_MEETING, anchorDate }),
+      ).toThrow(expect.objectContaining({ code: "INVALID_RULE" }));
+    },
+  );
+
+  it("throws INVALID_RULE for a key the rule type doesn't have", () => {
     expect(() =>
       everyNWeeksDates(ym("2026-09"), {
         ...BUSINESS_MEETING,
-        anchorDate: "2026-09-31",
+        // @ts-expect-error week isn't a field of everyNWeeks rules.
+        week: 1,
       }),
-    ).toThrow(expect.objectContaining({ code: "INVALID_DATE" }));
+    ).toThrow(expect.objectContaining({ code: "INVALID_RULE" }));
   });
 });
 
@@ -307,10 +324,7 @@ describe("expandPatternRules", () => {
     [{ type: "weekOfMonth", week: 5, weekday: "MONDAY" }, "INVALID_RULE"],
     [{ type: "everyWeekday", weekday: "FRI" }, "INVALID_RULE"],
     [{ type: "rrule", weekday: "FRIDAY" }, "INVALID_RULE"],
-    [
-      { ...BUSINESS_MEETING, anchorDate: "2026-09-03" },
-      "ANCHOR_WEEKDAY_MISMATCH",
-    ],
+    [{ ...BUSINESS_MEETING, anchorDate: "2026-09-03" }, "INVALID_RULE"],
   ])("rejects %j with %s", (rule, code) => {
     expect(() =>
       expandPatternRules(ym("2026-10"), [rule as PatternRule], SUNDAY_WEEKS),

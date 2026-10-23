@@ -25,7 +25,6 @@ export type CalendarRulesErrorCode =
   | "INVALID_YEAR_MONTH"
   | "INVALID_ENTRY"
   | "INVALID_RULE"
-  | "ANCHOR_WEEKDAY_MISMATCH"
   | "INVALID_SETTINGS"
   | "INVALID_TIME_ZONE";
 

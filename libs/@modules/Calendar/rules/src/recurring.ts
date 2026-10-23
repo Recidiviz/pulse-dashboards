@@ -67,9 +67,9 @@ export function everyWeekdayDates(
  * Every 3 weeks on FRIDAY from 2026-09-04 gives 2026-09-04 and 2026-09-25 in
  * September, 2026-10-16 in October, and 2026-08-14 in August.
  *
- * Throws INVALID_RULE when intervalWeeks is outside MIN_INTERVAL_WEEKS to
- * MAX_INTERVAL_WEEKS, and ANCHOR_WEEKDAY_MISMATCH when anchorDate isn't on
- * weekday.
+ * Throws INVALID_RULE when rule fails patternRuleSchema, e.g. intervalWeeks
+ * outside MIN_INTERVAL_WEEKS to MAX_INTERVAL_WEEKS or an anchorDate that isn't
+ * a real date on weekday.
  */
 export function everyNWeeksDates(
   ym: YearMonth,

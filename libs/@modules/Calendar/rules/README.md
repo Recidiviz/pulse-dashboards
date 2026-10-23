@@ -16,7 +16,8 @@ Dates cross the public API as `"YYYY-MM-DD"` strings (`IsoDate`). Inside, the li
 | `everyWeekdayDates`, `everyNWeeksDates`                     | The dates an `everyWeekday` or `everyNWeeks` rule makes in a month.                                     |
 | `expandPatternRules`                                        | Every date a list of rules makes in a month, sorted, with `inMonth` for dates past month end.           |
 | `describePatternRules`                                      | Display text such as "1st and 2nd Monday" or "Every 3 weeks on Friday from Sep 4, 2026".                |
-| `CalendarRulesError`                                        | Thrown for invalid input, with a `code` such as `INVALID_DATE` or `ANCHOR_WEEKDAY_MISMATCH`.            |
+| `patternRulesSchema`, `parsePatternRules`                   | Check a pattern's stored or submitted rules: 1 to 28 valid rules with no repeats.                       |
+| `CalendarRulesError`                                        | Thrown for invalid input, with a `code` such as `INVALID_DATE` or `INVALID_RULE`.                       |
 | `WEEKDAYS`, `WEEK_NUMBERINGS`, `HOLIDAY_POLICIES` and types | `PatternRule`, `CalendarSettings`, `WeekSettings`, `YearMonth` and the enums the Prisma schema mirrors. |
 
 ## Pattern rules
@@ -28,6 +29,8 @@ Dates cross the public API as `"YYYY-MM-DD"` strings (`IsoDate`). Inside, the li
 | `everyNWeeks`  | `weekday`, `intervalWeeks` 2 to 8, `anchorDate` | Every Nth such weekday from the anchor, running across months in both directions |
 
 `WEEKS_OF_MONTH`, `MIN_INTERVAL_WEEKS` and `MAX_INTERVAL_WEEKS` export these bounds, so validation code reads them instead of restating them.
+
+`patternRuleSchema` in `src/rules.ts`, which is internal, is the one definition of a valid rule. Every function that takes rules checks them with it, and so does `patternRulesSchema`. A rule it rejects, such as one with a key its type doesn't have or an `everyNWeeks` anchor on another weekday, throws `INVALID_RULE` with a message naming the field, e.g. `anchorDate: 2026-09-03 is a THURSDAY, not a FRIDAY`.
 
 ## Week numbering
 
