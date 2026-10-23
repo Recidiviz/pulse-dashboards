@@ -15,23 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { moduleRouter } from "~@modules/UsTnReclassification/router";
+import { TRPCRouterRecord } from "@trpc/server";
+
+import { manifest as usTnReclassificationManifest } from "~@modules/UsTnReclassification/router";
 import {
   auth0Procedure,
   baseProcedure,
   router,
 } from "~@modules-server/trpc-base";
 
-export const appRouter = router({
+import { MANIFEST_REGISTRY, registerManifests } from "./manifestRegistry";
+
+const procedures: TRPCRouterRecord = {
   hello: baseProcedure.query(async () => {
     return "hi there";
   }),
   howdy: auth0Procedure.query(async () => {
     return "hey, y'all";
   }),
-  usTnReclass: moduleRouter,
-});
+};
+
+const mergedProcedures = registerManifests(procedures, MANIFEST_REGISTRY);
+
+export const appRouter = router(mergedProcedures);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
-export type UsTnReclassModuleRouter = typeof moduleRouter;
+export type UsTnReclassModuleRouter =
+  typeof usTnReclassificationManifest.router;

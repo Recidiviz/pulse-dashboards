@@ -17,3 +17,4 @@
 
 export { createContext } from "./context";
 export { auth0Procedure, baseProcedure, router } from "./init";
+export type { ModuleBackendManifest } from "./types";

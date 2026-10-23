@@ -50,7 +50,7 @@ const UsTnReclassTrpcProvider: React.FC<{
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
-        subrouteScopedLink("usTnReclass"),
+        subrouteScopedLink("UsTnReclassification"),
         httpBatchLink({
           url: DB_URL,
           transformer: superjson,

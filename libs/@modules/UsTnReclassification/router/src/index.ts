@@ -15,4 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { moduleRouter } from "./router";
+import type { ModuleBackendManifest } from "~@modules-server/trpc-base";
+
+import { moduleRouter } from "./router";
+
+export const manifest = {
+  module: "UsTnReclassification",
+  router: moduleRouter,
+  enabledTenants: ["US_TN"],
+} satisfies ModuleBackendManifest;

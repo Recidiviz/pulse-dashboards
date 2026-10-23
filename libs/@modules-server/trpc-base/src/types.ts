@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FastifyReply, FastifyRequest } from "fastify";
+import { AnyTRPCRootTypes, TRPCBuiltRouter } from "@trpc/server";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
-export type StateCode = "US_TN";
+export type StateCode = "US_TN" | "Recidiviz";
 
 export type Auth0User = {
   [`https://dashboard.recidiviz.org/app_metadata`]: {
@@ -42,4 +43,11 @@ export type Context = {
   res: FastifyReply;
   isAuth0Authorized: boolean;
   user?: AuthUser;
+};
+
+export type ModuleBackendManifest = {
+  module: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  router: TRPCBuiltRouter<AnyTRPCRootTypes, any>;
+  enabledTenants: StateCode[];
 };
