@@ -36,7 +36,6 @@ type ResidentFlag =
   | "usCoMrdOverride"
   | "usCoMrdOverrideFullState"
   | "usCoEdovoCredits"
-  //TODO OBT-34689 remove after launch
   | "usArFslImprovements"
   | "usArEdovoCredits"
   | "usNcRNAAutoEnablement"
