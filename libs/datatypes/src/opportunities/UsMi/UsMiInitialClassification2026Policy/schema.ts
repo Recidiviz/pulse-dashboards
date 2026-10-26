@@ -21,7 +21,7 @@ import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import {
-  goodBehaviorPeriodNotes,
+  goodBehaviorPastFourMonthsNotes,
   programCompletionsList,
 } from "../UsMiReviewClassification2026Policy/schema";
 import {
@@ -54,6 +54,10 @@ export const usMiInitialClassificationSchema = opportunitySchemaBase.extend({
 
 export type prevLevelFiveNotes = z.infer<typeof prevLevelFiveNotes>;
 
+type goodBehaviorPastFourMonthsNotes = z.infer<
+  typeof goodBehaviorPastFourMonthsNotes
+>;
+
 export type ClassificationNoteData = {
   age: ageNotes;
   vfo: vfoNotes;
@@ -61,7 +65,7 @@ export type ClassificationNoteData = {
   felony: felonyConvictionsNotes;
   adSeg: pastAdSegNotes;
   incidents: incidentNotesSchema;
-  goodBehavior: goodBehaviorPeriodNotes;
+  goodBehavior: goodBehaviorPastFourMonthsNotes;
   programs: programCompletionsList;
 };
 

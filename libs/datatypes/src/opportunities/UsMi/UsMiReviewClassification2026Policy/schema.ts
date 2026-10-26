@@ -20,31 +20,30 @@ import { z } from "zod";
 import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
-import {
-  incidentNotesSchema,
-  usMiClassificationFormBaseSchema,
-} from "../UsMiInitialClassification2026Policy/utils";
-
-export const goodBeahviorNotesSchema = incidentNotesSchema.extend({
-  adSegStartsList: z
-    .array(
-      z.object({
-        adSegEndDateExclusive: dateStringSchema,
-        adSegStartDate: dateStringSchema,
-        incidentTimePeriod: z.string().optional(),
-      }),
-    )
-    .nullable(),
-});
-
-export type goodBeahviorNotesSchema = z.infer<typeof goodBeahviorNotesSchema>;
-
+import { usMiClassificationFormBaseSchema } from "../UsMiInitialClassification2026Policy/utils";
 export const programCompletionsList = z.array(
   z.object({
     completionDate: dateStringSchema,
     programName: z.string(),
   }),
 );
+
+export const goodBehaviorPastFourMonthsNotes = z.object({
+  latestAdSegPlacement: z
+    .object({
+      adSegEndDateExclusive: dateStringSchema,
+      adSegStartDate: dateStringSchema,
+    })
+    .nullable(),
+  latestIncidents: z.array(
+    z.object({
+      incarcerationIncidentId: z.coerce.number(),
+      incidentClass: z.string(),
+      incidentDate: dateStringSchema,
+      infractionTypeRawText: z.string(),
+    }),
+  ),
+});
 
 export type programCompletionsList = z.infer<typeof programCompletionsList>;
 
@@ -100,11 +99,11 @@ export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
       .passthrough()
       .partial()
       .nullish(),
-    goodBehaviorScore: z.coerce.number().nullable(),
-    goodBehaviorNotes: goodBeahviorNotesSchema
-      .partial()
+    goodBehPastFourMonthScore: z.coerce.number().nullable(),
+    goodBehPastFourMonthNotes: goodBehaviorPastFourMonthsNotes
       .passthrough()
-      .nullish(),
+      .partial()
+      .nullable(),
   }),
 });
 
