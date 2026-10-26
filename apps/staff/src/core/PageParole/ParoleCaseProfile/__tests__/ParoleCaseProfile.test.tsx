@@ -327,19 +327,33 @@ describe("ParoleCaseProfile", () => {
       ).not.toBeInTheDocument();
     });
 
-    // The V1 design drops both slots from Idaho's profile. The components
-    // stay in the tree for a later version, but nothing renders them.
-    it.each([
-      "Disciplinary Facility Notes",
-      "Gang / Security Threat Group (STG)",
-    ])("omits US_ID's %s slot", async (heading) => {
+    // The V1 design drops this slot from Idaho's profile. The component stays
+    // in the tree for a later version, but nothing renders it.
+    it("omits US_ID's Disciplinary Facility Notes slot", async () => {
       rootStore.tenantStore.currentTenantId = "US_ID";
       renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Institutional History"),
       ).toBeInTheDocument();
-      expect(screen.queryByText(heading)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Disciplinary Facility Notes"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("shows US_ID's STG affiliations in Institutional History", async () => {
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Institutional History"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Gang / Security Threat Group (STG)"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Northsiders; Westside Crew"),
+      ).toBeInTheDocument();
     });
 
     it("omits the STG slot for US_CO", async () => {

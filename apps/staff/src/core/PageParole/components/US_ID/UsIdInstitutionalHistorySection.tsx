@@ -26,6 +26,7 @@ import { UsIdCaseNotesSection } from "./UsIdCaseNotesSection";
 import { UsIdDisciplinaryReportsSection } from "./UsIdDisciplinaryReportsSection";
 import { UsIdHealthAndAssessmentsSection } from "./UsIdHealthAndAssessmentsSection";
 import { UsIdProgrammingSection } from "./UsIdProgrammingSection";
+import { UsIdStgSection } from "./UsIdStgSection";
 
 /**
  * US_ID's Institutional History card. The V1 design folds what were four
@@ -56,6 +57,7 @@ export function UsIdInstitutionalHistorySection({
         }
       />
       <UsIdCaseNotesSection caseNotes={caseDetail.caseNotes} />
+      <UsIdStgSection stg={caseDetail.stg} />
       <UsIdHealthAndAssessmentsSection
         riskAssessments={caseDetail.riskAssessments}
         riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}

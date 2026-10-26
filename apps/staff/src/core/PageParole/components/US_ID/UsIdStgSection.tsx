@@ -15,26 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleCase } from "~datatypes";
+import {
+  ParoleSmallFactValue,
+  ParoleSubsection,
+  ParoleSubsectionCaption,
+  ParoleSubsectionHeading,
+  ParoleSubsectionTitle,
+} from "../ParoleCaseProfileStyles";
 
-import type { ParoleConfig } from "../../../models/types";
-import { EmptyState, SubsectionTitle } from "../shared";
-
-export function UsIdStgSection({
-  caseDetail,
-}: {
-  caseDetail: ParoleCase;
-  config: ParoleConfig;
-}) {
-  const stg = caseDetail.stg;
+/**
+ * US_ID's Gang / Security Threat Group (STG) subsection.
+ *
+ * @param stg - The resident's current STG affiliations, as the backend sends
+ *   them: group names joined by "; ". Undefined when there are none.
+ */
+export function UsIdStgSection({ stg }: { stg: string | undefined }) {
   return (
-    <div>
-      <SubsectionTitle>Gang / Security Threat Group (STG)</SubsectionTitle>
-      {stg ? (
-        <div>{stg}</div>
-      ) : (
-        <EmptyState>No STG affiliation on record.</EmptyState>
-      )}
-    </div>
+    <ParoleSubsection>
+      <ParoleSubsectionHeading>
+        <ParoleSubsectionTitle>
+          Gang / Security Threat Group (STG)
+        </ParoleSubsectionTitle>
+        {!stg && (
+          <ParoleSubsectionCaption>
+            No STG affiliation on record.
+          </ParoleSubsectionCaption>
+        )}
+      </ParoleSubsectionHeading>
+      {stg && <ParoleSmallFactValue>{stg}</ParoleSmallFactValue>}
+    </ParoleSubsection>
   );
 }
