@@ -16,6 +16,49 @@
         "Transfer Eligibility Date": "[US_AR]importantDates.eligibilityDate.description.Transfer Eligibility Date",
         "Parole Eligibility Date": "[US_AR]importantDates.eligibilityDate.description.Parole Eligibility Date",
         "Release Eligibility Date": "[US_AR]importantDates.eligibilityDate.description.Release Eligibility Date"
+      },
+      "card": {
+        "goodTimeLink": "[US_AR]importantDates.eligibilityDate.card.goodTimeLink",
+        "programmingLink": "[US_AR]importantDates.eligibilityDate.card.programmingLink",
+        "Release Eligibility Date": {
+          "description": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.description",
+          "programUnitsRequired_one": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.programUnitsRequired_one",
+          "programUnitsRequired_other": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.programUnitsRequired_other",
+          "goodTimeOverlay": {
+            "heading": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.goodTimeOverlay.heading",
+            "body": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.goodTimeOverlay.body",
+            "overlayLinkText": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.goodTimeOverlay.overlayLinkText"
+          },
+          "programmingOverlay": {
+            "heading": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.programmingOverlay.heading",
+            "body": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.programmingOverlay.body",
+            "overlayLinkText": "[US_AR]importantDates.eligibilityDate.card.Release Eligibility Date.programmingOverlay.overlayLinkText"
+          }
+        },
+        "Transfer Eligibility Date": {
+          "description": "[US_AR]importantDates.eligibilityDate.card.Transfer Eligibility Date.description",
+          "goodTimeOverlay": {
+            "heading": "[US_AR]importantDates.eligibilityDate.card.Transfer Eligibility Date.goodTimeOverlay.heading",
+            "body": "[US_AR]importantDates.eligibilityDate.card.Transfer Eligibility Date.goodTimeOverlay.body",
+            "overlayLinkText": "[US_AR]importantDates.eligibilityDate.card.Transfer Eligibility Date.goodTimeOverlay.overlayLinkText"
+          },
+          "programmingOverlay": {
+            "heading": "[US_AR]importantDates.eligibilityDate.card.Transfer Eligibility Date.programmingOverlay.heading",
+            "body": "[US_AR]importantDates.eligibilityDate.card.Transfer Eligibility Date.programmingOverlay.body"
+          }
+        },
+        "Parole Eligibility Date": {
+          "description": "[US_AR]importantDates.eligibilityDate.card.Parole Eligibility Date.description",
+          "goodTimeOverlay": {
+            "heading": "[US_AR]importantDates.eligibilityDate.card.Parole Eligibility Date.goodTimeOverlay.heading",
+            "body": "[US_AR]importantDates.eligibilityDate.card.Parole Eligibility Date.goodTimeOverlay.body",
+            "overlayLinkText": "[US_AR]importantDates.eligibilityDate.card.Parole Eligibility Date.goodTimeOverlay.overlayLinkText"
+          },
+          "programmingOverlay": {
+            "heading": "[US_AR]importantDates.eligibilityDate.card.Parole Eligibility Date.programmingOverlay.heading",
+            "body": "[US_AR]importantDates.eligibilityDate.card.Parole Eligibility Date.programmingOverlay.body"
+          }
+        }
       }
     },
     "maximumReleaseDate": {
@@ -49,5 +92,11 @@
   "edovoBanner": {
     "message": "[US_AR]edovoBanner.message",
     "linkText": "[US_AR]edovoBanner.linkText"
+  },
+  "protectAct": {
+    "moreInfo": {
+      "heading": "[US_AR]protectAct.moreInfo.heading",
+      "body": "[US_AR]protectAct.moreInfo.body"
+    }
   }
 }

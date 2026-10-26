@@ -17,7 +17,14 @@
 
 import { useState } from "react";
 
-import { BottomSheet, CardHeading, CardValue, GoLink } from "~@jii/common-ui";
+import {
+  BottomSheet,
+  CardHeading,
+  CardValue,
+  GoLink,
+  OverlayBody,
+  OverlayHeading,
+} from "~@jii/common-ui";
 import {
   useDateDistanceTranslation,
   useUsAzTranslations,
@@ -29,9 +36,7 @@ import {
   DashedBorderSvg,
   DateInfoContent,
   LearnMoreLinkWrapper,
-  OverlayBody,
   OverlayEyebrow,
-  OverlayHeading,
   StyledCard,
   StyledSlateCopy,
 } from "./styles";

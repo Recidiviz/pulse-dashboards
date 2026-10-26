@@ -21,6 +21,7 @@ export * from "./AnnouncementBanner/AnnouncementBanner";
 export * from "./BackLink/BackLink";
 export * from "./BaseLayout/BaseLayout";
 export * from "./BottomSheet/BottomSheet";
+export * from "./BottomSheet/styles";
 export * from "./Buttons/ButtonLink";
 export * from "./Buttons/JIIButton";
 export * from "./CallToActionCard/CallToActionCard";

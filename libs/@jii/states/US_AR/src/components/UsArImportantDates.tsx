@@ -16,67 +16,63 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
 import { GoButton, HomepageSectionHeading } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { UsArResidentJiiData } from "~@jii/schemas";
 import { useUsArTranslations } from "~@jii/translation";
+import { withPresenterManager } from "~hydration-utils";
 
-import { DateInfoCard, DateInfoProps } from "./DateInfoCard";
+import { DateInfoCard } from "./DateInfoCard";
+import { UsArImportantDatesPresenter } from "./UsArImportantDatesPresenter";
 
 const LinkContainer = styled.div`
   margin-top: ${rem(spacing.lg)};
   margin-bottom: ${rem(spacing.lg)};
 `;
 
-export function UsArImportantDates({
-  metadata,
-}: {
-  metadata: UsArResidentJiiData;
-}) {
+type UsArImportantDatesProps = { metadata: UsArResidentJiiData };
+
+const ManagedComponent: React.FC<{ presenter: UsArImportantDatesPresenter }> =
+  observer(function UsArImportantDates({ presenter }) {
+    const { t } = useUsArTranslations();
+
+    return (
+      <section>
+        <HomepageSectionHeading>
+          {t(($) => $.importantDates.sectionHeader)}
+        </HomepageSectionHeading>
+
+        {presenter.dateEntries.map((dateInfo) => (
+          <DateInfoCard {...dateInfo} key={dateInfo.label} />
+        ))}
+
+        <LinkContainer>
+          <GoButton
+            to={State.Resident.$.UsArMoreInformation.ImportantDates.buildRelativePath(
+              {},
+            )}
+          >
+            {t(($) => $.importantDates.moreInfoLink)}
+          </GoButton>
+        </LinkContainer>
+      </section>
+    );
+  });
+
+function usePresenter({ metadata }: UsArImportantDatesProps) {
+  const { residentFlags } = useSingleResidentContext();
   const { t } = useUsArTranslations();
-  const dates: DateInfoProps[] = [
-    {
-      date: metadata.eligibilityDate,
-      label: t(
-        ($) =>
-          $.importantDates.eligibilityDate.labels[metadata.eligibilityDateName],
-      ),
-      description: t(
-        ($) =>
-          $.importantDates.eligibilityDate.description[
-            metadata.eligibilityDateName
-          ],
-      ),
-    },
-    {
-      date: metadata.maximumReleaseDate,
-      label: t(($) => $.importantDates.maximumReleaseDate.label),
-      description: t(($) => $.importantDates.maximumReleaseDate.description),
-    },
-  ];
 
-  return (
-    <section>
-      <HomepageSectionHeading>
-        {t(($) => $.importantDates.sectionHeader)}
-      </HomepageSectionHeading>
-
-      {dates.map((dateInfo) => (
-        <DateInfoCard {...dateInfo} />
-      ))}
-
-      <LinkContainer>
-        <GoButton
-          to={State.Resident.$.UsArMoreInformation.ImportantDates.buildRelativePath(
-            {},
-          )}
-        >
-          {t(($) => $.importantDates.moreInfoLink)}
-        </GoButton>
-      </LinkContainer>
-    </section>
-  );
+  return new UsArImportantDatesPresenter(metadata, residentFlags, t);
 }
+
+export const UsArImportantDates = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
+});
