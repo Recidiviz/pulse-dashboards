@@ -47,6 +47,7 @@ export const ORAS_FIELDS: ReadonlyArray<
 > = [
   "assessmentScore",
   "assessmentType",
+  "assessmentRiskLevel",
   "assessmentDate",
   "assessmentAdministeredBy",
   "criminalHistoryLevel",
@@ -180,6 +181,7 @@ export const updateSARSchema = z.object({
     // Assessment metadata
     assessmentScore: z.number().int().nullish(),
     assessmentType: assessmentTypeEnum.nullish(),
+    assessmentRiskLevel: z.nativeEnum(DomainRiskLevel).nullish(),
     assessmentDate: z.date().nullish(),
     assessmentAdministeredBy: z.string().nullish(),
     noORASDomainReason: z.string().nullish(),

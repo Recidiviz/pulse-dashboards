@@ -646,7 +646,7 @@ model SentencingAssessmentReport {
   assessmentScore           Int?
   assessmentType            AssessmentType?
   // Overall risk level of assessmentScore. The import sets it from the
-  // source's assessment level.
+  // source's assessment level; the ORAS form sends it for manually entered scores.
   assessmentRiskLevel       DomainRiskLevel?
   assessmentDate            DateTime?
   assessmentAdministeredBy  String?

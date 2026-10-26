@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { RiskLevelKey } from "./constants";
+
 // Keys = DB values (from Prisma enum), Values = UI display names
 export const AssessmentTypeDisplayNames = {
   ORAS_CST: "Community Supervision Tool (ORAS-CST)",
@@ -95,17 +97,55 @@ function getBoundaries(
   return gender === "FEMALE" ? byGender.FEMALE : byGender.MALE;
 }
 
+/**
+ * Returns the overall risk level score falls in for assessmentType and gender,
+ * or null for an assessment type with no thresholds.
+ */
+export function getAssessmentRiskLevel(
+  assessmentType: AssessmentTypeKey | null | undefined,
+  score: number,
+  gender?: string | null,
+): RiskLevelKey | null {
+  if (!assessmentType) return null;
+  const boundaries = getBoundaries(assessmentType, gender);
+  if (!boundaries) return null;
+  return deriveDomainRiskLevel(score, boundaries);
+}
+
+/**
+ * Derives a risk level from a raw score, given the score thresholds (from the
+ * official ORAS scoring guide, see MO-11748) at which it enters MODERATE and
+ * HIGH. Below `moderate` is LOW; there's no upper bound on HIGH since scores
+ * are already capped at the maximum score.
+ */
+export function deriveDomainRiskLevel(
+  score: number | null | undefined,
+  cutoffs: Boundaries,
+): RiskLevelKey | null {
+  if (score == null) return null;
+
+  if (score >= cutoffs.high) return "HIGH";
+  if (score >= cutoffs.moderate) return "MODERATE";
+  return "LOW";
+}
+
+const RISK_LEVEL_TO_BUCKET: Record<RiskLevelKey, number> = {
+  LOW: 0,
+  MODERATE: 1,
+  HIGH: 2,
+};
+
+/**
+ * Returns the assessment score bucket insights are keyed on for score, or null
+ * for an assessment type with no thresholds.
+ */
 export function getAssessmentScoreBucket(
   assessmentType: AssessmentTypeKey | null | undefined,
   score: number,
   gender?: string | null,
 ): number | null {
-  if (!assessmentType) return null;
-  const boundaries = getBoundaries(assessmentType, gender);
-  if (!boundaries) return null;
-  if (score >= boundaries.high) return 2;
-  if (score >= boundaries.moderate) return 1;
-  return 0;
+  const riskLevel = getAssessmentRiskLevel(assessmentType, score, gender);
+  return riskLevel ? RISK_LEVEL_TO_BUCKET[riskLevel] : null;
 }
 
 /**

@@ -152,6 +152,45 @@ describe("saveORASData", () => {
     );
   });
 
+  it.each([
+    // 20 is Moderate on the ORAS-CST for both men and women.
+    ["MALE", 20, "MODERATE"],
+    ["FEMALE", 20, "MODERATE"],
+    // 24 is High for men but Moderate for women, whose High starts at 29.
+    ["MALE", 24, "HIGH"],
+    ["FEMALE", 24, "MODERATE"],
+    ["MALE", null, null],
+  ] as const)(
+    "sends a %s client's score of %s as risk level %s",
+    async (gender, assessmentScore, assessmentRiskLevel) => {
+      const sar = SARDetailsFixture[sarId];
+      vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+        ...sar,
+        client: sar.client && { ...sar.client, gender },
+      });
+      vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+        undefined as never,
+      );
+      await presenter.hydrate();
+
+      await presenter.saveORASData({
+        ...ORAS_EMPTY_FORM,
+        assessmentType: "ORAS_CST",
+        assessmentScore,
+        assessmentDate: new Date("2025-01-01"),
+        assessmentAdministeredBy: "Officer Smith",
+      });
+
+      expect(sentencingStore.apiClient.updateSARDetails).toHaveBeenCalledWith(
+        presenter.SARData?.id,
+        expect.objectContaining({ assessmentRiskLevel }),
+      );
+      expect(presenter.SARData?.assessmentRiskLevel).toEqual(
+        assessmentRiskLevel,
+      );
+    },
+  );
+
   it("updates SARData locally after saving", async () => {
     vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
       undefined as never,

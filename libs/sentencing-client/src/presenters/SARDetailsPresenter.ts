@@ -49,12 +49,13 @@ import { mapEnumKeysToDisplay } from "../components/KeyConsiderations/utils";
 import {
   AssessmentTypeKey,
   Boundaries,
+  deriveDomainRiskLevel,
+  getAssessmentRiskLevel,
   getAssessmentScoreBucket,
 } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { RiskLevelKey } from "../components/OffenderAssessment/constants";
 import { EmploymentHistory } from "../components/OffenderAssessment/EmploymentHistory/constants";
 import {
-  deriveDomainRiskLevel,
   DomainConfig,
   getDomainsForAssessmentType,
   getScoreWithAgePoint,
@@ -1364,6 +1365,16 @@ export class SARDetailsPresenter implements Hydratable {
     const payload = {
       ...data,
       ...derivedRiskLevels,
+      // The import sets this from the source's assessment level; manually
+      // entered scores get it from the score thresholds instead.
+      assessmentRiskLevel:
+        data.assessmentScore == null
+          ? null
+          : getAssessmentRiskLevel(
+              data.assessmentType,
+              data.assessmentScore,
+              sarData.client?.gender,
+            ),
       ORASLastUpdatedAt: new Date(),
       ORASEnteredManually: true,
     };

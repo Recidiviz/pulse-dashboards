@@ -17,9 +17,9 @@
 
 import { describe, expect, test } from "vitest";
 
+import { deriveDomainRiskLevel } from "../assessmentTypeUtils";
 import {
   buildStatic99RReportText,
-  deriveDomainRiskLevel,
   deriveStatic99RRiskCategory,
   getAgeAtAssessmentPoint,
   getScoreWithAgePoint,

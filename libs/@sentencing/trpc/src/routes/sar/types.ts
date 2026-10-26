@@ -59,6 +59,7 @@ export type UpsertSARInput = Pick<
   | "mostSevereOffenseName"
   | "assessmentScore"
   | "assessmentType"
+  | "assessmentRiskLevel"
   | "assessmentDate"
   | "assessmentAdministeredBy"
   | "noORASDomainReason"

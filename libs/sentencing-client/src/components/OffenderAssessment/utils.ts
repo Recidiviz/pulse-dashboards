@@ -107,26 +107,6 @@ export function getScoreWithAgePoint(
 }
 
 /**
- * Derives a domain risk level from a raw score, given the score thresholds
- * (from the official ORAS scoring guide, see MO-11748) at which the domain
- * enters MODERATE and HIGH. Below `moderate` is LOW; there's no upper bound
- * on HIGH since scores are already capped at the domain's maxScore.
- *
- * Mirrors assessmentTypeUtils.ts's `getAssessmentScoreBucket`, which applies
- * the same threshold shape to the overall (gendered) assessment score.
- */
-export function deriveDomainRiskLevel(
-  score: number | null | undefined,
-  cutoffs: Boundaries,
-): "LOW" | "MODERATE" | "HIGH" | null {
-  if (score == null) return null;
-
-  if (score >= cutoffs.high) return "HIGH";
-  if (score >= cutoffs.moderate) return "MODERATE";
-  return "LOW";
-}
-
-/**
  * Whether ORAS domain data (scores, risk levels) should be treated as
  * available. SARManualORAS gates the "no ORAS domains available" flow
  * entirely: with the flag off, domains are always treated as available,
