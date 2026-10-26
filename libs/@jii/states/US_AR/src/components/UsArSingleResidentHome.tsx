@@ -36,7 +36,7 @@ export function UsArSingleResidentHome() {
   const metadata = useResidentMetadata("US_AR");
   const { residentFlags } = useSingleResidentContext();
 
-  // TODO(JII2-112) also require isEligibleForEdovoCredit
+  // TODO(JII2-140) also require isEligibleForEdovoCredit
   const showBanner = residentFlags.usArEdovoCredits;
 
   return (

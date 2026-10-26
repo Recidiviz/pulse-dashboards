@@ -18,22 +18,68 @@
 import { RawUsArResidentJiiData } from "~@jii/schemas";
 import { usArResidentCommonDataFixtures } from "~datatypes";
 
+// The view gives every resident the same Edovo refresh time
+const edovoLastRefreshedAt = "2021-12-16T20:10:12Z";
+
 export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
   {
     ...usArResidentCommonDataFixtures[0],
     lastUpdatedDate: "2021-12-16",
+    // Edovo: in progress, with hours carried in from last month
+    cohortCode: "4",
+    hasApprovedCasePlan: true,
+    maxCpus: 4,
+    isEligibleForCpus: true,
+    edovoHoursThisMonth: 6.5,
+    edovoCarryInHours: 3,
+    edovoHoursToNextCpu: 6.5,
+    edovoIsCreditingMonth: false,
+    edovoLastRefreshedAt,
   },
   {
     ...usArResidentCommonDataFixtures[1],
     lastUpdatedDate: "2021-12-16",
+    // Edovo: not Protect Act, so not eligible
+    hasApprovedCasePlan: false,
+    maxCpus: null,
+    isEligibleForCpus: false,
+    edovoHoursThisMonth: 0,
+    edovoCarryInHours: 0,
+    edovoHoursToNextCpu: 16,
+    edovoIsCreditingMonth: false,
+    edovoLastRefreshedAt,
   },
   {
     ...usArResidentCommonDataFixtures[2],
+    // Protect Act residents have an RE date, not a TE date
+    eligibilityDateName: "Release Eligibility Date",
     lastUpdatedDate: "2021-12-16",
+    // Edovo: case plan allows 0 CPUs, no completions
+    cohortCode: "4",
+    hasApprovedCasePlan: true,
+    maxCpus: 0,
+    isEligibleForCpus: false,
+    edovoHoursThisMonth: 0,
+    edovoCarryInHours: 0,
+    edovoHoursToNextCpu: 16,
+    edovoIsCreditingMonth: false,
+    edovoLastRefreshedAt,
   },
   {
     ...usArResidentCommonDataFixtures[3],
+    // Protect Act residents have an RE date, not a TE date
+    eligibilityDateName: "Release Eligibility Date",
     lastUpdatedDate: "2021-12-16",
+    // Edovo: earned a CPU this month with exactly 16 hours
+    cohortCode: "4",
+    hasApprovedCasePlan: true,
+    maxCpus: 4,
+    isEligibleForCpus: true,
+    edovoHoursThisMonth: 16,
+    edovoCarryInHours: 0,
+    edovoHoursToNextCpu: 0,
+    edovoIsCreditingMonth: true,
+    edovoLastRefreshedAt,
   },
   {
     ...usArResidentCommonDataFixtures[4],
@@ -43,5 +89,14 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     ...usArResidentCommonDataFixtures[5],
     cohortCode: "4",
     lastUpdatedDate: "2025-04-01",
+    // Edovo: earned a CPU this month with hours over 16
+    hasApprovedCasePlan: true,
+    maxCpus: 4,
+    isEligibleForCpus: true,
+    edovoHoursThisMonth: 18.5,
+    edovoCarryInHours: 0,
+    edovoHoursToNextCpu: 0,
+    edovoIsCreditingMonth: true,
+    edovoLastRefreshedAt,
   },
 ];
