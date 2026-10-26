@@ -17,16 +17,8 @@
 
 import type { OnboardingVideoAssets } from "~@jii/onboarding-video";
 import { useUsMaTranslations } from "~@jii/translation";
-import { Icon, palette } from "~design-system";
 
-import {
-  CloseButton,
-  Footer,
-  Header,
-  Title,
-  VideoContainer,
-  VideoModal,
-} from "./ReentryVideoModal.styles";
+import { VideoContainer, VideoModal } from "./ReentryVideoModal.styles";
 
 export type ReentryVideoModalProps = {
   isOpen: boolean;
@@ -35,6 +27,7 @@ export type ReentryVideoModalProps = {
   video: OnboardingVideoAssets | undefined;
 };
 
+// TODO(OBT-55332): replace this modal with the ~@jii/onboarding-video lightbox.
 export const ReentryVideoModal = ({
   isOpen,
   onClose,
@@ -45,16 +38,6 @@ export const ReentryVideoModal = ({
 
   return (
     <VideoModal isOpen={isOpen} onRequestClose={onClose} contentLabel={title}>
-      <Header>
-        <Title>{title}</Title>
-        <CloseButton
-          type="button"
-          aria-label={t(($) => $.reentry.overview.video.modalClose)}
-          onClick={onClose}
-        >
-          <Icon kind="Close" size={10} color={palette.slate85} />
-        </CloseButton>
-      </Header>
       <VideoContainer>
         {/* TODO(REE-200): drop the placeholder once the video is ready */}
         {video ? (
@@ -66,7 +49,6 @@ export const ReentryVideoModal = ({
           "Video coming soon"
         )}
       </VideoContainer>
-      <Footer>{t(($) => $.reentry.overview.video.modalFooter)}</Footer>
     </VideoModal>
   );
 };

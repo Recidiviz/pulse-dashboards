@@ -22,6 +22,7 @@ import { ButtonLink } from "~@jii/common-ui";
 import { Card, palette, spacing, typography } from "~design-system";
 
 export const StartButton = styled(ButtonLink)`
+  align-self: flex-start;
   justify-content: center;
 `;
 

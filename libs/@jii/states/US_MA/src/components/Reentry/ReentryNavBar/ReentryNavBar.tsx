@@ -22,13 +22,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { RESOURCE_CATEGORIES } from "../ctaConfigs";
-import {
-  Content,
-  Divider,
-  Links,
-  SectionLabel,
-  Wrapper,
-} from "./ReentryNavBar.styles";
+import { Links, Wrapper } from "./ReentryNavBar.styles";
 
 export const ReentryNavBar = () => {
   const { t } = useUsMaTranslations();
@@ -43,35 +37,31 @@ export const ReentryNavBar = () => {
 
   return (
     <Wrapper aria-label={t(($) => $.reentry.navBar.sectionLabel)}>
-      <Content>
-        <SectionLabel>{t(($) => $.reentry.navBar.sectionLabel)}</SectionLabel>
-        <Divider />
-        <Links>
-          <NavLink
-            to={State.Resident.UsMaReentry.Overview.buildPath(routeParams)}
-            end
-            className={overviewClassName}
-          >
-            {t(($) => $.reentry.navBar.overview)}
-          </NavLink>
-          <NavLink
-            to={State.Resident.UsMaReentry.Checklist.buildPath(routeParams)}
-            end
-          >
-            {t(($) => $.reentry.navBar.checklist)}
-          </NavLink>
-          <NavLink
-            to={State.Resident.UsMaReentry.Resources.CategoryResults.buildPath({
-              ...routeParams,
-              // For now, we only have one category to link directly to (housing) - if we get more,
-              // this should link to a proper CRE landing page where users can select categories
-              category: RESOURCE_CATEGORIES[0].category,
-            })}
-          >
-            {t(($) => $.reentry.navBar.resourceExplorer)}
-          </NavLink>
-        </Links>
-      </Content>
+      <Links>
+        <NavLink
+          to={State.Resident.UsMaReentry.Overview.buildPath(routeParams)}
+          end
+          className={overviewClassName}
+        >
+          {t(($) => $.reentry.navBar.overview)}
+        </NavLink>
+        <NavLink
+          to={State.Resident.UsMaReentry.Checklist.buildPath(routeParams)}
+          end
+        >
+          {t(($) => $.reentry.navBar.checklist)}
+        </NavLink>
+        <NavLink
+          to={State.Resident.UsMaReentry.Resources.CategoryResults.buildPath({
+            ...routeParams,
+            // For now, we only have one category to link directly to (housing) - if we get more,
+            // this should link to a proper CRE landing page where users can select categories
+            category: RESOURCE_CATEGORIES[0].category,
+          })}
+        >
+          {t(($) => $.reentry.navBar.resourceExplorer)}
+        </NavLink>
+      </Links>
     </Wrapper>
   );
 };

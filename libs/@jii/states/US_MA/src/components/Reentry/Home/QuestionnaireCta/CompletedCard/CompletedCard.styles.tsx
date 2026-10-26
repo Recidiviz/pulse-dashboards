@@ -42,6 +42,6 @@ export const Description = styled.p`
 `;
 
 export const ViewChecklistButton = styled(ButtonLink)`
+  align-self: flex-start;
   justify-content: center;
-  width: 100%;
 `;

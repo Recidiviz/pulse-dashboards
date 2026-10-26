@@ -23,49 +23,29 @@ import { PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
 import { palette, spacing, typography } from "~design-system";
 
 export const Wrapper = styled(FullBleedContainer).attrs({ as: "nav" })`
-  background: ${palette.marble2};
+  background: ${palette.slate05};
   border-bottom: 1px solid ${palette.slate20};
   margin-top: -${rem(PAGE_LAYOUT_HEADER_GAP)};
 `;
 
-export const Content = styled(PageContainer)`
-  align-items: center;
+export const Links = styled(PageContainer)`
   display: flex;
-  gap: ${rem(spacing.md)};
-  padding-bottom: ${rem(spacing.md)};
-  padding-top: ${rem(spacing.md)};
-`;
-
-export const SectionLabel = styled.span`
-  ${typography.Sans16}
-
-  color: ${palette.pine1};
-  font-weight: 600;
-`;
-
-export const Divider = styled.span`
-  align-self: stretch;
-  background: ${palette.slate20};
-  width: 1px;
-`;
-
-export const Links = styled.div`
-  display: flex;
-  gap: ${rem(spacing.md)};
-  margin-left: auto;
+  gap: ${rem(spacing.xl)};
 
   & > a {
-    ${typography.Sans14}
+    ${typography.Sans16}
 
-    border-bottom: 2px solid transparent;
-    color: ${palette.slate85};
-    padding-bottom: ${rem(spacing.xs)};
+    align-items: center;
+    border-bottom: 3px solid transparent;
+    box-sizing: border-box;
+    color: ${palette.pine2};
+    display: flex;
+    font-weight: 400;
+    height: ${rem(56)};
     text-decoration: none;
 
     &.active {
       border-bottom-color: ${palette.pine4};
-      color: ${palette.pine1};
-      font-weight: 600;
     }
   }
 `;

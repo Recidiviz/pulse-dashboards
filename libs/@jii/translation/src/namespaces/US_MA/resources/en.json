@@ -226,7 +226,7 @@
         }
       },
       "guideCta": {
-        "sectionLabel": "Learn more about",
+        "sectionLabel": "Learn more",
         "idDocuments": "ID Documents",
         "housing": "Housing Basics"
       },
@@ -449,7 +449,11 @@
     "checklist": {
       "pageTitle": "Reentry Checklist",
       "heading": "Reentry Checklist",
-      "intro": "This is your personal to-do list to prepare for reentry. Check off each task when you finish it. Your Reentry Specialist will not be notified of tasks you check off here unless you tell them.",
+      "intro": "This is your personal to-do list to prepare for reentry. It is organized **by time to release**. Check off each task when you finish it. Your Reentry Specialist **will not be notified** of tasks you check off here unless you tell them.",
+      "parole": {
+        "heading": "If you are seeking release under parole supervision",
+        "description": "Your timeline will be different, but your checklist items are the same. Please be advised that you will not be working with a Reentry Specialist until you have received a positive parole vote."
+      },
       "notPersonalized": {
         "heading": "Checklist not personalized yet",
         "description": "Complete your Reentry profile to personalize this checklist.",

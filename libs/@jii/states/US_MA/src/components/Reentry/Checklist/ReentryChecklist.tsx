@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Markdown from "markdown-to-jsx";
+
 import { usePageTitle } from "~@jii/common-ui";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { Callout } from "../Callout/Callout";
 import { SuspenseQueryBoundary } from "../SuspenseQueryBoundary";
 import { ChecklistContent } from "./ChecklistContent/ChecklistContent";
 import { Heading, Intro, PageHeader, Wrapper } from "./ReentryChecklist.styles";
@@ -31,7 +34,17 @@ export const ReentryChecklist = () => {
     <Wrapper>
       <PageHeader>
         <Heading>{t(($) => $.reentry.checklist.heading)}</Heading>
-        <Intro>{t(($) => $.reentry.checklist.intro)}</Intro>
+        <Intro>
+          <Markdown options={{ forceInline: true }}>
+            {t(($) => $.reentry.checklist.intro)}
+          </Markdown>
+        </Intro>
+        <Callout
+          tone="neutral"
+          variant="card"
+          heading={t(($) => $.reentry.checklist.parole.heading)}
+          description={t(($) => $.reentry.checklist.parole.description)}
+        />
       </PageHeader>
       <SuspenseQueryBoundary>
         <ChecklistContent />

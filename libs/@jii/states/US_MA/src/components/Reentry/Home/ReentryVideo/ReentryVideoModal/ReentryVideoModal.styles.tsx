@@ -18,67 +18,39 @@
 import { rem, rgba } from "polished";
 import styled from "styled-components";
 
+import { PAGE_WIDTH } from "~@jii/common-ui";
 import { Modal, palette, spacing, typography } from "~design-system";
 
+// TODO(OBT-55332): replace this modal with the ~@jii/onboarding-video lightbox.
+// Until then, these styles copy its AboutVideoModal so the switch looks the same.
 export const VideoModal = styled(Modal)`
   .ReactModal__Content {
-    border-radius: ${rem(12)};
-    box-shadow: 0 ${rem(24)} ${rem(60)} ${rgba(palette.pine1, 0.3)};
-    overflow: hidden;
-    padding: 0;
-    width: ${rem(552)};
+    background-color: black;
+    border-radius: unset;
+    box-shadow: unset;
+    padding: ${rem(spacing.xs)};
+    width: ${rem(PAGE_WIDTH)};
   }
-`;
 
-export const Header = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${palette.slate20};
-  display: flex;
-  gap: ${rem(spacing.md)};
-  justify-content: space-between;
-  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-`;
-
-export const Title = styled.h2`
-  ${typography.Serif24}
-
-  color: ${palette.pine2};
-  font-weight: 700;
-  margin: 0;
-`;
-
-export const CloseButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex: 0 0 auto;
-  padding: ${rem(spacing.sm)};
+  .ReactModal__Overlay {
+    backdrop-filter: unset;
+    background-color: ${rgba("black", 0.9)};
+  }
 `;
 
 export const VideoContainer = styled.div`
   ${typography.Sans14}
 
   align-items: center;
-  aspect-ratio: 16 / 9;
-  background: ${palette.pine1};
+  aspect-ratio: 16 / 12;
   color: ${palette.white70};
   display: flex;
   justify-content: center;
 
   video {
-    display: block;
     height: 100%;
+    object-fit: contain;
+    object-position: top;
     width: 100%;
   }
-`;
-
-export const Footer = styled.p`
-  ${typography.Sans14}
-
-  background: ${palette.marble3};
-  color: ${palette.slate85};
-  margin: 0;
-  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
 `;

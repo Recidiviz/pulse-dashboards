@@ -21,9 +21,10 @@ import styled from "styled-components";
 import { palette, spacing, typography } from "~design-system";
 
 export const SectionLabel = styled.h2`
-  ${typography.Sans14}
+  ${typography.Sans18}
 
-  color: ${palette.slate85};
+  color: ${palette.pine1};
+  font-weight: 700;
   margin: 0 0 ${rem(spacing.sm)};
 `;
 

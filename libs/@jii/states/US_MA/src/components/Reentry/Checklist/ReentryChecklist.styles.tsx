@@ -48,4 +48,8 @@ export const Intro = styled.p`
 
   color: ${palette.slate85};
   margin: 0;
+
+  strong {
+    font-weight: 700;
+  }
 `;

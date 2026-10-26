@@ -450,6 +450,10 @@
       "pageTitle": "[US_MA]reentry.checklist.pageTitle",
       "heading": "[US_MA]reentry.checklist.heading",
       "intro": "[US_MA]reentry.checklist.intro",
+      "parole": {
+        "heading": "[US_MA]reentry.checklist.parole.heading",
+        "description": "[US_MA]reentry.checklist.parole.description"
+      },
       "notPersonalized": {
         "heading": "[US_MA]reentry.checklist.notPersonalized.heading",
         "description": "[US_MA]reentry.checklist.notPersonalized.description",

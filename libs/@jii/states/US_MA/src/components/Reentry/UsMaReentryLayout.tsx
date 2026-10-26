@@ -17,7 +17,6 @@
 
 import { Outlet } from "react-router-dom";
 
-import { ReentryFooter } from "./ReentryFooter/ReentryFooter";
 import { ReentryNavBar } from "./ReentryNavBar/ReentryNavBar";
 import { Wrapper } from "./UsMaReentryLayout.styles";
 
@@ -25,6 +24,5 @@ export const UsMaReentryLayout = () => (
   <Wrapper>
     <ReentryNavBar />
     <Outlet />
-    <ReentryFooter />
   </Wrapper>
 );
