@@ -104,6 +104,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     levelOfEducation: null,
     assessmentScore: 0,
     assessmentType: null,
+    assessmentRiskLevel: null,
     assessmentDate: null,
     assessmentAdministeredBy: null,
     ORASLastUpdatedAt: new Date("2026-01-01"),

@@ -55,6 +55,7 @@ export const mockSAR: SAR = {
   levelOfEducation: null,
   assessmentScore: 26,
   assessmentType: "ORAS_CST",
+  assessmentRiskLevel: "HIGH",
   assessmentDate: new Date("2026-01-29T00:00:00.000Z"),
   assessmentAdministeredBy: "Casey Officer",
   ORASDomainsAvailable: true,

@@ -97,6 +97,17 @@ const RAW_RISK_LEVEL_TO_ENUM: Record<string, DomainRiskLevel> = {
   "3": DomainRiskLevel.HIGH,
 };
 
+// Maps the overall assessment_level to DomainRiskLevel. LOW_MEDIUM only
+// appears for women on the ORAS-CST and falls in the Moderate score range.
+// VERY_HIGH counts as High, since insights have no higher level.
+const ASSESSMENT_LEVEL_TO_ENUM: Record<string, DomainRiskLevel> = {
+  LOW: DomainRiskLevel.LOW,
+  LOW_MEDIUM: DomainRiskLevel.MODERATE,
+  MEDIUM: DomainRiskLevel.MODERATE,
+  HIGH: DomainRiskLevel.HIGH,
+  VERY_HIGH: DomainRiskLevel.HIGH,
+};
+
 export async function transformAndLoadSARData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof SARImportSchema>>,
@@ -131,6 +142,9 @@ export async function transformAndLoadSARData(
     ]),
   );
 
+  // SARs whose assessment level we couldn't map, reported once the loop is done
+  const unexpectedAssessmentLevels: string[] = [];
+
   for await (const sarData of data) {
     // Check if the staff and clients exist in the db
     const staffExists = staffExternalIds.has(sarData.staff_id);
@@ -159,6 +173,20 @@ export async function transformAndLoadSARData(
       // Only update ORAS data if SAR is incomplete — preserve snapshot on re-import
       const assessmentScore = parseInt(sarData.assessment_score ?? "0", 10);
       orasFields["assessmentScore"] = assessmentScore;
+      const assessmentRiskLevel = sarData.assessment_level
+        ? ASSESSMENT_LEVEL_TO_ENUM[sarData.assessment_level] ?? null
+        : null;
+      orasFields["assessmentRiskLevel"] = assessmentRiskLevel;
+      // A SAR without a level has no insight, so a new level from MO, or a
+      // score sent without one, would otherwise hide insights silently.
+      if (
+        !assessmentRiskLevel &&
+        (sarData.assessment_level || sarData.assessment_score)
+      ) {
+        unexpectedAssessmentLevels.push(
+          `${sarData.external_id} (assessment_level: ${sarData.assessment_level ?? "missing"})`,
+        );
+      }
       orasFields["dateRequested"] = sarData.assigned_date;
       orasFields["assessmentAdministeredBy"] =
         sarData.assessment_administered_by;
@@ -244,5 +272,13 @@ export async function transformAndLoadSARData(
         });
       }
     });
+  }
+
+  // Thrown after every SAR is written, so the rest of the import still runs and
+  // the run is marked failed.
+  if (unexpectedAssessmentLevels.length > 0) {
+    throw new Error(
+      `These SARs have an assessment level we don't recognize, so they were saved without one and won't show insights: ${unexpectedAssessmentLevels.join(", ")}`,
+    );
   }
 }

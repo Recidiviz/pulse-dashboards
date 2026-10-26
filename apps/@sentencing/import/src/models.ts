@@ -162,6 +162,7 @@ export const SARImportSchema = z.object({
   completion_date: z.coerce.date().nullish(),
   assessment_type: assessmentType.optional(), // MO sends ORAS types, not PSI types
   assessment_score: z.string().optional(),
+  assessment_level: z.string().nullish(),
   assessment_date: z.coerce.date().nullish(),
   assigned_date: z.coerce.date().nullish(),
   assessment_administered_by: z

@@ -181,6 +181,8 @@ describe("import SAR data", () => {
         createSARImportRow({
           assessment_score: "12",
           assessment_type: "ORAS_COMMUNITY_SUPERVISION",
+          // LOW_MEDIUM falls in the Moderate score range.
+          assessment_level: "LOW_MEDIUM",
           assessment_date: assessmentDate,
           assigned_date: assignedDate,
           assessment_administered_by: '"Assessing Officer"',
@@ -209,6 +211,7 @@ describe("import SAR data", () => {
         expect.objectContaining({
           assessmentScore: 12,
           assessmentType: AssessmentType.ORAS_CST,
+          assessmentRiskLevel: DomainRiskLevel.MODERATE,
           assessmentDate,
           dateRequested: assignedDate,
           // Surrounding quotes from the source data are stripped.
@@ -225,10 +228,44 @@ describe("import SAR data", () => {
       );
     });
 
+    test.each([
+      // Insights have no level above High.
+      ["VERY_HIGH", DomainRiskLevel.HIGH],
+      // No ORAS score on file
+      [null, null],
+    ])(
+      "should store assessment level %s as risk level %s",
+      async (assessmentLevel, riskLevel) => {
+        await importSARs([
+          createSARImportRow({ assessment_level: assessmentLevel }),
+        ]);
+
+        expect((await findSAR())?.assessmentRiskLevel).toEqual(riskLevel);
+      },
+    );
+
+    test.each([
+      ["an unrecognized level", { assessment_level: "UNKNOWN_LEVEL" }],
+      ["a score without a level", { assessment_score: "12" }],
+    ])(
+      "should save the SAR without a level and fail the import for %s",
+      async (_, overrides) => {
+        await expect(
+          importSARs([createSARImportRow(overrides)]),
+        ).rejects.toThrow(SAR_EXTERNAL_ID);
+
+        expect(await findSAR()).toEqual(
+          expect.objectContaining({ assessmentRiskLevel: null }),
+        );
+      },
+    );
+
     test("should not overwrite ORAS data the officer entered manually", async () => {
       await createSAR({ ORASEnteredManually: true, assessmentScore: 7 });
 
-      await importSARs([createSARImportRow({ assessment_score: "12" })]);
+      await importSARs([
+        createSARImportRow({ assessment_score: "12", assessment_level: "LOW" }),
+      ]);
 
       expect((await findSAR())?.assessmentScore).toEqual(7);
     });
