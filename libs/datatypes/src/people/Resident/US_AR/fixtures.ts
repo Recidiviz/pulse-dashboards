@@ -28,7 +28,7 @@ import { usArResidentMetadataFixtures } from "./metadata/fixtures";
 export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   {
     stateCode: "US_AR",
-    personExternalId: "AR_RES001",
+    personExternalId: "AR-RES001",
     pseudonymizedId: "anonres001",
     displayId: "RES001",
     personName: {
@@ -40,7 +40,7 @@ export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   },
   {
     stateCode: "US_AR",
-    personExternalId: "AR_RES002",
+    personExternalId: "AR-RES002",
     pseudonymizedId: "anonres002",
     displayId: "RES002",
     personName: {
@@ -52,7 +52,7 @@ export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   },
   {
     stateCode: "US_AR",
-    personExternalId: "AR_RES003",
+    personExternalId: "AR-RES003",
     pseudonymizedId: "anonres003",
     displayId: "RES003",
     personName: {
@@ -64,7 +64,7 @@ export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   },
   {
     stateCode: "US_AR",
-    personExternalId: "AR_RES004",
+    personExternalId: "AR-RES004",
     pseudonymizedId: "anonres004",
     displayId: "RES004",
     personName: {
@@ -76,7 +76,7 @@ export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   },
   {
     stateCode: "US_AR",
-    personExternalId: "AR_RES005",
+    personExternalId: "AR-RES005",
     pseudonymizedId: "anonres005",
     displayId: "RES005",
     personName: { givenNames: "John", middleNames: "Edward", surname: "Smith" },
@@ -84,7 +84,7 @@ export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   },
   {
     stateCode: "US_AR",
-    personExternalId: "AR_RES006",
+    personExternalId: "AR-RES006",
     pseudonymizedId: "anonres006",
     displayId: "RES006",
     personName: {

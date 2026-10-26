@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`schema for 'US_AR' 'AR_RES001' 1`] = `
+exports[`schema for 'US_AR' 'AR-RES001' 1`] = `
 {
   "admissionDate": 2019-08-12T00:00:00.000Z,
   "allEligibleOpportunities": [],
@@ -51,7 +51,7 @@ exports[`schema for 'US_AR' 'AR_RES001' 1`] = `
     "stateCode": "US_AR",
   },
   "officerId": null,
-  "personExternalId": "AR_RES001",
+  "personExternalId": "AR-RES001",
   "personName": {
     "givenNames": "Sandra",
     "middleNames": "Wynona",
@@ -66,7 +66,7 @@ exports[`schema for 'US_AR' 'AR_RES001' 1`] = `
 }
 `;
 
-exports[`schema for 'US_AR' 'AR_RES002' 1`] = `
+exports[`schema for 'US_AR' 'AR-RES002' 1`] = `
 {
   "admissionDate": 2019-08-12T00:00:00.000Z,
   "allEligibleOpportunities": [],
@@ -117,7 +117,7 @@ exports[`schema for 'US_AR' 'AR_RES002' 1`] = `
     "stateCode": "US_AR",
   },
   "officerId": null,
-  "personExternalId": "AR_RES002",
+  "personExternalId": "AR-RES002",
   "personName": {
     "givenNames": "Clayton",
     "middleNames": "Milton",
@@ -132,7 +132,7 @@ exports[`schema for 'US_AR' 'AR_RES002' 1`] = `
 }
 `;
 
-exports[`schema for 'US_AR' 'AR_RES003' 1`] = `
+exports[`schema for 'US_AR' 'AR-RES003' 1`] = `
 {
   "admissionDate": 2020-05-17T00:00:00.000Z,
   "allEligibleOpportunities": [],
@@ -183,7 +183,7 @@ exports[`schema for 'US_AR' 'AR_RES003' 1`] = `
     "stateCode": "US_AR",
   },
   "officerId": null,
-  "personExternalId": "AR_RES003",
+  "personExternalId": "AR-RES003",
   "personName": {
     "givenNames": "Robert",
     "middleNames": "Terence",
@@ -198,7 +198,7 @@ exports[`schema for 'US_AR' 'AR_RES003' 1`] = `
 }
 `;
 
-exports[`schema for 'US_AR' 'AR_RES004' 1`] = `
+exports[`schema for 'US_AR' 'AR-RES004' 1`] = `
 {
   "admissionDate": 2021-01-15T00:00:00.000Z,
   "allEligibleOpportunities": [
@@ -251,7 +251,7 @@ exports[`schema for 'US_AR' 'AR_RES004' 1`] = `
     "stateCode": "US_AR",
   },
   "officerId": null,
-  "personExternalId": "AR_RES004",
+  "personExternalId": "AR-RES004",
   "personName": {
     "givenNames": "Alice",
     "middleNames": "Marie",
@@ -266,7 +266,7 @@ exports[`schema for 'US_AR' 'AR_RES004' 1`] = `
 }
 `;
 
-exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
+exports[`schema for 'US_AR' 'AR-RES005' 1`] = `
 {
   "admissionDate": 2018-11-20T00:00:00.000Z,
   "allEligibleOpportunities": [
@@ -319,7 +319,7 @@ exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
     "stateCode": "US_AR",
   },
   "officerId": null,
-  "personExternalId": "AR_RES005",
+  "personExternalId": "AR-RES005",
   "personName": {
     "givenNames": "John",
     "middleNames": "Edward",
@@ -334,7 +334,7 @@ exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
 }
 `;
 
-exports[`schema for 'US_AR' 'AR_RES006' 1`] = `
+exports[`schema for 'US_AR' 'AR-RES006' 1`] = `
 {
   "admissionDate": 2025-03-10T00:00:00.000Z,
   "allEligibleOpportunities": [],
@@ -365,7 +365,7 @@ exports[`schema for 'US_AR' 'AR_RES006' 1`] = `
     "stateCode": "US_AR",
   },
   "officerId": null,
-  "personExternalId": "AR_RES006",
+  "personExternalId": "AR-RES006",
   "personName": {
     "givenNames": "Maria",
     "middleNames": "Elena",

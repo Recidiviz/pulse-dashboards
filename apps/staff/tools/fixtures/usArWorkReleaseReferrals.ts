@@ -23,7 +23,7 @@ export const usArWorkReleaseReferrals =
   fixtureWithIdKey<OpportunityRecordBaseRaw>("externalId", [
     {
       stateCode: "US_AR",
-      externalId: "AR_RES004",
+      externalId: "AR-RES004",
       locationId: "FACILITY1",
       eligibleCriteria: {
         usArClassIOrEligibleForClassIWorkRelease: {},
@@ -41,7 +41,7 @@ export const usArWorkReleaseReferrals =
     },
     {
       stateCode: "US_AR",
-      externalId: "AR_RES005",
+      externalId: "AR-RES005",
       locationId: "FACILITY1",
       eligibleCriteria: {
         usArClassIOrEligibleForClassIWorkRelease: {},
