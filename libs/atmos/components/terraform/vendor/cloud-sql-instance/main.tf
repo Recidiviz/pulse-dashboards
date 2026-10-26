@@ -129,7 +129,7 @@ resource "google_sql_database_instance" "data" {
 
 
     ip_configuration {
-      ipv4_enabled                                  = true
+      ipv4_enabled                                  = var.ipv4_enabled
       private_network                               = var.private_network
       enable_private_path_for_google_cloud_services = var.enable_private_path_for_google_cloud_services
       # The following SSL enforcement options only allow connections encrypted with SSL/TLS and with

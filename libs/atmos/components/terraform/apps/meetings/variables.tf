@@ -147,3 +147,15 @@ variable "waf_id" {
   type        = string
   description = "Identifier of the WAF policy to be used for the module server"
 }
+
+variable "private_vpc_egress" {
+  type        = bool
+  description = "Route this service's private-range egress through the project's default VPC (Direct VPC egress, PRIVATE_RANGES_ONLY). Internet-bound traffic is unchanged."
+  default     = false
+}
+
+variable "database_public_ip_enabled" {
+  type        = bool
+  description = "Whether the SQL instance keeps a public IPv4 address. Only turn off after private_vpc_egress is validated for this service."
+  default     = true
+}

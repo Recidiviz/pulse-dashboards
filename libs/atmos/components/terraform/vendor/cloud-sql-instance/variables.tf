@@ -95,6 +95,12 @@ variable "private_network" {
   type    = string
   default = null
 }
+variable "ipv4_enabled" {
+  type        = bool
+  description = "Whether the instance has a public IPv4 address. Only set to false once every client reaches the instance over the private network."
+  default     = true
+}
+
 variable "enable_private_path_for_google_cloud_services" {
   type    = string
   default = false

@@ -49,6 +49,7 @@ module "database" {
   additional_databases                          = local.additional_databases
   private_network                               = var.private_network
   enable_private_path_for_google_cloud_services = var.private_network != null ? true : false
+  ipv4_enabled                                  = var.database_public_ip_enabled
 
   insights_config = {
     query_insights_enabled : true
@@ -88,6 +89,14 @@ module "server" {
       instances = [module.database.connection_name]
     }
   }]
+
+  vpc_access = var.private_vpc_egress ? {
+    egress = "PRIVATE_RANGES_ONLY"
+    network_interfaces = {
+      network    = "projects/${var.project_id}/global/networks/default"
+      subnetwork = "projects/${var.project_id}/regions/${var.location}/subnetworks/default"
+    }
+  } : null
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 }

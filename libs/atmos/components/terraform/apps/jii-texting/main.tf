@@ -47,6 +47,7 @@ module "database" {
   tier                       = "db-custom-1-3840"
   additional_databases       = local.additional_databases
   private_network            = "projects/${var.project_id}/global/networks/default"
+  ipv4_enabled               = var.database_public_ip_enabled
   insights_config = {
     query_insights_enabled : true
     query_string_length : 1024
@@ -85,6 +86,14 @@ module "cloud_run" {
 
   # Roles to grant the Cloud Run service account
   service_account_project_roles = ["roles/cloudsql.client", "roles/storage.objectViewer"]
+
+  vpc_access = var.private_vpc_egress ? {
+    egress = "PRIVATE_RANGES_ONLY"
+    network_interfaces = {
+      network    = "projects/${var.project_id}/global/networks/default"
+      subnetwork = "projects/${var.project_id}/regions/${var.location}/subnetworks/default"
+    }
+  } : null
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
 }

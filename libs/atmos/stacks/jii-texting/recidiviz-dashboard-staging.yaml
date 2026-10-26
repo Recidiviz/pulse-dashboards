@@ -69,6 +69,8 @@ components:
         # The 'names_list' output uses the same order as the list of names, so ensure that the archive bucket is second
         archive_bucket_name: !terraform.state gcs-buckets {{ .stack }} names_list[1]
         environment: staging
+        # Stage 1 of #17339: validate Direct VPC egress (PRIVATE_RANGES_ONLY) here before production.
+        private_vpc_egress: true
 
     postgres-bq-data-transfer:
       vars:
