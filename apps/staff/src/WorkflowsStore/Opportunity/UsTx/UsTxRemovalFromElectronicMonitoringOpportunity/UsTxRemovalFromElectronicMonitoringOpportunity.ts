@@ -44,4 +44,9 @@ export class UsTxRemovalFromElectronicMonitoringOpportunity extends OpportunityB
       ? "Ready for Review"
       : title;
   }
+
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  get caseNoteHeaders(): string[] {
+    return ["Current Employment", "Programs in Progress", "Completed Programs"];
+  }
 }

@@ -109,3 +109,14 @@ describe("tabTitle", () => {
     expect(opp.tabTitle()).toBe("Marked Ineligible");
   });
 });
+
+describe("caseNoteHeaders", () => {
+  test("lists employment before programs in progress before completed programs", () => {
+    const { opp } = createTestUnit();
+    expect(opp.caseNoteHeaders).toEqual([
+      "Current Employment",
+      "Programs in Progress",
+      "Completed Programs",
+    ]);
+  });
+});
