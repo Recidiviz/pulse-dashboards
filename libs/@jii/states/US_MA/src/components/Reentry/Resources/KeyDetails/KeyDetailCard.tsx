@@ -17,16 +17,21 @@
 
 import { FC } from "react";
 
-import { Card, Label, Value } from "./KeyDetails.styles";
+import { Card, Label, Suffix, Value } from "./KeyDetails.styles";
+import { KeyDetail } from "./utils";
 
-export type KeyDetailCardProps = {
-  label: string;
-  value: string;
-};
+export type KeyDetailCardProps = KeyDetail;
 
-export const KeyDetailCard: FC<KeyDetailCardProps> = ({ label, value }) => (
+export const KeyDetailCard: FC<KeyDetailCardProps> = ({
+  label,
+  value,
+  suffix,
+}) => (
   <Card>
     <Label>{label}</Label>
-    <Value>{value}</Value>
+    <Value>
+      {value}
+      {suffix && <Suffix> {suffix}</Suffix>}
+    </Value>
   </Card>
 );

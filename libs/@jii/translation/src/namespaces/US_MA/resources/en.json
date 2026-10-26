@@ -721,13 +721,16 @@
             "acceptsArsonOffenses": "Accepts: arson offenses"
           },
           "weeklyRent": {
-            "rentOrIncome": "{{rent}} or {{income}}"
+            "perWeek": "/ week",
+            "basedOnIncome": "Based on income",
+            "varies": "Varies"
           },
           "whoCanStay": {
             "withBeds_one": "{{gender}} ({{count}} bed)",
             "withBeds_other": "{{gender}} ({{count}} beds)",
             "bedsOnly_one": "{{count}} bed",
-            "bedsOnly_other": "{{count}} beds"
+            "bedsOnly_other": "{{count}} beds",
+            "unspecified": "Unspecified"
           },
           "disclaimer": "Organization details change often. Always confirm with a Reentry Specialist."
         },

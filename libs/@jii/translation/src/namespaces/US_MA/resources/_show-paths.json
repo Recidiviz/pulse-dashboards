@@ -721,13 +721,16 @@
             "acceptsArsonOffenses": "[US_MA]reentry.resources.detail.keyDetails.labels.acceptsArsonOffenses"
           },
           "weeklyRent": {
-            "rentOrIncome": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.rentOrIncome"
+            "perWeek": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.perWeek",
+            "basedOnIncome": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.basedOnIncome",
+            "varies": "[US_MA]reentry.resources.detail.keyDetails.weeklyRent.varies"
           },
           "whoCanStay": {
             "withBeds_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_one",
             "withBeds_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.withBeds_other",
             "bedsOnly_one": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_one",
-            "bedsOnly_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_other"
+            "bedsOnly_other": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.bedsOnly_other",
+            "unspecified": "[US_MA]reentry.resources.detail.keyDetails.whoCanStay.unspecified"
           },
           "disclaimer": "[US_MA]reentry.resources.detail.keyDetails.disclaimer"
         },

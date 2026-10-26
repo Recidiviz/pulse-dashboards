@@ -51,3 +51,7 @@ export const Value = styled.dd`
   color: ${palette.pine1};
   margin: 0;
 `;
+
+export const Suffix = styled.span`
+  color: ${palette.slate80};
+`;

@@ -22,7 +22,7 @@ import { HousingAttributes } from "../../types";
 import {
   getKeyDetails,
   getLengthOfStayValue,
-  getWeeklyRentDetailsCopy,
+  getWeeklyRentDetail,
   getWhoCanStayValue,
 } from "../utils";
 
@@ -58,14 +58,14 @@ describe("getWhoCanStayValue", () => {
     expect(getWhoCanStayValue(["Parolees Accepted"], 12, t)).toBe("12 beds");
   });
 
-  test("falls back without gender or beds", () => {
-    expect(getWhoCanStayValue([], undefined, t)).toBe("Not listed");
+  test("shows the gender alone when the bed count is missing or 0", () => {
+    expect(getWhoCanStayValue(["Co-ed"], undefined, t)).toBe("Co-ed");
+    expect(getWhoCanStayValue(["Co-ed"], 0, t)).toBe("Co-ed");
   });
 
-  // TODO(REE-204): Update once product decides how to show a bed count of 0.
-  test("shows a bed count of 0", () => {
-    expect(getWhoCanStayValue(["Co-ed"], 0, t)).toBe("Co-ed (0 beds)");
-    expect(getWhoCanStayValue([], 0, t)).toBe("0 beds");
+  test("shows unspecified without gender or beds", () => {
+    expect(getWhoCanStayValue([], undefined, t)).toBe("Unspecified");
+    expect(getWhoCanStayValue([], 0, t)).toBe("Unspecified");
   });
 });
 
@@ -135,57 +135,56 @@ describe("getLengthOfStayValue", () => {
   });
 });
 
-describe("getWeeklyRentDetailsCopy", () => {
+describe("getWeeklyRentDetail", () => {
   test("shows free for zero rent", () => {
     expect(
-      getWeeklyRentDetailsCopy(housing({ weeklyRent: { min: 0, max: 0 } }), t),
-    ).toBe("Free");
+      getWeeklyRentDetail(housing({ weeklyRent: { min: 0, max: 0 } }), t),
+    ).toEqual({ value: "Free" });
   });
 
-  test("shows a single amount, keeping cents", () => {
+  test("shows a single amount per week, keeping cents", () => {
     expect(
-      getWeeklyRentDetailsCopy(
+      getWeeklyRentDetail(
         housing({ weeklyRent: { min: 187.5, max: 187.5 } }),
         t,
       ),
-    ).toBe("$187.50");
+    ).toEqual({ value: "$187.50", suffix: "/ week" });
   });
 
-  test("shows a range in whole dollars", () => {
+  test("shows a range per week", () => {
     expect(
-      getWeeklyRentDetailsCopy(
-        housing({ weeklyRent: { min: 150, max: 175 } }),
+      getWeeklyRentDetail(
+        housing({ weeklyRent: { min: 200, max: 256.25 } }),
         t,
       ),
-    ).toBe("$150–$175");
+    ).toEqual({ value: "$200–$256.25", suffix: "/ week" });
   });
 
-  test("shows a share of income", () => {
+  test("shows based on income for a share of income", () => {
     expect(
-      getWeeklyRentDetailsCopy(housing({ rentAsIncomePercent: 30 }), t),
-    ).toBe("30% of income");
+      getWeeklyRentDetail(housing({ rentAsIncomePercent: 30 }), t),
+    ).toEqual({ value: "Based on income" });
+    expect(getWeeklyRentDetail(housing({ rentAsIncomePercent: 0 }), t)).toEqual(
+      {
+        value: "Based on income",
+      },
+    );
   });
 
-  test("shows a share of income of 0%", () => {
+  test("shows varies for both a dollar amount and a share of income", () => {
     expect(
-      getWeeklyRentDetailsCopy(housing({ rentAsIncomePercent: 0 }), t),
-    ).toBe("0% of income");
-  });
-
-  test("lists both a dollar amount and a share of income", () => {
-    expect(
-      getWeeklyRentDetailsCopy(
+      getWeeklyRentDetail(
         housing({
           weeklyRent: { min: 150, max: 175 },
           rentAsIncomePercent: 30,
         }),
         t,
       ),
-    ).toBe("$150–$175 or 30% of income");
+    ).toEqual({ value: "Varies" });
   });
 
   test("falls back without rent", () => {
-    expect(getWeeklyRentDetailsCopy(housing(), t)).toBe("Not listed");
+    expect(getWeeklyRentDetail(housing(), t)).toEqual({ value: "Not listed" });
   });
 });
 
@@ -206,7 +205,7 @@ describe("getKeyDetails", () => {
     ).toEqual([
       { label: "Who can stay", value: "Co-ed (50 beds)" },
       { label: "Length of stay", value: "No time limit" },
-      { label: "Weekly rent", value: "$150" },
+      { label: "Weekly rent", value: "$150", suffix: "/ week" },
       { label: "Accepts: sex offenses", value: "Yes" },
       { label: "Accepts: parolees", value: "No" },
       { label: "Accepts: arson offenses", value: "Yes" },

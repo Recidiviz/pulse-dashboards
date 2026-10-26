@@ -27,8 +27,8 @@ export type KeyDetailsProps = {
 
 export const KeyDetails: FC<KeyDetailsProps> = ({ details }) => (
   <Grid>
-    {details.map(({ label, value }) => (
-      <KeyDetailCard key={label} label={label} value={value} />
+    {details.map((detail) => (
+      <KeyDetailCard key={detail.label} {...detail} />
     ))}
   </Grid>
 );

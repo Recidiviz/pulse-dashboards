@@ -19,9 +19,13 @@ import { UsMaTFunction } from "~@jii/translation";
 
 import { ACCEPTS_OPTIONS, GENDER_OPTIONS } from "../filters/filterConfig";
 import { HousingAttributes, ResourceSummary } from "../types";
-import { formatIncomePercent, formatLengthOfStay, formatRent } from "../utils";
+import { formatLengthOfStay, formatRent } from "../utils";
 
-export type KeyDetail = { label: string; value: string };
+export type KeyDetail = {
+  label: string;
+  value: string;
+  suffix?: string;
+};
 
 export function getWhoCanStayValue(
   tags: string[],
@@ -31,21 +35,23 @@ export function getWhoCanStayValue(
   const gender = GENDER_OPTIONS.filter((option) => tags.includes(option.match))
     .map((option) => option.label(t))
     .join(", ");
+  // A bed count of 0 most likely means the count is unknown, so it reads the
+  // same as a missing one.
+  const hasBeds = !!numBeds;
 
-  // TODO(REE-204): Confirm with product what to show when number of beds is zero
-  if (gender && numBeds !== undefined) {
+  if (gender && hasBeds) {
     return t(($) => $.reentry.resources.detail.keyDetails.whoCanStay.withBeds, {
       gender,
       count: numBeds,
     });
   }
   if (gender) return gender;
-  if (numBeds !== undefined) {
+  if (hasBeds) {
     return t(($) => $.reentry.resources.detail.keyDetails.whoCanStay.bedsOnly, {
       count: numBeds,
     });
   }
-  return t(($) => $.reentry.resources.detail.keyDetails.notListed);
+  return t(($) => $.reentry.resources.detail.keyDetails.whoCanStay.unspecified);
 }
 
 export function getLengthOfStayValue(
@@ -59,26 +65,38 @@ export function getLengthOfStayValue(
 }
 
 /**
- * Returns the weekly rent, e.g. "$150–$175", but shows both weekly rent and percent
- * of income if both exist.
+ * Returns the weekly rent, e.g. "$150–$175" with a "/ week" suffix, "Free" or
+ * "Based on income". A resource that lists both a dollar amount and a share of
+ * income shows "Varies".
  */
-export function getWeeklyRentDetailsCopy(
+export function getWeeklyRentDetail(
   { weeklyRent, rentAsIncomePercent }: HousingAttributes,
   t: UsMaTFunction,
-): string {
-  const rent = weeklyRent && formatRent(weeklyRent, t);
-
-  if (rent && rentAsIncomePercent !== undefined) {
-    return t(
-      ($) => $.reentry.resources.detail.keyDetails.weeklyRent.rentOrIncome,
-      { rent, income: formatIncomePercent(rentAsIncomePercent, t) },
-    );
+): Pick<KeyDetail, "value" | "suffix"> {
+  if (weeklyRent && rentAsIncomePercent !== undefined) {
+    return {
+      value: t(($) => $.reentry.resources.detail.keyDetails.weeklyRent.varies),
+    };
   }
-  if (rent) return rent;
+  if (weeklyRent) {
+    const value = formatRent(weeklyRent, t);
+    return weeklyRent.max === 0
+      ? { value }
+      : {
+          value,
+          suffix: t(
+            ($) => $.reentry.resources.detail.keyDetails.weeklyRent.perWeek,
+          ),
+        };
+  }
   if (rentAsIncomePercent !== undefined) {
-    return formatIncomePercent(rentAsIncomePercent, t);
+    return {
+      value: t(
+        ($) => $.reentry.resources.detail.keyDetails.weeklyRent.basedOnIncome,
+      ),
+    };
   }
-  return t(($) => $.reentry.resources.detail.keyDetails.notListed);
+  return { value: t(($) => $.reentry.resources.detail.keyDetails.notListed) };
 }
 
 const ACCEPTS_CARDS: { id: string; label: (t: UsMaTFunction) => string }[] = [
@@ -131,7 +149,7 @@ export function getKeyDetails(
     },
     {
       label: t(($) => $.reentry.resources.detail.keyDetails.labels.weeklyRent),
-      value: getWeeklyRentDetailsCopy(housing, t),
+      ...getWeeklyRentDetail(housing, t),
     },
     ...acceptsDetails,
   ];

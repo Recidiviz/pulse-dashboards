@@ -168,6 +168,7 @@ test("shows key details for a housing resource", async () => {
   expect(screen.getByText("Who can stay")).toBeInTheDocument();
   expect(screen.getByText("Co-ed (50 beds)")).toBeInTheDocument();
   expect(screen.getByText("$150–$175")).toBeInTheDocument();
+  expect(screen.getByText("/ week")).toBeInTheDocument();
 });
 
 test("leaves out key details for a resource without housing attributes", async () => {
