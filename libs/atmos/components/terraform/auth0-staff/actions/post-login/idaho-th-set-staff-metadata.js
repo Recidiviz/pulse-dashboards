@@ -35,11 +35,13 @@
  * - Denies any login whose roster restrictions are not for US_ID (fail
  *   closed) — see handleRosterStaffLogin for why that is re-checked on every
  *   login rather than trusted from app_metadata.
- * - Routes @recidiviz.org logins off the roster entirely. They are never on an
- *   Idaho roster, so the Admin Panel lookup would 404 for them and there is no
- *   pseudonymizedId to read. Authorization comes from the Idaho TH backend
- *   (signed POST /internal/check-staff-authorized) and the identifier is
- *   derived from the email.
+ * - Routes @recidiviz.org logins on the database connection off the roster
+ *   entirely. They are never on an Idaho roster, so the Admin Panel lookup
+ *   would 404 for them and there is no pseudonymizedId to read. Authorization
+ *   comes from the Idaho TH backend (signed POST
+ *   /internal/check-staff-authorized) and the identifier is derived from the
+ *   email. The connection is part of that test, not just the suffix: only on
+ *   the database connection did this tenant issue the address.
  *
  * An account on the staff database connection is NOT authorization by itself.
  * That connection is shared tenant-wide, so an account on it says only that
@@ -77,6 +79,9 @@ const {
   generatePseudonymizedId,
   getUserEmail,
   isIdahoThClient,
+  isIdahoThDatabaseConnection,
+  isIdahoThProviderConnection,
+  isIdahoThStaffConnection,
   normalizeEmail,
 } = require("actions:recidiviz-action-helpers");
 
@@ -103,12 +108,6 @@ const MISSING_IDENTITY_MESSAGE =
 const STAFF_IDENTITY_CONFLICT_MESSAGE =
   "Your Recidiviz account is already linked to Idaho Transitional Housing " +
   "under a different identity. Please contact the Recidiviz team.";
-
-const PASSWORDLESS_CONNECTION_NAMES = new Set(["email"]);
-const STAFF_CONNECTION_NAMES = new Set([
-  "Username-Password-Authentication",
-  // "idaho-state-sso", // uncomment when IDOC AD SSO is configured
-]);
 
 /**
  * Asks the backend whether this Recidiviz address is authorized for Idaho TH.
@@ -274,12 +273,12 @@ async function handleRecidivizStaffLogin(event, api, { email, auth0Sub }) {
 
 /**
  * IDOC staff take their identity from the Admin Panel roster, which is also
- * what authorizes them: the staff DB connection is shared tenant-wide, so an
- * account whose restrictions belong to another state must not be stamped as
- * Idaho TH staff just because it can authenticate here. Re-checked on every
- * login rather than only when there is no cached identity, because other
- * actions in this tenant cache pseudonymizedId for non-Idaho accounts on that
- * same connection.
+ * what authorizes them: arriving on Idaho's own enterprise connection is
+ * transport, not a grant. An address can be rostered to another state, and
+ * must not be stamped as Idaho TH staff just because it can authenticate
+ * here. Re-checked on every login rather than only when there is no cached
+ * identity, because other actions in this tenant cache pseudonymizedId for
+ * non-Idaho accounts.
  *
  * A conflict does not deny. The roster value stays authoritative, so it costs
  * this person their digest email rather than their access.
@@ -312,7 +311,21 @@ async function handleRosterStaffLogin(
     return;
   }
 
-  await registerStaffWithBackend({ email, auth0Sub, pseudonymizedId });
+  // The roster's own address, not the one the identity provider sent. IDOC's
+  // Microsoft tenant can present either its verified domain or the default
+  // onmicrosoft one, and only the roster knows which address the state
+  // actually records for this person — including a local part that need not
+  // match the sign-in name. Taking it from the response rather than rewriting
+  // the login address removes the guess; the schema has already lowercased it.
+  // Falls back to the login address so a roster row without one still
+  // registers rather than denying.
+  const rosterEmail = normalizeEmail(restrictions.emailAddress) || email;
+
+  await registerStaffWithBackend({
+    email: rosterEmail,
+    auth0Sub,
+    pseudonymizedId,
+  });
   stampStaffIdentity(event, api, pseudonymizedId);
 }
 
@@ -322,15 +335,13 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  const connectionName = (event.connection?.name || "").trim();
-
   // Providers are handled by the provider action; leave their login untouched.
-  if (PASSWORDLESS_CONNECTION_NAMES.has(connectionName)) {
+  if (isIdahoThProviderConnection(event)) {
     return;
   }
 
   // Fail closed: anything that is not a known staff connection is denied here.
-  if (!STAFF_CONNECTION_NAMES.has(connectionName)) {
+  if (!isIdahoThStaffConnection(event)) {
     api.access.deny(
       "This login method is not supported for Idaho Transitional Housing.",
     );
@@ -352,7 +363,18 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  if (identity.email.endsWith(RECIDIVIZ_STAFF_EMAIL_SUFFIX)) {
+  // The email alone cannot select the path, and neither can ruling one
+  // connection out. This path trusts the address twice over — to look up the
+  // allowlist and to derive the identifier — so it is reachable only where
+  // this tenant issued that address, which is the database connection. Named
+  // positively rather than as "not the IDOC connection": the latter would
+  // extend this trust to whatever staff connection is added next, where the
+  // address is again whatever some other directory emits. Everything else
+  // goes to the roster, which answers for the account rather than the suffix.
+  if (
+    isIdahoThDatabaseConnection(event) &&
+    identity.email.endsWith(RECIDIVIZ_STAFF_EMAIL_SUFFIX)
+  ) {
     await handleRecidivizStaffLogin(event, api, identity);
     return;
   }

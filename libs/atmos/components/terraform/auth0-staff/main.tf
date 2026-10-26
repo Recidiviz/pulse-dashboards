@@ -55,4 +55,8 @@ resource "auth0_action_module" "recidiviz_action_helpers" {
     name  = "RECIDIVIZ_ADMIN_PANEL_URL"
     value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
   }
+  secrets {
+    name  = "US_ID_CONNECTION_ID"
+    value = lookup(data.sops_file.action_configs.data, "US_ID_CONNECTION_ID", "")
+  }
 }

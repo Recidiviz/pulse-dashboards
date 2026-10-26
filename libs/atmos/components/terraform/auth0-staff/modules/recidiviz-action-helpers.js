@@ -74,6 +74,37 @@ function isIdahoThClient(event) {
   return configured.includes(event.client?.client_id);
 }
 
+const IDAHO_TH_PROVIDER_CONNECTION_NAMES = new Set(["email"]);
+const IDAHO_TH_STAFF_DATABASE_CONNECTION_NAME =
+  "Username-Password-Authentication";
+
+function connectionName(event) {
+  return (event.connection?.name || "").trim();
+}
+
+function isIdahoThProviderConnection(event) {
+  return IDAHO_TH_PROVIDER_CONNECTION_NAMES.has(connectionName(event));
+}
+
+function isIdahoThIdocConnection(event) {
+  const connectionId = (actions.secrets.US_ID_CONNECTION_ID || "").trim();
+  return connectionId !== "" && event.connection?.id === connectionId;
+}
+
+/**
+ * True when the login is on the staff database connection, the one this tenant
+ * issues accounts on. Named as its own test so a path that may only trust an
+ * address this tenant set can ask for it positively: a check phrased as "not
+ * the IDOC connection" silently admits whatever staff connection is added next.
+ */
+function isIdahoThDatabaseConnection(event) {
+  return connectionName(event) === IDAHO_TH_STAFF_DATABASE_CONNECTION_NAME;
+}
+
+function isIdahoThStaffConnection(event) {
+  return isIdahoThDatabaseConnection(event) || isIdahoThIdocConnection(event);
+}
+
 /**
  * Query the admin panel at the url stored in the secret RECIDIVIZ_ADMIN_PANEL_URL
  * and return the unwrapped response.
@@ -176,5 +207,9 @@ module.exports = {
   generatePseudonymizedId,
   getUserEmail,
   isIdahoThClient,
+  isIdahoThDatabaseConnection,
+  isIdahoThIdocConnection,
+  isIdahoThProviderConnection,
+  isIdahoThStaffConnection,
   normalizeEmail,
 };

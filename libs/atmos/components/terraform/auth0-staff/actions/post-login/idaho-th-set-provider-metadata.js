@@ -55,6 +55,8 @@ const {
   callIdahoThSignedWebhook,
   generatePseudonymizedId,
   isIdahoThClient,
+  isIdahoThProviderConnection,
+  isIdahoThStaffConnection,
   normalizeEmail,
 } = require("actions:recidiviz-action-helpers");
 
@@ -65,13 +67,6 @@ const ROLE_PROVIDER = "provider";
 // prototype/idaho-transitional-housing-v2
 // (libs/@idaho-th/trpc/src/auth/webhookSignature.ts).
 const LINK_PROVIDER_PATH = "internal/link-provider";
-
-const PASSWORDLESS_CONNECTION_NAMES = new Set(["email"]);
-const STAFF_CONNECTION_NAMES = new Set([
-  "Username-Password-Authentication",
-  "google-oauth2",
-  // "idaho-state-sso", // uncomment when IDOC AD SSO is configured
-]);
 
 function isNonEmptyString(value) {
   return typeof value === "string" && value.length > 0;
@@ -153,11 +148,9 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  const connectionName = (event.connection?.name || "").trim();
-
-  if (!PASSWORDLESS_CONNECTION_NAMES.has(connectionName)) {
+  if (!isIdahoThProviderConnection(event)) {
     // Staff connections are handled by the staff action.
-    if (STAFF_CONNECTION_NAMES.has(connectionName)) {
+    if (isIdahoThStaffConnection(event)) {
       return;
     }
 
