@@ -110,7 +110,6 @@ const UNKNOWN_OFFENSE: ParoleOffense = {
   sentence: UNKNOWN_TEXT,
   dateOfOffense: UNKNOWN_DATE,
   convictionDate: UNKNOWN_DATE,
-  offenseNarrative: UNKNOWN_TEXT,
 };
 
 // Source systems write years such as 2999 and 9999 to mean "no defined date".
@@ -634,6 +633,7 @@ export class ParoleAPIClient implements ParoleAPI {
       hearingHistory: this.hearingHistoryForResident(profile),
       offenseHistory: {
         offenses: this.offensesForResident(profile),
+        priorOffenses: this.priorOffensesForResident(profile),
         priorConvictions: this.priorConvictionsForResident(profile),
         victimInvolved: false,
         victimAttendingHearing: false,
@@ -644,15 +644,26 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
-   * One entry per sentence from
-   * `parole_board_client_profile.active_sentences`, or the single
-   * `[UNKNOWN_OFFENSE]` placeholder if that's empty -- unhydrated for the
-   * resident's state, or they genuinely have no active sentence.
+   * The sentences the resident is currently serving, in the backend's order.
+   * A profile exported before the backend renamed `activeSentences` to
+   * `sentences` carries current sentences only, under the old key.
+   */
+  private currentSentencesForResident(
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): Array<ParoleBoardClientProfileSentence> {
+    const sentences = profile?.sentences ?? profile?.activeSentences ?? [];
+    return sentences.filter((sentence) => !sentence.isPrior);
+  }
+
+  /**
+   * One entry per current sentence, or the single `[UNKNOWN_OFFENSE]`
+   * placeholder if there are none -- unhydrated for the resident's state, or
+   * they genuinely have no active sentence.
    */
   private offensesForResident(
     profile: ParoleBoardClientProfileRecord | undefined,
   ): ParoleOffenseHistory["offenses"] {
-    const sentences = profile?.activeSentences ?? [];
+    const sentences = this.currentSentencesForResident(profile);
 
     if (sentences.length === 0) return [UNKNOWN_OFFENSE];
 
@@ -661,6 +672,20 @@ export class ParoleAPIClient implements ParoleAPI {
       this.offenseForSentence(firstSentence),
       ...restSentences.map((sentence) => this.offenseForSentence(sentence)),
     ];
+  }
+
+  /**
+   * One entry per sentence from an earlier commitment, most recent first.
+   * Unlike offensesForResident, an empty list stays empty, since most
+   * residents have no prior commitment.
+   */
+  private priorOffensesForResident(
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): ParoleOffenseHistory["priorOffenses"] {
+    const sentences = profile?.sentences ?? [];
+    return sentences
+      .filter((sentence) => sentence.isPrior)
+      .map((sentence) => this.offenseForSentence(sentence));
   }
 
   /** Maps one backend sentence onto the offense the profile renders. */
@@ -676,7 +701,7 @@ export class ParoleAPIClient implements ParoleAPI {
       sentence: sentence.sentenceLength ?? UNKNOWN_TEXT,
       dateOfOffense: sentence.sentenceOffenseDate ?? UNKNOWN_DATE,
       convictionDate: sentence.sentenceConvictionDate ?? UNKNOWN_DATE,
-      offenseNarrative: sentence.sentenceSummary ?? UNKNOWN_TEXT,
+      offenseNarrative: sentence.sentenceSummary,
       sentenceStartDate: realSentenceDate(sentence.sentenceStartDate),
       paroleEligibilityDate: realSentenceDate(
         sentence.sentenceParoleEligibilityDate,
@@ -982,7 +1007,7 @@ export class ParoleAPIClient implements ParoleAPI {
     // The soonest-eligibility sentence, first per the backend's own
     // ordering (see recidiviz-data#102399's ORDER BY) -- the same one
     // offensesForResident() lists first.
-    const firstSentence = profile?.activeSentences?.[0];
+    const [firstSentence] = this.currentSentencesForResident(profile);
 
     if (resident.metadata.stateCode === "US_ID") {
       return {

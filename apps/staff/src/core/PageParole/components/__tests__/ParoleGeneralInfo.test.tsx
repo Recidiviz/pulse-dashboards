@@ -51,6 +51,7 @@ function makeCaseDetail(fields: Partial<ParoleCase> = {}): ParoleCase {
           offenseNarrative: "Not yet available",
         },
       ],
+      priorOffenses: [],
       priorConvictions: [],
       victimInvolved: false,
       victimAttendingHearing: false,

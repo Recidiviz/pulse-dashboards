@@ -615,9 +615,9 @@ describe("ParoleAPIClient", () => {
               sentence: "Not yet available",
               dateOfOffense: "9999-12-01",
               convictionDate: "9999-12-01",
-              offenseNarrative: "Not yet available",
             },
           ],
+          priorOffenses: [],
           priorConvictions: [],
           victimInvolved: false,
           victimAttendingHearing: false,
@@ -627,7 +627,7 @@ describe("ParoleAPIClient", () => {
       });
     });
 
-    it("falls back to [UNKNOWN_OFFENSE] when activeSentences is empty", async () => {
+    it("falls back to [UNKNOWN_OFFENSE] when there are no current sentences", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -638,7 +638,7 @@ describe("ParoleAPIClient", () => {
       );
       stubProfile(rootStore, {
         demographics: {},
-        activeSentences: [],
+        sentences: [{ isPrior: true, sentenceDocket: "CR-2010-001" }],
       });
 
       const result = await client.caseDetail("RES999");
@@ -652,12 +652,58 @@ describe("ParoleAPIClient", () => {
           sentence: "Not yet available",
           dateOfOffense: "9999-12-01",
           convictionDate: "9999-12-01",
-          offenseNarrative: "Not yet available",
         },
       ]);
     });
 
-    it("maps activeSentences into offenseHistory.offenses", async () => {
+    it("maps prior sentences into offenseHistory.priorOffenses, in order", async () => {
+      rootStore.tenantStore.currentTenantId = "US_CO";
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsCoResident(),
+      );
+      stubProfile(rootStore, {
+        demographics: {},
+        sentences: [
+          { isPrior: false, sentenceDocket: "2020CR000101" },
+          {
+            isPrior: true,
+            sentenceConvictionCounty: "Denver",
+            sentenceDocket: "2014CR000871",
+            sentenceFelonyClass: "Felony Class 5",
+            sentenceChargeName: "Menacing",
+            sentenceOffenseDate: "2014-02-11",
+            sentenceConvictionDate: "2014-08-20",
+            sentenceLength: "3y 0m 0d",
+            sentenceSummary: "Threatened a neighbor with a knife.",
+          },
+          { isPrior: true, sentenceDocket: "2009CR004410" },
+        ],
+      });
+
+      const { offenseHistory } = await client.caseDetail("RES999");
+
+      expect(offenseHistory.offenses.map((offense) => offense.docket)).toEqual([
+        "2020CR000101",
+      ]);
+      expect(offenseHistory.priorOffenses).toEqual([
+        expect.objectContaining({
+          county: "Denver",
+          docket: "2014CR000871",
+          classFelony: "Felony Class 5",
+          conviction: "Menacing",
+          dateOfOffense: "2014-02-11",
+          convictionDate: "2014-08-20",
+          sentence: "3y 0m 0d",
+          offenseNarrative: "Threatened a neighbor with a knife.",
+        }),
+        expect.objectContaining({
+          docket: "2009CR004410",
+          offenseNarrative: undefined,
+        }),
+      ]);
+    });
+
+    it("reads current sentences from activeSentences when the profile has no sentences", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -668,7 +714,29 @@ describe("ParoleAPIClient", () => {
       );
       stubProfile(rootStore, {
         demographics: {},
-        activeSentences: [
+        activeSentences: [{ sentenceDocket: "CR-2020-001" }],
+      });
+
+      const { offenseHistory } = await client.caseDetail("RES999");
+
+      expect(offenseHistory.offenses.map((offense) => offense.docket)).toEqual([
+        "CR-2020-001",
+      ]);
+      expect(offenseHistory.priorOffenses).toEqual([]);
+    });
+
+    it("maps sentences into offenseHistory.offenses", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+          },
+        }),
+      );
+      stubProfile(rootStore, {
+        demographics: {},
+        sentences: [
           {
             sentenceConvictionCounty: "Ada",
             sentenceDocket: "CR-2020-001",
@@ -716,7 +784,7 @@ describe("ParoleAPIClient", () => {
           sentence: "Not yet available",
           dateOfOffense: "9999-12-01",
           convictionDate: "9999-12-01",
-          offenseNarrative: "Not yet available",
+          offenseNarrative: undefined,
           sentenceStartDate: undefined,
           paroleEligibilityDate: undefined,
           fullTermDate: undefined,
@@ -735,7 +803,7 @@ describe("ParoleAPIClient", () => {
       );
       stubProfile(rootStore, {
         demographics: {},
-        activeSentences: [
+        sentences: [
           {
             sentenceDocket: "CR-2020-001",
             sentenceParoleEligibilityDate: "9999-01-25",
@@ -965,7 +1033,7 @@ describe("ParoleAPIClient", () => {
       );
       stubProfile(rootStore, {
         demographics: {},
-        activeSentences: [
+        sentences: [
           {
             sentenceParoleEligibilityDate: "2026-06-01",
             // A placeholder year, so it falls back to mrdTent.
@@ -1001,7 +1069,7 @@ describe("ParoleAPIClient", () => {
         );
         stubProfile(rootStore, {
           demographics: {},
-          activeSentences: [
+          sentences: [
             {
               sentenceParoleEligibilityDate: "2026-06-01",
               sentenceMandatoryReleaseDate: "2999-01-20",

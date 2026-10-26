@@ -57,12 +57,42 @@ describe("UsCoOffenseHistorySection", () => {
     expect(screen.getAllByText(firstOffense.classFelony)).not.toHaveLength(0);
   });
 
-  it("makes only each offense's description clickable", () => {
+  it("makes only the description of each offense that has one clickable", () => {
     render(<UsCoOffenseHistorySection caseDetail={FIXTURE_CASE} />);
 
-    expect(screen.getAllByRole("button")).toHaveLength(
-      FIXTURE_CASE.offenseHistory.offenses.length,
+    const { offenses, priorOffenses } = FIXTURE_CASE.offenseHistory;
+    const offensesWithNarrative = [...offenses, ...priorOffenses].filter(
+      (offense) => offense.offenseNarrative,
     );
+    expect(offensesWithNarrative.length).toBeLessThan(
+      offenses.length + priorOffenses.length,
+    );
+    expect(screen.getAllByRole("button")).toHaveLength(
+      offensesWithNarrative.length,
+    );
+  });
+
+  it("shows each prior offense as a card under Prior Convictions", () => {
+    render(<UsCoOffenseHistorySection caseDetail={FIXTURE_CASE} />);
+
+    expect(screen.getByText("Prior Convictions")).toBeInTheDocument();
+    for (const prior of FIXTURE_CASE.offenseHistory.priorOffenses) {
+      expect(screen.getByText(prior.conviction)).toBeInTheDocument();
+      expect(screen.getByText(prior.docket)).toBeInTheDocument();
+    }
+  });
+
+  it("hides Prior Convictions when there are no prior offenses", () => {
+    render(
+      <UsCoOffenseHistorySection
+        caseDetail={{
+          ...FIXTURE_CASE,
+          offenseHistory: { ...FIXTURE_CASE.offenseHistory, priorOffenses: [] },
+        }}
+      />,
+    );
+
+    expect(screen.queryByText("Prior Convictions")).not.toBeInTheDocument();
   });
 
   it("shows the offense description inside a clickable card", () => {

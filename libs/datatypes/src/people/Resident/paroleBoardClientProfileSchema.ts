@@ -55,11 +55,12 @@ export type ParoleBoardClientProfileHearing = z.infer<
   typeof paroleBoardClientProfileHearingSchema
 >;
 
-// One entry per sentence the resident is currently serving (see
-// recidiviz-data's `active_sentences` category, made REPEATED in
-// recidiviz-data#102573 and #102582). `sentenceLength` is already a
-// human-readable string from the backend.
+// One entry per sentence on the resident's record (see recidiviz-data's
+// `sentences` category). `sentenceLength` is already a human-readable string
+// from the backend. A prior sentence leaves the fields about serving the
+// current term (start, eligibility and release dates) empty.
 export const paroleBoardClientProfileSentenceSchema = z.object({
+  isPrior: nullishAsUndefined(z.boolean()),
   sentenceConvictionCounty: nullishAsUndefined(z.string()),
   sentenceDocket: nullishAsUndefined(z.string()),
   sentenceFelonyClass: nullishAsUndefined(z.string()),
@@ -274,12 +275,10 @@ export const paroleBoardClientProfileSchema = z.object({
     .array(paroleBoardClientProfileHearingSchema)
     .optional()
     .default([]),
-  // Optional for the same reason as paroleHearings above. A state with no
-  // per-sentence data yet (or a resident with none) emits an empty array.
-  activeSentences: z
-    .array(paroleBoardClientProfileSentenceSchema)
-    .optional()
-    .default([]),
+  sentences: z.array(paroleBoardClientProfileSentenceSchema).optional(),
+  // TODO(CO-882): Remove once every profile export writes `sentences`. The
+  // backend's earlier name for the list, which held current sentences only.
+  activeSentences: z.array(paroleBoardClientProfileSentenceSchema).optional(),
   criminalHistory: z
     .array(paroleBoardClientProfileCriminalHistorySchema)
     .optional()

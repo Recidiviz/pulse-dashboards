@@ -57,6 +57,7 @@ export function buildParoleCase(
           offenseNarrative: "Defendant entered convenience store with firearm.",
         },
       ],
+      priorOffenses: [],
       priorConvictions: [],
       victimInvolved: false,
       victimAttendingHearing: false,

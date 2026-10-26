@@ -288,7 +288,7 @@ export const paroleOffenseSchema = z.object({
   sentence: z.string(),
   dateOfOffense: z.string(),
   convictionDate: z.string(),
-  offenseNarrative: z.string(),
+  offenseNarrative: z.string().optional(),
   statute: z.string().optional(),
   isLife: z.boolean().optional(),
   sentencingDate: z.string().optional(),
@@ -304,6 +304,7 @@ export const paroleOffenseHistorySchema = z.object({
   // A person can be incarcerated on more than one current offense (e.g. one
   // docket entry per count), so this is a list rather than a single record.
   offenses: z.array(paroleOffenseSchema).nonempty(),
+  priorOffenses: z.array(paroleOffenseSchema),
   priorConvictions: z.array(paroleConvictionSchema),
   victimInvolved: z.boolean(),
   victimAttendingHearing: z.boolean(),

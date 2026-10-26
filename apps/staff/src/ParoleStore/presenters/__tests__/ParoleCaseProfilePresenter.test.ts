@@ -57,6 +57,7 @@ const TEST_CASE: ParoleCase = {
         offenseNarrative: "Defendant entered convenience store with firearm.",
       },
     ],
+    priorOffenses: [],
     priorConvictions: [],
     victimInvolved: false,
     victimAttendingHearing: false,

@@ -977,6 +977,33 @@ function buildAndersonCaseProfile(
           indeterminateEndDateInclusive: iso(addYears(today, 5)),
         },
       ],
+      // US_ID sends no prior sentences. The Assault entry has no narrative,
+      // so its card shows no description.
+      priorOffenses:
+        stateCode === "US_CO"
+          ? [
+              {
+                county: "Sangamon County",
+                docket: "2018-CR-0532",
+                conviction: "Second Degree Assault",
+                classFelony: "Felony Class 4",
+                sentence: "2y 6m 0d",
+                dateOfOffense: iso(subYears(today, 8)),
+                convictionDate: iso(subYears(today, 7)),
+              },
+              {
+                county: "Sangamon County",
+                docket: "2016-CR-0217",
+                conviction: "Theft",
+                classFelony: "Felony Class 5",
+                sentence: "1y 0m 0d",
+                dateOfOffense: iso(subYears(today, 9)),
+                convictionDate: iso(subYears(today, 8)),
+                offenseNarrative:
+                  "Defendant removed merchandise from a retail store without paying.",
+              },
+            ]
+          : [],
       priorConvictions: [
         { charge: "Theft", date: iso(subYears(today, 8)) },
         { charge: "Assault", date: iso(subYears(today, 7)) },
@@ -1307,6 +1334,7 @@ function buildOffenseHistory(
     ],
     // No prior convictions for the generic cases -- Anderson's hand-authored
     // profile above is the one that exercises the "Prior Convictions" list.
+    priorOffenses: [],
     priorConvictions: [],
     victimInvolved: false,
     victimAttendingHearing: false,
@@ -1508,6 +1536,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
             'Per PSIR, On 06/24/2021 at about 6:27 p.m., your affiant, hereby referred to as, "I" or, "Me" was dispatched to 7701 W Tower Ave for a report of a domestic. The reporting party (RP), who was later identified as Banner, Martine (DOB/09/22/1 993), reported that her husband tried to kill her by strangling her with a chord. She further reported that she had escaped and was across the street at 7700 W Tower Ave. She advised of multiple children in the residence and further stated that her husband, the suspect, is leaving in a silver Ford F150 with a temporary license plate on the back of the truck.',
         },
       ],
+      priorOffenses: [],
       priorConvictions: [],
       victimInvolved: true,
       victimAttendingHearing: false,
@@ -1922,6 +1951,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
             "A PSI was not available for programming, according to a Probable Cause Affidavit, on 07/26/2017, while several El Paso County Deputies were attempting to stop offender Rogers from harming himself, offender Rogers spit saliva at the deputies, hitting one in the face, right eye and shoulder.",
         },
       ],
+      priorOffenses: [],
       priorConvictions: [
         {
           charge: "Assault",
@@ -2156,6 +2186,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
           indeterminateEndDateInclusive: iso(addYears(new Date(), 13)),
         },
       ],
+      priorOffenses: [],
       priorConvictions: [
         { charge: "Assault", date: "2012-02-14" },
         { charge: "Menacing", date: "2008-02-21" },

@@ -93,15 +93,6 @@ const OffenseFact = styled(ParoleFactStack)`
   min-width: 0;
 `;
 
-const PriorConvictionList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.sm)};
-  margin: 0;
-  padding-left: ${rem(spacing.lg)};
-  list-style: disc;
-`;
-
 const formatOffenseDate = (date: string): string =>
   isParoleUnknownDate(date) ? PAROLE_UNKNOWN_TEXT : formatDate(date);
 
@@ -162,6 +153,46 @@ function OffenseDetails({
 }
 
 /**
+ * One card per offense. A card shows the start of the offense description,
+ * and a click on it opens the whole offense. A card with no description shows
+ * only the heading and facts.
+ *
+ * @param offenses - The offenses to show, in order.
+ * @param onSelectOffense - Called with the offense whose description was clicked.
+ */
+function OffenseCardList({
+  offenses,
+  onSelectOffense,
+}: {
+  offenses: ReadonlyArray<ParoleOffense>;
+  onSelectOffense: (offense: ParoleOffense) => void;
+}) {
+  return (
+    <SectionStack>
+      {offenses.map((offense) => (
+        <OffenseCard key={`${offense.docket}-${offense.conviction}`}>
+          <OffenseDetails
+            offense={offense}
+            description={
+              offense.offenseNarrative && (
+                <DescriptionButton onClick={() => onSelectOffense(offense)}>
+                  <ParoleFactLabel>
+                    Brief Description of Offense
+                  </ParoleFactLabel>
+                  <ClampedDescription>
+                    {offense.offenseNarrative}
+                  </ClampedDescription>
+                </DescriptionButton>
+              )
+            }
+          />
+        </OffenseCard>
+      ))}
+    </SectionStack>
+  );
+}
+
+/**
  * Colorado's Offense & Criminal History section.
  *
  * @param caseDetail - The case whose offenses to show.
@@ -218,42 +249,19 @@ export function UsCoOffenseHistorySection({
 
       <ParoleSubsection>
         <ParoleSubsectionTitle>Current Offenses</ParoleSubsectionTitle>
-        <SectionStack>
-          {offenseHistory.offenses.map((offense) => (
-            <OffenseCard key={`${offense.docket}-${offense.conviction}`}>
-              <OffenseDetails
-                offense={offense}
-                description={
-                  <DescriptionButton
-                    onClick={() => setSelectedOffense(offense)}
-                  >
-                    <ParoleFactLabel>
-                      Brief Description of Offense
-                    </ParoleFactLabel>
-                    <ClampedDescription>
-                      {offense.offenseNarrative}
-                    </ClampedDescription>
-                  </DescriptionButton>
-                }
-              />
-            </OffenseCard>
-          ))}
-        </SectionStack>
+        <OffenseCardList
+          offenses={offenseHistory.offenses}
+          onSelectOffense={setSelectedOffense}
+        />
       </ParoleSubsection>
 
-      {offenseHistory.priorConvictions.length > 0 && (
+      {offenseHistory.priorOffenses.length > 0 && (
         <ParoleSubsection>
           <ParoleSubsectionTitle>Prior Convictions</ParoleSubsectionTitle>
-          <PriorConvictionList>
-            {offenseHistory.priorConvictions.map((conviction) => (
-              <ParoleSmallFactValue
-                as="li"
-                key={`${conviction.charge}-${conviction.date}`}
-              >
-                {conviction.charge} — {formatDate(conviction.date)}
-              </ParoleSmallFactValue>
-            ))}
-          </PriorConvictionList>
+          <OffenseCardList
+            offenses={offenseHistory.priorOffenses}
+            onSelectOffense={setSelectedOffense}
+          />
         </ParoleSubsection>
       )}
 

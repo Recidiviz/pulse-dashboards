@@ -17,7 +17,6 @@
 
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { format, subYears } from "date-fns";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import * as StoreProvider from "../../../../components/StoreProvider";
@@ -590,23 +589,14 @@ describe("ParoleCaseProfile", () => {
       ).toBeTruthy();
     });
 
-    it("renders the list of prior convictions", async () => {
+    it("renders a card for each prior conviction", async () => {
       renderAtPath("/parole/case/45821");
 
-      // The fixture derives these dates as N years back from whichever day
-      // the fixture module happens to load, so the expected month must be
-      // computed the same way rather than hardcoded -- otherwise this test
-      // breaks every time the calendar rolls into a new month.
-      const theftMonth = format(subYears(new Date(), 8), "MMM");
-      const assaultMonth = format(subYears(new Date(), 7), "MMM");
-
       expect(await screen.findByText("Prior Convictions")).toBeInTheDocument();
-      expect(
-        screen.getByText(new RegExp(`Theft — ${theftMonth}`)),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(new RegExp(`Assault — ${assaultMonth}`)),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Second Degree Assault")).toBeInTheDocument();
+      expect(screen.getByText("2018-CR-0532")).toBeInTheDocument();
+      expect(screen.getByText("Theft")).toBeInTheDocument();
+      expect(screen.getByText("2016-CR-0217")).toBeInTheDocument();
     });
 
     it("omits the prior convictions subsection when there are none", async () => {
