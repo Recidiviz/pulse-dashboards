@@ -118,12 +118,20 @@ describe("tab count coverage", () => {
   }
 
   /** The real class on the whole record, which is what a shell must match. */
-  function realTabTitle(type: OpportunityType, input: Record<string, unknown>) {
+  function realTabTitle(
+    type: OpportunityType,
+    input: Record<string, unknown>,
+    updates?: unknown,
+  ) {
     const Ctor = opportunityConstructors[type] as unknown as new (
       person: unknown,
       record: unknown,
       type: unknown,
-    ) => { tabTitle: (g?: never) => string; config: { tabGroups: object } };
+    ) => {
+      tabTitle: (g?: never) => string;
+      config: { tabGroups: object };
+      updatesSubscription: unknown;
+    };
 
     const opportunity = new Ctor(
       {
@@ -140,13 +148,18 @@ describe("tab count coverage", () => {
       input,
       type,
     );
+    // Assigned rather than subscribed, exactly as `opportunityShell` does it,
+    // so the two differ only in which code reads the overlay.
+    if (updates !== undefined) {
+      opportunity.updatesSubscription = { data: updates };
+    }
     return opportunity.tabTitle(
       Object.keys(opportunity.config.tabGroups)[0] as never,
     );
   }
 
   /** Types whose shell disagrees with a real instance, on any fixture. */
-  function diverging(): string[] {
+  function diverging(updates?: unknown): string[] {
     const out: string[] = [];
 
     for (const type of configuredTypes()) {
@@ -168,6 +181,7 @@ describe("tab count coverage", () => {
             hasGrantedDate: Boolean(metadata["grantedAt"]),
           },
           root,
+          updates,
         );
 
         let shellTab: string | undefined;
@@ -179,7 +193,7 @@ describe("tab count coverage", () => {
 
         let realTab: string | undefined;
         try {
-          realTab = realTabTitle(type, input);
+          realTab = realTabTitle(type, input, updates);
         } catch {
           // No real instance, so nothing to compare against. See UNCHECKABLE.
           continue;
@@ -203,6 +217,30 @@ describe("tab count coverage", () => {
       .sort();
 
     expect(diverging()).toEqual(provable);
+  });
+
+  describe("a record with an overlay lands on the same tab either way", () => {
+    const OVERLAYS: [string, unknown][] = [
+      ["submitted", { submitted: { by: "TEST", date: new Date(2026, 0, 1) } }],
+      ["denied", { denial: { reasons: ["TEST"], otherReason: "" } }],
+      [
+        "submitted and denied",
+        {
+          submitted: { by: "TEST", date: new Date(2026, 0, 1) },
+          denial: { reasons: ["TEST"], otherReason: "" },
+        },
+      ],
+    ];
+
+    test.each(OVERLAYS)("with a %s overlay", (_label, updates) => {
+      // Same bar as the census case: a type may diverge only if it is already
+      // declared unreconstructable. A new divergence fails here.
+      const provable = [...BUCKET_KEY_INSUFFICIENT]
+        .filter((type) => !UNCHECKABLE.includes(type))
+        .sort();
+
+      expect(diverging(updates)).toEqual(provable);
+    });
   });
 
   test("an overriding type is checkable, or named as not", () => {

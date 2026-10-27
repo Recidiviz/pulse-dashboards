@@ -135,7 +135,7 @@ const MAX_FACET_VALUES = 50;
 export const CENSUS_MAX_GROUPS = 250;
 
 /** The fields whose combination decides an untouched record's tab. */
-const CENSUS_GROUP_BY = [
+export const CENSUS_GROUP_BY = [
   "opportunityType",
   "isEligible",
   "isAlmostEligible",
@@ -271,9 +271,7 @@ function actedOnSearch(
       ].join(" && "),
       include_fields: [
         `$opportunityUpdates(${UPDATE_FIELDS.join(",")})`,
-        "opportunityType",
-        "isEligible",
-        "isAlmostEligible",
+        ...CENSUS_GROUP_BY,
         "externalId",
         "id",
       ].join(","),

@@ -18,6 +18,7 @@
 import {
   ACTED_ON_PAGE_SIZE,
   buildOpportunitySearchPlan,
+  CENSUS_GROUP_BY,
   CENSUS_MAX_GROUPS,
   type OpportunitySearchPlanInput,
 } from "../buildOpportunitySearchPlan";
@@ -203,6 +204,15 @@ describe("the ELIGIBILITY shape", () => {
 });
 
 describe("the ACTED ON shape", () => {
+  test("projects every field the census bucket key reads", () => {
+    const search = build().find((p) => p.kind === "actedOn");
+    const include = search?.descriptor["include_fields"] as string;
+
+    for (const field of CENSUS_GROUP_BY) {
+      expect(include.split(",")).toContain(field);
+    }
+  });
+
   test("filters on hasOfficerAction, not on updateStatus", () => {
     const search = build().find((p) => p.kind === "actedOn");
 
