@@ -40,6 +40,7 @@ import {
   EligibilityDate,
   SentenceDates,
   UsIaActionPlansAndNotes,
+  UsIaEarlyDischargeFormStatus,
   UsIaEarlyDischargeIcOutDetails,
   UsIaVictimContactInfo,
   UsMiEarlyDischargeIcDetails,
@@ -111,6 +112,7 @@ export const OpportunityDetailSidebarComponents = {
   UsIaActionPlansAndNotes,
   UsIaVictimContactInfo,
   UsIaEarlyDischargeIcOutDetails,
+  UsIaEarlyDischargeFormStatus,
   UsMiLastAssessment,
   Programming,
 };

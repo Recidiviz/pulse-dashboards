@@ -100,6 +100,7 @@ export type FeatureVariant =
   //// Iowa
   | "usIaEarlyDischargeCustomizations"
   | "usIaEarlyDischargeForms"
+  | "usIaEarlyDischargeV2"
   | "usIaFinesAndFees"
   | "usIaSupervisionLevelDowngrade"
 
@@ -273,6 +274,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
   usIaEarlyDischargeForms: {},
+  usIaEarlyDischargeV2: {},
   usIaSupervisionLevelDowngrade: {},
   operationsDrilldown: {},
   operationsContactsDrilldown: {},
@@ -433,6 +435,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         typesensePersonSearch: undefined,
         usOrEarnedDischargeSentence: undefined,
         clientProfileWarmHandoff: undefined,
+        // Off for Recidiviz users while the US_IA early discharge writeback is
+        // built, because it replaces the live early discharge page. Opt in per
+        // user via the admin panel to work on it.
+        usIaEarlyDischargeV2: undefined,
         outcomesModule: {
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },

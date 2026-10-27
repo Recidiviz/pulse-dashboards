@@ -28,14 +28,12 @@ import { Denial, Submission } from "../../FirestoreStore";
 import { appendDateSuffixIfMissing } from "../../utils";
 import { ActedOnTextAddition, Opportunity } from "../../WorkflowsStore";
 import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
+import { DetailsShadedBox } from "./styles";
 import { formatSupervisionEndDatePhrase } from "./utils";
 
-const MarkedIneligibleReasonsText = styled.div`
+const MarkedIneligibleReasonsText = styled(DetailsShadedBox)`
   ${typography.Sans14}
   color: ${palette.pine1};
-  background-color: ${palette.slate10};
-  border-radius: 8px;
-  padding: 1rem;
   margin: 1.5rem 0;
 `;
 

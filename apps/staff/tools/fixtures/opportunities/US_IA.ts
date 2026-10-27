@@ -356,6 +356,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "ClientProfileDetails",
         "CaseNotes",
         "UsIaVictimContactInfo",
+        "UsIaEarlyDischargeFormStatus",
       ],
       skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },

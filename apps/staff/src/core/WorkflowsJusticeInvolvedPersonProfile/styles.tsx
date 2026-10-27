@@ -167,6 +167,12 @@ export const DetailsBox = styled.div`
   }
 `;
 
+export const DetailsShadedBox = styled.div`
+  background-color: ${palette.slate10};
+  border-radius: 8px;
+  padding: 1rem;
+`;
+
 export const SmallDetailsHeader = styled.div`
   display: flex;
   justify-content: space-between;
