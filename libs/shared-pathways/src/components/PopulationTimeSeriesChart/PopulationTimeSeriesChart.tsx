@@ -35,6 +35,11 @@ const CROWDED_POINT_COUNT = 60;
 type CommonProps = {
   title: string;
   subtitle?: string;
+  /**
+   * Places points one slot apart in date order, rather than by date, so dates
+   * the data skips take no space on the x axis.
+   */
+  placePointsInSequence?: boolean;
 };
 
 /** One population over time, which is what most Pathways charts show. */
@@ -54,7 +59,7 @@ type MultiSeriesProps = CommonProps & {
 type Props = SinglePopulationProps | MultiSeriesProps;
 
 const PopulationTimeSeriesChart: React.FC<Props> = (props) => {
-  const { title, subtitle } = props;
+  const { title, subtitle, placePointsInSequence } = props;
 
   // A chart draws either its own named series or a single population, never
   // both, so the props above keep them apart.
@@ -106,6 +111,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = (props) => {
       dateSpacing={dateSpacing}
       beginDate={beginDate}
       endDate={endDate}
+      placePointsInSequence={placePointsInSequence}
     />
   );
 };

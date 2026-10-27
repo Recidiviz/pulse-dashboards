@@ -81,6 +81,7 @@ const VizAdmissionsAndReleasesOverTime: React.FC<Props> = observer(
         title={chartTitleForEventType(metric.content, eventType)}
         subtitle={filtersStore.filtersDescription}
         series={buildEventTypeSeries(metric.dataSeries, eventType)}
+        placePointsInSequence
       />
     );
   },

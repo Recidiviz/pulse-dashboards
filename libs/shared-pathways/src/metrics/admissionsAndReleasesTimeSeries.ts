@@ -71,12 +71,15 @@ export function pivotMonthlyCounts(
 }
 
 /**
- * Returns one record per month across the range the data covers, so that a
- * month the backend reports nothing for is drawn as zero rather than joining
- * the months either side of it into one straight line.
+ * Returns one record per month of the checked years across the range the data
+ * covers, so that a month the backend reports nothing for is drawn as zero
+ * rather than joining the months either side of it into one straight line.
+ * Months of an unchecked year are left out, because the reader asked for no
+ * data there; zeros would claim nothing happened.
  */
 export function fillMissingMonths(
   records: AdmissionsAndReleasesTimeSeriesRecord[],
+  isYearChecked: (year: number) => boolean,
 ): AdmissionsAndReleasesTimeSeriesRecord[] {
   if (!records.length) return [];
 
@@ -90,16 +93,18 @@ export function fillMissingMonths(
   return eachMonthOfInterval({
     start: new Date(Math.min(...dates.map(Number))),
     end: new Date(Math.max(...dates.map(Number))),
-  }).map((date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    return (
-      recordsByMonth.get(monthKey(year, month)) ?? {
-        year,
-        month,
-        admissionsCount: 0,
-        releasesCount: 0,
-      }
-    );
-  });
+  })
+    .filter((date) => isYearChecked(date.getFullYear()))
+    .map((date) => {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      return (
+        recordsByMonth.get(monthKey(year, month)) ?? {
+          year,
+          month,
+          admissionsCount: 0,
+          releasesCount: 0,
+        }
+      );
+    });
 }

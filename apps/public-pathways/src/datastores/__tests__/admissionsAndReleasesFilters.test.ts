@@ -46,6 +46,10 @@ const API_METADATA = {
       { value: "incarcerated_individual", label: "Incarcerated Individual" },
       { value: "incarcerated_parolee", label: "Incarcerated Parolee" },
     ]),
+    calendar_year_id_name_map: JSON.stringify([
+      { value: "2024", label: "2024" },
+      { value: "2025", label: "2025" },
+    ]),
     release_to_community_supervision_indicator_id_name_map: JSON.stringify([
       {
         value: "released_to_community_supervision",
@@ -116,7 +120,11 @@ describe("Admissions & Releases filters", () => {
     await when(() => isHydrated(metric));
 
     expect(Object.keys(metric.dynamicFilterOptions).sort()).toEqual(
-      [FILTER_TYPES.COMMUNITY_SUPERVISION, FILTER_TYPES.CUSTODY_STATUS].sort(),
+      [
+        FILTER_TYPES.CALENDAR_YEAR,
+        FILTER_TYPES.COMMUNITY_SUPERVISION,
+        FILTER_TYPES.CUSTODY_STATUS,
+      ].sort(),
     );
   });
 
@@ -163,12 +171,45 @@ describe("Admissions & Releases filters", () => {
       expect([...metric.filters.enabledFilters].sort()).toEqual(
         [
           FILTER_TYPES.CUSTODY_STATUS,
+          FILTER_TYPES.CALENDAR_YEAR,
           FILTER_TYPES.ADMISSION_TYPE,
           FILTER_TYPES.RELEASE_TYPE,
           FILTER_TYPES.COMMUNITY_SUPERVISION,
         ].sort(),
       );
     });
+  });
+
+  it("lets the reader check several years at once", async () => {
+    const metric = metricsStore.current;
+    metric.hydrate();
+    await when(() => isHydrated(metric));
+
+    const yearFilter =
+      mockRootStore.filtersStore.filterOptions[FILTER_TYPES.CALENDAR_YEAR];
+
+    expect(yearFilter.isSingleSelect).toBeFalsy();
+    expect(yearFilter.options.map((o) => o.value)).toEqual([
+      "ALL",
+      "2024",
+      "2025",
+    ]);
+  });
+
+  it.each([
+    "admissionsAndReleasesOverTime",
+    "admissionsAndReleasesByCustodyStatus",
+    "admissionsByType",
+    "releasesByType",
+    "releasesByCommunitySupervision",
+  ] as const)("sends every checked year on the %s chart", (metricId) => {
+    mockRootStore.filtersStore.setFilters({
+      [FILTER_TYPES.CALENDAR_YEAR]: ["2024", "2025"],
+    });
+
+    const params = metricsStore[metricId].getQueryParams();
+
+    expect(params.getAll("filters[calendar_year]")).toEqual(["2024", "2025"]);
   });
 
   it("disables the breakdowns the event type leaves nothing to filter", () => {
@@ -222,6 +263,15 @@ describe("Admissions & Releases filters", () => {
       });
 
       expect(metric.hasEmptyFilterSelection).toBe(true);
+    });
+
+    it("does not ask the backend when every year is cleared", () => {
+      // A year narrows admissions and releases alike, so nothing can match.
+      mockRootStore.filtersStore.setFilters({
+        [FILTER_TYPES.CALENDAR_YEAR]: [],
+      });
+
+      expect(metricsStore.current.hasEmptyFilterSelection).toBe(true);
     });
 
     it("still asks the backend when every admission type is cleared", async () => {

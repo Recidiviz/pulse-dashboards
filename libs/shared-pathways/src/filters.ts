@@ -81,6 +81,7 @@ export type DynamicFilterOptionMetadataKey =
   | "marital_status_id_name_map"
   | "months_at_facility_id_name_map"
   | "custody_type_id_name_map"
+  | "calendar_year_id_name_map"
   | "admission_type_id_name_map"
   | "release_type_id_name_map"
   | "release_to_community_supervision_indicator_id_name_map";
@@ -104,6 +105,7 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
     marital_status_id_name_map: "maritalStatus",
     months_at_facility_id_name_map: "monthsAtFacility",
     custody_type_id_name_map: "custodyStatus",
+    calendar_year_id_name_map: "calendarYear",
     admission_type_id_name_map: "admissionType",
     release_type_id_name_map: "releaseType",
     release_to_community_supervision_indicator_id_name_map:

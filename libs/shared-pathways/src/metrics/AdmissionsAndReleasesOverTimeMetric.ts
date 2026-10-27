@@ -18,6 +18,7 @@
 import { format } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
+import { FILTER_TYPES } from "../constants";
 import {
   AdmissionsAndReleasesMonthlyCountRecord,
   AdmissionsAndReleasesTimeSeriesRecord,
@@ -78,7 +79,8 @@ export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBack
       downloadableData: computed,
     });
 
-    this.dataTransformer = fillMissingMonths;
+    this.dataTransformer = (records) =>
+      fillMissingMonths(records, (year) => this.isYearChecked(year));
     this.eventSpecificFilters = eventSpecificFilters;
   }
 
@@ -95,6 +97,16 @@ export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBack
       this.eventSpecificFilterState,
     );
     return queryParams;
+  }
+
+  /** Returns true if the reader's calendar year selection includes the year. */
+  private isYearChecked(year: number): boolean {
+    const checkedYears = this.store.filters[FILTER_TYPES.CALENDAR_YEAR];
+    return (
+      !this.filters.enabledFilters.includes(FILTER_TYPES.CALENDAR_YEAR) ||
+      checkedYears.includes("ALL") ||
+      checkedYears.includes(String(year))
+    );
   }
 
   private get eventSpecificFilterState() {

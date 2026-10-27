@@ -78,21 +78,23 @@ describe("pivotMonthlyCounts", () => {
 });
 
 describe("fillMissingMonths", () => {
+  const checkAllYears = () => true;
+
   it("returns nothing for no records", () => {
-    expect(fillMissingMonths([])).toEqual([]);
+    expect(fillMissingMonths([], checkAllYears)).toEqual([]);
   });
 
   it("leaves consecutive months untouched", () => {
     const records = [record(2023, 12, 10, 20), record(2024, 1, 11, 21)];
 
-    expect(fillMissingMonths(records)).toEqual(records);
+    expect(fillMissingMonths(records, checkAllYears)).toEqual(records);
   });
 
   it("fills a skipped month with zeros rather than joining across it", () => {
-    const filled = fillMissingMonths([
-      record(2023, 11, 10, 20),
-      record(2024, 1, 12, 22),
-    ]);
+    const filled = fillMissingMonths(
+      [record(2023, 11, 10, 20), record(2024, 1, 12, 22)],
+      checkAllYears,
+    );
 
     expect(filled.map((r) => [r.year, r.month])).toEqual([
       [2023, 11],
@@ -100,5 +102,26 @@ describe("fillMissingMonths", () => {
       [2024, 1],
     ]);
     expect(filled[1]).toEqual(record(2023, 12, 0, 0));
+  });
+
+  it("adds no zeros for a year the reader left unchecked", () => {
+    const filled = fillMissingMonths(
+      [record(2021, 12, 10, 20), record(2025, 1, 12, 22)],
+      (year) => year === 2021 || year === 2025,
+    );
+
+    expect(filled.map((r) => [r.year, r.month])).toEqual([
+      [2021, 12],
+      [2025, 1],
+    ]);
+  });
+
+  it("still fills a skipped month inside a checked year", () => {
+    const filled = fillMissingMonths(
+      [record(2024, 1, 10, 20), record(2024, 3, 12, 22)],
+      (year) => year === 2024,
+    );
+
+    expect(filled[1]).toEqual(record(2024, 2, 0, 0));
   });
 });

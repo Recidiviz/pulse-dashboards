@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { scaleTime } from "d3-scale";
+import { scaleLinear, scaleTime } from "d3-scale";
 import React, { useCallback, useEffect, useState } from "react";
 import { ResponsiveXYFrame } from "semiotic";
 import styled, { css, useTheme } from "styled-components";
@@ -35,6 +35,7 @@ import {
   ChartPoint,
   formatMonthAndYear,
   getTickValues,
+  placeLinesInSequence,
   PlotLine,
   resolveTimeSeriesLines,
   TimeSeriesLine,
@@ -79,6 +80,11 @@ type Props = {
   dateSpacing: number;
   beginDate: Date;
   endDate: Date;
+  /**
+   * Places points one slot apart in date order, rather than by date, so dates
+   * the data skips take no space on the x axis.
+   */
+  placePointsInSequence?: boolean;
   [k: string]: unknown;
 };
 
@@ -111,6 +117,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   dateSpacing,
   beginDate,
   endDate,
+  placePointsInSequence = false,
   ...chartProps
 }) => {
   const theme = useTheme() as PathwaysTheme;
@@ -142,7 +149,15 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     name && color ? [{ name, color }] : [],
   );
 
-  const tickValues = getTickValues(allPoints, dateSpacing);
+  const sequence = placePointsInSequence
+    ? placeLinesInSequence(lines, dateSpacing)
+    : undefined;
+  const bottomAxis = sequence
+    ? { tickValues: sequence.tickValues, tickFormat: sequence.formatTick }
+    : {
+        tickValues: getTickValues(allPoints, dateSpacing),
+        tickFormat: (d: Date) => formatMonthAndYear(d),
+      };
 
   const needsScroll = isMobile && allPoints.length > SCROLL_THRESHOLD;
   const scrollWidth = needsScroll
@@ -169,7 +184,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     hoverAnnotation: true,
     // eslint-disable-next-line react/no-unstable-nested-components
     tooltipContent: (d: ChartPoint) => <PopulationTimeSeriesTooltip d={d} />,
-    lines,
+    lines: sequence?.lines ?? lines,
     lineDataAccessor: "data",
     lineClass: (l: PlotLine) => l.class,
     // Left off entirely unless a line carries its own color, so that the
@@ -186,8 +201,8 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
           pointStyle: (point: ChartPoint) => ({ fill: point.color }),
         }
       : {}),
-    xScaleType: scaleTime(),
-    xAccessor: "date",
+    xScaleType: sequence ? scaleLinear() : scaleTime(),
+    xAccessor: sequence ? "position" : "date",
     yAccessor: "value",
     size: [558, CHART_HEIGHT],
     margin: {
@@ -196,17 +211,13 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
       right: MARGIN_RIGHT,
       top: MARGIN_TOP,
     },
-    xExtent: [beginDate, endDate],
+    xExtent: sequence?.xExtent ?? [beginDate, endDate],
     yExtent: [chartBottom, chartTop],
     showLinePoints: true,
     pointClass: "VizPathways__point",
     axes: [
       { orient: "left", tickFormat: (n: number) => n.toLocaleString() },
-      {
-        orient: "bottom",
-        tickValues,
-        tickFormat: (d: Date) => formatMonthAndYear(d),
-      },
+      { orient: "bottom", ...bottomAxis },
     ],
     ...chartProps,
   };
@@ -226,11 +237,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
             tickFormat: () => "",
             tickValues: yTickValues,
           },
-          {
-            orient: "bottom" as const,
-            tickValues,
-            tickFormat: (d: Date) => formatMonthAndYear(d),
-          },
+          { orient: "bottom" as const, ...bottomAxis },
         ],
       }
     : undefined;

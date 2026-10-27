@@ -65,16 +65,15 @@ const singleSelectFilter: PopulationFilter = {
   defaultValue: "6",
 };
 
-const calendarYearFilter = {
-  type: "calendarYear",
-  title: "Calendar year",
-  description:
-    "Bar charts show a single calendar year at a time. The Overview chart shows all years.",
+const supervisionTypeFilter: PopulationFilter = {
+  type: "supervisionType",
+  title: "Supervision Type",
+  description: "Pick one supervision type at a time.",
   isSingleSelect: true,
   options: [
     { label: "All", value: "ALL" },
-    { label: "2024", value: "2024" },
-    { label: "2025", value: "2025" },
+    { label: "Parole", value: "PAROLE" },
+    { label: "Probation", value: "PROBATION" },
   ],
   setFilters: mockSetFilters,
   defaultOption: { label: "All", value: "ALL" },
@@ -101,7 +100,7 @@ function createMockFiltersStore({
     race: raceFilter,
     gender: genderFilter,
     timePeriod: singleSelectFilter,
-    calendarYear: calendarYearFilter,
+    supervisionType: supervisionTypeFilter,
   } as unknown as PopulationFilters;
 
   return {
@@ -328,23 +327,23 @@ describe("FiltersPanel per-metric multi-select", () => {
 
   it("renders a single-select filter as radios by default", () => {
     const store = createMockFiltersStore({
-      enabledFilters: ["calendarYear"],
-      filterValues: { calendarYear: ["ALL"] },
+      enabledFilters: ["supervisionType"],
+      filterValues: { supervisionType: ["ALL"] },
     });
     render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
       wrapper,
     });
 
-    expect(screen.getByText("Calendar year")).toBeInTheDocument();
+    expect(screen.getByText("Supervision Type")).toBeInTheDocument();
     expect(screen.getAllByRole("radio").length).toBeGreaterThan(0);
     expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
   });
 
   it("renders the same filter as checkboxes when the metric lists it as multi-select", () => {
     const store = createMockFiltersStore({
-      enabledFilters: ["calendarYear"],
-      filterValues: { calendarYear: ["ALL"] },
-      multiSelectFilters: ["calendarYear"],
+      enabledFilters: ["supervisionType"],
+      filterValues: { supervisionType: ["ALL"] },
+      multiSelectFilters: ["supervisionType"],
     });
     render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
       wrapper,
@@ -356,28 +355,28 @@ describe("FiltersPanel per-metric multi-select", () => {
 
   it("shows the filter's description only where it renders as radios", () => {
     const single = createMockFiltersStore({
-      enabledFilters: ["calendarYear"],
-      filterValues: { calendarYear: ["ALL"] },
+      enabledFilters: ["supervisionType"],
+      filterValues: { supervisionType: ["ALL"] },
     });
     const { unmount } = render(
       <FiltersPanel isOpen onClose={onClose} filtersStore={single} />,
       { wrapper },
     );
     expect(
-      screen.getByText(/Bar charts show a single calendar year/),
+      screen.getByText(/Pick one supervision type at a time/),
     ).toBeInTheDocument();
     unmount();
 
     const multi = createMockFiltersStore({
-      enabledFilters: ["calendarYear"],
-      filterValues: { calendarYear: ["ALL"] },
-      multiSelectFilters: ["calendarYear"],
+      enabledFilters: ["supervisionType"],
+      filterValues: { supervisionType: ["ALL"] },
+      multiSelectFilters: ["supervisionType"],
     });
     render(<FiltersPanel isOpen onClose={onClose} filtersStore={multi} />, {
       wrapper,
     });
     expect(
-      screen.queryByText(/Bar charts show a single calendar year/),
+      screen.queryByText(/Pick one supervision type at a time/),
     ).not.toBeInTheDocument();
   });
 });
@@ -475,12 +474,12 @@ describe("FiltersPanel grouped options", () => {
 describe("FiltersPanel ordering", () => {
   const onClose = vi.fn();
 
-  // calendarYear is a radio and race is checkboxes, so the radios-first
+  // supervisionType is a radio and race is checkboxes, so the radios-first
   // default and the declared order disagree — which makes the choice visible.
   const setup = (renderInDeclaredOrder: boolean) => {
     const store = createMockFiltersStore({
-      enabledFilters: ["race", "calendarYear"],
-      filterValues: { calendarYear: ["ALL"] },
+      enabledFilters: ["race", "supervisionType"],
+      filterValues: { supervisionType: ["ALL"] },
     });
     const { unmount } = render(
       <FiltersPanel
@@ -492,18 +491,18 @@ describe("FiltersPanel ordering", () => {
       { wrapper },
     );
     const titles = screen
-      .getAllByText(/^(Race|Calendar year)$/)
+      .getAllByText(/^(Race|Supervision Type)$/)
       .map((n) => n.textContent);
     unmount();
     return titles;
   };
 
   it("puts every radio ahead of every checkbox by default", () => {
-    expect(setup(false)).toEqual(["Calendar year", "Race"]);
+    expect(setup(false)).toEqual(["Supervision Type", "Race"]);
   });
 
   it("keeps the metric's own order when asked", () => {
-    expect(setup(true)).toEqual(["Race", "Calendar year"]);
+    expect(setup(true)).toEqual(["Race", "Supervision Type"]);
   });
 });
 

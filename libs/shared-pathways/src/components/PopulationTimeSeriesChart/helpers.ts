@@ -192,3 +192,41 @@ export const resolveTimeSeriesLines = ({
     allPoints: historicalPopulation.concat(projectedPopulation.slice(1)),
   };
 };
+
+/** Space left before the first point and after the last, in point slots. */
+const SEQUENCE_EDGE_PADDING = 0.25;
+
+/**
+ * Returns the lines with each point placed by its date's position among every
+ * date the chart draws, plus the x axis that places and labels points by that
+ * position. Dates the data skips take no space, so a chart that leaves out a
+ * year draws the months either side of it next to each other.
+ *
+ * @param dateSpacing Labels every this many dates on the axis.
+ */
+export const placeLinesInSequence = (
+  lines: PlotLine[],
+  dateSpacing: number,
+) => {
+  const dates = [
+    ...new Set(lines.flatMap(({ data }) => data.map(({ date }) => +date))),
+  ]
+    .sort((a, b) => a - b)
+    .map((time) => new Date(time));
+  const positionByTime = new Map(dates.map((date, index) => [+date, index]));
+
+  return {
+    lines: lines.map((line) => ({
+      ...line,
+      data: line.data.map((point) => ({
+        ...point,
+        position: positionByTime.get(+point.date),
+      })),
+    })),
+    xExtent: [-SEQUENCE_EDGE_PADDING, dates.length - 1 + SEQUENCE_EDGE_PADDING],
+    tickValues: dates.flatMap((_, index) =>
+      index % dateSpacing === 0 ? [index] : [],
+    ),
+    formatTick: (position: number) => formatMonthAndYear(dates[position]),
+  };
+};

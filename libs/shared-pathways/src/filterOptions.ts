@@ -536,9 +536,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.CALENDAR_YEAR]: {
     type: FILTER_TYPES.CALENDAR_YEAR,
     title: "Calendar year",
-    description:
-      "Bar charts show a single calendar year at a time. The Overview chart shows all years.",
-    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.CALENDAR_YEAR),
     options: [{ label: "All", value: "ALL" }],
     get defaultOption(): FilterOption {
