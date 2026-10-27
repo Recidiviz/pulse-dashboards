@@ -101,6 +101,10 @@
         {
           "projects": ["@modules/UsTnReclassification/prisma"],
           "target": "prisma-generate"
+        },
+        {
+          "projects": ["@modules/UserSettings/prisma"],
+          "target": "prisma-generate"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/modules"],
