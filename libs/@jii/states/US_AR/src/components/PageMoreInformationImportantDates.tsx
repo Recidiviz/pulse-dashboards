@@ -26,9 +26,11 @@ import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 
+import { isPaaResident } from "../isPaaResident";
+
 export function PageMoreInformationImportantDates() {
   const { t } = useUsArTranslations();
-  const { cohortCode } = useResidentMetadata("US_AR");
+  const metadata = useResidentMetadata("US_AR");
   const params = useTypedParams(State.Resident.UsArMoreInformation);
   const [{ backTarget }] = useTypedSearchParams(
     State.Resident.UsArMoreInformation.ImportantDates,
@@ -44,9 +46,7 @@ export function PageMoreInformationImportantDates() {
           to: State.Resident.buildPath(params),
         };
 
-  const showProtectAct = cohortCode === "4";
-
-  const { heading, body } = showProtectAct
+  const { heading, body } = isPaaResident(metadata)
     ? t(($) => $.protectAct.moreInfo, { returnObjects: true })
     : t(($) => $.importantDates.moreInfo, { returnObjects: true });
 

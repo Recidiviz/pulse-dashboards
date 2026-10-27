@@ -24,6 +24,7 @@ import { LastUpdatedBanner } from "~@jii/layout";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
 import { spacing } from "~design-system";
 
+import { isPaaResident } from "../isPaaResident";
 import { UsArEdovoBanner } from "./UsArEdovoBanner";
 import { UsArImportantDates } from "./UsArImportantDates";
 
@@ -36,8 +37,7 @@ export function UsArSingleResidentHome() {
   const metadata = useResidentMetadata("US_AR");
   const { residentFlags } = useSingleResidentContext();
 
-  // TODO(JII2-140) also require isEligibleForEdovoCredit
-  const showBanner = residentFlags.usArEdovoCredits;
+  const showBanner = residentFlags.usArEdovoCredits && isPaaResident(metadata);
 
   return (
     <Wrapper>
