@@ -1,0 +1,15 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../src/client"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("USER_SETTINGS__RECIDIVIZ_DATABASE_URL")
+}
+
+model UserSettings {
+  userEmail      String @id
+  preferredState String
+}

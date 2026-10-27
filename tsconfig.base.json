@@ -90,6 +90,9 @@
         "./libs/@modules/Calendar/rules/src/index.ts"
       ],
       "~@modules/Calendar/rules/*": ["./libs/@modules/Calendar/rules/src/*"],
+      "~@modules/UserSettings/prisma": [
+        "./libs/@modules/UserSettings/prisma/src/index.ts"
+      ],
       "~@modules/UserSettings/router": [
         "./libs/@modules/UserSettings/router/src/index.ts"
       ],

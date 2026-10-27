@@ -23,7 +23,7 @@ let prismaClient: PrismaClient | undefined = undefined;
 
 export function getPrismaClient(): PrismaClient {
   if (prismaClient === undefined) {
-    const dbUrl = process.env["DATABASE_URL"];
+    const dbUrl = process.env["US_TN_RECLASSIFICATION__US_TN_DATABASE_URL"];
     const adapter = new PrismaPg({ connectionString: dbUrl });
     prismaClient = new PrismaClient({ adapter });
   }

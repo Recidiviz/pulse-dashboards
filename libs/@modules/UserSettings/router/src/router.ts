@@ -15,8 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { auth0Procedure, router } from "~@modules-server/trpc-base";
+import { z } from "zod";
+
+import { getPrismaClient } from "~@modules/UserSettings/prisma";
+import {
+  auth0Procedure,
+  baseProcedure,
+  router,
+} from "~@modules-server/trpc-base";
+
+const PrismaArgs = z.string();
 
 export const moduleRouter = router({
   stub: auth0Procedure.query(() => "stubbed"),
+  prisma: baseProcedure.input(PrismaArgs).query(async (opts) => {
+    const client = getPrismaClient();
+    const userEmail = opts.input;
+
+    const res = await client.userSettings.upsert({
+      where: { userEmail },
+      update: { preferredState: "US_WI" },
+      create: {
+        userEmail,
+        preferredState: "US_TN",
+      },
+    });
+
+    return res;
+  }),
 });

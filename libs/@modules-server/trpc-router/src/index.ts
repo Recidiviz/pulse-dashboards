@@ -18,5 +18,6 @@
 export {
   type AppRouter,
   appRouter,
+  type UserSettingsRouter,
   type UsTnReclassModuleRouter,
 } from "./router";

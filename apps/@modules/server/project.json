@@ -42,6 +42,16 @@
             "input": "{workspaceRoot}/libs/@modules/UsTnReclassification/prisma",
             "output": "modules/UsTnReclassification"
           },
+          {
+            "glob": "prisma/**/*.prisma",
+            "input": "{workspaceRoot}/libs/@modules/UserSettings/prisma",
+            "output": "modules/UserSettings"
+          },
+          {
+            "glob": "prisma/migrations/**/*",
+            "input": "{workspaceRoot}/libs/@modules/UserSettings/prisma",
+            "output": "modules/UserSettings"
+          },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
         ],

@@ -16,7 +16,7 @@
 # =============================================================================
 
 locals {
-  additional_databases = ["us_tn", "us_demo", "global"]
+  additional_databases = ["module-UserSettings-recidiviz", "module-UsTnReclassification-us_tn", "global"]
 }
 
 module "database" {

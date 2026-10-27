@@ -1,11 +1,11 @@
-name: "product-modules-prisma"
+name: "modules-UsTnReclassification-prisma"
 services:
   db:
     image: postgres:17
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=product-modules
+      - POSTGRES_DB=module-UsTnReclassification
     ports:
       - 6542:5432
     volumes:
@@ -15,7 +15,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=product-modules-test
+      - POSTGRES_DB=module-UsTnReclassification-test
     ports:
       - 6543:5432
     volumes:

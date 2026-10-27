@@ -1,0 +1,25 @@
+name: "modules-UserSettings-prisma"
+services:
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=module-UserSettings
+    ports:
+      - 6552:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  test-db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=module-UserSettings-test
+    ports:
+      - 6553:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/test-data/
+
+volumes:
+  postgres_data:

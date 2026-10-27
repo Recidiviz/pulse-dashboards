@@ -17,6 +17,7 @@
 
 import { TRPCRouterRecord } from "@trpc/server";
 
+import { manifest as userSettingsManifest } from "~@modules/UserSettings/router";
 import { manifest as usTnReclassificationManifest } from "~@modules/UsTnReclassification/router";
 import {
   auth0Procedure,
@@ -43,3 +44,4 @@ export const appRouter = router(mergedProcedures);
 export type AppRouter = typeof appRouter;
 export type UsTnReclassModuleRouter =
   typeof usTnReclassificationManifest.router;
+export type UserSettingsRouter = typeof userSettingsManifest.router;
