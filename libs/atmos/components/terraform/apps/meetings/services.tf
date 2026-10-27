@@ -100,8 +100,11 @@ resource "google_project_iam_member" "aiplatformuser" {
 }
 
 # Vertex AI's service agent, which reads meeting audio from the audio bucket when
-# a Gemini request passes it as a gs:// URI. Creating it here also makes sure it
-# exists before main.tf binds it to that bucket.
+# a Gemini request passes it as a gs:// URI. This resource only returns the
+# agent's email; Google creates the agent on the project's first Vertex call. In a
+# project that has never called Vertex, make one Vertex request before applying,
+# or the audio bucket binding in main.tf fails with "Service account ... does not
+# exist".
 resource "google_project_service_identity" "aiplatform" {
   project  = var.project_id
   provider = google-beta

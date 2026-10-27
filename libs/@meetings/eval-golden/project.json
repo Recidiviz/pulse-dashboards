@@ -38,7 +38,7 @@
         "cwd": "{projectRoot}",
         "env": {
           "GOOGLE_CLOUD_PROJECT": "recidiviz-dashboard-staging",
-          "GOOGLE_CLOUD_LOCATION": "us-central1"
+          "GOOGLE_CLOUD_LOCATION": "us"
         }
       },
       "inputs": [

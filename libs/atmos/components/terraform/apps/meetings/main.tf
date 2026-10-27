@@ -81,7 +81,7 @@ module "server" {
         { name = "CLOUD_TASKS_PROJECT", value = var.project_id },
         { name = "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL", value = google_service_account.default.email },
         { name = "GOOGLE_CLOUD_PROJECT", value = var.project_id },
-        { name = "GOOGLE_CLOUD_LOCATION", value = "us-central1" },
+        { name = "GOOGLE_CLOUD_LOCATION", value = "us" },
       ], module.envs.env_vars_by_component["server"])
 
       volume_mounts = [{

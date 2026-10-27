@@ -137,7 +137,7 @@ describe("Gemini Client", () => {
       expect(GoogleGenAI).not.toHaveBeenCalled();
     });
 
-    test("should default the location to us-central1", () => {
+    test("should default the location to us", () => {
       vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
       delete process.env["GOOGLE_CLOUD_LOCATION"];
 
@@ -146,7 +146,7 @@ describe("Gemini Client", () => {
       expect(GoogleGenAI).toHaveBeenCalledWith({
         vertexai: true,
         project: "test-project",
-        location: "us-central1",
+        location: "us",
       });
     });
 
@@ -218,7 +218,7 @@ describe("Gemini Client", () => {
         schema: z.object({ test: z.string() }),
       });
 
-      expect(lastRequest().model).toBe("gemini-2.5-flash");
+      expect(lastRequest().model).toBe("gemini-3.8-flash");
     });
 
     test("should use a custom model name when provided", async () => {

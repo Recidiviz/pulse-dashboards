@@ -21,10 +21,9 @@ import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-// gemini-2.5-flash is served only by regional Vertex endpoints such as
-// us-central1, while Gemini 3.x is served only by the "us" multi-region, so
-// moving the default model to 3.x also means changing this location.
-const DEFAULT_VERTEX_LOCATION = "us-central1";
+// Vertex serves Gemini 3.x only from the "us" and "global" multi-regions, not
+// from regional endpoints such as us-central1.
+const DEFAULT_VERTEX_LOCATION = "us";
 
 /**
  * Returns a Gemini client that routes through Vertex AI in GCP
@@ -115,7 +114,7 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   systemInstruction,
   parts,
   schema,
-  modelName = "gemini-2.5-flash",
+  modelName = "gemini-3.8-flash",
   timeout,
 }: ZodGenerateContentOptions<T>): Promise<T["_output"]> => {
   const response = await client.models.generateContent({
