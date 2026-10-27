@@ -93,8 +93,9 @@ This module creates the following resources:
 
 ### GKE Cluster
 
-- `google_container_cluster.primary`: GKE cluster with L4 ILB subsetting enabled
-- `google_container_node_pool.primary_nodes`: Node pool with private nodes (`e2-medium` machines)
+- `google_container_cluster.primary`: GKE cluster with L4 ILB subsetting and Workload Identity enabled
+- `google_container_node_pool.primary_nodes`: Node pool with private nodes (`e2-medium` machines) that run as `cloud-sql-proxy-node` and serve pods the GKE metadata server
+- `google_service_account.node` and `google_project_iam_member.node_default`: Node service account with only `roles/container.defaultNodeServiceAccount`
 
 ### Cloud SQL Proxy
 

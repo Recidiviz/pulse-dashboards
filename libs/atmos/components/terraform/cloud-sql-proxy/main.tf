@@ -42,6 +42,24 @@ resource "google_container_cluster" "primary" {
   initial_node_count       = 1
 
   ip_allocation_policy {}
+
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
+}
+
+# Without a dedicated account the nodes run as the Compute Engine default
+# service account, which holds roles/editor, and any pod can fetch its token
+# from the metadata server.
+resource "google_service_account" "node" {
+  account_id   = "cloud-sql-proxy-node"
+  display_name = "cloud-sql-proxy GKE nodes"
+}
+
+resource "google_project_iam_member" "node_default" {
+  project = var.project_id
+  role    = "roles/container.defaultNodeServiceAccount"
+  member  = "serviceAccount:${google_service_account.node.email}"
 }
 
 resource "google_container_node_pool" "primary_nodes" {
@@ -50,12 +68,24 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = var.region
   node_count = 1
 
+  depends_on = [google_project_iam_member.node_default]
+
   network_config {
     enable_private_nodes = true
   }
 
   node_config {
     machine_type = "e2-medium"
+
+    # Changing the service account replaces the node pool, which takes the
+    # single proxy node, and the connectivity it provides, down for a few
+    # minutes.
+    service_account = google_service_account.node.email
+
+    # Serves pods the GKE metadata server, which hides the node's credentials.
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
 
     # Required by org policy constraints/compute.requireShieldedVm.
     shielded_instance_config {
