@@ -16,7 +16,12 @@
 # =============================================================================
 
 locals {
-  additional_databases = ["module-UserSettings-recidiviz", "module-UsTnReclassification-us_tn", "global"]
+  additional_databases = [
+    "module-Calendar-us_co",
+    "module-UserSettings-recidiviz",
+    "module-UsTnReclassification-us_tn",
+    "global"
+  ]
 }
 
 module "database" {

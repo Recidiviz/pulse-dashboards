@@ -86,6 +86,9 @@
       "~@meetings/trpc-types": ["./libs/@meetings/trpc-types/src/index.ts"],
       "~@meetings/trpc/*": ["./libs/@meetings/trpc/src/*"],
       "~@meetings/trpc/test/*": ["./libs/@meetings/trpc/__tests__/*"],
+      "~@modules/Calendar/prisma": [
+        "./libs/@modules/Calendar/prisma/src/index.ts"
+      ],
       "~@modules/Calendar/rules": [
         "./libs/@modules/Calendar/rules/src/index.ts"
       ],

@@ -2,24 +2,30 @@
 
 BASE_DIR="$(pwd)"
 
-MODULES="USER_SETTINGS US_TN_RECLASSIFICATION"
+MODULES="CALENDAR USER_SETTINGS US_TN_RECLASSIFICATION"
+
+CALENDAR_ENABLED_STATES="US_CO"
+CALENDAR_FOLDER="Calendar"
+
 US_TN_RECLASSIFICATION_ENABLED_STATES="US_TN"
 US_TN_RECLASSIFICATION_FOLDER="UsTnReclassification"
 
 USER_SETTINGS_ENABLED_STATES="RECIDIVIZ"
 USER_SETTINGS_FOLDER="UserSettings"
 
-# Loop over the modules used as keys for ENABLED_STATES
+# Loop over the modules listed above
 for MODULE in $MODULES
 do
+  # Grab the folder name env var and read it
   FOLDER_ENV_VAR_NAME="${MODULE}_FOLDER"
   eval "FOLDER=\${$FOLDER_ENV_VAR_NAME}"
   cd $BASE_DIR/modules/$FOLDER || exit
 
+  # Grab the enabled states env var and read it
   ENABLED_STATES_ENV_VAR_NAME="${MODULE}_ENABLED_STATES"
   eval "ENABLED_STATES=\${$ENABLED_STATES_ENV_VAR_NAME}"
 
-  # Pull list of states for this module
+  # Loop over states for this module and migrate each db
   for STATE in $ENABLED_STATES
   do
      DB_NAME="${MODULE}__${STATE}"

@@ -1,0 +1,25 @@
+name: "modules-Calendar-prisma"
+services:
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=module-Calendar
+    ports:
+      - 6562:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  test-db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=module-Calendar-test
+    ports:
+      - 6563:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/test-data/
+
+volumes:
+  postgres_data:
