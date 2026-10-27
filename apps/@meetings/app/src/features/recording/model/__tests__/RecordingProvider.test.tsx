@@ -114,7 +114,8 @@ describe("RecordingProvider", () => {
     });
 
     it("shows in-use message for NotReadableError", async () => {
-      const err = new DOMException("Device in use", "NotReadableError");
+      const err = new Error("Device in use");
+      err.name = "NotReadableError";
       mockStart.mockRejectedValueOnce(err);
 
       const { result } = renderHook(() => useAudioRecording(), { wrapper });
@@ -134,7 +135,8 @@ describe("RecordingProvider", () => {
     });
 
     it("shows not-found message for NotFoundError", async () => {
-      const err = new DOMException("No mic", "NotFoundError");
+      const err = new Error("No mic");
+      err.name = "NotFoundError";
       mockStart.mockRejectedValueOnce(err);
 
       const { result } = renderHook(() => useAudioRecording(), { wrapper });
@@ -166,6 +168,31 @@ describe("RecordingProvider", () => {
         expect.stringContaining("Microphone access required"),
         6000,
       );
+    });
+
+    // Hermes on native has no DOMException global.
+    it("successfully reports errors when DOMException is not defined", async () => {
+      const originalDOMException = globalThis.DOMException;
+      // @ts-expect-error simulating a runtime without DOMException
+      delete globalThis.DOMException;
+
+      const err = new Error("Microphone permission not granted");
+      mockStart.mockRejectedValueOnce(err);
+
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
+
+      await act(async () => {
+        await result.current.startRecording();
+      });
+
+      expect(mockShowSnackbar).toHaveBeenCalledWith(
+        expect.stringContaining("Microphone access required"),
+        6000,
+      );
+      expect(Sentry.captureException).toHaveBeenCalledWith(err);
+
+      // reset environment
+      globalThis.DOMException = originalDOMException;
     });
   });
 

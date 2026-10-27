@@ -39,7 +39,7 @@ export const MIC_ERROR_MESSAGES: Record<
 };
 
 export function getMicErrorType(error: unknown): MicErrorType {
-  const name = error instanceof DOMException ? error.name : undefined;
+  const name = error instanceof Error ? error.name : undefined;
   switch (name) {
     case "NotReadableError":
     case "TrackStartError":
