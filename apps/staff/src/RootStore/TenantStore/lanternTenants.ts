@@ -16,6 +16,7 @@
 // =============================================================================
 
 // Used for I18n copy translations
+import { LanternTenants, TenantId } from "../types";
 import US_MO_TRANSLATIONS from "./us_mo_translations";
 import US_PA_TRANSLATIONS from "./us_pa_translations";
 
@@ -24,6 +25,15 @@ export const US_PA = "US_PA";
 export const US_DEMO = "US_DEMO";
 
 export const LANTERN_TENANTS = [US_MO, US_PA] as const;
+export const LANTERN_PATH = "/community/revocations";
+
+export function isLanternTenantId(tenantId: TenantId): boolean {
+  return LANTERN_TENANTS.includes(tenantId as LanternTenants);
+}
+
+export function isLanternPage(): boolean {
+  return window.location.pathname?.startsWith(LANTERN_PATH);
+}
 
 export const TRANSLATIONS = {
   US_MO: US_MO_TRANSLATIONS,

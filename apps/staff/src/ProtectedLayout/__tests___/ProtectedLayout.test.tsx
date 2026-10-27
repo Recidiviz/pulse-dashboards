@@ -22,6 +22,7 @@ import { Mock } from "vitest";
 import { useRootStore, useUserStore } from "../../components/StoreProvider";
 import DashboardLayout from "../../core/DashboardLayout";
 import LanternLayout from "../../lantern/LanternLayout";
+import { LANTERN_PATH } from "../../RootStore/TenantStore/lanternTenants";
 import ProtectedLayout from "../ProtectedLayout";
 
 vi.mock("../../components/StoreProvider");
@@ -136,7 +137,7 @@ describe("ProtectedLayout", () => {
 
     it("renders the LanternLayout on '/community/revocations'", () => {
       render(
-        <MemoryRouter initialEntries={["/community/revocations"]}>
+        <MemoryRouter initialEntries={[LANTERN_PATH]}>
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>

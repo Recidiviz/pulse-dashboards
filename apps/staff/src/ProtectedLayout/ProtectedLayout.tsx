@@ -32,6 +32,7 @@ import Profile from "../core/Profile";
 import useAuth from "../hooks/useAuth";
 import LanternLayout from "../lantern/LanternLayout";
 import RedirectHome from "../RedirectHome";
+import { LANTERN_PATH } from "../RootStore/TenantStore/lanternTenants";
 
 // Preserve bookmarked /sarAccess URLs after route rename
 const SarAccessRedirect = () => {
@@ -74,10 +75,10 @@ const ProtectedLayout = observer(function ProtectedLayout() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/" element={<RedirectHome />} />
       <Route path="/*" element={<DashboardLayout />} />
-      <Route path="/community/revocations" element={<LanternLayout />} />
+      <Route path={LANTERN_PATH} element={<LanternLayout />} />
       <Route
         path="/revocations"
-        element={<Navigate replace to="/community/revocations" />}
+        element={<Navigate replace to={LANTERN_PATH} />}
       />
       <Route path="/sarAccess/*" element={<SarAccessRedirect />} />
     </Routes>

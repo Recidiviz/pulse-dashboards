@@ -299,6 +299,111 @@ describe("TenantStore", () => {
     });
   });
 
+  describe("when viewing a Lantern page", () => {
+    const recidivizUser = {
+      [metadataField]: { stateCode: "recidiviz" },
+      email_verified: true,
+    };
+
+    beforeEach(() => {
+      sessionStorage.clear();
+      // @ts-expect-error
+      delete window.location;
+      // @ts-expect-error grandfathered
+      window.location = {
+        pathname: "/community/revocations",
+        search: "",
+      } as Location;
+    });
+
+    it("picks the tenantId in the url query for Recidiviz users", () => {
+      // @ts-expect-error grandfathered
+      window.location = {
+        pathname: "/community/revocations",
+        search: "?tenantId=US_TN",
+      } as Location;
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_AZ", "US_MO", "US_TN"],
+        userHasAccess: () => true,
+        user: recidivizUser,
+        isRecidivizUser: true,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual("US_TN");
+    });
+
+    it("picks the tenant ID in storage when that ID is a Lantern tenant", () => {
+      sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, "US_MO");
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_AZ", "US_PA"],
+        userHasAccess: () => true,
+        user: recidivizUser,
+        isRecidivizUser: true,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual("US_MO");
+    });
+
+    it("picks the first available Lantern tenant when no ID is in storage", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_AZ", "US_MO", "US_PA"],
+        userHasAccess: () => true,
+        user: recidivizUser,
+        isRecidivizUser: true,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual("US_MO");
+    });
+
+    it("picks the tenant ID in storage when the user has no Lantern tenants", () => {
+      sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, "US_AZ");
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_TN"],
+        userHasAccess: () => true,
+        user: recidivizUser,
+        isRecidivizUser: true,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual("US_AZ");
+    });
+
+    it("returns the first available tenant when the user has no Lantern tenants and no tenants in storage", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_AZ", "US_TN"],
+        userHasAccess: () => true,
+        user: recidivizUser,
+        isRecidivizUser: true,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual("US_AZ");
+    });
+  });
+
   describe("when getting task configurations", () => {
     beforeEach(() => {
       sessionStorage.clear();

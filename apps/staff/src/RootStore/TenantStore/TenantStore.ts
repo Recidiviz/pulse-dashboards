@@ -41,7 +41,7 @@ import {
 } from "../types";
 import UserStore from "../UserStore";
 import getDistrictKeyMap, { DistrictKeyMap } from "./districtKeyMappings";
-import { LANTERN_TENANTS } from "./lanternTenants";
+import { isLanternPage, isLanternTenantId } from "./lanternTenants";
 import methodology from "./methodology";
 
 type TenantConfigLabelType =
@@ -54,10 +54,40 @@ export const CURRENT_TENANT_IN_SESSION = "adminUserCurrentTenantInSession";
 const TENANT_ID_QUERY_PARAM = "tenantId";
 
 /*
+ * Returns the tenantID for a Lantern page, in priority of:
+ *  1. The sessionStorage cache if already set
+ *  2. The first available state.
+ *
+ * This function will only ever return a tenantID for a State where Lantern is enabled.
+ */
+function getTenantIdForLanternPage(
+  userStore: UserStore,
+  storageStateCode: TenantId | undefined,
+): TenantId | undefined {
+  if (userStore.user) {
+    const { availableStateCodes, userHasAccess } = userStore;
+
+    if (
+      storageStateCode &&
+      userHasAccess(storageStateCode) &&
+      isLanternTenantId(storageStateCode)
+    ) {
+      return storageStateCode;
+    }
+
+    const lanternStateCode = availableStateCodes.find(isLanternTenantId);
+    if (lanternStateCode) {
+      return lanternStateCode;
+    }
+  }
+}
+
+/*
  * Returns the current state that should be viewed, in priority of:
  *  1. The tenantId query param, if set (Recidiviz users only)
- *  2. The sessionStorage cache if already set
- *  3. The first available state in alphabetical order.
+ *  2. On a Lantern page, the lantern specific tenantID if it exists
+ *  3. The sessionStorage cache if already set
+ *  4. The first available state.
  */
 function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
   const storageStateCode = sessionStorage.getItem(CURRENT_TENANT_IN_SESSION) as
@@ -71,6 +101,15 @@ function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
       const queryTenantId = getTenantIdFromQuery();
       if (queryTenantId) {
         return queryTenantId;
+      }
+    }
+    if (isLanternPage()) {
+      const lanternPageTenantId = getTenantIdForLanternPage(
+        userStore,
+        storageStateCode,
+      );
+      if (lanternPageTenantId) {
+        return lanternPageTenantId;
       }
     }
 
@@ -165,7 +204,7 @@ export default class TenantStore {
   get isLanternTenant(): boolean {
     if (!this.currentTenantId) return false;
     const tenantId = this.currentTenantId as LanternTenants;
-    return LANTERN_TENANTS.includes(tenantId);
+    return isLanternTenantId(tenantId);
   }
 
   get tenantMappings(): DistrictKeyMap {
