@@ -47,7 +47,7 @@ import {
   ParoleRecordModal,
   ParoleRecordModalNarrative,
 } from "../ParoleRecordModal";
-import { AlertBanner, FactRow, formatDate, SectionStack } from "../shared";
+import { AlertBanner, formatDate, SectionStack } from "../shared";
 
 const VICTIM_ALERT_COLOR = "#D97706";
 const VICTIM_ALERT_BACKGROUND_COLOR = "rgba(217, 119, 6, 0.08)";
@@ -88,8 +88,25 @@ const DescriptionButton = styled.button.attrs({ type: "button" })`
   width: calc(100% + 2 * ${DESCRIPTION_BUTTON_INSET});
 `;
 
+const OFFENSE_FACTS_SINGLE_ROW_MIN_WIDTH = rem(720);
+const OffenseFactsContainer = styled.div`
+  container-type: inline-size;
+`;
+
+const OffenseFactGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+
+  @container (min-width: ${OFFENSE_FACTS_SINGLE_ROW_MIN_WIDTH}) {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+`;
+
 const OffenseFact = styled(ParoleFactStack)`
-  flex: 1 1 ${rem(150)};
   min-width: 0;
 `;
 
@@ -118,8 +135,8 @@ function offenseFacts(offense: ParoleOffense) {
 
 /**
  * An offense's heading, with the conviction on the left and the class felony
- * on the right, then its facts in a row that wraps and stretches to fill the
- * width, then the description on its own line.
+ * on the right, then its facts on one row when they fit, or in a three column
+ * grid when they do not, then the description on its own line.
  *
  * @param offense - The offense to show.
  * @param description - The offense description, as the caller wants it drawn.
@@ -139,14 +156,16 @@ function OffenseDetails({
           {offense.classFelony}
         </ParoleRecordHeaderDetail>
       </ParoleRecordHeader>
-      <FactRow>
-        {offenseFacts(offense).map((fact) => (
-          <OffenseFact key={fact.label}>
-            <ParoleFactLabel>{fact.label}</ParoleFactLabel>
-            <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
-          </OffenseFact>
-        ))}
-      </FactRow>
+      <OffenseFactsContainer>
+        <OffenseFactGrid>
+          {offenseFacts(offense).map((fact) => (
+            <OffenseFact key={fact.label}>
+              <ParoleFactLabel>{fact.label}</ParoleFactLabel>
+              <ParoleSmallFactValue>{fact.value}</ParoleSmallFactValue>
+            </OffenseFact>
+          ))}
+        </OffenseFactGrid>
+      </OffenseFactsContainer>
       {description}
     </>
   );
