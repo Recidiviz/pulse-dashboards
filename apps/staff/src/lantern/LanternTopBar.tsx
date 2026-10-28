@@ -41,7 +41,7 @@ const LanternTopBar: React.FC = observer(function LanternTopBar() {
         )}
         {hasSARAccess && (
           <li>
-            <NavLink to="/sar">Go to SAR Dashboard</NavLink>
+            <NavLink to="/sar">Go to SAR Tool</NavLink>
           </li>
         )}
         <ProfileLink />

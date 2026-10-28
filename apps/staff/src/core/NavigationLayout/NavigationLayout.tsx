@@ -448,7 +448,7 @@ function PSIStaffLink({
     <DropdownMenuItem>
       <NavLink to={psiUrl("staffDashboard", { staffPseudoId })} role="menuitem">
         {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-        Go to PSI Case Dashboard
+        Go to PSI Tool
       </NavLink>
     </DropdownMenuItem>
   );
@@ -468,7 +468,7 @@ function SARStaffLink({
     <DropdownMenuItem>
       <NavLink to={sarUrl("staffDashboard", { staffPseudoId })} role="menuitem">
         {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-        Go to SAR Dashboard
+        Go to SAR Tool
       </NavLink>
     </DropdownMenuItem>
   );
@@ -491,7 +491,7 @@ function PSISupervisorLink({
         role="menuitem"
       >
         {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-        Go to PSI Supervisor Dashboard
+        Go to PSI Supervisor Tool
       </NavLink>
     </DropdownMenuItem>
   );
