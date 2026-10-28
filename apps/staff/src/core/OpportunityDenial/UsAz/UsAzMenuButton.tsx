@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 
-import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { UsAzTransferToAdministrativeSupervisionV2Opportunity } from "../../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionV2Opportunity/UsAzTransferToAdministrativeSupervisionV2Opportunity";
 import {
   deleteSubmitted,
@@ -27,8 +26,7 @@ import {
 import { StatusAwareButton } from "../MenuButton.styles";
 
 type UsAzAdminSupOpportunity =
-  | UsAzTransferToAdministrativeSupervisionOpportunity
-  | UsAzTransferToAdministrativeSupervisionV2Opportunity;
+  UsAzTransferToAdministrativeSupervisionV2Opportunity;
 
 export const UsAzMarkSubmittedButton = observer(
   function UsAzMarkSubmittedButton({

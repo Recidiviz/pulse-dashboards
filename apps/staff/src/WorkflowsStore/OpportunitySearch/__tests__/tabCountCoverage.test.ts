@@ -48,7 +48,6 @@ vi.mock("@sentry/react", () => ({ captureException: vi.fn() }));
  */
 const UNCHECKABLE = [
   "pastFTRD",
-  "usAzTransferToAdministrativeSupervision",
   "usAzTransferToAdministrativeSupervisionV2",
   "usIaCompleteSupervisionLevelDowngrade",
   "usTxRemovalFromElectronicMonitoring",

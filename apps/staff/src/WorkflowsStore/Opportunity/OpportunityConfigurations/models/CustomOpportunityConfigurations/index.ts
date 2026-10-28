@@ -23,7 +23,6 @@ import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl"
 import { PastFTRDConfiguration } from "./PastFTRDConfiguration";
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
-import { UsAzTransferToAdministrativeSupervisionConfiguration } from "./UsAz/UsAzTransferToAdministrativeSupervisionConfiguration";
 import { UsAzTransferToAdministrativeSupervisionV2Configuration } from "./UsAz/UsAzTransferToAdministrativeSupervisionV2Configuration";
 import { UsIaEarlyDischargeConfiguration } from "./UsIa/UsIaEarlyDischargeConfiguration";
 import { UsIaSupervisionLevelDowngradeConfiguration } from "./UsIa/UsIaSupervisionLevelDischargeConfiguration";
@@ -63,8 +62,6 @@ const customOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
 > = {
   // Arizona
-  usAzTransferToAdministrativeSupervision:
-    UsAzTransferToAdministrativeSupervisionConfiguration,
   usAzTransferToAdministrativeSupervisionV2:
     UsAzTransferToAdministrativeSupervisionV2Configuration,
   usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,

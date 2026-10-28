@@ -93,7 +93,6 @@ import {
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz";
-import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { UsAzTransferToAdministrativeSupervisionV2Opportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionV2Opportunity/UsAzTransferToAdministrativeSupervisionV2Opportunity";
 import { UsIdOverdueFaceToFaceContactOpportunity } from "../../WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact";
 import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportunity/UsNe";
@@ -112,7 +111,6 @@ import {
 } from "../CaseloadTable";
 import { DownloadCaseloadButton } from "../CaseloadTable/DownloadTableButton";
 import InsightsPill from "../InsightsPill";
-import { UsAzMarkSubmittedButton } from "../OpportunityDenial/UsAz/UsAzMenuButton";
 import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
@@ -497,17 +495,6 @@ function AssignedStaffNameCell({ row }: { row: Row<Opportunity> }) {
 }
 
 export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
-  if (
-    row.original instanceof UsAzTransferToAdministrativeSupervisionOpportunity
-  ) {
-    if (row.original.config.supportsSupervisorReviewOnGrants) return null;
-    return (
-      <RightAlignedWrapper>
-        <UsAzMarkSubmittedButton opportunity={row.original} />
-      </RightAlignedWrapper>
-    );
-  }
-
   return row.original.form?.navigateToFormText ? (
     <RightAlignedWrapper>
       <NavigateToFormButton

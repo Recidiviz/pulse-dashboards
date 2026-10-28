@@ -42,7 +42,7 @@ export const opportunitySchemaBase = z.object({
    * The date when the opportunity first became almost eligible.
    * Available for LSU and usTnCompliantReporting2025Policy opportunities
    * as of 12/8/2025.
-   * Available for usAzTransferToAdministrativeSupervision as of 02/03/2026.
+   * Available for usAzTransferToAdministrativeSupervisionV2 as of 06/10/2026.
    *
    * Do NOT use as a general almost eligible date for all opportunity types
    * -- use case-by-case basis only.

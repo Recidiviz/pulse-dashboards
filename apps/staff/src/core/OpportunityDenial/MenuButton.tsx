@@ -21,7 +21,6 @@ import {
   Opportunity,
   UsMiCustodyLevelDowngradeOpportunity,
 } from "../../WorkflowsStore";
-import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { UsAzTransferToAdministrativeSupervisionV2Opportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionV2Opportunity/UsAzTransferToAdministrativeSupervisionV2Opportunity";
 import {
   UsIaEarlyDischargeOpportunity,
@@ -81,7 +80,6 @@ export const MenuButton = observer(function MenuButton({
   }
   // Arizona Admin Supervision requires separate buttons rather than dropdowns
   if (
-    opportunity instanceof UsAzTransferToAdministrativeSupervisionOpportunity ||
     opportunity instanceof UsAzTransferToAdministrativeSupervisionV2Opportunity
   ) {
     return (

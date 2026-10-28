@@ -17,13 +17,13 @@
 
 import UserStore from "../../../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration } from "../../../interfaces";
-import { UsAzTransferToAdministrativeSupervisionConfiguration } from "./UsAzTransferToAdministrativeSupervisionConfiguration";
+import { UsAzTransferToAdministrativeSupervisionV2Configuration } from "./UsAzTransferToAdministrativeSupervisionV2Configuration";
 
 const mockConfigObject = {} as unknown as IApiOpportunityConfiguration;
 
-describe("UsAzTransferToAdministrativeSupervisionConfiguration supervisor approval", () => {
+describe("UsAzTransferToAdministrativeSupervisionV2Configuration supervisor approval", () => {
   test("does not require supervisor approval when feature variant is off", () => {
-    const config = new UsAzTransferToAdministrativeSupervisionConfiguration(
+    const config = new UsAzTransferToAdministrativeSupervisionV2Configuration(
       mockConfigObject,
       new UserStore({}),
     );
@@ -31,7 +31,7 @@ describe("UsAzTransferToAdministrativeSupervisionConfiguration supervisor approv
   });
 
   test("requires supervisor approval when feature variant is on", () => {
-    const config = new UsAzTransferToAdministrativeSupervisionConfiguration(
+    const config = new UsAzTransferToAdministrativeSupervisionV2Configuration(
       mockConfigObject,
       {
         activeFeatureVariants: { usAzAdminSupervisionApprovalFlow: {} },

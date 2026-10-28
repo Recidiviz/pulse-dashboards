@@ -310,7 +310,6 @@ export type OpportunityTab =
   | "Reduction Pending"
 
   // For US_AZ Admin Supervision
-  | "Eligible per Initial Assessment"
   | "Eligible per ORAS"
   | "Submitted for Supervisor Review"
 
