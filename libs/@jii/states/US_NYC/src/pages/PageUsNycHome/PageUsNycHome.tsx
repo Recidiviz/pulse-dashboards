@@ -15,17 +15,58 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Redirect } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { withPresenterManager } from "~hydration-utils";
 
-// Temporary redirect until a US_NYC home page is designed.
-export function PageUsNycHome() {
-  const residentUrlParams = useTypedParams(State.Resident);
-  return (
-    <Redirect
-      to={State.Resident.ResourceExplorer.buildPath(residentUrlParams)}
-    />
-  );
+import { UsNycHomePresenter } from "../PageUsNyc/UsNycHomePresenter";
+import {
+  PageContainer,
+  PageHeader,
+  SpacedSection,
+} from "./PageUsNycHome.styles";
+
+const COPY = {
+  title: "Learn more about your case",
+};
+
+const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
+  function PageUsNycHome({ presenter }) {
+    const residentUrlParams = useTypedParams(State.Resident);
+
+    // Residents without usNycSentenceDatesV1 keep the redirect until a US_NYC
+    // home page is designed.
+    if (!presenter.shouldShowusNycSentenceDatesV1) {
+      return (
+        <Redirect
+          to={State.Resident.ResourceExplorer.buildPath(residentUrlParams)}
+        />
+      );
+    }
+
+    return (
+      <PageContainer>
+        <SpacedSection>
+          <PageHeader>{COPY.title}</PageHeader>
+        </SpacedSection>
+      </PageContainer>
+    );
+  },
+);
+
+function usePresenter() {
+  const {
+    residentFlags: { usNycSentenceDatesV1 },
+  } = useSingleResidentContext();
+  return new UsNycHomePresenter(!!usNycSentenceDatesV1);
 }
+
+export const PageUsNycHome = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
+});

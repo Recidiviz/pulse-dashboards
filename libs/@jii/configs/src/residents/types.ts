@@ -41,7 +41,8 @@ type ResidentFlag =
   | "usNcRNAAutoEnablement"
   | "usMaReentry"
   | "usMaSentenceDatesV1"
-  | "usNeCheckInTool";
+  | "usNeCheckInTool"
+  | "usNycSentenceDatesV1";
 
 // this type must stay in sync with the UserFlagId enum
 // defined in the prisma schema.
