@@ -74,6 +74,11 @@
             "output": "."
           },
           {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@sentencing/prisma",
+            "output": "."
+          },
+          {
             "glob": "prisma/migrations/**/*",
             "input": "{workspaceRoot}/libs/@sentencing/prisma",
             "output": "."

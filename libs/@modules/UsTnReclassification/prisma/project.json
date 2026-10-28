@@ -36,10 +36,11 @@
       "defaultConfiguration": "dev"
     },
     "prisma-generate": {
-      "inputs": ["{projectRoot}/prisma/**/*"],
-      "executor": "@nx-tools/nx-prisma:generate",
+      "inputs": ["{projectRoot}/prisma/**/*", "{projectRoot}/prisma.config.ts"],
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma generate",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},
@@ -48,9 +49,10 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma-format": {
-      "executor": "@nx-tools/nx-prisma:format",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma format",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},
@@ -60,9 +62,10 @@
     },
     "requires-sops-env:prisma-migrate": {
       "dependsOn": ["local-dbs"],
-      "executor": "@nx-tools/nx-prisma:migrate",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma migrate dev",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},
@@ -71,9 +74,10 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma-pull": {
-      "executor": "@nx-tools/nx-prisma:pull",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma db pull",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},
@@ -82,10 +86,11 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma-push": {
-      "executor": "@nx-tools/nx-prisma:push",
+      "executor": "nx:run-commands",
       "dependsOn": ["local-dbs"],
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma db push",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},
@@ -94,10 +99,11 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma-reset": {
-      "executor": "@nx-tools/nx-prisma:reset",
+      "executor": "nx:run-commands",
       "dependsOn": ["local-dbs"],
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma migrate reset",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},
@@ -106,9 +112,10 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma-studio": {
-      "executor": "@nx-tools/nx-prisma:studio",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma"
+        "command": "prisma studio",
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {},

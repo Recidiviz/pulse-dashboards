@@ -38,6 +38,11 @@
             "output": "modules/Calendar"
           },
           {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@modules/Calendar/prisma",
+            "output": "modules/Calendar"
+          },
+          {
             "glob": "prisma/migrations/**/*",
             "input": "{workspaceRoot}/libs/@modules/Calendar/prisma",
             "output": "modules/Calendar"
@@ -48,12 +53,22 @@
             "output": "modules/UserSettings"
           },
           {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@modules/UserSettings/prisma",
+            "output": "modules/UserSettings"
+          },
+          {
             "glob": "prisma/migrations/**/*",
             "input": "{workspaceRoot}/libs/@modules/UserSettings/prisma",
             "output": "modules/UserSettings"
           },
           {
             "glob": "prisma/**/*.prisma",
+            "input": "{workspaceRoot}/libs/@modules/UsTnReclassification/prisma",
+            "output": "modules/UsTnReclassification"
+          },
+          {
+            "glob": "prisma.config.ts",
             "input": "{workspaceRoot}/libs/@modules/UsTnReclassification/prisma",
             "output": "modules/UsTnReclassification"
           },

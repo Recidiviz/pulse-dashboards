@@ -40,6 +40,11 @@
             "input": "{workspaceRoot}/libs/@jii-texting/prisma",
             "output": "."
           },
+          {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@jii-texting/prisma",
+            "output": "."
+          },
           "{workspaceRoot}/.yarnrc.yml",
           "{projectRoot}/scripts/*"
         ],

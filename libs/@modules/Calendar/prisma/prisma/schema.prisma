@@ -1,12 +1,10 @@
 generator client {
   provider   = "prisma-client"
   output     = "../src/client"
-  engineType = "client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("CALENDAR__US_CO_DATABASE_URL")
 }
 
 model Calendar {

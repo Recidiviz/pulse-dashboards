@@ -16,9 +16,12 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient, StateCode } from "@prisma/jii-texting/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env["DATABASE_URL"] }),
+});
 
 async function main() {
   // Person

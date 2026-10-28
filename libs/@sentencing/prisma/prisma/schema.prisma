@@ -2,12 +2,10 @@ generator client {
   provider        = "prisma-client"
   previewFeatures = ["fullTextSearchPostgres"]
   output          = "../src/client"
-  engineType      = "client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum StateCode {

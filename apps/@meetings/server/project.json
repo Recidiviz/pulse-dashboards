@@ -82,6 +82,11 @@
             "output": "."
           },
           {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@meetings/prisma",
+            "output": "."
+          },
+          {
             "glob": "prisma/migrations/**/*",
             "input": "{workspaceRoot}/libs/@meetings/prisma",
             "output": "."

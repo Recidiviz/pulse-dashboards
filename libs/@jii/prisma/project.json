@@ -130,16 +130,21 @@
       "defaultConfiguration": "dev"
     },
     "prisma-format": {
-      "executor": "@nx-tools/nx-prisma:format",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma format",
+        "cwd": "{projectRoot}"
       }
     },
     "prisma-generate": {
-      "inputs": ["{projectRoot}/prisma/schema.prisma"],
-      "executor": "@nx-tools/nx-prisma:generate",
+      "inputs": [
+        "{projectRoot}/prisma/schema.prisma",
+        "{projectRoot}/prisma.config.ts"
+      ],
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma generate",
+        "cwd": "{projectRoot}"
       }
     },
     "prisma-migrate": {
@@ -165,9 +170,10 @@
       "metadata": {
         "description": "Pulls changes from the DB into the Prisma schema. Requires a DATABASE_URL to be specified in the env."
       },
-      "executor": "@nx-tools/nx-prisma:pull",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma db pull",
+        "cwd": "{projectRoot}"
       }
     },
     "prisma-push": {
@@ -215,18 +221,20 @@
       "metadata": {
         "description": "Lets you mark failed migrations as applied or rolled back. Requires a DATABASE_URL to be specified in the env."
       },
-      "executor": "@nx-tools/nx-prisma:resolve",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate resolve",
+        "cwd": "{projectRoot}"
       }
     },
     "prisma-status": {
       "metadata": {
         "description": "Reports on the state of migrations in the DB. Requires a DATABASE_URL to be specified in the env."
       },
-      "executor": "@nx-tools/nx-prisma:status",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate status",
+        "cwd": "{projectRoot}"
       }
     },
     "prisma-studio": {
@@ -244,9 +252,10 @@
       }
     },
     "prisma-validate": {
-      "executor": "@nx-tools/nx-prisma:validate",
+      "executor": "nx:run-commands",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma validate",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:test": {

@@ -61,86 +61,99 @@
       }
     },
     "prisma-generate": {
-      "inputs": ["{projectRoot}/prisma/schema.prisma"],
-      "executor": "@nx-tools/nx-prisma:generate",
+      "inputs": [
+        "{projectRoot}/prisma/schema.prisma",
+        "{projectRoot}/prisma.config.ts"
+      ],
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma generate",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-format": {
-      "executor": "@nx-tools/nx-prisma:format",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma format",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-migrate": {
       "dependsOn": ["docker"],
-      "executor": "@nx-tools/nx-prisma:migrate",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate dev",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-pull": {
-      "executor": "@nx-tools/nx-prisma:pull",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma db pull",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-push": {
-      "executor": "@nx-tools/nx-prisma:push",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "dependsOn": ["docker"],
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma db push",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-deploy": {
-      "executor": "@nx-tools/nx-prisma:deploy",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate deploy",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-status": {
-      "executor": "@nx-tools/nx-prisma:status",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate status",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-studio": {
-      "executor": "@nx-tools/nx-prisma:studio",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma studio",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-reset": {
-      "executor": "@nx-tools/nx-prisma:reset",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate reset",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-resolve": {
-      "executor": "@nx-tools/nx-prisma:resolve",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma migrate resolve",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:prisma-seed": {
@@ -154,11 +167,12 @@
       }
     },
     "requires-sops-env:prisma-validate": {
-      "executor": "@nx-tools/nx-prisma:validate",
+      "executor": "nx:run-commands",
       "configurations": { "dev": {}, "test": {} },
       "defaultConfiguration": "dev",
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
+        "command": "prisma validate",
+        "cwd": "{projectRoot}"
       }
     },
     "requires-sops-env:custom-prisma-deploy": {

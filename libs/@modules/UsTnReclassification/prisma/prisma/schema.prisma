@@ -1,12 +1,10 @@
 generator client {
   provider   = "prisma-client"
   output     = "../src/client"
-  engineType = "client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("US_TN_RECLASSIFICATION__US_TN_DATABASE_URL")
 }
 
 enum StateCode {

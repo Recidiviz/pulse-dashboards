@@ -178,6 +178,11 @@
             "output": "."
           },
           {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@jii/prisma",
+            "output": "."
+          },
+          {
             "glob": "prisma/migrations/**/*",
             "input": "{workspaceRoot}/libs/@jii/prisma",
             "output": "."

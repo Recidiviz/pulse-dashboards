@@ -1,12 +1,10 @@
 generator client {
     provider   = "prisma-client"
     output     = "../src/client"
-    engineType = "client"
 }
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
 }
 
 // Can be used to store random bits of user activity or preferences.
