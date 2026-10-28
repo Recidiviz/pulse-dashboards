@@ -42,7 +42,7 @@ const HeaderCell: React.FC<{
     <Text style={{ fontSize: font.size.base, color: color.text.default }}>
       {label}
     </Text>
-    <Text style={{ fontSize: font.size.xxxl, fontWeight: font.weight.medium }}>
+    <Text style={{ fontSize: font.size.xxl, fontWeight: font.weight.medium }}>
       {value}
     </Text>
   </View>
