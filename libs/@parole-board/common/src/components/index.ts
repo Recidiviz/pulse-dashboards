@@ -18,4 +18,5 @@
 // Shared UI primitives for every state's calendar. Each one wraps or composes
 // ~design-system parts and never edits libs/design-system or apps/staff.
 export * from "./Callout";
+export * from "./ParoleBoardButton";
 export * from "./StatusMessage";
