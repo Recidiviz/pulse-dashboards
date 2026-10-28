@@ -17,6 +17,7 @@
 
 import type { ServiceDefinition } from "../types.mts";
 import { caseNotes } from "./case-notes.mts";
+import { firestoreRules } from "./firestore-rules.mts";
 import { demoFixtures, oppsTestData } from "./fixtures.mts";
 import { jiiTexting } from "./jii-texting.mts";
 import {
@@ -39,6 +40,7 @@ import { staffBackend, staffFrontend } from "./staff.mts";
  * just defining a {@link ServiceDefinition} in `services/*.mts` and adding it here.
  */
 export const services = {
+  firestoreRules,
   staffBackend,
   staffFrontend,
   sentencing,
