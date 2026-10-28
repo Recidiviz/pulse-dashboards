@@ -9,9 +9,10 @@ Import it as `~@parole-board/common`. Test helpers live behind their own alias, 
 - **`src/host/`**: `ParoleBoardHost`, `ParoleBoardHostProvider`, `useParoleBoardHost()` and `useCalendarCode()`.
 - **`src/components/`**: shared UI primitives. Build each one by wrapping or composing `~design-system` parts (or `@recidiviz/design-system`, only for exports `~design-system` lacks). Never edit `libs/design-system` or `apps/staff` to get one. When a screen needs a staff component, such as `StatusMessage`, copy it here and note the copy in the PR.
 - **`src/theme/`**: `semantics`, the colours, type, spacing and radius every Parole Board component uses. The names follow the Figma System v2 groups (text, icon, surface, border, action, status, radius) and every value aliases a `~design-system` token. Components read only `semantics`, never `palette` or a hex or rgb literal; a missing value becomes one new alias there, mapped to the nearest design-system token. Stand-ins for exports the design system lacks carry a `TODO(CO-935)`.
+- **`src/CalendarGrid/`**: `CalendarGrid`, the month grid built on FullCalendar, with its types and date helpers (`toIsoDate`, `isInMonth`, `monthStartIso`, `weekStartsOnToFirstDay`).
 - **`src/loading/`**: `SuspenseBoundary`, the skeleton primitives (`Skeleton`, `SkeletonText`, `SkeletonGroup`) and `AdminPageSkeleton`. The host app imports it as `~@parole-board/common/loading`, so its lazy page's fallback doesn't pull in the rest of the library.
 - **`src/testing/`**: `createFakeHost()` and `renderWithHost()`.
-- **`src/fixtures/`**: all synthetic fixture data, plus `queryResult()`, `suspendedQuery()`, `failedQuery()` and `mutationResult()`, which stand in for React Query hooks. Import them as `~@parole-board/common/fixtures`, from tests and example files only.
+- **`src/fixtures/`**: all synthetic fixture data (such as `september2026`), plus `queryResult()`, `suspendedQuery()`, `failedQuery()` and `mutationResult()`, which stand in for React Query hooks. Import them as `~@parole-board/common/fixtures`, from tests and example files only.
 - **`.examples/`**: the examples config every Parole Board library shares (below).
 
 Components fetch data only through the hooks in this library (CO-869), never with their own clients.

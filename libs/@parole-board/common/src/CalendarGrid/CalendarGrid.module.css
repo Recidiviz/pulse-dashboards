@@ -1,0 +1,104 @@
+/* Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2026 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================= */
+
+/* Themes FullCalendar's parts. Each class is assigned through one of
+   FullCalendar's class-name options in CalendarGrid, and no rule selects
+   FullCalendar's own elements or classes, so a change to its markup can't
+   break these. Content we render inside those parts (day numbers, chips,
+   header text) is styled with styled-components in CalendarGrid.styles.ts.
+   Values arrive as custom properties from CALENDAR_VARS, set on CalendarGrid's
+   root, so colours and sizes come from the semantic layer.
+
+   CalendarGrid imports this file after FullCalendar's skeleton CSS, so these
+   rules win over the skeleton's at equal specificity. */
+
+/* FullCalendar's skeleton strips cell borders and padding with !important,
+   so grid lines are inset shadows on the right and bottom of each cell, with
+   a border on the view's top and left, and padding goes on the cell's parts. */
+.monthView {
+  border-top: var(--pb-cal-hairline) solid var(--pb-cal-line);
+  border-left: var(--pb-cal-hairline) solid var(--pb-cal-line);
+}
+
+.header {
+  background: var(--pb-cal-bg);
+  box-shadow: var(--pb-cal-grid-lines);
+}
+
+.headerInner {
+  padding: var(--pb-cal-header-padding-y) var(--pb-cal-cell-padding-x);
+}
+
+/* FullCalendar sets min-height: 0 on cells with !important and sizes rows
+   from the width, so the design's minimum height needs !important too. Each
+   cell draws its own grid line inside it, so cells are 1px taller than the
+   design's gap-separated cells. */
+.day {
+  background: var(--pb-cal-bg);
+  min-height: var(--pb-cal-day-min-height) !important;
+  box-shadow: var(--pb-cal-grid-lines);
+}
+
+.dayMuted {
+  background: var(--pb-cal-bg-muted);
+}
+
+/* While a chip is dragged, FullCalendar adds a highlight layer as the
+   target cell's first child, so padding goes on the cell's named parts.
+   Chips are absolutely positioned inside the inner part, so it's inset with
+   a margin rather than padding. */
+.dayTop {
+  padding: var(--pb-cal-cell-padding-y) var(--pb-cal-cell-padding-x) 0;
+}
+
+.dayInner {
+  margin: 0 var(--pb-cal-cell-padding-x);
+}
+
+.dayBottom {
+  padding-bottom: var(--pb-cal-day-padding-bottom);
+}
+
+/* A day the dragged chip can move to, as CalendarGrid's dayCellClass
+   decides. FullCalendar refuses a drop on a day without it. */
+.dropTarget {
+  outline: var(--pb-cal-hairline) dashed var(--pb-cal-drop-target);
+  outline-offset: var(--pb-cal-drop-outline-offset);
+}
+
+.entry {
+  cursor: pointer;
+  margin-bottom: var(--pb-cal-chip-gap);
+}
+
+.entryEditable {
+  cursor: grab;
+}
+
+/* FullCalendar hides the dragged chip; the design keeps it in place, faded.
+   Dragging a selected chip moves every selected chip, so all of them fade.
+   The opacity is a custom property from CalendarGrid's root, so it doesn't
+   reach the copy of the chip that follows the pointer, which FullCalendar
+   appends to the page's body. */
+.entryFaded {
+  visibility: visible;
+  opacity: var(--pb-cal-faded-opacity, 1);
+}
+
+.listDayHeader {
+  padding: var(--pb-cal-list-day-header-padding);
+}

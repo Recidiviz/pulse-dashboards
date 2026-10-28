@@ -18,6 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { MonthGridShape } from "../CalendarGrid/CalendarGridSkeleton";
 import { semantics } from "../theme";
 import { Skeleton, SkeletonGroup, SkeletonText } from "./Skeleton";
 
@@ -40,9 +41,6 @@ const WIDTH = {
   primaryAction: rem(144),
   stats: rem(224),
 };
-// The grid area holds a five-week grid's height until the grid's own
-// skeleton fills it (CO-829).
-const PANEL_MIN_HEIGHT = rem(912);
 
 const LOADING_LABEL = "Loading the calendar";
 
@@ -96,14 +94,6 @@ const Stats = styled.div`
   margin-bottom: ${rem(space.md)};
 `;
 
-// The grid area. CalendarGridSkeleton fills it once the grid lands in this
-// library (CO-829); until then it holds the grid's size.
-const Panel = styled.div`
-  min-height: ${PANEL_MIN_HEIGHT};
-  background: ${surface.card};
-  border: ${stroke.default} solid ${border.faint};
-`;
-
 /**
  * The skeleton for an admin page while it loads: the header with the month
  * controls, title and actions, then the month stats and the grid area. It
@@ -145,7 +135,7 @@ export function AdminPageSkeleton() {
           <Stats>
             <SkeletonText width={WIDTH.stats} level="Sans14" />
           </Stats>
-          <Panel />
+          <MonthGridShape />
         </Body>
       </Page>
     </SkeletonGroup>
