@@ -567,6 +567,37 @@ function MeetingsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
+function HousingLink() {
+  const { isMobile } = useIsMobile(true);
+
+  const { usIdTransitionalHousingPilot } = useFeatureVariants();
+  const { currentTenantId } = useRootStore();
+
+  if (!usIdTransitionalHousingPilot || currentTenantId !== "US_ID") return null;
+
+  const housingUrl =
+    import.meta.env.VITE_DEPLOY_ENV === "production"
+      ? "https://housing.recidiviz.org"
+      : "https://housing-stg.recidiviz.org";
+
+  return (
+    <DropdownMenuItem>
+      <a
+        href={housingUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        role="menuitem"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {isMobile && <Icon kind={IconSVG.Open} width={20} />}
+        Transitional Housing
+        <BetaPill textColor="rgba(0, 85, 188, 1)">BETA</BetaPill>
+        <Icon kind={IconSVG.Open} width={15} />
+      </a>
+    </DropdownMenuItem>
+  );
+}
+
 function LogoutLink({ enabled }: OptionalLinkProps) {
   const logout = useLogout();
   const { isMobile } = useIsMobile(true);
@@ -779,6 +810,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         />
         <CPALink enabled={enabledCPA} />
         <MeetingsLink enabled={isMeetingsRouteEnabled} />
+        <HousingLink />
         <EnvironmentLinks />
         <LogoutLink enabled={!isOfflineMode()} />
       </>

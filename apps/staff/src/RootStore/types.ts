@@ -109,6 +109,7 @@ export type FeatureVariant =
   | "usIdCRCFacilitySearch"
   | "usIdDistrictSearch"
   | "usIdTasksV2"
+  | "usIdTransitionalHousingPilot"
   | "crcLikeBeds"
 
   //// Michigan
@@ -320,6 +321,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   HCRPPIIEmail: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
+  usIdTransitionalHousingPilot: {},
   crcLikeBeds: {},
   SARBuilder: {},
   SARSignature: {},
