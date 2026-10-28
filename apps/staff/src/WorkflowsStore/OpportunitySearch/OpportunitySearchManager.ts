@@ -184,9 +184,11 @@ export class OpportunitySearchManager implements Hydratable {
       () => [
         this.workflowsStore.activeSystem,
         this.workflowsStore.rootStore.currentTenantId,
-        // A primitive: `selectedSearchIds` is derived, so a recomputation
-        // yields an identical-but-new array that reads as a change.
-        this.searchStore.selectedSearchIds.join(","),
+        // A primitive: `selectedSearch` is derived, so a recomputation
+        // yields an identical-but-new object that reads as a change.
+        this.searchStore.isSearchingAllCaseloads
+          ? "all"
+          : this.searchStore.selectedSearchIds.join(","),
       ],
       () => {
         this.typesenseClient.reset();
@@ -221,9 +223,7 @@ export class OpportunitySearchManager implements Hydratable {
    * because a cross-system request needs one acted-on search per system.
    */
   get plan(): PlannedOpportunitySearch[] {
-    const { selectedSearchIds } = this.searchStore;
-    if (selectedSearchIds.length === 0) return [];
-
+    const { selectedSearch } = this.searchStore;
     const configs =
       this.workflowsStore.opportunityConfigurationStore.opportunities;
 
@@ -237,7 +237,8 @@ export class OpportunitySearchManager implements Hydratable {
         searchFieldPaths: this.workflowsStore
           .systemConfigFor(system)
           .search.map((c) => c.searchField),
-        selectedSearchIds,
+        selection: selectedSearch,
+        stateCode: this.workflowsStore.rootStore.currentTenantId,
         opportunityTypes: types.map((type) => ({ type, system })),
         hydrateIneligibleTypes: types.filter(
           (type) => configs[type]?.hydrateIneligibleRecordsInOpportunityManager,

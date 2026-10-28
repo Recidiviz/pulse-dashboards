@@ -42,6 +42,7 @@ vi.mock("@sentry/react", () => ({ captureException: vi.fn() }));
  */
 function makeSearchStore({
   selectedSearchIds = ["OFFICER_1"],
+  isSearchingAllCaseloads = false,
   types = { usTnLSU: { systemType: "SUPERVISION" } } as Record<
     string,
     Record<string, unknown>
@@ -55,6 +56,10 @@ function makeSearchStore({
   return {
     isTypesenseHomepageEnabled,
     selectedSearchIds,
+    isSearchingAllCaseloads,
+    selectedSearch: isSearchingAllCaseloads
+      ? { kind: "all" }
+      : { kind: "ids", ids: selectedSearchIds },
     workflowsStore: {
       activeSystem: "ALL",
       opportunityTypes: Object.keys(types),
@@ -128,6 +133,17 @@ describe("the plan", () => {
     );
 
     expect(manager.plan).toEqual([]);
+  });
+
+  test("searches the whole state when all caseloads are selected", () => {
+    const manager = new OpportunitySearchManager(
+      makeSearchStore({ selectedSearchIds: [], isSearchingAllCaseloads: true }),
+    );
+
+    expect(manager.plan).not.toEqual([]);
+    for (const { descriptor } of manager.plan) {
+      expect(descriptor["filter_by"]).toContain("$clients(stateCode:=`US_TN`)");
+    }
   });
 
   test("builds per system, because the search fields differ between them", () => {

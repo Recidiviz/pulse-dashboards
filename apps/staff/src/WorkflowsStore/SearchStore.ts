@@ -22,11 +22,13 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { SystemId } from "~datatypes";
 
 import {
+  CaseloadSearchSelection,
   locationIdsBySearchType,
   Searchable,
   SearchableGroup,
   SearchType,
 } from "../core/models/types";
+import { toTitleCase } from "../utils";
 import { CaseloadSearchable } from "./CaseloadSearchable";
 import { CaseloadSearchManager } from "./CaseloadSearchManager";
 import { Location } from "./Location";
@@ -51,6 +53,11 @@ export class SearchStore {
    * in impersonation mode the user cannot write to firebase
    */
   selectedSearchIdsForImpersonation: string[] | undefined = undefined;
+
+  /**
+   * The impersonation-mode counterpart of the persisted searchAllCaseloads flag
+   */
+  searchAllCaseloadsForImpersonation: boolean | undefined = undefined;
 
   /**
    * Local state to keep track of the selected search ids for a user with supervised staff,
@@ -97,6 +104,11 @@ export class SearchStore {
       () => this.workflowsStore.user?.updates?.selectedSearchIds,
       (searchIds?) =>
         (this.selectedSearchIdsForImpersonation = searchIds ?? []),
+    );
+    reaction(
+      () => this.workflowsStore.user?.updates?.searchAllCaseloads,
+      (searchAllCaseloads?) =>
+        (this.searchAllCaseloadsForImpersonation = searchAllCaseloads ?? false),
     );
 
     // clear saved search when changing tenants, to prevent cross-contamination
@@ -222,12 +234,95 @@ export class SearchStore {
     return user.updates?.selectedSearchIds ?? [];
   }
 
+  // Whether the user last chose the all-caseloads option, regardless of
+  // whether the current page honors it. See isSearchingAllCaseloads.
+  private get searchAllCaseloadsSelected(): boolean {
+    const user = this.workflowsStore.user;
+    if (!user) return false;
+
+    if (this.workflowsStore.rootStore.isImpersonating) {
+      return this.searchAllCaseloadsForImpersonation ?? false;
+    }
+
+    const stateCodeForUpdates = user.updates?.stateCode;
+    if (
+      stateCodeForUpdates &&
+      stateCodeForUpdates !== this.workflowsStore.rootStore.currentTenantId
+    ) {
+      return false;
+    }
+
+    return user.updates?.searchAllCaseloads ?? false;
+  }
+
+  /**
+   * Whether this user can choose the all-caseloads option. The query it runs
+   * filters by state alone, so the feature variant must only go to users who
+   * can see every person in the state.
+   */
+  get isSearchAllCaseloadsEnabled(): boolean {
+    return Boolean(
+      this.workflowsStore.featureVariants.workflowsSearchAllCaseloads &&
+        this.isTypesenseHomepageEnabled,
+    );
+  }
+
+  // The homepage counts come from Typesense and the opportunity pages hydrate
+  // only people surfaced for one opportunity, so both stay affordable across a
+  // whole state. Other pages fall back to selectedSearchIds.
+  get activePageSupportsSearchAllCaseloads(): boolean {
+    const {
+      activePage: { page },
+      activePageIsHomepage,
+      opportunityConfigurationStore,
+    } = this.workflowsStore;
+    if (activePageIsHomepage) return true;
+    // activePage.page is the first URL segment, which on an opportunity's list
+    // and person pages is that opportunity's urlSection.
+    return Boolean(
+      page && opportunityConfigurationStore.getOpportunityTypeFromUrl(page),
+    );
+  }
+
+  get isSearchingAllCaseloads(): boolean {
+    return (
+      this.searchAllCaseloadsSelected &&
+      this.isSearchAllCaseloadsEnabled &&
+      this.activePageSupportsSearchAllCaseloads
+    );
+  }
+
+  get selectedSearch(): CaseloadSearchSelection {
+    return this.isSearchingAllCaseloads
+      ? { kind: "all" }
+      : { kind: "ids", ids: this.selectedSearchIds };
+  }
+
+  get hasSelectedSearch(): boolean {
+    return this.isSearchingAllCaseloads || this.selectedSearchIds.length > 0;
+  }
+
+  /**
+   * Label for the all-caseloads option, named with the tenant's searchTitle
+   * for the active search type, e.g. "Every Agent" or "Every COIII". Falls
+   * back to "Every Caseload" when the search bar covers several search types.
+   */
+  get searchAllCaseloadsLabel(): string {
+    const searchConfig = this.workflowsStore.activeSystemConfig?.search.find(
+      (sc) => sc.searchType === this.searchType,
+    );
+    if (!searchConfig) return "Every Caseload";
+    const { searchTitle, searchTitleIgnoreCase } = searchConfig;
+    return `Every ${searchTitleIgnoreCase ? searchTitle : toTitleCase(searchTitle)}`;
+  }
+
   // Returns the local selected-search overrides to the state they'd be in on a
   // fresh load into the new tenant, then clears the persisted selection.
   clearSelectedSearchForTenantChange(): void {
     this.updateSelectedSearch([]);
     this.selectedSearchIdsForSupervisorsWithStaff = undefined;
     this.selectedSearchIdsForImpersonation = undefined;
+    this.searchAllCaseloadsForImpersonation = undefined;
   }
 
   // TODO(OBT-49983): Remove once the Typesense-backed search refactor ships.
@@ -266,6 +361,15 @@ export class SearchStore {
     }
 
     this.selectedSearchIdsForImpersonation = cappedSearchIds;
+    this.searchAllCaseloadsForImpersonation = false;
+  }
+
+  selectAllCaseloads(): void {
+    const user = this.workflowsStore.user;
+    if (!user || !this.workflowsStore.rootStore.currentTenantId) return;
+
+    this.workflowsStore.rootStore.firestoreStore.updateSearchAllCaseloads();
+    this.searchAllCaseloadsForImpersonation = true;
   }
 
   // Keeps at most the INCARCERATION system's `maxFacilityUnitSearchIds` (see

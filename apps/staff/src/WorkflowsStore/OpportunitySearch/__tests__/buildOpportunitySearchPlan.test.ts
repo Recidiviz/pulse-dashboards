@@ -25,7 +25,8 @@ import {
 
 const BASE: OpportunitySearchPlanInput = {
   searchFieldPaths: [["officerId"]],
-  selectedSearchIds: ["OFFICER_1"],
+  selection: { kind: "ids", ids: ["OFFICER_1"] },
+  stateCode: "US_TN",
   opportunityTypes: [{ type: "usTnLSU", system: "SUPERVISION" }],
 };
 
@@ -41,9 +42,13 @@ describe("an empty selection", () => {
   // A plan that matches everything is the dangerous failure here, so the
   // absence of a selection must produce no searches at all.
   test.each([
-    ["no selected ids", { selectedSearchIds: [] }],
+    ["no selected ids", { selection: { kind: "ids", ids: [] } }],
     ["no search fields", { searchFieldPaths: [] }],
     ["no opportunity types", { opportunityTypes: [] }],
+    [
+      "all caseloads without a state",
+      { selection: { kind: "all" }, stateCode: undefined },
+    ],
   ])("%s produces no searches", (_label, overrides) => {
     expect(build(overrides as Partial<OpportunitySearchPlanInput>)).toEqual([]);
   });
@@ -103,9 +108,29 @@ describe("the emitted filters", () => {
   });
 
   test("escapes a backtick in a selected id", () => {
-    const [first] = filtersOf(build({ selectedSearchIds: ["a`b"] }));
+    const [first] = filtersOf(
+      build({ selection: { kind: "ids", ids: ["a`b"] } }),
+    );
 
     expect(first).toContain("\\`");
+  });
+});
+
+describe("an all-caseloads selection", () => {
+  test("joins on the state instead of any search field", () => {
+    const filters = filtersOf(build({ selection: { kind: "all" } }));
+
+    expect(filters.length).toBeGreaterThan(0);
+    for (const filter of filters) {
+      expect(filter).toContain("$clients(stateCode:=`US_TN`)");
+      expect(filter).not.toContain("officerId");
+    }
+  });
+
+  test("still plans searches when the system has no search fields", () => {
+    expect(
+      build({ selection: { kind: "all" }, searchFieldPaths: [] }),
+    ).not.toEqual([]);
   });
 });
 

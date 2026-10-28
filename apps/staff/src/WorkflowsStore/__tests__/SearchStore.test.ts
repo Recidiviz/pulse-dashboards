@@ -985,3 +985,133 @@ describe("handleSearchPillClick", () => {
     expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("INCARCERATION");
   });
 });
+
+describe("all caseloads", () => {
+  const mockUpdateSearchAllCaseloads = vi.fn();
+
+  beforeEach(() => {
+    // Enabling Typesense makes the opportunity search react to the selection;
+    // with no opportunity types its plan is empty, so it never reaches the network.
+    workflowsStore.opportunityTypes = [];
+    workflowsStore.opportunityConfigurationStore = {
+      opportunities: {},
+      getOpportunityTypeFromUrl: (url: string) =>
+        url === "earnedDischarge" ? "earnedDischarge" : undefined,
+    };
+    workflowsStore.activePage = { page: "home" };
+    workflowsStore.activePageIsHomepage = true;
+    workflowsStore.rootStore.firestoreStore.updateSearchAllCaseloads =
+      mockUpdateSearchAllCaseloads;
+    // Set before the feature variants so the Typesense selected-id cache
+    // warm-up, which reacts only to id changes, stays off.
+    workflowsStore.user.updates = {
+      stateCode: "US_ND",
+      selectedSearchIds: ["OFFICER1"],
+      searchAllCaseloads: true,
+    };
+    workflowsStore.featureVariants = {
+      workflowsSearchAllCaseloads: {},
+      typesenseHomepage: {},
+      typesenseCaseloadSearch: {},
+    };
+    // The constructor's default-caseload write is not under test here.
+    mockUpdatedSelectedSearchIds.mockClear();
+  });
+
+  test("supersedes the stored ids on the homepage", () => {
+    expect(searchStore.selectedSearch).toEqual({ kind: "all" });
+    expect(searchStore.hasSelectedSearch).toBe(true);
+  });
+
+  test("supersedes the stored ids on an opportunity page", () => {
+    workflowsStore.activePageIsHomepage = false;
+    workflowsStore.activePage = { page: "earnedDischarge" };
+
+    expect(searchStore.selectedSearch).toEqual({ kind: "all" });
+  });
+
+  test.each(["clients", "tasks"])(
+    "falls back to the stored ids on the %s page",
+    (page) => {
+      workflowsStore.activePageIsHomepage = false;
+      workflowsStore.activePage = { page };
+
+      expect(searchStore.selectedSearch).toEqual({
+        kind: "ids",
+        ids: ["OFFICER1"],
+      });
+    },
+  );
+
+  test.each([
+    [
+      "the feature variant",
+      { typesenseHomepage: {}, typesenseCaseloadSearch: {} },
+    ],
+    [
+      "the Typesense homepage",
+      { workflowsSearchAllCaseloads: {}, typesenseCaseloadSearch: {} },
+    ],
+  ])("is ignored without %s", (_label, featureVariants) => {
+    workflowsStore.featureVariants = featureVariants;
+
+    expect(searchStore.selectedSearch).toEqual({
+      kind: "ids",
+      ids: ["OFFICER1"],
+    });
+  });
+
+  test("is ignored when saved under a different tenant", () => {
+    workflowsStore.user.updates.stateCode = "US_MO";
+
+    expect(searchStore.isSearchingAllCaseloads).toBe(false);
+  });
+
+  test("uses the local flag while impersonating", () => {
+    workflowsStore.rootStore.isImpersonating = true;
+    searchStore.searchAllCaseloadsForImpersonation = false;
+
+    expect(searchStore.isSearchingAllCaseloads).toBe(false);
+  });
+
+  test("selectAllCaseloads persists the flag without touching the ids", () => {
+    workflowsStore.user.updates.searchAllCaseloads = false;
+
+    searchStore.selectAllCaseloads();
+
+    expect(mockUpdateSearchAllCaseloads).toHaveBeenCalledWith();
+    expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
+    expect(searchStore.searchAllCaseloadsForImpersonation).toBe(true);
+  });
+
+  test("updateSelectedSearch clears the local flag", () => {
+    searchStore.searchAllCaseloadsForImpersonation = true;
+
+    searchStore.updateSelectedSearch(["OFFICER2"]);
+
+    expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(["OFFICER2"]);
+    expect(searchStore.searchAllCaseloadsForImpersonation).toBe(false);
+  });
+
+  test.each([
+    ["OFFICER", "Every Agent"],
+    ["FACILITY_UNIT", "Every Unit"],
+    ["CASELOAD", "Every COIII"],
+    ["ALL", "Every Caseload"],
+  ] as const)("labels the option for %s searches", (searchType, label) => {
+    workflowsStore.activeSystemConfig = {
+      search: [
+        { searchType: "OFFICER", searchTitle: "agent" },
+        { searchType: "FACILITY_UNIT", searchTitle: "unit" },
+        {
+          searchType: "CASELOAD",
+          searchTitle: "COIII",
+          searchTitleIgnoreCase: true,
+        },
+      ],
+    };
+    searchStore.setSearchTypeOverride(searchType);
+
+    expect(searchStore.searchAllCaseloadsLabel).toBe(label);
+  });
+});

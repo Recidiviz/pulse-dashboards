@@ -736,7 +736,7 @@ export class WorkflowsStore implements Hydratable {
     return (
       this.caseloadPersons.filter(
         (person) => isHydrationFinished(person.opportunityManager) === false,
-      ).length === 0 && this.searchStore.selectedSearchIds.length > 0
+      ).length === 0 && this.searchStore.hasSelectedSearch
     );
   }
 

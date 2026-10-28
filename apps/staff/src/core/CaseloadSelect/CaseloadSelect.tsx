@@ -59,6 +59,10 @@ import {
 // This is a query limitation imposed by Firestore
 const SELECTED_SEARCH_LIMIT = 30;
 
+// Option value for the all-caseloads choice. Never a real search id, and never
+// written to selectedSearchIds.
+const SEARCH_ALL_CASELOADS_VALUE = "__searchAllCaseloads__";
+
 const ValuePill = styled(Pill).attrs({ color: palette.slate20, filled: false })`
   align-self: flex-start;
   border-radius: ${rem(8)};
@@ -324,6 +328,11 @@ type CaseloadSelectProps = {
   hideIndicators?: boolean;
 };
 
+const allCaseloadsOptionStyle = (option: SelectOption) =>
+  option.value === SEARCH_ALL_CASELOADS_VALUE
+    ? { fontStyle: "italic", paddingRight: rem(2) }
+    : {};
+
 export const caseloadSelectStyles = (
   isMobile: any,
   hideIndicators: boolean,
@@ -355,12 +364,13 @@ export const caseloadSelectStyles = (
     margin: 0,
     padding: rem(spacing.sm),
   }),
-  multiValueLabel: (base) => ({
+  multiValueLabel: (base, { data }) => ({
     ...base,
     color: palette.slate85,
     fontSize: isMobile ? rem(12) : rem(14),
     lineHeight: rem(16),
     padding: 0,
+    ...allCaseloadsOptionStyle(data),
   }),
   multiValueRemove: (base) => ({
     ...base,
@@ -424,6 +434,7 @@ export const caseloadSelectStyles = (
   }),
   option: (base, state) => ({
     ...base,
+    ...allCaseloadsOptionStyle(state.data),
     backgroundColor: "none",
     color: state.isDisabled ? palette.slate20 : searchBarOptionTextColor,
     pointerEvents: state.isDisabled ? "none" : "initial",
@@ -454,8 +465,29 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       isTypesenseSearchEnabled,
       caseloadSearchManager,
       facilityUnitSearchIds,
+      isSearchAllCaseloadsEnabled,
+      activePageSupportsSearchAllCaseloads,
+      isSearchingAllCaseloads,
+      searchAllCaseloadsLabel,
+      selectAllCaseloads,
     },
   } = workflowsStore;
+
+  const searchAllCaseloadsOption: SelectOption | undefined =
+    isSearchAllCaseloadsEnabled && activePageSupportsSearchAllCaseloads
+      ? { label: searchAllCaseloadsLabel, value: SEARCH_ALL_CASELOADS_VALUE }
+      : undefined;
+
+  const selectedOptions =
+    isSearchingAllCaseloads && searchAllCaseloadsOption
+      ? [searchAllCaseloadsOption]
+      : buildSelectOptionsFromSearchables(selectedSearchables);
+
+  // While all caseloads are selected, selectedSearchIds holds the previous
+  // individual selection, which only other pages use.
+  const individuallySelectedIds = isSearchingAllCaseloads
+    ? []
+    : selectedSearchIds;
 
   const searchableGroups = availableSearchables;
 
@@ -473,7 +505,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   };
 
   const disableAdditionalSelections =
-    selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
+    selectedOptions.length >= SELECTED_SEARCH_LIMIT;
 
   // TODO(OBT-49983): Temporary. A handful of large facility units is enough
   // to exhaust Firestore's request quota, so tenants with a FACILITY_UNIT
@@ -485,7 +517,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   // units. Remove once the Typesense-backed search refactor ships.
   const maxFacilityUnitSearchIds =
     workflowsStore.systemConfigFor("INCARCERATION").maxFacilityUnitSearchIds;
-  const selectedFacilityUnitIds = selectedSearchIds.filter((id) =>
+  const selectedFacilityUnitIds = individuallySelectedIds.filter((id) =>
     facilityUnitSearchIds.has(id),
   );
   const isFacilityUnitSelectionCapped =
@@ -525,6 +557,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     components: customComponents,
     isMulti: true,
     isOptionDisabled: (option: SelectOption) => {
+      if (option.value === SEARCH_ALL_CASELOADS_VALUE) return false;
       if (disableAdditionalSelections) return true;
       if (!isFacilityUnitSelectionCapped) return false;
       return (
@@ -532,10 +565,31 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         !selectedFacilityUnitIds.includes(option.value)
       );
     },
-    onChange: (newValue: any) => {
-      updateSelectedSearch(newValue.map((item: SelectOption) => item.value));
+    onChange: (newValue: readonly SelectOption[]) => {
+      const values = newValue.map((item) => item.value);
+
+      // Choosing the all-caseloads option replaces any individual selection,
+      // and choosing an individual item while it is selected replaces it.
+      if (
+        values.includes(SEARCH_ALL_CASELOADS_VALUE) &&
+        !isSearchingAllCaseloads
+      ) {
+        selectAllCaseloads();
+        analyticsStore.trackCaseloadSearch({
+          searchCount: 0,
+          isDefault: false,
+          searchType,
+          searchAllCaseloads: true,
+        });
+        return;
+      }
+
+      const searchIds = values.filter(
+        (value) => value !== SEARCH_ALL_CASELOADS_VALUE,
+      );
+      updateSelectedSearch(searchIds);
       analyticsStore.trackCaseloadSearch({
-        searchCount: newValue.length,
+        searchCount: searchIds.length,
         isDefault: false,
         searchType,
       });
@@ -553,12 +607,15 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           filterOption: () => true,
         }
       : {}),
-    options: buildSelectOptionsFromSearchableGroup(searchableGroups),
+    options: [
+      ...(searchAllCaseloadsOption ? [searchAllCaseloadsOption] : []),
+      ...buildSelectOptionsFromSearchableGroup(searchableGroups),
+    ],
     placeholder: isTypesenseSearchEnabled
       ? "Start typing …"
       : "Search for one or more caseloads …",
     styles: caseloadSelectStyles(isMobile, hideIndicators),
-    value: buildSelectOptionsFromSearchables(selectedSearchables),
+    value: selectedOptions,
     // use of satisfies narrows isMulti from boolean to true,
     // which the custom components defined here will require
   } satisfies { isMulti: true; [key: string]: unknown };
@@ -574,9 +631,14 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       <CaseloadSelectContainer>
         Caseloads:
         <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
-          {selectedSearchIds.length > 0
-            ? `${selectedSearchIds.length} selected`
-            : "Click to select caseloads"}
+          {/* eslint-disable-next-line no-nested-ternary */}
+          {isSearchingAllCaseloads ? (
+            <em>{searchAllCaseloadsLabel}</em>
+          ) : selectedSearchIds.length > 0 ? (
+            `${selectedSearchIds.length} selected`
+          ) : (
+            "Click to select caseloads"
+          )}
           &nbsp;
           <Icon kind={IconSVG.DownChevron} width={8} />
         </CaseloadSelectMobileButton>

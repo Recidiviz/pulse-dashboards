@@ -26,6 +26,7 @@ import { startOfToday } from "date-fns";
 import { quote, quoteList } from "~@typesense/client";
 import { SystemId } from "~datatypes";
 
+import { CaseloadSearchSelection } from "../../core/models/types";
 import { staleRangeFacet } from "./staleCutoff";
 
 export type PersonCollection = "clients" | "residents";
@@ -70,7 +71,12 @@ export type OpportunitySearchPlanInput = {
    * an OR inside a join.
    */
   searchFieldPaths: string[][];
-  selectedSearchIds: string[];
+  selection: CaseloadSearchSelection;
+  /**
+   * Bounds an all-caseloads selection, which has no search ids to filter by.
+   * Without it, that selection produces no searches.
+   */
+  stateCode?: string;
   /** Active opportunity types with their system, in render order. */
   opportunityTypes: PlannedOpportunityType[];
   /**
@@ -146,9 +152,13 @@ export const CENSUS_GROUP_BY = [
 
 function selectionPredicate(
   searchFieldPaths: string[][],
-  selectedSearchIds: string[],
-): string {
-  const ids = quoteList(selectedSearchIds);
+  selection: CaseloadSearchSelection,
+  stateCode: string | undefined,
+): string | undefined {
+  if (selection.kind === "all") {
+    return stateCode ? `stateCode:=${quote(stateCode)}` : undefined;
+  }
+  const ids = quoteList(selection.ids);
   return searchFieldPaths
     .map((path) => `${path.join(".")}:=${ids}`)
     .join(" || ");
@@ -398,7 +408,8 @@ export function buildOpportunitySearchPlan(
 ): PlannedOpportunitySearch[] {
   const {
     searchFieldPaths,
-    selectedSearchIds,
+    selection: caseloadSelection,
+    stateCode,
     opportunityTypes,
     hydrateIneligibleTypes = [],
     alertThresholds = {},
@@ -406,14 +417,19 @@ export function buildOpportunitySearchPlan(
   } = input;
 
   if (
-    selectedSearchIds.length === 0 ||
-    searchFieldPaths.length === 0 ||
+    (caseloadSelection.kind === "ids" &&
+      (caseloadSelection.ids.length === 0 || searchFieldPaths.length === 0)) ||
     opportunityTypes.length === 0
   ) {
     return [];
   }
 
-  const selection = selectionPredicate(searchFieldPaths, selectedSearchIds);
+  const selection = selectionPredicate(
+    searchFieldPaths,
+    caseloadSelection,
+    stateCode,
+  );
+  if (!selection) return [];
   const hydrateIneligible = new Set(hydrateIneligibleTypes);
   const plan: PlannedOpportunitySearch[] = [];
 

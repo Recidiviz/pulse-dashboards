@@ -1160,6 +1160,7 @@ describe("FirestoreStore", () => {
       const update = {
         stateCode: "us_ca",
         selectedSearchIds,
+        searchAllCaseloads: false,
       };
       store.updateSelectedSearchIds(selectedSearchIds);
       expect(mockDoc.mock.calls).toEqual([
@@ -1173,6 +1174,18 @@ describe("FirestoreStore", () => {
           {
             merge: true,
           },
+        ],
+      ]);
+    });
+
+    test("updateSearchAllCaseloads", () => {
+      store.updateSearchAllCaseloads();
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { stateCode: "us_ca", searchAllCaseloads: true },
+          { merge: true },
         ],
       ]);
     });

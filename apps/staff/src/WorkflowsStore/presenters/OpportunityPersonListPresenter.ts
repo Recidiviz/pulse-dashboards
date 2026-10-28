@@ -737,11 +737,13 @@ export class OpportunityPersonListPresenter
     );
   }
 
-  get selectedSearchablesCount() {
+  get hasSelectedSearch() {
     // The opportunity person list within the supervisor homepage is officer-specific, so
-    // there will be exactly 1 officer selected, even though nobody has been searched for
-    if (this.isSupervisorHomepage) return 1;
-    return this.workflowsStore.searchStore.selectedSearchables.length;
+    // there is always an officer selected, even though nobody has been searched for
+    if (this.isSupervisorHomepage) return true;
+    const { isSearchingAllCaseloads, selectedSearchables } =
+      this.workflowsStore.searchStore;
+    return isSearchingAllCaseloads || selectedSearchables.length > 0;
   }
 
   get workflowsSearchFieldTitle() {

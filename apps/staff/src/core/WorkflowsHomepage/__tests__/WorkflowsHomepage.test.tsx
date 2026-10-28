@@ -65,6 +65,8 @@ const baseWorkflowsStoreMock = {
     workflowsSearchFieldTitle: "officer",
     searchTitleOverride: () => "location",
     selectedSearchIds: ["123"],
+    hasSelectedSearch: true,
+    isSearchingAllCaseloads: false,
   },
   activePage: { page: "home " },
   systemConfigFor: () => {
@@ -181,6 +183,8 @@ describe("WorkflowsHomepage", () => {
         opportunitiesLoaded: () => true,
         searchStore: {
           selectedSearchIds: ["123", "456"],
+          hasSelectedSearch: true,
+          isSearchingAllCaseloads: false,
           workflowsSearchFieldTitle: "an officer",
         },
       },

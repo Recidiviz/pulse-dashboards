@@ -1598,9 +1598,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
               <WorkflowsCaseloadControlBar
                 title={"Group by"}
                 tabBadges={
-                  presenter.selectedSearchablesCount > 0
-                    ? presenter.tabBadges
-                    : {}
+                  presenter.hasSelectedSearch ? presenter.tabBadges : {}
                 }
                 tabs={presenter.displayTabs}
                 activeTab={presenter.activeTab}
@@ -1630,13 +1628,12 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         </OpportunityPageExplainer>
       )}
       {/* eslint-disable-next-line no-nested-ternary */}
-      {allOpportunities.length === 0 ||
-      presenter.selectedSearchablesCount === 0 ? (
+      {allOpportunities.length === 0 || !presenter.hasSelectedSearch ? (
         /* Empty tab display */
         <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
           <EmptyStateWrapper>
             <EmptyStateText>
-              {presenter.selectedSearchablesCount > 0
+              {presenter.hasSelectedSearch
                 ? presenter.emptyTabText
                 : presenter.searchIdsNotSelectedCtaText}
             </EmptyStateText>

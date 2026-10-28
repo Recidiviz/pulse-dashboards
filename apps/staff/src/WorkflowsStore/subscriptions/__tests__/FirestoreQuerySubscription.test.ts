@@ -83,12 +83,13 @@ test("unsubscribe", () => {
 
   // @ts-expect-error this is private with respect to the application,
   // but we need to verify its behavior to prevent memory leaks
-  vi.spyOn(sub, "disposeDynamicDataSource");
+  const dispose = vi.spyOn(sub, "disposeDynamicDataSource");
   sub.unsubscribe();
 
   expect(cancelSnapshotMock).toHaveBeenCalled();
-  // @ts-expect-error
-  expect(sub.disposeDynamicDataSource).toHaveBeenCalled();
+  expect(dispose).toHaveBeenCalled();
+  // @ts-expect-error private, checked so a later subscribe() starts afresh
+  expect(sub.disposeDynamicDataSource).toBeUndefined();
 });
 
 test("results", () => {
@@ -210,6 +211,38 @@ test("no duplicate listeners", () => {
   sub.subscribe();
   sub.subscribe();
   expect(onSnapshotMock).toHaveBeenCalledTimes(1);
+});
+
+test("subscribing again does not skip the debounce on a new query", () => {
+  vi.useFakeTimers();
+
+  observableParam.set(undefined);
+  sub.subscribe();
+  observableParam.set("TEST2");
+
+  // e.g. a presenter hydrating the subscription while the restart is pending
+  sub.subscribe();
+  expect(onSnapshotMock).not.toHaveBeenCalled();
+
+  vi.advanceTimersByTime(300);
+  expect(onSnapshotMock).toHaveBeenCalledTimes(1);
+
+  vi.useRealTimers();
+});
+
+test("repeated subscribes leave nothing listening after unsubscribe", () => {
+  vi.useFakeTimers();
+
+  sub.subscribe();
+  sub.subscribe();
+  sub.unsubscribe();
+  onSnapshotMock.mockClear();
+
+  observableParam.set("TEST2");
+  vi.advanceTimersByTime(300);
+  expect(onSnapshotMock).not.toHaveBeenCalled();
+
+  vi.useRealTimers();
 });
 
 test("hydration", () => {

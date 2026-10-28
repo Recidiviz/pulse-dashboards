@@ -158,7 +158,11 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     // The caseload is still fetched from Firestore under typesenseHomepage, so these are
     // the same subscriptions Firestore hydrated homepage opens. Tasks move to Typesense in
     // phase 4.
-    if (this.useTypesenseHomepage) return this.isOfficerOnlySupervisionSearch;
+    if (this.useTypesenseHomepage) {
+      // Statewide, that would be one tasks subscription per person.
+      if (this.workflowsStore.searchStore.isSearchingAllCaseloads) return false;
+      return this.isOfficerOnlySupervisionSearch;
+    }
 
     return true;
   }
@@ -348,8 +352,11 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       !!currentTenantConfig?.navigation?.workflows?.includes("tasks") &&
       // the current caseload has tasks available, and
       this.workflowsStore.hasSupervisionTasks &&
-      // the current user has access to tasks
-      this.workflowsStore.rootStore.userStore.canUserAccessTasks
+      // the current user has access to tasks, and
+      this.workflowsStore.rootStore.userStore.canUserAccessTasks &&
+      // this page hydrates tasks, so tasks hydrated for an earlier selection
+      // (e.g. before switching to all caseloads) are not shown
+      this.shouldHydrateTasks
     );
   }
 
@@ -395,7 +402,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   get ctaAndHeaderText(): { ctaText?: string; headerText?: string } {
     const { searchResultLabel } = this.labels;
 
-    const selectedSearchIdsCount = this.selectedSearchIds?.length || 0;
+    const { isSearchingAllCaseloads } = this.workflowsStore.searchStore;
 
     // `opportunitiesByType` is empty under the gate, so reading it here would
     // assert "no eligible opportunities" over a page full of them.
@@ -412,13 +419,16 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       ? `Hi, ${this.userGivenNames}.`
       : "Hi.";
     // If no search ids are selected, show a welcome message.
-    if (selectedSearchIdsCount === 0) {
+    if (!this.workflowsStore.searchStore.hasSelectedSearch) {
       return this.welcomeCtaAndHeaderText;
     }
 
-    const noResultsCta =
-      "None of the selected caseloads have eligible opportunities. Search for another caseload.";
-    const foundItems = `We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`;
+    const noResultsCta = isSearchingAllCaseloads
+      ? "There are no eligible opportunities across all caseloads."
+      : "None of the selected caseloads have eligible opportunities. Search for another caseload.";
+    const foundItems = isSearchingAllCaseloads
+      ? "We’ve found some outstanding items across all caseloads"
+      : `We’ve found some outstanding items across ${this.selectedSearchIds.length} ${searchResultLabel}`;
 
     // Without the FV, keep the original single-header styling: the "no results"
     // copy is a lone CTA and the "found items" copy is one Serif header line.
@@ -443,7 +453,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     if (!this.isTypesenseSearchEnabled) return {};
 
     const resultsReady =
-      this.selectedSearchIds.length > 0 &&
+      this.workflowsStore.searchStore.hasSelectedSearch &&
       this.isCaseloadLoaded &&
       isHydrated(this);
 

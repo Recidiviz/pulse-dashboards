@@ -45,14 +45,24 @@ export class SearchManager {
       workflowsStore: {
         rootStore: { currentTenantId },
       },
-      selectedSearchIds,
+      selectedSearch,
       searchType,
     } = this.searchStore;
     const { systemConfig } = this;
 
-    if (!currentTenantId || !selectedSearchIds.length) {
-      return undefined;
+    if (!currentTenantId) return undefined;
+
+    if (selectedSearch.kind === "all") {
+      // The homepage reads its all-caseloads counts from Typesense, so it
+      // would pay for a statewide listener it never reads.
+      if (this.searchStore.workflowsStore.activePageIsHomepage) {
+        return undefined;
+      }
+      return and(where("stateCode", "==", currentTenantId));
     }
+
+    const selectedSearchIds = selectedSearch.ids;
+    if (!selectedSearchIds.length) return undefined;
 
     const searchConfigs =
       searchType !== "ALL"
@@ -92,11 +102,16 @@ export class SearchManager {
   }
 
   personMatchesSearch(person: JusticeInvolvedPerson): boolean {
-    return (
-      person.personType === this.personType &&
-      some(this.searchStore.selectedSearchIds, (id) =>
-        person.searchIdValues?.includes(id),
-      )
+    const { selectedSearch } = this.searchStore;
+    if (person.personType !== this.personType) return false;
+    if (selectedSearch.kind === "all") {
+      return (
+        person.stateCode ===
+        this.searchStore.workflowsStore.rootStore.currentTenantId
+      );
+    }
+    return some(selectedSearch.ids, (id) =>
+      person.searchIdValues?.includes(id),
     );
   }
 

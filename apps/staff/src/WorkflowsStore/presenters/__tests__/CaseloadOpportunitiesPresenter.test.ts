@@ -291,3 +291,57 @@ describe("compositeHydrationState for caseload opportunities presenter", () => {
     expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   });
 });
+
+describe("the caseload subscriptions", () => {
+  function subscription(status: HydrationState["status"], hasQuery = true) {
+    return {
+      dataSource: hasQuery ? {} : undefined,
+      hydrationState: { status },
+      hydrate: vi.fn(),
+    };
+  }
+
+  function presenterFor(subscriptions: ReturnType<typeof subscription>[]) {
+    const caseloadPresenter = new CaseloadOpportunitiesPresenter({
+      hydrationState: { status: "hydrated" },
+      caseloadPersons: [],
+      caseloadSubscription: subscriptions,
+    } as unknown as WorkflowsStore);
+    vi.spyOn(caseloadPresenter, "isDebug", "get").mockReturnValue(false);
+    return caseloadPresenter;
+  }
+
+  it.each(["needs hydration", "loading"] as const)(
+    "hold the presenter at %s before their first snapshot",
+    (status) => {
+      // No persons have arrived, so without the subscription this reads as hydrated.
+      expect(presenterFor([subscription(status)]).hydrationState.status).toBe(
+        status,
+      );
+    },
+  );
+
+  it("let the presenter hydrate once they have", () => {
+    expect(presenterFor([subscription("hydrated")]).hydrationState.status).toBe(
+      "hydrated",
+    );
+  });
+
+  it("are left out when they have no query", () => {
+    const noQuery = subscription("needs hydration", false);
+    const caseloadPresenter = presenterFor([noQuery]);
+
+    caseloadPresenter.hydrate();
+
+    expect(caseloadPresenter.hydrationState.status).toBe("hydrated");
+    expect(noQuery.hydrate).not.toHaveBeenCalled();
+  });
+
+  it("are hydrated by the presenter", () => {
+    const withQuery = subscription("needs hydration");
+
+    presenterFor([withQuery]).hydrate();
+
+    expect(withQuery.hydrate).toHaveBeenCalledOnce();
+  });
+});

@@ -97,6 +97,18 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
     return this.workflowsStore.caseloadPersons;
   }
 
+  /**
+   * The subscriptions that load caseloadPersons. Until their first snapshot
+   * arrives there are no persons to hydrate, which would otherwise read as
+   * hydrated. One without a dataSource has no selection to query and never
+   * hydrates, so it is left out.
+   */
+  private get caseloadSubscriptionsToHydrate(): Hydratable[] {
+    return (this.workflowsStore.caseloadSubscription ?? []).filter(
+      (subscription) => subscription.dataSource,
+    );
+  }
+
   async populateCaseloads() {
     const unhydratedPersons = this.personsToHydrate.filter(
       (person) => !isHydrated(person.opportunityManager),
@@ -134,7 +146,11 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
   }
 
   hydrate() {
-    if (!this.isDebug) this.populateCaseloads();
+    if (this.isDebug) return;
+    this.caseloadSubscriptionsToHydrate.forEach((subscription) =>
+      subscription.hydrate(),
+    );
+    this.populateCaseloads();
   }
 
   // =========================
@@ -148,13 +164,11 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
   get hydrationState(): HydrationState {
     return this.isDebug
       ? { status: "hydrated" }
-      : compositeHydrationState(
-          [this.workflowsStore as Hydratable].concat(
-            this.personsToHydrate
-              .map((person) => person.opportunityManager)
-              .concat(),
-          ),
-        );
+      : compositeHydrationState([
+          this.workflowsStore,
+          ...this.caseloadSubscriptionsToHydrate,
+          ...this.personsToHydrate.map((person) => person.opportunityManager),
+        ]);
   }
 
   // =========================

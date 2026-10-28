@@ -114,6 +114,7 @@ describe("the header copy under the gate", () => {
         isTypesenseSearchEnabled: true,
         opportunitySearchManager: { countsByType },
         selectedSearchIds: ["OFFICER_1"],
+        hasSelectedSearch: true,
         searchTypeOverride: undefined,
         workflowsSearchFieldTitle: "officer",
       },
@@ -355,6 +356,21 @@ describe("tasks under the typesenseHomepage gate", () => {
     });
 
     expect(presenter.shouldHydrateTasks).toBe(false);
+    expect(presenter.showTasksSummary).toBe(false);
+  });
+
+  test("and NOT while searching all caseloads, even with tasks already hydrated", () => {
+    // hasSupervisionTasks stays true when people on the caseload kept tasks
+    // hydrated by an earlier, narrower selection.
+    const presenter = makePresenter({
+      ...gated,
+      searchStore: { ...gated.searchStore, isSearchingAllCaseloads: true },
+    });
+
+    expect(presenter.shouldHydrateTasks).toBe(false);
+    expect(presenter.showTasksSummary).toBe(false);
+    expect(presenter.showTasksSummaryCard).toBe(false);
+    expect(presenter.showTasksSummaryBottom).toBe(false);
   });
 
   test('and YES while the active system is "ALL"', () => {

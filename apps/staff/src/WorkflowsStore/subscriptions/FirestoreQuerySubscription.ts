@@ -127,6 +127,8 @@ export abstract class FirestoreQuerySubscription<
   }
 
   subscribe(): void {
+    if (this.disposeDynamicDataSource) return;
+
     super.subscribe();
 
     // watches dataSource for changes and re-subscribes accordingly;
@@ -144,5 +146,6 @@ export abstract class FirestoreQuerySubscription<
   unsubscribe(): void {
     super.unsubscribe();
     this.disposeDynamicDataSource?.();
+    this.disposeDynamicDataSource = undefined;
   }
 }

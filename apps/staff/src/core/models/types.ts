@@ -318,6 +318,14 @@ export type SearchableGroup = {
   searchables: Searchable[];
 };
 
+/**
+ * What the caseload search bar has selected: every caseload the user can see,
+ * or the officers, locations, and caseloads with the given search ids.
+ */
+export type CaseloadSearchSelection =
+  | { kind: "all" }
+  | { kind: "ids"; ids: string[] };
+
 export type SearchType =
   | "OFFICER"
   | "INCARCERATION_OFFICER"

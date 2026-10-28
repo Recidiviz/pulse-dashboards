@@ -632,6 +632,7 @@ export default class AnalyticsStore {
     searchCount: number;
     isDefault: boolean;
     searchType?: SearchType;
+    searchAllCaseloads?: boolean;
   }): void {
     this.track("frontend.caseload_search", metadata);
   }

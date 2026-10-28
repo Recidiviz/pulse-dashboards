@@ -1051,6 +1051,16 @@ export default class FirestoreStore {
     return this.updateUserUpdatesDocument({
       stateCode: this.rootStore.tenantStore.currentTenantId,
       selectedSearchIds,
+      searchAllCaseloads: false,
+    });
+  }
+
+  // Leaves selectedSearchIds alone so pages without an all-caseloads option
+  // can fall back to the user's last individual selection.
+  updateSearchAllCaseloads(): Promise<void> | undefined {
+    return this.updateUserUpdatesDocument({
+      stateCode: this.rootStore.tenantStore.currentTenantId,
+      searchAllCaseloads: true,
     });
   }
 

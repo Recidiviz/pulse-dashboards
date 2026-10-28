@@ -47,6 +47,9 @@ beforeEach(() => {
     searchStore: {
       workflowsSearchFieldTitle: "field title",
       selectedSearchIds: ["id1", "id2"],
+      get hasSelectedSearch() {
+        return this.selectedSearchIds.length > 0;
+      },
       isTypesenseSearchEnabled: true,
       searchTypeOverride: undefined,
     },

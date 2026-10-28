@@ -77,6 +77,13 @@ beforeEach(() => {
     },
     clientSearchManager: { queryConstraints: [] },
     residentSearchManager: { queryConstraints: [] },
+    selectedSearchIds: [],
+    isSearchingAllCaseloads: false,
+    get selectedSearch() {
+      return this.isSearchingAllCaseloads
+        ? { kind: "all" }
+        : { kind: "ids", ids: this.selectedSearchIds };
+    },
   }) as unknown as SearchStore;
   clientSearchManager = new SearchManager(searchStoreMock, "CLIENT");
   residentSearchManager = new SearchManager(searchStoreMock, "RESIDENT");
@@ -211,6 +218,45 @@ describe("queryConstraints", () => {
       "==, US_ND",
       "in, TEST1,TEST2,OFFICER1||fakeOp, TEST1,TEST2,OFFICER1&&!=, []",
     );
+  });
+});
+
+describe("all caseloads", () => {
+  beforeEach(() => {
+    // @ts-ignore
+    searchStoreMock.isSearchingAllCaseloads = true;
+    // @ts-ignore
+    searchStoreMock.selectedSearchIds = ["A DIFFERENT OFFICER"];
+  });
+
+  test("queries by state alone", () => {
+    // @ts-ignore
+    searchStoreMock.workflowsStore.activePageIsHomepage = false;
+
+    // eslint-disable-next-line
+    clientSearchManager.queryConstraints;
+    expect(whereMock).toHaveBeenCalledExactlyOnceWith(
+      "stateCode",
+      "==",
+      "US_ND",
+    );
+    expect(orMock).not.toHaveBeenCalled();
+  });
+
+  test("skips the query on the homepage", () => {
+    // @ts-ignore
+    searchStoreMock.workflowsStore.activePageIsHomepage = true;
+
+    expect(clientSearchManager.queryConstraints).toBeUndefined();
+  });
+
+  test("matches every person of the manager's type in the current state", () => {
+    const inState = { ...testClient, stateCode: "US_ND" } as Client;
+    const outOfState = { ...testClient, stateCode: "US_MO" } as Client;
+
+    expect(clientSearchManager.personMatchesSearch(inState)).toBeTrue();
+    expect(clientSearchManager.personMatchesSearch(outOfState)).toBeFalse();
+    expect(residentSearchManager.personMatchesSearch(inState)).toBeFalse();
   });
 });
 

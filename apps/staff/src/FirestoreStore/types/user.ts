@@ -29,6 +29,10 @@ export type UserUpdateRecord = {
   stateCode: string;
   // this persists their most recent caseload selection
   selectedSearchIds?: string[];
+  // When true, the user has selected every caseload in the state. Takes
+  // precedence over selectedSearchIds on the pages that support it; the other
+  // pages fall back to selectedSearchIds.
+  searchAllCaseloads?: boolean;
   // TODO(#3522): [Workflows][Auth] Rethink district overrides
   overrideDistrictIds?: string[];
   dismissedOpportunityNotificationIds?: string[];
