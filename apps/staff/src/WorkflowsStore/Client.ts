@@ -328,9 +328,21 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     if (this.stateCode === "US_MO") {
       if (!this._caseType) return "Unknown";
       if (this._caseType === "INTERNAL_UNKNOWN") {
-        return humanReadableTitleCase(this.caseTypeRawText ?? "Unknown")
-          .replace("Icts", "ICTS")
-          .replace("Jri", "JRI");
+        return humanReadableTitleCase(
+          this.caseTypeRawText ?? "Unknown",
+        ).replace("Jri", "JRI");
+      }
+      if (this._caseType === "DRUG_COURT") {
+        // Ingest maps both MO treatment court types to DRUG_COURT, but they have
+        // different contact standards, so show the specific type from the raw
+        // text. DRG is the MOCIS code for Treatment Court Offender.
+        const rawText = this.caseTypeRawText?.toUpperCase();
+        if (rawText === "ICTS TREATMENT OFFENDER") {
+          return "ICTS Treatment Offender";
+        }
+        if (rawText === "TREATMENT COURT OFFENDER" || rawText === "DRG") {
+          return "Treatment Court Offender";
+        }
       }
       return humanReadableTitleCase(this._caseType);
     }

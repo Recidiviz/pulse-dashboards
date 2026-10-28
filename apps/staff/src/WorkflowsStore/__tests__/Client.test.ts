@@ -452,6 +452,35 @@ describe("Client", () => {
     expect(testClient.searchIdValues).toEqual(["DISTRICT1", "OFFICER1"]);
   });
 
+  describe("caseType", () => {
+    test.each<[string, string | undefined, string]>([
+      ["DRUG_COURT", "ICTS TREATMENT OFFENDER", "ICTS Treatment Offender"],
+      ["DRUG_COURT", "TREATMENT COURT OFFENDER", "Treatment Court Offender"],
+      ["DRUG_COURT", "DRG", "Treatment Court Offender"],
+      ["DRUG_COURT", undefined, "Drug Court"],
+      ["SEX_OFFENSE", "SEX OFFENDER", "Sex Offense"],
+      [
+        "INTERNAL_UNKNOWN",
+        "SPECIALTY COURT OFFENDER",
+        "Specialty Court Offender",
+      ],
+      [
+        "INTERNAL_UNKNOWN",
+        "JRI TREATMENT PILOT OFFENDER",
+        "JRI Treatment Pilot Offender",
+      ],
+    ])(
+      "US_MO: caseType %s with raw text %s → %s",
+      (caseType, caseTypeRawText, expected) => {
+        record.stateCode = "US_MO";
+        record.caseType = caseType;
+        record.caseTypeRawText = caseTypeRawText;
+        createTestUnit();
+        expect(testClient.caseType).toEqual(expected);
+      },
+    );
+  });
+
   describe("supervisedIn", () => {
     const tenantId = "US_CA";
     const tenantName = TENANT_CONFIGS[tenantId].name;
