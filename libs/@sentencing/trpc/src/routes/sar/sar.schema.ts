@@ -39,7 +39,7 @@ import {
 export const getSARInsightSchema = z.object({
   offenseName: z.string(),
   gender: z.nativeEnum(Gender),
-  assessmentScoreBucket: z.number().int(),
+  assessmentRiskLevel: z.nativeEnum(DomainRiskLevel),
 });
 
 export const ORAS_FIELDS: ReadonlyArray<

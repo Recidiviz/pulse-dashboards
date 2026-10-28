@@ -147,13 +147,13 @@ export const sarRouter = router({
     .input(getSARInsightSchema)
     .query(
       async ({
-        input: { offenseName, gender, assessmentScoreBucket },
+        input: { offenseName, gender, assessmentRiskLevel },
         ctx: { prisma },
       }) => {
         return await getSARInsight(
           offenseName,
           gender,
-          assessmentScoreBucket,
+          assessmentRiskLevel,
           prisma,
         );
       },

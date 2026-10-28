@@ -28,8 +28,8 @@ import {
   getSentenceLengthBucketLabel,
   LEGEND_LABELS,
 } from "../CaseDetails/components/charts/common/utils";
+import { getRiskChipLabel } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
 import { GenderToDisplayName } from "../CaseDetails/constants";
-import { BUCKET_TO_RISK_CHIP } from "../SARDetails/constants";
 import {
   InsightDescriptionContext,
   InsightSubjectSpans,
@@ -142,15 +142,14 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
 }) => {
   const {
     gender,
-    assessmentScoreBucketStart,
+    assessmentRiskLevel,
     offense,
     offenseCategory,
     dispositionNumRecords,
   } = insight;
 
   const genderChip = GenderToDisplayName[gender] ?? gender;
-  const riskChip =
-    BUCKET_TO_RISK_CHIP[assessmentScoreBucketStart] ?? "RISK SCORE";
+  const riskChip = getRiskChipLabel(assessmentRiskLevel);
   const offenseChip = (offenseCategory ?? offense).toUpperCase();
 
   const percentageByLabel = Object.fromEntries(
@@ -196,7 +195,7 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
             {printFormattedRecordString(dispositionNumRecords)} of{" "}
             <InsightSubjectSpans
               gender={gender}
-              assessmentScoreBucketStart={assessmentScoreBucketStart}
+              riskLevel={assessmentRiskLevel}
               offense={offense}
               offenseCategory={offenseCategory}
             />

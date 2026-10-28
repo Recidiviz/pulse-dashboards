@@ -48,7 +48,7 @@ export const AverageTimeServed: React.FC<{
   const numRecords = insight.timeServedNumRecords ?? 0;
   const descriptionContext = {
     gender: insight.gender,
-    assessmentScoreBucketStart: insight.assessmentScoreBucketStart,
+    riskLevel: insight.assessmentRiskLevel,
     offense: insight.offense,
     offenseCategory: insight.offenseCategory,
   };

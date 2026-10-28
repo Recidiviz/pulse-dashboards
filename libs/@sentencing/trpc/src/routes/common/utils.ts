@@ -19,6 +19,7 @@ import { captureException } from "@sentry/node";
 import _ from "lodash";
 
 import {
+  DomainRiskLevel,
   Gender,
   Prisma,
   PrismaClient,
@@ -360,13 +361,25 @@ export async function getInsight(
   };
 }
 
-// SAR-specific insight lookup using exact bucket match (0=Low, 1=Moderate, 2=High, 3=Very High)
+// Maps a risk level to the assessment score bucket insights are keyed on.
+export const RISK_LEVEL_TO_BUCKET: Record<DomainRiskLevel, number> = {
+  LOW: 0,
+  MODERATE: 1,
+  HIGH: 2,
+};
+
+/**
+ * Returns the SAR insight for offenseName, gender, and assessmentRiskLevel, or
+ * undefined if none matches. Insights are keyed on an assessment score bucket,
+ * so the risk level is converted to one here and returned in its place.
+ */
 export async function getSARInsight(
   offenseName: string,
   gender: Gender,
-  assessmentScoreBucket: number,
+  assessmentRiskLevel: DomainRiskLevel,
   prisma: PrismaClient,
 ) {
+  const assessmentScoreBucket = RISK_LEVEL_TO_BUCKET[assessmentRiskLevel];
   const insight = await prisma.insight.findFirst({
     where: {
       assessmentScoreBucketStart: assessmentScoreBucket,
@@ -382,7 +395,7 @@ export async function getSARInsight(
   if (!insight) {
     // Not necessarily an error — MO insight data may not yet cover all offense/bucket combos
     console.warn(
-      `No SAR insight found for offense "${offenseName}", gender ${gender}, bucket ${assessmentScoreBucket}`,
+      `No SAR insight found for offense "${offenseName}", gender ${gender}, risk level ${assessmentRiskLevel}`,
     );
 
     return undefined;
@@ -391,8 +404,6 @@ export async function getSARInsight(
   return {
     ..._.pick(insight, [
       "gender",
-      "assessmentScoreBucketStart",
-      "assessmentScoreBucketEnd",
       "rollupGender",
       "rollupAssessmentScoreBucketStart",
       "rollupAssessmentScoreBucketEnd",
@@ -404,6 +415,7 @@ export async function getSARInsight(
       "avgPctServed",
       "timeServedNumRecords",
     ]),
+    assessmentRiskLevel,
     offense: insight.offense.name,
     offenseCategory: insight.offense.category,
     rollupOffenseName: insight.rollupOffenseName,

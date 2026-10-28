@@ -90,14 +90,14 @@ export const InsightsSummaryPanel: React.FC<{
       ? buildInsightsFootnoteText(
           insightData.dispositionNumRecords,
           insightData.gender,
-          insightData.assessmentScoreBucketStart,
+          insightData.assessmentRiskLevel,
         )
       : null,
     hasTimeServedData && insightData.timeServedNumRecords != null
       ? buildInsightsFootnoteText(
           insightData.timeServedNumRecords,
           insightData.gender,
-          insightData.assessmentScoreBucketStart,
+          insightData.assessmentRiskLevel,
         )
       : null,
   ];
@@ -158,9 +158,7 @@ export const InsightsSummaryPanel: React.FC<{
                   prison for{" "}
                   <InsightSubjectSpans
                     gender={insightData.gender}
-                    assessmentScoreBucketStart={
-                      insightData.assessmentScoreBucketStart
-                    }
+                    riskLevel={insightData.assessmentRiskLevel}
                     offense={insightData.offense}
                     offenseCategory={insightData.offenseCategory}
                   />{" "}

@@ -307,7 +307,7 @@ export class APIClient {
   async getSARInsight(
     offense: string,
     gender: Client["gender"],
-    assessmentScoreBucket: number,
+    assessmentRiskLevel: NonNullable<SAR["assessmentRiskLevel"]>,
   ) {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
@@ -315,7 +315,7 @@ export class APIClient {
     const fetchedData = await this.trpcClient.sar.getSARInsight.query({
       offenseName: offense,
       gender,
-      assessmentScoreBucket,
+      assessmentRiskLevel,
     });
 
     return fetchedData;

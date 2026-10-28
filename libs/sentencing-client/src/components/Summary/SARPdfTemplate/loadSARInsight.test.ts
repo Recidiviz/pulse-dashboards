@@ -15,25 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { getAssessmentScoreBucket } from "../../OffenderAssessment/assessmentTypeUtils";
 import { loadSARInsight } from "./loadSARInsight";
 import type { SAR } from "./SARPdfTemplate.types";
-
-vi.mock("../../OffenderAssessment/assessmentTypeUtils", () => ({
-  getAssessmentScoreBucket: vi.fn(),
-}));
-
-const mockBucket = vi.mocked(getAssessmentScoreBucket);
 
 /** Minimal SAR carrying only the fields the insight derivation reads. */
 function makeSAR(overrides: Partial<SAR> = {}): SAR {
   return {
     assessmentDate: new Date("2026-01-15"),
     mostSevereOffenseName: "POSSESSION OF CONTROLLED SUBSTANCE",
-    assessmentScore: 20,
-    assessmentType: "ORAS_CST",
+    assessmentRiskLevel: "HIGH",
     client: { gender: "MALE" },
     ...overrides,
   } as unknown as SAR;
@@ -44,11 +36,6 @@ function makeApiClient() {
 }
 
 describe("loadSARInsight", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockBucket.mockReturnValue(2);
-  });
-
   it("returns null (and skips the fetch) when assessmentDate is missing", async () => {
     const apiClient = makeApiClient();
     const result = await loadSARInsight(
@@ -61,9 +48,7 @@ describe("loadSARInsight", () => {
 
   it.each([
     ["offense", { mostSevereOffenseName: null }],
-    ["gender", { client: null }],
-    ["score", { assessmentScore: null }],
-    ["assessment type", { assessmentType: null }],
+    ["risk level", { assessmentRiskLevel: null }],
   ])("returns null when %s is missing", async (_field, overrides) => {
     const apiClient = makeApiClient();
     const result = await loadSARInsight(
@@ -74,15 +59,7 @@ describe("loadSARInsight", () => {
     expect(apiClient.getSARInsight).not.toHaveBeenCalled();
   });
 
-  it("returns null when the score bucket cannot be determined", async () => {
-    mockBucket.mockReturnValue(null);
-    const apiClient = makeApiClient();
-    const result = await loadSARInsight(apiClient, makeSAR());
-    expect(result).toBeNull();
-    expect(apiClient.getSARInsight).not.toHaveBeenCalled();
-  });
-
-  it("fetches the insight with the derived bucket on the happy path", async () => {
+  it("fetches the insight for the stored risk level on the happy path", async () => {
     const insight = { dispositionData: [] };
     const apiClient = makeApiClient();
     apiClient.getSARInsight.mockResolvedValue(insight);
@@ -92,7 +69,7 @@ describe("loadSARInsight", () => {
     expect(apiClient.getSARInsight).toHaveBeenCalledWith(
       "POSSESSION OF CONTROLLED SUBSTANCE",
       "MALE",
-      2,
+      "HIGH",
     );
     expect(result).toBe(insight);
   });

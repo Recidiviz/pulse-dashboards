@@ -15,15 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  formatOffenseLabel,
-  printFormattedRecordString,
-} from "../../../../../../src/utils/utils";
+import { printFormattedRecordString } from "../../../../../../src/utils/utils";
 import { SARInsight } from "../../../../../api";
-import { getDescriptionGender } from "../common/utils";
+import { InsightSubjectSpans } from "../../../../Summary/insightsUtils";
 import * as Styled from "../components/Styles";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../constants";
-import { BUCKET_TO_RISK_LEVEL } from "./sarUtils";
 
 interface SARDispositionChartExplanationProps {
   insight: NonNullable<SARInsight>;
@@ -34,17 +30,11 @@ export function SARDispositionChartExplanation({
 }: SARDispositionChartExplanationProps) {
   const {
     gender,
-    assessmentScoreBucketStart,
+    assessmentRiskLevel,
     offense,
     offenseCategory,
     dispositionNumRecords,
   } = insight;
-
-  const genderString = getDescriptionGender(gender);
-  const riskLevel =
-    BUCKET_TO_RISK_LEVEL[assessmentScoreBucketStart] ?? "unknown risk";
-  const offenseDescriptor =
-    offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
 
   return (
     <Styled.TextContainer>
@@ -53,9 +43,13 @@ export function SARDispositionChartExplanation({
         sentenced to a particular disposition. The rates are based on{" "}
         {dispositionNumRecords.toLocaleString()}{" "}
         {printFormattedRecordString(dispositionNumRecords)} of{" "}
-        <span>{genderString.trim()}</span> with <span>{riskLevel} scores*</span>{" "}
-        with <span>{offenseDescriptor} convictions</span>, using MODOC data from
-        2020-present.
+        <InsightSubjectSpans
+          gender={gender}
+          riskLevel={assessmentRiskLevel}
+          offense={offense}
+          offenseCategory={offenseCategory}
+        />
+        , using MODOC data from 2020-present.
       </Styled.TextWrapper>
     </Styled.TextContainer>
   );

@@ -16,7 +16,13 @@
 // =============================================================================
 
 import { pick } from "lodash";
-import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
+import {
+  comparer,
+  flowResult,
+  makeAutoObservable,
+  reaction,
+  runInAction,
+} from "mobx";
 import moment from "moment";
 
 import {
@@ -51,7 +57,6 @@ import {
   Boundaries,
   deriveDomainRiskLevel,
   getAssessmentRiskLevel,
-  getAssessmentScoreBucket,
 } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { RiskLevelKey } from "../components/OffenderAssessment/constants";
 import { EmploymentHistory } from "../components/OffenderAssessment/EmploymentHistory/constants";
@@ -221,12 +226,17 @@ export class SARDetailsPresenter implements Hydratable {
       },
     });
 
+    // Insights are keyed on the offense and the risk level, so saving a new
+    // ORAS score that changes the level reloads them.
     this.disposeInsightReaction = reaction(
-      () => this.SARData?.mostSevereOffenseName,
-      (offenseName) => {
+      () => [
+        this.SARData?.mostSevereOffenseName,
+        this.SARData?.assessmentRiskLevel,
+      ],
+      ([offenseName]) => {
         if (offenseName) this.loadInsight();
       },
-      { fireImmediately: true },
+      { fireImmediately: true, equals: comparer.structural },
     );
   }
 
@@ -253,25 +263,14 @@ export class SARDetailsPresenter implements Hydratable {
 
     const offense = sarData.mostSevereOffenseName;
     const gender = sarData.client?.gender;
-    const score = sarData.assessmentScore;
-    const assessmentType = sarData.assessmentType;
+    const riskLevel = sarData.assessmentRiskLevel;
 
-    if (!offense || !gender || score == null || assessmentType == null) {
-      let missingField = "assessment score";
+    if (!offense || !gender || !riskLevel) {
+      let missingField = "assessment risk level";
       if (!offense) missingField = "offense";
       else if (!gender) missingField = "gender";
-      else if (assessmentType == null) missingField = "assessment type";
       console.warn(
         `[SARDetailsPresenter] Cannot load insight: missing ${missingField}`,
-      );
-      this.insight = null;
-      return;
-    }
-
-    const scoreBucket = getAssessmentScoreBucket(assessmentType, score, gender);
-    if (scoreBucket == null) {
-      console.warn(
-        `[SARDetailsPresenter] Cannot load insight: could not determine score bucket for assessmentType=${assessmentType}, score=${score}`,
       );
       this.insight = null;
       return;
@@ -281,11 +280,11 @@ export class SARDetailsPresenter implements Hydratable {
       this.insight = yield this.sentencingStore.apiClient.getSARInsight(
         offense,
         gender,
-        scoreBucket,
+        riskLevel,
       );
       if (!this.insight) {
         console.warn(
-          `[SARDetailsPresenter] No insight found for offense="${offense}", gender=${gender}, scoreBucket=${scoreBucket}`,
+          `[SARDetailsPresenter] No insight found for offense="${offense}", gender=${gender}, riskLevel=${riskLevel}`,
         );
       }
     } catch (e) {
@@ -300,9 +299,14 @@ export class SARDetailsPresenter implements Hydratable {
 
   get emptyStateDescriptionContext(): InsightDescriptionContext | null {
     if (this.insight) {
-      const { gender, assessmentScoreBucketStart, offense, offenseCategory } =
+      const { gender, assessmentRiskLevel, offense, offenseCategory } =
         this.insight;
-      return { gender, assessmentScoreBucketStart, offense, offenseCategory };
+      return {
+        gender,
+        riskLevel: assessmentRiskLevel,
+        offense,
+        offenseCategory,
+      };
     }
     // Fallback: build context from sarData when no matching insight exists.
     const sarData = this.SARData;
@@ -311,14 +315,7 @@ export class SARDetailsPresenter implements Hydratable {
     if (!gender || !offense) return null;
     return {
       gender,
-      assessmentScoreBucketStart:
-        sarData?.assessmentScore != null
-          ? getAssessmentScoreBucket(
-              sarData.assessmentType ?? null,
-              sarData.assessmentScore,
-              gender,
-            )
-          : null,
+      riskLevel: sarData?.assessmentRiskLevel ?? null,
       offense,
       offenseCategory: null,
     };

@@ -20,7 +20,7 @@ import React from "react";
 
 import { formatOffenseLabel } from "../../../../utils/utils";
 import { getDescriptionGender } from "../../../CaseDetails/components/charts/common/utils";
-import { BUCKET_TO_RISK_LEVEL } from "../../../CaseDetails/components/charts/DispositionChart/sarUtils";
+import { getRiskLevelDescription } from "../../../CaseDetails/components/charts/DispositionChart/sarUtils";
 import type { InsightDescriptionContext } from "../../insightsUtils";
 import { font } from "../tokens";
 
@@ -31,18 +31,16 @@ import { font } from "../tokens";
  * bold segments are nested <Text> (so it must be rendered INSIDE a parent
  * <Text>), whitespace between segments is explicit (react-pdf does not collapse
  * whitespace between inline nodes the way the browser does between <span>s), and
- * the risk clause is omitted when no assessment bucket is available.
+ * the risk clause is omitted when there's no risk level.
  */
 export const InsightSubject: React.FC<{
   context: InsightDescriptionContext;
-}> = ({
-  context: { gender, assessmentScoreBucketStart, offense, offenseCategory },
-}) => {
+}> = ({ context: { gender, riskLevel, offense, offenseCategory } }) => {
   const genderString = getDescriptionGender(gender).trim();
   const offenseDescriptor =
     offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
 
-  if (assessmentScoreBucketStart == null) {
+  if (riskLevel == null) {
     return (
       <>
         <Text style={{ fontWeight: font.weight.bold }}>{genderString}</Text>{" "}
@@ -54,12 +52,12 @@ export const InsightSubject: React.FC<{
     );
   }
 
-  const riskLevel =
-    BUCKET_TO_RISK_LEVEL[assessmentScoreBucketStart] ?? "unknown risk";
   return (
     <>
       <Text style={{ fontWeight: font.weight.bold }}>{genderString}</Text> with{" "}
-      <Text style={{ fontWeight: font.weight.bold }}>{riskLevel} scores*</Text>{" "}
+      <Text style={{ fontWeight: font.weight.bold }}>
+        {getRiskLevelDescription(riskLevel)} scores*
+      </Text>{" "}
       with{" "}
       <Text style={{ fontWeight: font.weight.bold }}>
         {offenseDescriptor} convictions

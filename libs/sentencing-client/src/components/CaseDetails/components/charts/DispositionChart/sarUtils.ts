@@ -17,27 +17,28 @@
 
 import { formatOffenseLabel } from "../../../../../../src/utils/utils";
 import { SARInsight } from "../../../../../api";
+import {
+  RISK_LEVELS,
+  RiskLevelKey,
+} from "../../../../OffenderAssessment/constants";
 import { getSubtitleGender } from "../common/utils";
 
-export const BUCKET_TO_RISK_LEVEL: Record<number, string> = {
-  0: "low risk",
-  1: "moderate risk",
-  2: "high risk",
-};
+/** Returns riskLevel as it reads mid-sentence, e.g. "moderate risk". */
+export function getRiskLevelDescription(riskLevel: RiskLevelKey): string {
+  return `${RISK_LEVELS[riskLevel].toLowerCase()} risk`;
+}
 
-const BUCKET_TO_SUBTITLE_RISK_LEVEL: Record<number, string> = {
-  0: "Low risk score",
-  1: "Moderate risk score",
-  2: "High risk score",
-};
+/** Returns the insight chip label for riskLevel, e.g. "Moderate Risk Score". */
+export function getRiskChipLabel(riskLevel: RiskLevelKey): string {
+  return `${RISK_LEVELS[riskLevel]} Risk Score`;
+}
 
 export function getSARDispositionChartSubtitle(
   insight: NonNullable<SARInsight>,
 ): string {
-  const { gender, assessmentScoreBucketStart, offense, offenseCategory } =
-    insight;
+  const { gender, assessmentRiskLevel, offense, offenseCategory } = insight;
   const genderString = getSubtitleGender(gender);
-  const riskString = BUCKET_TO_SUBTITLE_RISK_LEVEL[assessmentScoreBucketStart];
+  const riskString = `${RISK_LEVELS[assessmentRiskLevel]} risk score`;
   const offenseString = offenseCategory ?? formatOffenseLabel(offense);
   return [genderString, riskString, offenseString].filter(Boolean).join(", ");
 }

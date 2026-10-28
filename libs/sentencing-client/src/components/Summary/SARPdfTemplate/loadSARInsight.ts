@@ -16,7 +16,6 @@
 // =============================================================================
 
 import type { APIClient } from "../../../api";
-import { getAssessmentScoreBucket } from "../../OffenderAssessment/assessmentTypeUtils";
 import type { SAR, SARInsight } from "./SARPdfTemplate.types";
 
 /**
@@ -38,18 +37,12 @@ export async function loadSARInsight(
 
   const offense = sar.mostSevereOffenseName;
   const gender = sar.client?.gender;
-  const score = sar.assessmentScore;
-  const assessmentType = sar.assessmentType;
+  const riskLevel = sar.assessmentRiskLevel;
 
-  if (!offense || !gender || score == null || assessmentType == null) {
-    return null;
-  }
-
-  const scoreBucket = getAssessmentScoreBucket(assessmentType, score, gender);
-  if (scoreBucket == null) return null;
+  if (!offense || !gender || !riskLevel) return null;
 
   try {
-    return await apiClient.getSARInsight(offense, gender, scoreBucket);
+    return await apiClient.getSARInsight(offense, gender, riskLevel);
   } catch {
     return null;
   }

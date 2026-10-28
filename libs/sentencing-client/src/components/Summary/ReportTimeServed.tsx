@@ -66,7 +66,7 @@ export const ReportTimeServedEmpty: React.FC<ReportTimeServedEmptyProps> = ({
         {buildInsightsFootnoteText(
           dispositionNumRecords,
           descriptionContext.gender,
-          descriptionContext.assessmentScoreBucketStart,
+          descriptionContext.riskLevel,
         )}
       </Styled.TimeServedFootnoteText>
     </Styled.TimeServedFootnoteContainer>
@@ -123,7 +123,7 @@ export const ReportTimeServed: React.FC<ReportTimeServedProps> = ({
           {buildInsightsFootnoteText(
             timeServedNumRecords,
             descriptionContext.gender,
-            descriptionContext.assessmentScoreBucketStart,
+            descriptionContext.riskLevel,
           )}
         </Styled.TimeServedFootnoteText>
         <Styled.TimeServedFootnoteText>

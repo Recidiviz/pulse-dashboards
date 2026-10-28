@@ -238,8 +238,7 @@ export const mockSAR: SAR = {
 /** Synthetic getSARInsight response for the same offense/gender/bucket. */
 export const mockSARInsight: SARInsight = {
   gender: "MALE",
-  assessmentScoreBucketStart: 2,
-  assessmentScoreBucketEnd: 2,
+  assessmentRiskLevel: "HIGH",
   rollupGender: "MALE",
   rollupAssessmentScoreBucketStart: null,
   rollupAssessmentScoreBucketEnd: null,

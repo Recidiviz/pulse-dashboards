@@ -28,16 +28,17 @@ import {
   getSentenceLengthBucketLabel,
   sentenceLengthLabelFilter,
 } from "../CaseDetails/components/charts/common/utils";
-import { BUCKET_TO_RISK_LEVEL } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
+import { getRiskLevelDescription } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
 import {
   getAssessmentTypeShortName,
-  getOrasBucketScoreRange,
+  getOrasRiskLevelScoreRange,
   ORAS_TOOL_KEYS,
 } from "../OffenderAssessment/assessmentTypeUtils";
+import { RiskLevelKey } from "../OffenderAssessment/constants";
 
 export type InsightDescriptionContext = {
   gender: NonNullable<SARInsight>["gender"];
-  assessmentScoreBucketStart: number | null;
+  riskLevel: RiskLevelKey | null;
   offense: NonNullable<SARInsight>["offense"];
   offenseCategory: NonNullable<SARInsight>["offenseCategory"];
 };
@@ -45,7 +46,7 @@ export type InsightDescriptionContext = {
 /** Renders the bold inline subject segment shared by the full and empty chart states. */
 export function InsightSubjectSpans({
   gender,
-  assessmentScoreBucketStart,
+  riskLevel,
   offense,
   offenseCategory,
 }: InsightDescriptionContext) {
@@ -53,8 +54,8 @@ export function InsightSubjectSpans({
   const offenseDescriptor =
     offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
 
-  // Omit risk level clause when no valid bucket is available (e.g. no ORAS assessment).
-  if (assessmentScoreBucketStart == null) {
+  // Omit the risk level clause when there's no risk level (e.g. no ORAS assessment).
+  if (riskLevel == null) {
     return (
       <>
         <span>{genderString.trim()}</span> with{" "}
@@ -63,12 +64,11 @@ export function InsightSubjectSpans({
     );
   }
 
-  const riskLevel =
-    BUCKET_TO_RISK_LEVEL[assessmentScoreBucketStart] ?? "unknown risk";
   return (
     <>
-      <span>{genderString.trim()}</span> with <span>{riskLevel} scores*</span>{" "}
-      with <span>{offenseDescriptor} convictions</span>
+      <span>{genderString.trim()}</span> with{" "}
+      <span>{getRiskLevelDescription(riskLevel)} scores*</span> with{" "}
+      <span>{offenseDescriptor} convictions</span>
     </>
   );
 }
@@ -80,20 +80,19 @@ export function InsightSubjectSpans({
 export function buildInsightsFootnoteText(
   numRecords: number,
   gender: NonNullable<SARInsight>["gender"],
-  bucket: number | null,
+  riskLevel: RiskLevelKey | null,
 ): string {
   const genderString = getDescriptionGender(gender).trim();
-  if (bucket == null) {
+  if (riskLevel == null) {
     return `*These rates are based on ${numRecords.toLocaleString()} records of ${genderString}`;
   }
-  const riskLevel = BUCKET_TO_RISK_LEVEL[bucket] ?? "unknown risk";
   const rangeFragments = ORAS_TOOL_KEYS.map((tool, i) => {
-    const range = getOrasBucketScoreRange(bucket, tool, gender);
+    const range = getOrasRiskLevelScoreRange(riskLevel, tool, gender);
     const shortName = getAssessmentTypeShortName(tool);
     const prefix = i === ORAS_TOOL_KEYS.length - 1 ? "or " : "";
     return `${prefix}${range} for the ${shortName}`;
   });
-  return `*These rates are based on ${numRecords.toLocaleString()} records of ${genderString} with ${riskLevel} scores (${rangeFragments.join(", ")})`;
+  return `*These rates are based on ${numRecords.toLocaleString()} records of ${genderString} with ${getRiskLevelDescription(riskLevel)} scores (${rangeFragments.join(", ")})`;
 }
 
 /**

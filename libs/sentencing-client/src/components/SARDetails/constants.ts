@@ -67,13 +67,6 @@ export const DISPOSITION_TYPE_ORDER: Record<string, number> = {
   Suspended: 3,
 };
 
-export const BUCKET_TO_RISK_CHIP: Record<number, string> = {
-  0: "Low Risk Score",
-  1: "Moderate Risk Score",
-  2: "High Risk Score",
-  3: "Very High Risk Score",
-};
-
 // Canonical set of disposition legend labels, shared by the DOM report's
 // DISPOSITION_FILL (ReportDispositionPatterns.tsx) and the PDF report's
 // GLYPH_BY_LABEL (SARPdfTemplate/blocks/HistoricalOutcomeBlock.tsx).

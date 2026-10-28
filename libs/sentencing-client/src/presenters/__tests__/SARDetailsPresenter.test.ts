@@ -191,6 +191,44 @@ describe("saveORASData", () => {
     },
   );
 
+  it("reloads the insight when a new score changes the risk level", async () => {
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      mostSevereOffenseName: "Burglary",
+      assessmentType: "ORAS_CST",
+      assessmentScore: 10,
+      assessmentRiskLevel: "LOW",
+      assessmentDate: new Date("2025-01-01"),
+    });
+    vi.spyOn(sentencingStore.apiClient, "getSARInsight").mockResolvedValue(
+      null as never,
+    );
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenLastCalledWith(
+      "Burglary",
+      "MALE",
+      "LOW",
+    );
+
+    // 20 is Moderate on the ORAS-CST.
+    await presenter.saveORASData({
+      ...ORAS_EMPTY_FORM,
+      assessmentType: "ORAS_CST",
+      assessmentScore: 20,
+      assessmentDate: new Date("2025-01-01"),
+      assessmentAdministeredBy: "Officer Smith",
+    });
+
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenLastCalledWith(
+      "Burglary",
+      "MALE",
+      "MODERATE",
+    );
+  });
+
   it("updates SARData locally after saving", async () => {
     vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
       undefined as never,

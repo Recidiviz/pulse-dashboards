@@ -129,45 +129,23 @@ export function deriveDomainRiskLevel(
   return "LOW";
 }
 
-const RISK_LEVEL_TO_BUCKET: Record<RiskLevelKey, number> = {
-  LOW: 0,
-  MODERATE: 1,
-  HIGH: 2,
-};
-
 /**
- * Returns the assessment score bucket insights are keyed on for score, or null
- * for an assessment type with no thresholds.
+ * Returns the score range riskLevel covers for assessmentType and gender, e.g.
+ * "15-23", or null for an assessment type with no thresholds.
  */
-export function getAssessmentScoreBucket(
-  assessmentType: AssessmentTypeKey | null | undefined,
-  score: number,
-  gender?: string | null,
-): number | null {
-  const riskLevel = getAssessmentRiskLevel(assessmentType, score, gender);
-  return riskLevel ? RISK_LEVEL_TO_BUCKET[riskLevel] : null;
-}
-
-/**
- * Returns a human-readable ORAS score range string for a given bucket number
- * (0=Low, 1=Moderate, 2=High).
- * Returns null if the assessment type is unknown or bucket is invalid.
- */
-export function getOrasBucketScoreRange(
-  bucket: number,
+export function getOrasRiskLevelScoreRange(
+  riskLevel: RiskLevelKey,
   assessmentType: AssessmentTypeKey,
   gender?: string | null,
 ): string | null {
   const boundaries = getBoundaries(assessmentType, gender);
   if (!boundaries) return null;
-  switch (bucket) {
-    case 0:
+  switch (riskLevel) {
+    case "LOW":
       return `0-${boundaries.moderate - 1}`;
-    case 1:
+    case "MODERATE":
       return `${boundaries.moderate}-${boundaries.high - 1}`;
-    case 2:
+    case "HIGH":
       return `${boundaries.high}+`;
-    default:
-      return null;
   }
 }

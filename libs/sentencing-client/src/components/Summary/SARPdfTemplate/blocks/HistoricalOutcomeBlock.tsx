@@ -23,11 +23,9 @@ import { Link, Text, View } from "@react-pdf/renderer";
 import React from "react";
 
 import { formatOffenseLabel } from "../../../../utils/utils";
+import { getRiskChipLabel } from "../../../CaseDetails/components/charts/DispositionChart/sarUtils";
 import { GenderToDisplayName } from "../../../CaseDetails/constants";
-import {
-  BUCKET_TO_RISK_CHIP,
-  type DispositionLegendLabel,
-} from "../../../SARDetails/constants";
+import { type DispositionLegendLabel } from "../../../SARDetails/constants";
 import { buildInsightsFootnoteText } from "../../insightsUtils";
 import {
   keyFindingText,
@@ -71,7 +69,7 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
 
   const tags = [
     GenderToDisplayName[insight.gender],
-    BUCKET_TO_RISK_CHIP[insight.assessmentScoreBucketStart],
+    getRiskChipLabel(insight.assessmentRiskLevel),
     insight.offenseCategory ?? formatOffenseLabel(insight.offense),
   ].filter(Boolean) as string[];
 
@@ -133,7 +131,7 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
           items,
           context: {
             gender: insight.gender,
-            assessmentScoreBucketStart: insight.assessmentScoreBucketStart,
+            riskLevel: insight.assessmentRiskLevel,
             offense: insight.offense,
             offenseCategory: insight.offenseCategory,
           },
@@ -154,7 +152,7 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
         {buildInsightsFootnoteText(
           insight.dispositionNumRecords,
           insight.gender,
-          insight.assessmentScoreBucketStart,
+          insight.assessmentRiskLevel,
         )}
       </Text>
       <Text
