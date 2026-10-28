@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { registerAacEncoder } from "@mediabunny/aac-encoder";
+import * as Sentry from "@sentry/react-native";
 import {
   BufferTarget,
   canEncodeAudio,
@@ -26,10 +27,36 @@ import {
 } from "mediabunny";
 import { useRef, useState } from "react";
 
-import { AUDIO_LEVEL_INTERVAL_MS, MAX_RECORDING_SEC } from "../config";
+import {
+  AUDIO_LEVEL_INTERVAL_MS,
+  FINALIZE_TIMEOUT_MS,
+  MAX_RECORDING_SEC,
+} from "../config";
 import { rmsToAudioLevel } from "../lib/audioLevel";
 import { RecorderState } from "./recorderStates";
 import { AudioRecorder, AudioRecorderProps } from "./types";
+
+// Reads internal mediabunny fields for diagnostics when the finalize step hangs.
+// TODO(MM-695): Remove once these logs identify the hanging step.
+function finalizeDiagnostics(source: MediaStreamAudioTrackSource | null) {
+  const internals = source as unknown as {
+    _closed?: boolean;
+    _abortController?: AbortController | null;
+    _audioContext?: AudioContext | null;
+  } | null;
+  return {
+    // False means finalize never got past its internal lock.
+    flushStarted: internals?._abortController === null,
+    // True means the source finished flushing, so finalize is stuck writing
+    // the MP4.
+    sourceClosed: internals?._closed,
+    // While sourceClosed is false, "running" means finalize is stuck
+    // suspending the capture AudioContext and "suspended" means it is stuck
+    // flushing the encoder. "none" means the browser captures through
+    // MediaStreamTrackProcessor instead of an AudioContext.
+    captureAudioContextState: internals?._audioContext?.state ?? "none",
+  };
+}
 
 export function useRecorder(props: AudioRecorderProps = {}): AudioRecorder {
   const outputRef = useRef<Output<Mp4OutputFormat, BufferTarget> | null>(null);
@@ -163,6 +190,10 @@ export function useRecorder(props: AudioRecorderProps = {}): AudioRecorder {
     });
     output.addAudioTrack(audioSource);
     audioSourceRef.current = audioSource;
+    audioSource.errorPromise.catch((error) => {
+      Sentry.logger.error("recording.source.error", { error: String(error) });
+      Sentry.captureException(error);
+    });
     await output.start();
     setRecorderState("recording");
   };
@@ -177,8 +208,46 @@ export function useRecorder(props: AudioRecorderProps = {}): AudioRecorder {
       return;
     }
 
-    await output.finalize();
+    await finalizeWithDiagnostics(output);
+
     setRecorderState("idle");
+  };
+
+  const finalizeWithDiagnostics = async (
+    output: Output<Mp4OutputFormat, BufferTarget>,
+  ) => {
+    const audioSource = audioSourceRef.current;
+    const canEncodeAac = await canEncodeAudio("aac");
+    const startedAt = performance.now();
+    Sentry.logger.info("recording.finalize.begin", {
+      canEncodeAac,
+      hasTrackProcessor: "MediaStreamTrackProcessor" in window,
+      durationSec,
+    });
+
+    let timeoutId: number | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timeoutId = window.setTimeout(() => {
+        Sentry.logger.error("recording.finalize.timeout", {
+          canEncodeAac,
+          ...finalizeDiagnostics(audioSource),
+        });
+        reject(
+          new Error(
+            `Recording finalize timed out after ${FINALIZE_TIMEOUT_MS}ms`,
+          ),
+        );
+      }, FINALIZE_TIMEOUT_MS);
+    });
+    try {
+      await Promise.race([output.finalize(), timeout]);
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+
+    Sentry.logger.info("recording.finalize.done", {
+      elapsedMs: Math.round(performance.now() - startedAt),
+    });
   };
 
   const getUrl = (): string | null => {

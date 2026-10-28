@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { act, renderHook } from "@testing-library/react-native";
 
-import { MAX_RECORDING_SEC } from "../../config";
+import { FINALIZE_TIMEOUT_MS, MAX_RECORDING_SEC } from "../../config";
 import { useRecorder } from "../useRecorder.web";
 
 type MockOutput = {
@@ -34,10 +35,20 @@ type MockAudioSource = {
   pause: jest.Mock;
   resume: jest.Mock;
   onEncodedPacket: (packet: { timestamp: number; duration: number }) => void;
+  errorPromise: Promise<void>;
+  rejectError: (error: Error) => void;
 };
 
 const mockAudioSources: MockAudioSource[] = [];
 const mockTargets: { buffer: ArrayBuffer | null }[] = [];
+
+jest.mock("@sentry/react-native", () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+  },
+  captureException: jest.fn(),
+}));
 
 jest.mock("@mediabunny/aac-encoder", () => ({
   registerAacEncoder: jest.fn(),
@@ -55,6 +66,10 @@ jest.mock("mediabunny", () => ({
   MediaStreamAudioTrackSource: jest
     .fn()
     .mockImplementation((_track, config) => {
+      let rejectError: (error: Error) => void = () => undefined;
+      const errorPromise = new Promise<void>((_, reject) => {
+        rejectError = reject;
+      });
       const source: MockAudioSource = {
         paused: false,
         pause: jest.fn(() => {
@@ -64,6 +79,8 @@ jest.mock("mediabunny", () => ({
           source.paused = false;
         }),
         onEncodedPacket: config.onEncodedPacket,
+        errorPromise,
+        rejectError,
       };
       mockAudioSources.push(source);
       return source;
@@ -280,5 +297,46 @@ describe("useRecorder (web)", () => {
     expect(latestAudioSource().pause).toHaveBeenCalled();
     expect(result.current.state).toBe("paused");
     expect(result.current.durationMs).toBe(MAX_RECORDING_SEC * 1000);
+  });
+
+  it("stop rejects and logs diagnostics when finalize hangs", async () => {
+    const { result } = await renderStartedRecorder();
+    latestOutput().finalize.mockReturnValue(new Promise(() => undefined));
+
+    let stopError: unknown;
+    await act(async () => {
+      const stopped = result.current.stop().catch((error) => {
+        stopError = error;
+      });
+      await jest.advanceTimersByTimeAsync(FINALIZE_TIMEOUT_MS);
+      await stopped;
+    });
+
+    expect(stopError).toEqual(
+      new Error(`Recording finalize timed out after ${FINALIZE_TIMEOUT_MS}ms`),
+    );
+    expect(Sentry.logger.error).toHaveBeenCalledWith(
+      "recording.finalize.timeout",
+      expect.objectContaining({ canEncodeAac: true }),
+    );
+    expect(result.current.state).not.toBe("idle");
+  });
+
+  it("stop still finalizes after the source errored mid-recording", async () => {
+    const { result } = await renderStartedRecorder();
+    const sourceError = new Error("capture failed");
+
+    await act(async () => {
+      latestAudioSource().rejectError(sourceError);
+    });
+    await act(() => result.current.stop());
+
+    expect(Sentry.logger.error).toHaveBeenCalledWith("recording.source.error", {
+      error: "Error: capture failed",
+    });
+    expect(Sentry.captureException).toHaveBeenCalledWith(sourceError);
+    expect(latestOutput().finalize).toHaveBeenCalled();
+    expect(result.current.state).toBe("idle");
+    expect(result.current.getUrl()).toBe("blob:recording");
   });
 });
