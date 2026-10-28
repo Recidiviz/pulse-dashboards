@@ -27,32 +27,45 @@ import { Alert, Linking } from "react-native";
 
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
-import { AUDIO_LEVEL_INTERVAL_MS, MAX_RECORDING_MS } from "../config";
+import {
+  AUDIO_LEVEL_INTERVAL_MS,
+  MAX_RECORDING_MS,
+  MAX_RECORDING_SEC,
+} from "../config";
 import { dbToAudioLevel } from "../lib/audioLevel";
 import { configureAudioMode } from "../lib/audioMode";
 import { RecorderState } from "./recorderStates";
-import { AudioRecorder } from "./types";
-import { useDurationTimer } from "./useDurationTimer";
+import { AudioRecorder, AudioRecorderProps } from "./types";
 
-const MAX_RECORDING_SECONDS = MAX_RECORDING_MS / 1000;
+type RecorderFinish = null | "user" | "timeExpired";
 
-export function useRecorder(): AudioRecorder {
+export function useRecorder(props: AudioRecorderProps = {}): AudioRecorder {
   const [recorderState, setRecorderState] = useState<RecorderState>("idle");
   const allowsBackgroundRecordingRef = useRef(false);
   const hasWarnedBackgroundRef = useRef(false);
   const { showSnackbar } = useSnackbar();
+  const config = props?.config;
+  // Used to track when the recording has been killed by "forDuration",
+  // useful for catching in-background stops
+  const finishTypeRef = useRef<RecorderFinish>(null);
 
-  const audioRecorder = useAudioRecorder({
-    ...RecordingPresets.HIGH_QUALITY,
-    // force mono so we don't lose DB squashing down to mono later
-    numberOfChannels: 1,
-    isMeteringEnabled: true,
-    // we do MP4 here just to have parity with the web's MediaBunny recorder implementation
-    extension: ".mp4",
-  });
-
-  const durationTimer = useDurationTimer();
-  const { start: startTimer, stop: stopTimer } = durationTimer;
+  const audioRecorder = useAudioRecorder(
+    {
+      ...RecordingPresets.HIGH_QUALITY,
+      // force mono so we don't lose DB squashing down to mono later
+      numberOfChannels: 1,
+      isMeteringEnabled: true,
+      // we do MP4 here just to have parity with the web's MediaBunny recorder implementation
+      extension: ".mp4",
+    },
+    function onRecordingTerminated(status) {
+      // This checks to see if this happened because "forDuration" reached its limit
+      if (status.isFinished && !finishTypeRef.current) {
+        config?.onDurationLimitReached?.();
+        finishTypeRef.current = "timeExpired";
+      }
+    },
+  );
 
   const audioRecorderState = useAudioRecorderState(
     audioRecorder,
@@ -64,14 +77,11 @@ export function useRecorder(): AudioRecorder {
     : 0;
 
   useEffect(
-    function updateState() {
+    function onRecStateChange() {
       if (audioRecorderState.isRecording) {
         setRecorderState("recording");
-        startTimer();
         return;
       }
-
-      stopTimer();
 
       if (audioRecorderState.canRecord) {
         setRecorderState("paused");
@@ -80,15 +90,17 @@ export function useRecorder(): AudioRecorder {
 
       setRecorderState("idle");
     },
-    [audioRecorderState, startTimer, stopTimer],
+    [audioRecorderState],
   );
 
   const start = async (): Promise<void> => {
+    finishTypeRef.current = null;
     await handleRecordingPermissions();
 
     await audioRecorder.prepareToRecordAsync();
-    durationTimer.reset();
-    audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
+    // Leveraging "forDuration" allows us to adhere to the maximum recording
+    // timer even when the app is backgrounded
+    audioRecorder.record({ forDuration: MAX_RECORDING_SEC });
   };
 
   const handleRecordingPermissions = async (): Promise<void> => {
@@ -122,8 +134,8 @@ export function useRecorder(): AudioRecorder {
   };
 
   const stop = async (): Promise<void> => {
+    finishTypeRef.current = "user";
     await audioRecorder.stop();
-    durationTimer.stop();
   };
 
   const getUrl = (): string | null => {
@@ -131,16 +143,29 @@ export function useRecorder(): AudioRecorder {
   };
 
   const resume = () => {
-    const timeRemaining =
-      MAX_RECORDING_SECONDS - durationTimer.durationMs / 1000;
-    audioRecorder.record({ forDuration: timeRemaining });
+    // Calculate how much time till the max duration is reached
+    // FROM the already-recorded audio
+    const timeRemainingSec =
+      MAX_RECORDING_SEC - audioRecorderState?.durationMillis / 1000;
+    audioRecorder.record({ forDuration: timeRemainingSec });
   };
 
   const pause = () => {
+    /*
+     * AVild - This makes me feel nothing but pain.
+     * Basically, expo-audio doesn't cancel its duration timer
+     * on pause but briefly calling record w/ no params circumvents that
+     *
+     * Without this hack, a paused meeting can still hit the max-duration
+     * even though It's not recording.
+     */
+    audioRecorder.pause();
+    audioRecorder.record();
     audioRecorder.pause();
   };
 
   const discard = async () => {
+    finishTypeRef.current = "user";
     await audioRecorder.stop();
 
     const uri = audioRecorder.uri;
@@ -152,6 +177,11 @@ export function useRecorder(): AudioRecorder {
     }
   };
 
+  const durationMs =
+    finishTypeRef.current === "timeExpired"
+      ? MAX_RECORDING_MS
+      : audioRecorderState?.durationMillis;
+
   return {
     start,
     stop,
@@ -161,6 +191,6 @@ export function useRecorder(): AudioRecorder {
     resume,
     state: recorderState,
     audioLevel,
-    durationMs: durationTimer.durationMs,
+    durationMs,
   };
 }

@@ -47,6 +47,7 @@ export function MeetingMinimizedModal() {
     pauseRecording,
     resumeRecording,
     state: recorderState,
+    durationReached,
   } = useNewRecording();
 
   const onEnd = () => {
@@ -104,7 +105,7 @@ export function MeetingMinimizedModal() {
             <TouchableOpacity
               className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-brand aria-disabled:opacity-40"
               onPress={resumeRecording}
-              disabled={controlsDisabled}
+              disabled={controlsDisabled || durationReached}
             >
               <PlaySvg className="size-4 fill-on-brand" />
               <Typography className="ml-2 text-base font-semibold text-on-brand">

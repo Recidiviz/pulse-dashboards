@@ -16,10 +16,13 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react-native";
-import { createContext, ReactNode, useContext } from "react";
+import { useAudioPlayer } from "expo-audio";
+import { createContext, ReactNode, useContext, useState } from "react";
 
+import pingSound from "~@meetings/app/shared/assets/sounds/ping.wav";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
+import { MAX_RECORDING_MIN } from "../config";
 import { getMicErrorType, MIC_ERROR_MESSAGES } from "../lib/micError";
 import { useActiveMeetingStore } from "./activeMeetingStore";
 import { RecorderState } from "./recorderStates";
@@ -36,6 +39,7 @@ type RecordingContextValue = {
   finalizeRecording: () => Promise<string>;
   discardRecording: () => Promise<void>;
   durationMs: number;
+  durationReached: boolean;
 };
 
 const RecordingContext = createContext<RecordingContextValue | null>(null);
@@ -50,16 +54,28 @@ export function useAudioRecording() {
   return ctx;
 }
 
+const DUR_REACHED_MSG = `You have reached the ${MAX_RECORDING_MIN} minute maximum for this recording. Please save and record another meeting if you need to continue.`;
+
 export function RecordingProvider({ children }: { children: ReactNode }) {
-  const recorder = useRecorder();
   const { showSnackbar } = useSnackbar();
+  const ping = useAudioPlayer(pingSound);
   const { markActivity } = useActiveMeetingStore();
+  const [durationReached, setDurationReached] = useState(false);
+
+  const onDurationLimitReached = () => {
+    ping.play();
+    showSnackbar(DUR_REACHED_MSG);
+    setDurationReached(true);
+  };
+
+  const recorder = useRecorder({ config: { onDurationLimitReached } });
 
   useLeavePageWarning(recorder.state !== "idle");
   useScreenWakeLock(recorder.state === "recording");
 
   const startRecording = async () => {
     try {
+      setDurationReached(false);
       await recorder.start();
       markActivity();
       Sentry.logger.info("recording.start");
@@ -82,6 +98,11 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
   };
 
   const resumeRecording = () => {
+    if (durationReached) {
+      showSnackbar(DUR_REACHED_MSG);
+      return;
+    }
+
     recorder.resume();
     markActivity();
     Sentry.logger.info("recording.resume");
@@ -106,11 +127,14 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       showSnackbar("A fatal error occured.");
 
       throw e;
+    } finally {
+      setDurationReached(false);
     }
   };
 
   const discardRecording = async () => {
     await recorder.discard();
+    setDurationReached(false);
   };
 
   return (
@@ -124,6 +148,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
         discardRecording,
         resumeRecording,
         durationMs: recorder.durationMs,
+        durationReached,
       }}
     >
       {children}

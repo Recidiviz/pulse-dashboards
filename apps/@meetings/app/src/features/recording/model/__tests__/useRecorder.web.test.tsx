@@ -17,6 +17,7 @@
 
 import { act, renderHook } from "@testing-library/react-native";
 
+import { MAX_RECORDING_SEC } from "../../config";
 import { useRecorder } from "../useRecorder.web";
 
 type MockOutput = {
@@ -28,7 +29,14 @@ type MockOutput = {
 };
 
 const mockOutputs: MockOutput[] = [];
-const mockAudioSources: { pause: jest.Mock; resume: jest.Mock }[] = [];
+type MockAudioSource = {
+  paused: boolean;
+  pause: jest.Mock;
+  resume: jest.Mock;
+  onEncodedPacket: (packet: { timestamp: number; duration: number }) => void;
+};
+
+const mockAudioSources: MockAudioSource[] = [];
 const mockTargets: { buffer: ArrayBuffer | null }[] = [];
 
 jest.mock("@mediabunny/aac-encoder", () => ({
@@ -44,11 +52,22 @@ jest.mock("mediabunny", () => ({
   }),
   Mp4OutputFormat: jest.fn(),
   Quality: jest.fn(),
-  MediaStreamAudioTrackSource: jest.fn().mockImplementation(() => {
-    const source = { pause: jest.fn(), resume: jest.fn() };
-    mockAudioSources.push(source);
-    return source;
-  }),
+  MediaStreamAudioTrackSource: jest
+    .fn()
+    .mockImplementation((_track, config) => {
+      const source: MockAudioSource = {
+        paused: false,
+        pause: jest.fn(() => {
+          source.paused = true;
+        }),
+        resume: jest.fn(() => {
+          source.paused = false;
+        }),
+        onEncodedPacket: config.onEncodedPacket,
+      };
+      mockAudioSources.push(source);
+      return source;
+    }),
   Output: jest.fn().mockImplementation(() => {
     const output: MockOutput = {
       state: "pending",
@@ -111,6 +130,15 @@ function advance(ms: number) {
   });
 }
 
+// Simulates the encoder emitting audio up to endSec, then lets the
+// recorder's duration poll pick it up.
+function encodeThrough(endSec: number) {
+  act(() => {
+    latestAudioSource().onEncodedPacket({ timestamp: 0, duration: endSec });
+  });
+  advance(500);
+}
+
 describe("useRecorder (web)", () => {
   beforeEach(() => {
     jest.useFakeTimers();
@@ -145,14 +173,14 @@ describe("useRecorder (web)", () => {
     expect(latestOutput().start).toHaveBeenCalled();
     expect(result.current.state).toBe("recording");
 
-    advance(1000);
+    encodeThrough(1);
     expect(result.current.durationMs).toBe(1000);
   });
 
   it("does not count paused time toward durationMs", async () => {
     const { result } = await renderStartedRecorder();
 
-    advance(1000);
+    encodeThrough(1);
     act(() => result.current.pause());
 
     expect(result.current.state).toBe("paused");
@@ -166,8 +194,8 @@ describe("useRecorder (web)", () => {
     expect(result.current.state).toBe("recording");
     expect(latestAudioSource().resume).toHaveBeenCalled();
 
-    advance(500);
-    expect(result.current.durationMs).toBe(1500);
+    encodeThrough(2);
+    expect(result.current.durationMs).toBe(2000);
   });
 
   it("pause and resume are no-ops before start", () => {
@@ -180,9 +208,9 @@ describe("useRecorder (web)", () => {
     expect(result.current.state).toBe("idle");
   });
 
-  it("stop finalizes the output, releases the mic, and freezes the duration", async () => {
+  it("stop finalizes the output, releases the mic, and resets the duration", async () => {
     const { result } = await renderStartedRecorder();
-    advance(2000);
+    encodeThrough(2);
 
     await act(() => result.current.stop());
 
@@ -192,8 +220,7 @@ describe("useRecorder (web)", () => {
     expect(result.current.state).toBe("idle");
     expect(result.current.audioLevel).toBe(0);
 
-    advance(2000);
-    expect(result.current.durationMs).toBe(2000);
+    expect(result.current.durationMs).toBe(0);
   });
 
   it("getUrl returns a blob URL only after the output is finalized", async () => {
@@ -208,11 +235,11 @@ describe("useRecorder (web)", () => {
 
   it("start → pause → resume → discard cancels the output and releases resources", async () => {
     const { result } = await renderStartedRecorder();
-    advance(1000);
+    encodeThrough(1);
     act(() => result.current.pause());
     advance(1000);
     act(() => result.current.resume());
-    advance(1000);
+    encodeThrough(2);
 
     await act(() => result.current.discard());
 
@@ -224,20 +251,34 @@ describe("useRecorder (web)", () => {
     expect(result.current.audioLevel).toBe(0);
     expect(result.current.getUrl()).toBeNull();
 
-    advance(1000);
-    expect(result.current.durationMs).toBe(2000);
+    expect(result.current.durationMs).toBe(0);
   });
 
   it("restarting resets the duration and uses a fresh output", async () => {
     const { result } = await renderStartedRecorder();
-    advance(3000);
+    encodeThrough(3);
     await act(() => result.current.stop());
 
     await act(() => result.current.start());
 
     expect(mockOutputs).toHaveLength(2);
     expect(result.current.durationMs).toBe(0);
-    advance(500);
-    expect(result.current.durationMs).toBe(500);
+    encodeThrough(1);
+    expect(result.current.durationMs).toBe(1000);
+  });
+
+  it("pauses and reports the limit once the max duration is recorded", async () => {
+    const onDurationLimitReached = jest.fn();
+    const { result } = renderHook(() =>
+      useRecorder({ config: { onDurationLimitReached } }),
+    );
+    await act(() => result.current.start());
+
+    encodeThrough(MAX_RECORDING_SEC);
+
+    expect(onDurationLimitReached).toHaveBeenCalledTimes(1);
+    expect(latestAudioSource().pause).toHaveBeenCalled();
+    expect(result.current.state).toBe("paused");
+    expect(result.current.durationMs).toBe(MAX_RECORDING_SEC * 1000);
   });
 });

@@ -19,6 +19,12 @@ import { RecorderState } from "./recorderStates";
 
 export type MicStatus = "speaking" | "silent" | "error";
 
+export type AudioRecorderProps = {
+  config?: {
+    onDurationLimitReached: () => void;
+  };
+};
+
 export type AudioRecorder = {
   start: () => Promise<void>;
   stop: () => Promise<void>;

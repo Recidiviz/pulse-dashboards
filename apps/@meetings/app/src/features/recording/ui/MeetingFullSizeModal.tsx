@@ -57,6 +57,7 @@ export const MeetingFullSizeModal = () => {
     pauseRecording,
     resumeRecording,
     state: recorderState,
+    durationReached,
   } = useNewRecording();
 
   const onEnd = () => {
@@ -244,7 +245,7 @@ export const MeetingFullSizeModal = () => {
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-brand py-3 aria-disabled:opacity-40"
                 onPress={resumeRecording}
-                disabled={controlsDisabled}
+                disabled={controlsDisabled || durationReached}
               >
                 <PlaySvg className="size-4 fill-on-brand" />
                 <Typography className="ml-2 text-lg font-semibold text-on-brand">

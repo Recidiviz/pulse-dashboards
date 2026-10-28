@@ -26,25 +26,26 @@ import {
 } from "mediabunny";
 import { useRef, useState } from "react";
 
-import { AUDIO_LEVEL_INTERVAL_MS } from "../config";
+import { AUDIO_LEVEL_INTERVAL_MS, MAX_RECORDING_SEC } from "../config";
 import { rmsToAudioLevel } from "../lib/audioLevel";
 import { RecorderState } from "./recorderStates";
-import { AudioRecorder } from "./types";
-import { useDurationTimer } from "./useDurationTimer";
+import { AudioRecorder, AudioRecorderProps } from "./types";
 
-export function useRecorder(): AudioRecorder {
+export function useRecorder(props: AudioRecorderProps = {}): AudioRecorder {
   const outputRef = useRef<Output<Mp4OutputFormat, BufferTarget> | null>(null);
   const targetRef = useRef<BufferTarget | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
   const audioSourceRef = useRef<MediaStreamAudioTrackSource | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
+  const analyzerRef = useRef<AnalyserNode | null>(null);
   const levelIntervalRef = useRef<number | null>(null);
+  const durationIntervalRef = useRef<number | null>(null);
+  const recordedSecondsRef = useRef<number>(0);
+
+  const [durationSec, setDurationSec] = useState(0);
 
   const [recorderState, setRecorderState] = useState<RecorderState>("idle");
   const [audioLevel, setAudioLevel] = useState(0);
-
-  const durationTimer = useDurationTimer();
 
   const grabMic = (): Promise<MediaStream> => {
     return navigator.mediaDevices.getUserMedia({
@@ -67,14 +68,14 @@ export function useRecorder(): AudioRecorder {
     const audioCtx = new AudioContext();
     audioCtxRef.current = audioCtx;
     const source = audioCtx.createMediaStreamSource(stream);
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 1024;
-    source.connect(analyser);
-    analyserRef.current = analyser;
+    const analyzer = audioCtx.createAnalyser();
+    analyzer.fftSize = 1024;
+    source.connect(analyzer);
+    analyzerRef.current = analyzer;
 
-    const buffer = new Float32Array(analyser.fftSize);
+    const buffer = new Float32Array(analyzer.fftSize);
     levelIntervalRef.current = window.setInterval(() => {
-      analyser.getFloatTimeDomainData(buffer);
+      analyzer.getFloatTimeDomainData(buffer);
       let sum = 0;
       for (let i = 0; i < buffer.length; i++) {
         sum += buffer[i] * buffer[i];
@@ -85,16 +86,39 @@ export function useRecorder(): AudioRecorder {
     }, AUDIO_LEVEL_INTERVAL_MS);
   };
 
-  const _cleanupAudioLevel = () => {
+  // Monitor for changes in recording duration every Xms (less than a second to pick up on weird time discrepancies)
+  const _monitorDuration = () => {
+    durationIntervalRef.current = window.setInterval(() => {
+      const audioSource = audioSourceRef.current;
+      if (!audioSource || audioSource.paused) {
+        return;
+      }
+      const recordedSec = Math.ceil(recordedSecondsRef.current);
+      setDurationSec(recordedSec);
+
+      if (recordedSec >= MAX_RECORDING_SEC) {
+        pause();
+        props.config?.onDurationLimitReached();
+      }
+    }, 500);
+  };
+
+  const _cleanup = () => {
     if (levelIntervalRef.current) {
       clearInterval(levelIntervalRef.current);
       levelIntervalRef.current = null;
+    }
+    if (durationIntervalRef.current) {
+      clearInterval(durationIntervalRef.current);
+      durationIntervalRef.current = null;
+      recordedSecondsRef.current = 0;
+      setDurationSec(0);
     }
     if (audioCtxRef.current) {
       audioCtxRef.current.close();
       audioCtxRef.current = null;
     }
-    analyserRef.current = null;
+    analyzerRef.current = null;
     setAudioLevel(0);
   };
 
@@ -105,10 +129,14 @@ export function useRecorder(): AudioRecorder {
       registerAacEncoder();
     }
 
+    setDurationSec(0);
+    recordedSecondsRef.current = 0;
+
     const stream = await grabMic();
     micStreamRef.current = stream;
 
     _monitorStreamDb(stream);
+    _monitorDuration();
 
     // Basically, we're gonna be writing bits to a buffer during recording, then finalizing the buffer into a
     // valid .mp4 file
@@ -128,27 +156,27 @@ export function useRecorder(): AudioRecorder {
     const audioSource = new MediaStreamAudioTrackSource(audioTrack, {
       codec: "aac",
       quality: new Quality({ bitrate: 128_000 }),
+      // during packet encoding is our only hook into recording duration
+      onEncodedPacket: (packet) => {
+        recordedSecondsRef.current = packet.timestamp + packet.duration;
+      },
     });
     output.addAudioTrack(audioSource);
     audioSourceRef.current = audioSource;
     await output.start();
     setRecorderState("recording");
-    durationTimer.reset();
-    durationTimer.start();
   };
 
   const stop = async (): Promise<void> => {
     const output = outputRef.current;
 
-    _cleanupAudioLevel();
+    _cleanup();
     releaseMic();
     if (!output || output.state !== "started") {
-      durationTimer.stop();
       setRecorderState("idle");
       return;
     }
 
-    durationTimer.stop();
     await output.finalize();
     setRecorderState("idle");
   };
@@ -170,7 +198,6 @@ export function useRecorder(): AudioRecorder {
     }
 
     setRecorderState("recording");
-    durationTimer.start();
     audioSource.resume();
   };
 
@@ -182,7 +209,6 @@ export function useRecorder(): AudioRecorder {
     }
 
     setRecorderState("paused");
-    durationTimer.stop();
     audioSource.pause();
   };
 
@@ -191,9 +217,8 @@ export function useRecorder(): AudioRecorder {
     if (output && output.state === "started") {
       await output.cancel();
     }
-    _cleanupAudioLevel();
+    _cleanup();
     releaseMic();
-    durationTimer.stop();
     setRecorderState("idle");
     outputRef.current = null;
     targetRef.current = null;
@@ -208,6 +233,6 @@ export function useRecorder(): AudioRecorder {
     pause,
     state: recorderState,
     audioLevel,
-    durationMs: durationTimer.durationMs,
+    durationMs: Math.ceil(durationSec * 1000),
   };
 }

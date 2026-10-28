@@ -20,7 +20,7 @@ import { AudioModule } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
 import { Alert, Platform } from "react-native";
 
-import { MAX_RECORDING_MS } from "../../config";
+import { MAX_RECORDING_SEC } from "../../config";
 import { configureAudioMode } from "../../lib/audioMode";
 import { useRecorder } from "../useRecorder.native";
 
@@ -35,13 +35,22 @@ const mockRecorder = {
 let mockRecorderState = {
   isRecording: false,
   canRecord: false,
+  durationMillis: 0,
   metering: undefined as number | undefined,
 };
+
+let mockStatusListener: (status: { isFinished: boolean }) => void = jest.fn();
 
 jest.mock("expo-audio", () => ({
   AudioModule: { requestRecordingPermissionsAsync: jest.fn() },
   RecordingPresets: { HIGH_QUALITY: {} },
-  useAudioRecorder: () => mockRecorder,
+  useAudioRecorder: (
+    _options: unknown,
+    listener: (status: { isFinished: boolean }) => void,
+  ) => {
+    mockStatusListener = listener;
+    return mockRecorder;
+  },
   useAudioRecorderState: () => mockRecorderState,
 }));
 
@@ -73,10 +82,10 @@ function setNativeState(
   hook.rerender({});
 }
 
-function advance(ms: number) {
-  act(() => {
-    jest.advanceTimersByTime(ms);
-  });
+// Simulates the event expo-audio emits whenever the recorder stops, whether
+// from stop() or from the forDuration limit.
+function emitFinished() {
+  act(() => mockStatusListener({ isFinished: true }));
 }
 
 describe("useRecorder (native)", () => {
@@ -87,6 +96,7 @@ describe("useRecorder (native)", () => {
     mockRecorderState = {
       isRecording: false,
       canRecord: false,
+      durationMillis: 0,
       metering: -Infinity,
     };
     requestPermissions.mockResolvedValue({
@@ -119,7 +129,7 @@ describe("useRecorder (native)", () => {
 
       expect(mockRecorder.prepareToRecordAsync).toHaveBeenCalled();
       expect(mockRecorder.record).toHaveBeenCalledWith({
-        forDuration: MAX_RECORDING_MS / 1000,
+        forDuration: MAX_RECORDING_SEC,
       });
     });
 
@@ -202,43 +212,67 @@ describe("useRecorder (native)", () => {
       expect(hook.result.current.audioLevel).toBe(0);
     });
 
-    it("does not count paused time toward durationMs", () => {
+    it("reports durationMs from the native recorder", () => {
       const hook = renderHook(() => useRecorder());
 
-      setNativeState(hook, { isRecording: true, canRecord: true });
-      advance(1000);
-      setNativeState(hook, { isRecording: false });
-      advance(5000);
-      expect(hook.result.current.durationMs).toBe(1000);
-
-      setNativeState(hook, { isRecording: true });
-      advance(500);
+      setNativeState(hook, { isRecording: true, durationMillis: 1500 });
       expect(hook.result.current.durationMs).toBe(1500);
     });
   });
 
-  it("pause and resume delegate to the native recorder", () => {
+  it("pause cancels the native duration timer by briefly re-recording", () => {
     const { result } = renderHook(() => useRecorder());
 
     act(() => result.current.pause());
-    expect(mockRecorder.pause).toHaveBeenCalled();
 
-    act(() => result.current.resume());
+    expect(mockRecorder.pause).toHaveBeenCalledTimes(2);
+    expect(mockRecorder.record).toHaveBeenCalledWith();
+  });
+
+  it("resume records only for the time left under the max duration", () => {
+    const hook = renderHook(() => useRecorder());
+    setNativeState(hook, { canRecord: true, durationMillis: 1000 });
+
+    act(() => hook.result.current.resume());
+
     expect(mockRecorder.record).toHaveBeenCalledWith({
-      forDuration: MAX_RECORDING_MS / 1000,
+      forDuration: MAX_RECORDING_SEC - 1,
     });
   });
 
-  it("stop stops the recorder and freezes the duration", async () => {
-    const hook = renderHook(() => useRecorder());
-    setNativeState(hook, { isRecording: true, canRecord: true });
-    advance(2000);
+  it("stop stops the native recorder", async () => {
+    const { result } = renderHook(() => useRecorder());
 
-    await act(() => hook.result.current.stop());
-    advance(2000);
+    await act(() => result.current.stop());
 
     expect(mockRecorder.stop).toHaveBeenCalled();
-    expect(hook.result.current.durationMs).toBe(2000);
+  });
+
+  describe("when the recorder finishes", () => {
+    it("reports the duration limit when forDuration ends the recording", async () => {
+      const onDurationLimitReached = jest.fn();
+      const { result } = renderHook(() =>
+        useRecorder({ config: { onDurationLimitReached } }),
+      );
+      await act(() => result.current.start());
+
+      emitFinished();
+
+      expect(onDurationLimitReached).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not report the duration limit after a user stop", async () => {
+      const onDurationLimitReached = jest.fn();
+      const { result } = renderHook(() =>
+        useRecorder({ config: { onDurationLimitReached } }),
+      );
+      await act(() => result.current.start());
+
+      await act(() => result.current.stop());
+      emitFinished();
+
+      expect(onDurationLimitReached).not.toHaveBeenCalled();
+    });
   });
 
   it("getUrl returns the recorder's file URI", () => {

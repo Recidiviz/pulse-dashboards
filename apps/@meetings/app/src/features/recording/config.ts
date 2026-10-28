@@ -15,5 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const MAX_RECORDING_MS = 90 * 60 * 1000; // 90min
+export const MAX_RECORDING_MIN = 150;
+export const MAX_RECORDING_SEC = MAX_RECORDING_MIN * 60;
+export const MAX_RECORDING_MS = MAX_RECORDING_SEC * 1000;
 export const AUDIO_LEVEL_INTERVAL_MS = 50;

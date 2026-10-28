@@ -28,20 +28,28 @@ const mockDiscard = jest.fn().mockResolvedValue(undefined);
 const mockPause = jest.fn();
 const mockResume = jest.fn();
 const mockTogglePauseResume = jest.fn();
+let mockOnDurationLimitReached: () => void = jest.fn();
 
 jest.mock("../useRecorder", () => ({
-  useRecorder: () => ({
-    start: mockStart,
-    stop: mockStop,
-    getUrl: mockGetUrl,
-    discard: mockDiscard,
-    pause: mockPause,
-    resume: mockResume,
-    togglePauseResume: mockTogglePauseResume,
-    state: "idle",
-    audioLevel: 0,
-    durationMs: 0,
-  }),
+  useRecorder: (props: { config: { onDurationLimitReached: () => void } }) => {
+    mockOnDurationLimitReached = props.config.onDurationLimitReached;
+    return {
+      start: mockStart,
+      stop: mockStop,
+      getUrl: mockGetUrl,
+      discard: mockDiscard,
+      pause: mockPause,
+      resume: mockResume,
+      togglePauseResume: mockTogglePauseResume,
+      state: "idle",
+      audioLevel: 0,
+      durationMs: 0,
+    };
+  },
+}));
+
+jest.mock("expo-audio", () => ({
+  useAudioPlayer: () => ({ play: jest.fn() }),
 }));
 
 jest.mock("@sentry/react-native", () => ({
@@ -268,6 +276,31 @@ describe("RecordingProvider", () => {
       });
 
       expect(mockDiscard).toHaveBeenCalled();
+    });
+  });
+
+  describe("when the duration limit is reached", () => {
+    it("blocks resuming and explains why", () => {
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
+
+      act(() => mockOnDurationLimitReached());
+      mockShowSnackbar.mockClear();
+      act(() => result.current.resumeRecording());
+
+      expect(mockResume).not.toHaveBeenCalled();
+      expect(mockShowSnackbar).toHaveBeenCalledWith(
+        expect.stringContaining("maximum"),
+      );
+    });
+
+    it("allows resuming again after a new recording starts", async () => {
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
+
+      act(() => mockOnDurationLimitReached());
+      await act(() => result.current.startRecording());
+      act(() => result.current.resumeRecording());
+
+      expect(mockResume).toHaveBeenCalled();
     });
   });
 });

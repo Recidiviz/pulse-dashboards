@@ -48,13 +48,14 @@ export function MeetingControlsMobile() {
     audioLevel,
     pauseRecording,
     state: recorderState,
+    durationReached,
   } = useNewRecording();
   const { micStatus } = useAudioErrorDetection({
     isRecording: recorderState === "recording",
     audioLevel,
   });
 
-  if (recorderState === "idle" || !meetingId || !person) return null;
+  if (!meetingId || !person) return null;
 
   const linkProps = {
     screen: personType === "client" ? "ClientNewMeeting" : "ResidentNewMeeting",
@@ -135,7 +136,7 @@ export function MeetingControlsMobile() {
             <TouchableOpacity
               className="flex-1 disabled:opacity-50"
               onPress={resumeRecording}
-              disabled={controlsDisabled}
+              disabled={controlsDisabled || durationReached}
             >
               <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-brand">
                 <PlaySvg className="!size-4 fill-on-brand" />
