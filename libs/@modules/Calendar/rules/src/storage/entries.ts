@@ -54,8 +54,17 @@ export class InvalidEntryError extends CalendarRulesError {
   }
 }
 
+/**
+ * Whether code can be part of a slotKey: a non-empty string with no colon.
+ * The slotKey joins codes with a colon (see entrySlotKey), so a code with one
+ * could make two different kind and resource pairs share a key.
+ */
+export function isSlotKeyCode(code: unknown): code is string {
+  return typeof code === "string" && code.length > 0 && !code.includes(":");
+}
+
 function assertSlotKeyCode(field: string, code: string): void {
-  if (typeof code !== "string" || code.length === 0 || code.includes(":")) {
+  if (!isSlotKeyCode(code)) {
     throw new InvalidEntryError(
       "INVALID_CODE",
       `${field} must be non-empty with no colon, got ${JSON.stringify(code)}`,

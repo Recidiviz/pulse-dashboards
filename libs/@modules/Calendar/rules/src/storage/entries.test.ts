@@ -21,6 +21,7 @@ import {
   assertEntryShape,
   entrySlotKey,
   InvalidEntryError,
+  isSlotKeyCode,
 } from "./entries";
 
 const CALENDAR_ID = "cal-parole-board";
@@ -62,6 +63,16 @@ describe("entrySlotKey", () => {
     ],
   ])("throws for %s", (_name, codes) => {
     expect(() => entrySlotKey(codes)).toThrow(invalidEntry("INVALID_CODE"));
+  });
+});
+
+describe("isSlotKeyCode", () => {
+  it.each(["HEARING", "ICC/FED"])("accepts %s", (code) => {
+    expect(isSlotKeyCode(code)).toBe(true);
+  });
+
+  it.each(["", "HEAR:ING", ":", null, undefined, 42])("rejects %j", (code) => {
+    expect(isSlotKeyCode(code)).toBe(false);
   });
 });
 

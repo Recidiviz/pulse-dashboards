@@ -36,6 +36,11 @@ export {
   everyWeekdayDates,
   expandPatternRules,
 } from "./recurring";
+export type { CalendarConfig } from "./storage/calendarConfig";
+export {
+  calendarConfigSchema,
+  parseCalendarConfig,
+} from "./storage/calendarConfig";
 export type { InvalidEntryReason } from "./storage/entries";
 export {
   assertCancellable,
