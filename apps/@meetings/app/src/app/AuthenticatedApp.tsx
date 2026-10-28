@@ -72,10 +72,10 @@ const getFirebaseAuthClient = () => {
  */
 const ConnectedStateCodeProvider = ({
   children,
-  selectedStateRef,
+  stateCodeRef,
 }: {
   children: React.ReactNode;
-  selectedStateRef: React.RefObject<StateCode>;
+  stateCodeRef: React.RefObject<StateCode>;
 }) => {
   const {
     isSkipAuthUser,
@@ -87,13 +87,17 @@ const ConnectedStateCodeProvider = ({
     isPending: configsPending,
     isError: configsErrored,
   } = useAgencyConfigs();
+  const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   return (
     <StateCodeProvider
-      selectedStateRef={selectedStateRef}
+      stateCodeRef={stateCodeRef}
       isSkipAuthUser={isSkipAuthUser}
       recidivizAllowedStates={recidivizAllowedStates}
       userStateCode={userStateCode}
+      impersonatedStateCode={
+        impersonatedEmail ? impersonatedStateCode : undefined
+      }
       agencyConfigs={agencyConfigs}
       configsPending={configsPending}
       configsErrored={configsErrored}
@@ -109,23 +113,21 @@ const ConnectedStateCodeProvider = ({
  */
 const AuthenticatedApp: React.FC = () => {
   const { isLoading, isSkipAuthUser, getCredentials } = useUserContext();
-  const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
+  const { impersonatedEmail } = useImpersonationStore();
 
   // State code ref is managed here since it's only needed for authenticated requests. StateContext
-  // will initialize this to the user's state for state users, or allow Recidiviz users to change it
-  // via settings.
-  const selectedStateRef = useRef<StateCode>(DEFAULT_STATE_CODE);
+  // keeps it equal to its stateCode: the impersonated user's state while impersonating, otherwise
+  // the user's own state or the one a Recidiviz user selected in settings.
+  const stateCodeRef = useRef<StateCode>(DEFAULT_STATE_CODE);
   // impersonatedEmail is "" when not impersonating
   const impersonatedEmailRef = useRef(impersonatedEmail);
-  const impersonatedStateCodeRef = useRef(impersonatedStateCode);
   // We need to refresh our firebase token when switching between identities - this
   // ref will allow us to flag when the token needs a refresh.
   const firebaseSessionEmailRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     impersonatedEmailRef.current = impersonatedEmail;
-    impersonatedStateCodeRef.current = impersonatedStateCode;
-  }, [impersonatedEmail, impersonatedStateCode]);
+  }, [impersonatedEmail]);
 
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -133,12 +135,11 @@ const AuthenticatedApp: React.FC = () => {
         httpBatchLink({
           url: env.EXPO_PUBLIC_SERVER_URL,
           async headers() {
-            let statecode = selectedStateRef.current;
+            const statecode = stateCodeRef.current;
             const impersonationHeaders: Record<string, string> = {};
             if (impersonatedEmailRef.current) {
               impersonationHeaders["X-Impersonated-Email"] =
                 impersonatedEmailRef.current;
-              statecode = impersonatedStateCodeRef.current;
             }
 
             // In skip auth mode, send a special header
@@ -194,9 +195,7 @@ const AuthenticatedApp: React.FC = () => {
               firebaseSessionEmailRef.current = impersonatedEmailRef.current;
             }
 
-            const stateCode = impersonatedEmailRef.current
-              ? impersonatedStateCodeRef.current
-              : selectedStateRef.current;
+            const stateCode = stateCodeRef.current;
             return {
               Authorization: `Bearer ${await firebaseAuthClient.getIdToken()}`,
               StateCode: stateCode,
@@ -239,7 +238,7 @@ const AuthenticatedApp: React.FC = () => {
           }}
         >
           <AgencyConfigProvider>
-            <ConnectedStateCodeProvider selectedStateRef={selectedStateRef}>
+            <ConnectedStateCodeProvider stateCodeRef={stateCodeRef}>
               <AuthenticatedContent />
             </ConnectedStateCodeProvider>
           </AgencyConfigProvider>

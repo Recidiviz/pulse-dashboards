@@ -140,7 +140,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -167,7 +167,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: true,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -194,7 +194,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -228,7 +228,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -255,7 +255,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: true,
         currentStateName: "Nebraska",
@@ -282,7 +282,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -309,7 +309,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -338,7 +338,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
@@ -412,7 +412,7 @@ describe("DrawerNavigator", () => {
       });
       mockUseStateSelection.mockReturnValue({
         isLoading: false,
-        selectedStateCode: "US_NE",
+        stateCode: "US_NE",
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",

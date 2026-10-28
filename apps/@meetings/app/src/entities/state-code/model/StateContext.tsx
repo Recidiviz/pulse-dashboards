@@ -36,16 +36,18 @@ export const DEFAULT_STATE_CODE: StateCode = "US_DEMO";
 
 interface StateContextType {
   /**
-   * The currently selected state code for data queries.
-   * For Recidiviz users (stateCode === "recidiviz"), this can be changed via settings to view different states.
-   * For state users, this is always set to their organizational stateCode and cannot be changed.
+   * The state whose data the app is showing, and the state code sent on tRPC requests.
+   * While impersonating, this is the impersonated user's state. Otherwise it is the selected
+   * state: Recidiviz users can change it in settings, and state users are fixed to their
+   * organizational stateCode.
    */
-  selectedStateCode: StateCode;
+  stateCode: StateCode;
   setSelectedStateCode: (stateCode: StateCode) => Promise<void>;
   isLoading: boolean;
   /**
    * Whether the current user has permission to select different state codes.
-   * Only true for Recidiviz staff (stateCode === "recidiviz") and skip auth users.
+   * Only true for Recidiviz staff (stateCode === "recidiviz") and skip auth users, and never
+   * while impersonating, since the impersonated user's state overrides the selection.
    */
   canSelectStateCode: boolean;
   currentStateName: string | undefined;
@@ -59,10 +61,13 @@ const CACHE_STATE_KEY = "queryCacheStateCode";
 
 export const StateCodeProvider: React.FC<{
   children: React.ReactNode;
-  selectedStateRef: React.RefObject<StateCode | null>;
+  /** Holds stateCode for the tRPC request headers, which read it outside React. */
+  stateCodeRef: React.RefObject<StateCode | null>;
   isSkipAuthUser: boolean;
   recidivizAllowedStates: string[];
   userStateCode: string | undefined;
+  /** The impersonated user's state code; undefined when not impersonating. */
+  impersonatedStateCode?: StateCode;
   agencyConfigs: Record<string, AgencyConfig>;
   /** True while the agency config query hasn't produced data yet. */
   configsPending: boolean;
@@ -70,10 +75,11 @@ export const StateCodeProvider: React.FC<{
   configsErrored: boolean;
 }> = ({
   children,
-  selectedStateRef,
+  stateCodeRef,
   isSkipAuthUser,
   recidivizAllowedStates,
   userStateCode,
+  impersonatedStateCode,
   agencyConfigs,
   configsPending,
   configsErrored,
@@ -92,21 +98,23 @@ export const StateCodeProvider: React.FC<{
   const [selectedStateCode, setSelectedStateCodeInternal] =
     useState<StateCode>(initialStateCode);
   const [isLoading, setIsLoading] = useState(true);
+  const stateCode = impersonatedStateCode || selectedStateCode;
 
   // Show settings for skip auth users or users who have access to multiple states.
   // Currently only Recidiviz users (UserContext.stateCode === "recidiviz") have
   // recidivizAllowedStates.length > 1, so this effectively limits state selection to internal staff.
   // State users have exactly one allowed state and cannot select others.
-  const canSelectStateCode =
+  const hasMultiStateAccess =
     isSkipAuthUser || recidivizAllowedStates.length > 1;
-  const currentStateName = agencyConfigs[selectedStateCode]?.name;
+  const canSelectStateCode = hasMultiStateAccess && !impersonatedStateCode;
+  const currentStateName = agencyConfigs[stateCode]?.name;
 
   // Everything that must happen when the state code changes; the synchronous
   // ref writes come first so in-flight requests already carry the new code.
   const applyStateCode = useCallback(
     async (code: StateCode) => {
       stateCodeParam.current = code; // getPathFromState appends this to URLs
-      selectedStateRef.current = code; // tRPC statecode header
+      stateCodeRef.current = impersonatedStateCode || code; // tRPC statecode header
       // Query keys don't include the state code (it rides on a header), so
       // cached data may belong to another state. Reset before writing the
       // marker so an interrupted switch re-resets on next launch instead of
@@ -117,7 +125,7 @@ export const StateCodeProvider: React.FC<{
       }
       setSelectedStateCodeInternal(code);
     },
-    [queryClient, selectedStateRef],
+    [queryClient, stateCodeRef, impersonatedStateCode],
   );
 
   // Load saved state code on mount, or initialize to user's state code if not a Recidiviz user
@@ -129,7 +137,7 @@ export const StateCodeProvider: React.FC<{
 
       try {
         // For state users, initialize to their state code
-        if (!canSelectStateCode) {
+        if (!hasMultiStateAccess) {
           const normalizedStateCode = userStateCode?.toUpperCase() as StateCode;
           if (normalizedStateCode in agencyConfigs) {
             await applyStateCode(normalizedStateCode);
@@ -164,7 +172,7 @@ export const StateCodeProvider: React.FC<{
 
     loadSavedStateCode();
   }, [
-    canSelectStateCode,
+    hasMultiStateAccess,
     userStateCode,
     agencyConfigs,
     configsPending,
@@ -190,21 +198,22 @@ export const StateCodeProvider: React.FC<{
   };
 
   // Sync state code to ref (for TRPC headers); still needed because
-  // initialStateCode seeds state without going through applyStateCode.
+  // initialStateCode seeds state without going through applyStateCode, and
+  // starting or stopping impersonation changes stateCode without it.
   useEffect(() => {
-    if (selectedStateRef) {
-      selectedStateRef.current = selectedStateCode;
+    if (stateCodeRef) {
+      stateCodeRef.current = stateCode;
     }
-  }, [selectedStateCode, selectedStateRef]);
+  }, [stateCode, stateCodeRef]);
 
   useEffect(() => {
-    Sentry.setTag("stateCode", selectedStateCode);
-  }, [selectedStateCode]);
+    Sentry.setTag("stateCode", stateCode);
+  }, [stateCode]);
 
   return (
     <StateContext.Provider
       value={{
-        selectedStateCode,
+        stateCode,
         setSelectedStateCode,
         isLoading,
         canSelectStateCode,

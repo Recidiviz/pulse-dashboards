@@ -47,7 +47,8 @@ export const StateSelectionScreen = () => {
   const insets = useSafeAreaInsets();
   useSetDocumentTitle("State Selection - Recidiviz Meetings");
   const navigation = useNavigation<StateSelectionNavProp>();
-  const { selectedStateCode, setSelectedStateCode } = useStateSelection();
+  const { stateCode, setSelectedStateCode, canSelectStateCode } =
+    useStateSelection();
   const [isSaving, setIsSaving] = useState(false);
   const { agencyConfigs } = useAgencyConfigs();
 
@@ -91,7 +92,7 @@ export const StateSelectionScreen = () => {
                   onPress={() =>
                     handleStateCodeSelect(stateCodeOption.stateCode)
                   }
-                  disabled={isSaving}
+                  disabled={isSaving || !canSelectStateCode}
                   className="flex-row items-center justify-between py-4"
                 >
                   <View className="flex-1">
@@ -103,7 +104,7 @@ export const StateSelectionScreen = () => {
                     </Typography>
                   </View>
                   <View className="flex-row items-center gap-x-3">
-                    {selectedStateCode === stateCodeOption.stateCode && (
+                    {stateCode === stateCodeOption.stateCode && (
                       <View className="rounded-full bg-brand px-3 py-1">
                         <Typography
                           variant="caption-s-regular"
@@ -120,7 +121,7 @@ export const StateSelectionScreen = () => {
                       />
                     ) : (
                       <View className="size-6 items-center justify-center rounded-full border-2 border-subtle">
-                        {selectedStateCode === stateCodeOption.stateCode && (
+                        {stateCode === stateCodeOption.stateCode && (
                           <View className="size-3 rounded-full bg-brand" />
                         )}
                       </View>
@@ -135,7 +136,7 @@ export const StateSelectionScreen = () => {
           </View>
 
           <Typography variant="body-s-regular" className="mt-4">
-            Currently viewing data for {agencyConfigs[selectedStateCode]?.name}
+            Currently viewing data for {agencyConfigs[stateCode]?.name}
           </Typography>
         </View>
       </ScrollView>

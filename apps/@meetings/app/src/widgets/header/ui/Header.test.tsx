@@ -120,8 +120,8 @@ describe("Header", () => {
     (useRoute as jest.Mock).mockReturnValue(mockRoute);
   });
 
-  const selectedStateRef = React.createRef<StateCode>();
-  selectedStateRef.current = "US_NE";
+  const stateCodeRef = React.createRef<StateCode>();
+  stateCodeRef.current = "US_NE";
 
   describe("navigation changes", () => {
     it("navigates to Clients when logo is pressed (changed from Home)", async () => {
@@ -129,7 +129,7 @@ describe("Header", () => {
         <QueryClientProvider client={new QueryClient()}>
           <UserContextProvider isSkipAuthUser={false}>
             <StateCodeProvider
-              selectedStateRef={selectedStateRef}
+              stateCodeRef={stateCodeRef}
               isSkipAuthUser={false}
               recidivizAllowedStates={["US_NE"]}
               userStateCode="US_NE"

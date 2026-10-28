@@ -48,12 +48,12 @@ export function ClientCaseNoteSummary({ person }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const { isWeb } = usePlatform();
   const isMobileWidth = useIsMobileWidth();
-  const { selectedStateCode } = useStateSelection();
+  const { stateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();
 
   const showCNI =
-    agencyConfigs[selectedStateCode].showCNI || isVariantActive("showCNI");
+    agencyConfigs[stateCode].showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
 
   const { segments, summaries, enabled, lastUpdatedAt } = useCaseNoteSummary({

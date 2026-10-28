@@ -90,9 +90,9 @@ const MeetingsTranscriptionTab = ({
   personType,
 }: Props) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { selectedStateCode } = useStateSelection();
+  const { stateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
-  const labels = agencyConfigs[selectedStateCode].labels;
+  const labels = agencyConfigs[stateCode].labels;
 
   const { email: currentUserEmail, name: currentUserName } = useUserContext();
 

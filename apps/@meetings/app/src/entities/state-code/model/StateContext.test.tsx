@@ -49,6 +49,7 @@ const baseProps = {
   isSkipAuthUser: false,
   userStateCode: "US_NE",
   recidivizAllowedStates: ["US_NE"],
+  impersonatedStateCode: undefined as string | undefined,
   agencyConfigs,
   configsPending: false,
   configsErrored: false,
@@ -61,17 +62,13 @@ beforeEach(() => {
 });
 
 function makeWrapper(
-  selectedStateRef: React.RefObject<string | null>,
+  stateCodeRef: React.RefObject<string | null>,
   props: Partial<typeof baseProps> = {},
   queryClient = new QueryClient(),
 ) {
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <StateCodeProvider
-        selectedStateRef={selectedStateRef}
-        {...baseProps}
-        {...props}
-      >
+      <StateCodeProvider stateCodeRef={stateCodeRef} {...baseProps} {...props}>
         {children}
       </StateCodeProvider>
     </QueryClientProvider>
@@ -79,7 +76,7 @@ function makeWrapper(
 }
 
 describe("StateCodeProvider", () => {
-  describe("selectedStateRef initialization", () => {
+  describe("stateCodeRef initialization", () => {
     it("sets ref to user state code on first render for a state user", () => {
       const ref = React.createRef<string | null>();
 
@@ -147,7 +144,7 @@ describe("StateCodeProvider", () => {
     });
   });
 
-  describe("selectedStateCode initial value", () => {
+  describe("stateCode initial value", () => {
     it("exposes the user state code immediately (before async effect) for state users", () => {
       const ref = React.createRef<string | null>();
 
@@ -158,7 +155,7 @@ describe("StateCodeProvider", () => {
         }),
       });
 
-      expect(result.current.selectedStateCode).toBe("US_DEMO");
+      expect(result.current.stateCode).toBe("US_DEMO");
     });
   });
 
@@ -175,7 +172,7 @@ describe("StateCodeProvider", () => {
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-      expect(result.current.selectedStateCode).toBe("US_DEMO");
+      expect(result.current.stateCode).toBe("US_DEMO");
       expect(stateCodeParam.current).toBe("US_DEMO");
     });
   });
@@ -226,7 +223,7 @@ describe("StateCodeProvider", () => {
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
-      expect(result.current.selectedStateCode).toBe(DEFAULT_STATE_CODE);
+      expect(result.current.stateCode).toBe(DEFAULT_STATE_CODE);
     });
   });
 
@@ -244,7 +241,7 @@ describe("StateCodeProvider", () => {
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-      expect(result.current.selectedStateCode).toBe("US_NE");
+      expect(result.current.stateCode).toBe("US_NE");
       // The param applies to this session only.
       expect(mockSaveItem).not.toHaveBeenCalledWith(
         "selectedStateCode",
@@ -268,7 +265,7 @@ describe("StateCodeProvider", () => {
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-      expect(result.current.selectedStateCode).toBe("US_NE");
+      expect(result.current.stateCode).toBe("US_NE");
       expect(stateCodeParam.current).toBe("US_NE");
     });
 
@@ -285,7 +282,7 @@ describe("StateCodeProvider", () => {
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-      expect(result.current.selectedStateCode).toBe("US_DEMO");
+      expect(result.current.stateCode).toBe("US_DEMO");
     });
   });
 
@@ -365,6 +362,82 @@ describe("StateCodeProvider", () => {
         expect(mockGetItem).toHaveBeenCalledWith("queryCacheStateCode"),
       );
       expect(resetSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("impersonation", () => {
+    const recidivizProps = {
+      userStateCode: "recidiviz",
+      recidivizAllowedStates: ["US_NE", "US_DEMO", "US_CO"],
+    };
+
+    beforeEach(() => {
+      mockGetItem.mockImplementation((key: string) =>
+        Promise.resolve(key === "selectedStateCode" ? "US_NE" : null),
+      );
+    });
+
+    it("uses the selected state when not impersonating", async () => {
+      const ref = React.createRef<string | null>();
+
+      const { result } = renderHook(() => useStateSelection(), {
+        wrapper: makeWrapper(ref, recidivizProps),
+      });
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.stateCode).toBe("US_NE");
+      expect(ref.current).toBe("US_NE");
+      expect(result.current.canSelectStateCode).toBe(true);
+    });
+
+    it("uses the impersonated state and blocks selection while impersonating", async () => {
+      const ref = React.createRef<string | null>();
+
+      const { result } = renderHook(() => useStateSelection(), {
+        wrapper: makeWrapper(ref, {
+          ...recidivizProps,
+          impersonatedStateCode: "US_CO",
+        }),
+      });
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(result.current.stateCode).toBe("US_CO");
+      expect(ref.current).toBe("US_CO");
+      expect(result.current.canSelectStateCode).toBe(false);
+      await expect(
+        result.current.setSelectedStateCode("US_DEMO"),
+      ).rejects.toThrow();
+    });
+
+    it("returns to the selected state when impersonation stops", async () => {
+      const ref = React.createRef<string | null>();
+      let impersonatedStateCode: string | undefined = "US_CO";
+      const queryClient = new QueryClient();
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+          <StateCodeProvider
+            stateCodeRef={ref}
+            {...baseProps}
+            {...recidivizProps}
+            impersonatedStateCode={impersonatedStateCode}
+          >
+            {children}
+          </StateCodeProvider>
+        </QueryClientProvider>
+      );
+
+      const { result, rerender } = renderHook(() => useStateSelection(), {
+        wrapper,
+      });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      expect(ref.current).toBe("US_CO");
+
+      impersonatedStateCode = undefined;
+      rerender({});
+
+      await waitFor(() => expect(result.current.stateCode).toBe("US_NE"));
+      expect(ref.current).toBe("US_NE");
+      expect(result.current.canSelectStateCode).toBe(true);
     });
   });
 });

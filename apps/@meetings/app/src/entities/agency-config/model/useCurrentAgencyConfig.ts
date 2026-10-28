@@ -22,12 +22,12 @@ import { useAgencyConfigs } from "./AgencyConfigContext";
 
 export default function useCurrentAgencyConfig() {
   const { agencyConfigs } = useAgencyConfigs();
-  const { selectedStateCode } = useStateSelection();
+  const { stateCode } = useStateSelection();
 
   const currentAgencyConfig = useMemo(() => {
-    if (!selectedStateCode) return null;
-    return agencyConfigs[selectedStateCode] ?? null;
-  }, [agencyConfigs, selectedStateCode]);
+    if (!stateCode) return null;
+    return agencyConfigs[stateCode] ?? null;
+  }, [agencyConfigs, stateCode]);
 
   return currentAgencyConfig;
 }

@@ -22,12 +22,12 @@ import { useImpersonationStore } from "~@meetings/app/features/impersonation";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 export const StatusBanners = () => {
-  const { selectedStateCode } = useStateSelection();
+  const { stateCode } = useStateSelection();
   const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   return (
     <>
-      {selectedStateCode === "US_DEMO" && (
+      {stateCode === "US_DEMO" && (
         <View className="z-[-1] bg-warning-light px-4 py-2.5">
           <Typography
             variant="body-s-medium"

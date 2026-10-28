@@ -37,12 +37,12 @@ type Props = {
 
 export function MeetingCaseNoteSummary({ person }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
-  const { selectedStateCode } = useStateSelection();
+  const { stateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();
 
   const showCNI =
-    agencyConfigs[selectedStateCode].showCNI || isVariantActive("showCNI");
+    agencyConfigs[stateCode].showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
 
   const { segments, enabled, lastUpdatedAt } = useCaseNoteSummary({

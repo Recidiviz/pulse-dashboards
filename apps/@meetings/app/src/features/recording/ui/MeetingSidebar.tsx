@@ -59,11 +59,11 @@ export function MeetingSidebar({
 
   const isCollapsed = useActiveMeetingStore((s) => s.isSidebarCollapsed);
   const setIsCollapsed = useActiveMeetingStore((s) => s.setIsSidebarCollapsed);
-  const { selectedStateCode } = useStateSelection();
+  const { stateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();
   const showCNI =
-    agencyConfigs[selectedStateCode]?.showCNI || isVariantActive("showCNI");
+    agencyConfigs[stateCode]?.showCNI || isVariantActive("showCNI");
   const isClient = personType === "client";
   const {
     segments,
