@@ -66,7 +66,7 @@ export interface MeetingContext {
   staffEmail?: string;
   /** Notes typed by the staff member during the meeting. */
   staffNotes?: string;
-  /** When the meeting started, in the state's local time, e.g. "Thursday, September 24, 2026 at 7:30 PM CDT". */
+  /** When the meeting started, in the meeting's local time, e.g. "Thursday, September 24, 2026 at 7:30 PM CDT". */
   meetingStart?: string;
 }
 

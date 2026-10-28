@@ -16,7 +16,10 @@
 // =============================================================================
 
 import type { Prisma, StateCode } from "~@meetings/prisma/client";
-import { formatTranscripts } from "~@meetings/tasks/llm/utils";
+import {
+  formatMeetingLocalDate,
+  formatTranscripts,
+} from "~@meetings/tasks/llm/utils";
 import { writeMeetingTaskFile } from "~@meetings/tasks/meeting-task-file";
 
 // =============================================================================
@@ -192,7 +195,11 @@ export function buildLabelStudioTask(
   const durationSeconds =
     meeting.durationMs !== null ? Math.floor(meeting.durationMs / 1000) : null;
 
-  const recordingDate = meeting.startTime.toISOString().split("T")[0];
+  const recordingDate = formatMeetingLocalDate(
+    meeting.startTime,
+    stateCode,
+    meeting.timeZone,
+  );
   return {
     meeting_id: meeting.id,
     state_code: stateCode,

@@ -275,6 +275,26 @@ describe("buildLlmajTriageTask", () => {
     expect(task?.meta["Person Display ID"]).toBe(NOT_AVAILABLE);
   });
 
+  // 04:30 UTC on March 16 is 00:30 March 16 in eastern Tennessee but still
+  // 23:30 March 15 in Nashville, the zone TN falls back to.
+  test.each([
+    ["America/New_York", "2026-03-16"],
+    [null, "2026-03-15"],
+  ])("dates a meeting with time zone %s on %s", (timeZone, expectedDate) => {
+    const task = buildLlmajTriageTask(
+      makeMeeting({
+        startTime: new Date("2026-03-16T04:30:00Z"),
+        timeZone,
+      }),
+      makeEvaluationRun({ caseNote: makeScore({ grade: "BAD" }) }),
+      "US_TN",
+      makeGradedOutputs(),
+    );
+
+    expect(task?.recording_date).toBe(expectedDate);
+    expect(task?.meta["Recording date"]).toBe(expectedDate);
+  });
+
   test("returns null when no section is BAD", () => {
     expect(
       buildLlmajTriageTask(

@@ -185,6 +185,24 @@ describe("buildLabelStudioTask", () => {
     const task = buildLabelStudioTask(makeMeeting(), "US_NE", true);
     expect(task.needs_recidiviz_review).toBe(true);
   });
+
+  // 04:30 UTC on March 16 is 00:30 March 16 in eastern Tennessee but still
+  // 23:30 March 15 in Nashville, the zone TN falls back to.
+  test.each([
+    ["America/New_York", "2026-03-16"],
+    [null, "2026-03-15"],
+  ])("dates a meeting with time zone %s on %s", (timeZone, expectedDate) => {
+    const task = buildLabelStudioTask(
+      makeMeeting({
+        startTime: new Date("2026-03-16T04:30:00Z"),
+        timeZone,
+      }),
+      "US_TN",
+    );
+
+    expect(task.recording_date).toBe(expectedDate);
+    expect(task.meta["Recording date"]).toBe(expectedDate);
+  });
 });
 
 describe("action_items", () => {

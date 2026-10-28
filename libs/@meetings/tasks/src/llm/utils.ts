@@ -72,11 +72,10 @@ export function formatTranscripts(
 }
 
 /**
- * The time zone used to express a meeting's start in local time. States that
- * span more than one zone use the zone most of their population lives in.
- *
- * TODO(OBT-52087): Use the time zone reported by the recording device, and
- * fall back to this map only for meetings that don't have one.
+ * The time zone used to express a meeting's start in local time when the
+ * meeting has no time zone from the recording device, e.g. one recorded by an
+ * older app build. States that span more than one zone use the zone most of
+ * their population lives in.
  */
 const STATE_TIME_ZONES: Record<StateCode, string> = {
   US_AL: "America/Chicago",
@@ -133,8 +132,19 @@ const STATE_TIME_ZONES: Record<StateCode, string> = {
 };
 
 /**
- * Returns when a meeting started, in the state's local time, spelled out for a
- * prompt, e.g. "Thursday, September 24, 2026 at 7:30 PM CDT". Meeting times
+ * Returns the zone a meeting happened in: the recording device's, or the
+ * state's for meetings without one.
+ */
+function getMeetingTimeZone(
+  stateCode: StateCode,
+  timeZone?: string | null,
+): string {
+  return timeZone ?? STATE_TIME_ZONES[stateCode];
+}
+
+/**
+ * Returns when a meeting started, in the meeting's local time, spelled out for
+ * a prompt, e.g. "Thursday, September 24, 2026 at 7:30 PM CDT". Meeting times
  * are stored in UTC, so without the conversion an evening meeting in Nebraska
  * would land on the next day. The weekday lets the model resolve phrases like
  * "see you next Tuesday".
@@ -145,7 +155,7 @@ export function formatMeetingStartForPrompt(
   timeZone?: string | null,
 ): string {
   return new Intl.DateTimeFormat("en-US", {
-    timeZone: timeZone ?? STATE_TIME_ZONES[stateCode],
+    timeZone: getMeetingTimeZone(stateCode, timeZone),
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -153,5 +163,23 @@ export function formatMeetingStartForPrompt(
     hour: "numeric",
     minute: "2-digit",
     timeZoneName: "short",
+  }).format(startTime);
+}
+
+/**
+ * Returns the date a meeting started on, in the meeting's local time, as
+ * YYYY-MM-DD.
+ */
+export function formatMeetingLocalDate(
+  startTime: Date,
+  stateCode: StateCode,
+  timeZone?: string | null,
+): string {
+  // en-CA formats dates as YYYY-MM-DD
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: getMeetingTimeZone(stateCode, timeZone),
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   }).format(startTime);
 }

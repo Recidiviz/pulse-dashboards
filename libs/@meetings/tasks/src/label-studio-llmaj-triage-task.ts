@@ -33,7 +33,10 @@ import {
   NOT_AVAILABLE,
 } from "~@meetings/tasks/label-studio-llmaj-triage";
 import type { EvaluationScores } from "~@meetings/tasks/llm/evaluators/schemas";
-import { formatTranscripts } from "~@meetings/tasks/llm/utils";
+import {
+  formatMeetingLocalDate,
+  formatTranscripts,
+} from "~@meetings/tasks/llm/utils";
 import { writeMeetingTaskFile } from "~@meetings/tasks/meeting-task-file";
 
 /**
@@ -102,7 +105,11 @@ export function buildLlmajTriageTask(
     ]),
   );
 
-  const recordingDate = meeting.startTime.toISOString().split("T")[0];
+  const recordingDate = formatMeetingLocalDate(
+    meeting.startTime,
+    stateCode,
+    meeting.timeZone,
+  );
   const person = meeting.client ?? meeting.resident;
 
   return LlmajTriageTaskSchema.parse({
