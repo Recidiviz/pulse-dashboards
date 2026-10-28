@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { CalendarConfig } from "~@parole-board/common";
 import {
   ClientRecord,
   LocationRecord,
@@ -124,6 +125,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
 
   // Parole
   paroleConfig?: ParoleConfig;
+  calendarConfig?: CalendarConfig;
 };
 
 /**

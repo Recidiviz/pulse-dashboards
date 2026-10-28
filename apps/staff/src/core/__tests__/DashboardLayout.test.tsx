@@ -33,7 +33,7 @@ import PageSentenceCalculation from "../PageSentenceCalculation";
 import PageSystem from "../PageSystem";
 import PageVitals from "../PageVitals";
 import PageWorkflows from "../PageWorkflows";
-import { DASHBOARD_PATHS, DASHBOARD_VIEWS } from "../views";
+import { DASHBOARD_PATHS, DASHBOARD_VIEWS, PAROLE_PATHS } from "../views";
 
 vi.mock("../../hooks/useIntercom");
 vi.mock("mobx-react-lite", () => {
@@ -281,6 +281,52 @@ describe("DashboardLayout", () => {
       renderLayout(DASHBOARD_PATHS.parole);
 
       expect(screen.getByTestId("page-parole-id")).toBeInTheDocument();
+    });
+  });
+
+  describe("the parole Public Calendar subpage", () => {
+    it("renders PageParole if the tenant and user allow it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { parole: ["publicCalendar"] } },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(PAROLE_PATHS.publicCalendar);
+
+      expect(screen.getByTestId("page-parole-id")).toBeInTheDocument();
+    });
+
+    it("renders PageParole for a path below /parole/public-calendar", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { parole: ["publicCalendar"] } },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(`${PAROLE_PATHS.publicCalendar}/2026-10`);
+
+      expect(screen.getByTestId("page-parole-id")).toBeInTheDocument();
+    });
+
+    it("doesn't render if the tenant doesn't allow it but the user does", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { parole: ["publicCalendar"] } },
+        currentTenantId: "US_XX",
+      });
+
+      renderLayout(PAROLE_PATHS.publicCalendar);
+
+      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
+    });
+
+    it("doesn't render if the user's parole navigation doesn't list it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { parole: ["docket"] } },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(PAROLE_PATHS.publicCalendar);
+
+      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
     });
   });
 

@@ -25,8 +25,21 @@ const US_CO_CONFIG = {
   availableStateCodes: [dashboard.US_CO],
   enableUserRestrictions: false,
   navigation: {
-    parole: ["docket", "residents"],
+    parole: ["docket", "residents", "publicCalendar"],
   },
+  calendarConfig: {
+    calendarCode: "PAROLE_BOARD_PUBLIC",
+    navTitle: "Public Calendar",
+  },
+  // Turns the usCoParolePublicCalendar feature variant on for US_CO in every
+  // deploy except production (staging, demo and local dev), so users there with
+  // the parolePublicCalendar route permission can test it. Production stays
+  // dark until launch. TODO(CO-811): Remove the variant and this field at
+  // launch.
+  featureVariants:
+    import.meta.env.VITE_DEPLOY_ENV !== "production"
+      ? { usCoParolePublicCalendar: {} }
+      : {},
   paroleConfig: {
     docketConfig: {
       columns: [

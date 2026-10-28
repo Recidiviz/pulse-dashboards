@@ -46,15 +46,18 @@ The libraries carry no `type:*` tag, because a `type:feature` library can't impo
 
 ## The host
 
-`ParoleBoardHost` is the set of services the calendar needs from the app hosting it. It is structural, so the host app builds one without these libraries importing it. In the staff app, the adapter in `apps/staff/src/core/PageParoleBoard/UsCo/` (CO-803) maps `RootStore` onto it:
+`ParoleBoardHost` is the set of services the calendar needs from the app hosting it. It is structural, so the host app builds one without these libraries importing it. In the staff app, `createParoleBoardHost` in `apps/staff/src/core/PageParole/UsCo/` maps `RootStore` onto it. `currentTenantId` is a getter, so the host follows the tenant the user switches to:
 
 ```tsx
 const host: ParoleBoardHost = {
-  currentTenantId: rootStore.currentTenantId,
+  get currentTenantId() {
+    return rootStore.currentTenantId;
+  },
   userStore: rootStore.userStore,
   tenantStore: rootStore.tenantStore,
   // createParoleBoardAnalytics lives in the same staff folder.
   analyticsStore: createParoleBoardAnalytics(rootStore.analyticsStore),
+  reportError: (error) => captureException(error),
 };
 
 <UsCoParoleCalendarAdmin host={host} />;
@@ -107,5 +110,5 @@ For the same hook, the later entry wins, so a story can override a shared defaul
 1. Create `libs/@parole-board/us-xx` with the tags `scope:client`, `domain:parole-board` and `parole-board:state`, and add its `~@parole-board/us-xx` alias to `tsconfig.base.json`.
 2. Export `<UsXxParoleCalendarAdmin host />`, built on this library's hooks, `CalendarGrid` and test helpers. Put anything another state could use in this library instead.
 3. Add the state's `calendarConfig` and route permission (Spec D, "How a state adds a calendar").
-4. Mount it from the staff app the way CO-803 mounts the US_CO admin, inside `apps/staff/src/core/PageParoleBoard/`.
+4. Mount it from the staff app the way US_CO does: a view in `apps/staff/src/core/PageParole/Us<Xx>/`, registered in `PUBLIC_CALENDAR_COMPONENTS_BY_TENANT`.
 5. Copy the `examples` and `build-examples` targets from `us-co/project.json`. They point at this library's shared `.examples/` config and pass `--no-open`, so nothing else is needed.

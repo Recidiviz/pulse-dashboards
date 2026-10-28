@@ -211,7 +211,10 @@ export type FeatureVariant =
 
   // HOME CONTACT ROUTE PLANNER
   | "HCRPAddMoreClients"
-  | "HCRPPIIEmail";
+  | "HCRPPIIEmail"
+
+  // PAROLE BOARD
+  | "usCoParolePublicCalendar";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -351,6 +354,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   hideWorkflowsResidentsPage: {},
   useRecordForIneligibleOpps: {},
   useStableExternalId: {},
+  usCoParolePublicCalendar: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

@@ -58,7 +58,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       activeSystem,
     },
     userStore: { userAllowedNavigation },
-    tenantStore: { directorDashboardConfig },
+    tenantStore: { directorDashboardConfig, calendarConfig },
   } = useRootStore();
 
   const enableWorkflows =
@@ -68,10 +68,15 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
     "milestones",
   );
   const enabledInsights = (userAllowedNavigation?.insights || []).length > 0;
-  const enabledParole = !!userAllowedNavigation?.parole;
+  const enabledParole = (userAllowedNavigation?.parole || []).includes(
+    "docket",
+  );
   const enabledParoleResidents = (userAllowedNavigation?.parole || []).includes(
     "residents",
   );
+  const enabledParolePublicCalendar = (
+    userAllowedNavigation?.parole || []
+  ).includes("publicCalendar");
   const enabledDirectorDashboard =
     (userAllowedNavigation?.directorDashboard || []).length > 0;
   const enableSystems = !supportsMultipleSystems || !isMobile;
@@ -103,6 +108,11 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enabledParoleResidents && (
         <NavLink to={paroleUrl("residents")} role="menuitem">
           Residents
+        </NavLink>
+      )}
+      {enabledParolePublicCalendar && calendarConfig && (
+        <NavLink to={paroleUrl("publicCalendar")} role="menuitem">
+          {calendarConfig.navTitle}
         </NavLink>
       )}
       {enableWorkflows && (

@@ -748,7 +748,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enabledInsights =
       !!userAllowedNavigation.insights && includeInsightsWorkflowsLinks;
     const enabledPSI = !!userAllowedNavigation.psi;
-    const enabledParole = !!userAllowedNavigation.parole;
+    const enabledParole = (userAllowedNavigation.parole || []).includes(
+      "docket",
+    );
 
     const isInsightsView = view === DASHBOARD_VIEWS.insights;
     const isInsightsLanternState =

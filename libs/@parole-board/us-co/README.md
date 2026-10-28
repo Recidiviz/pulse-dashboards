@@ -2,7 +2,7 @@
 
 The US_CO Parole Board calendar admin tool. Import it as `~@parole-board/us-co`.
 
-Its top-level export is `<UsCoParoleCalendarAdmin host={host} />`. The host app mounts it on a route ending in `/*` (`/paroleCalendar/*` in the staff app, CO-803), and the routes inside it are relative (`index`, `:yearMonth`), so this library never needs the staff app's paths.
+Its top-level export is `<UsCoParoleCalendarAdmin host={host} />`. The host app mounts it on a route ending in `/*` (`/parole/public-calendar/*` in the staff app), and the routes inside it are relative (`index`, `:yearMonth`), so this library never needs the staff app's paths.
 
 ## What goes here
 

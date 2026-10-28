@@ -165,6 +165,46 @@ describe("OverviewNavLinks tests", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("Should render a link for the Public Calendar, named by the tenant, if enabled", () => {
+    rootStoreMock.userStore.userAllowedNavigation.parole = ["publicCalendar"];
+    rootStoreMock.tenantStore = {
+      calendarConfig: {
+        calendarCode: "PAROLE_BOARD_PUBLIC",
+        navTitle: "Public Calendar",
+      },
+    };
+    renderLinks();
+
+    expect(
+      screen.getByRole("menuitem", { name: "Public Calendar" }),
+    ).toHaveAttribute("href", "/parole/public-calendar");
+    expect(
+      screen.queryByRole("menuitem", { name: "Parole" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("Should not render a link for the Public Calendar if the parole navigation doesn't list it", () => {
+    rootStoreMock.userStore.userAllowedNavigation.parole = ["docket"];
+    rootStoreMock.tenantStore = {
+      calendarConfig: {
+        calendarCode: "PAROLE_BOARD_PUBLIC",
+        navTitle: "Public Calendar",
+      },
+    };
+    renderLinks();
+
+    expect(
+      screen.queryByRole("menuitem", { name: "Public Calendar" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("Should not render a link for the Public Calendar if the tenant has no calendarConfig", () => {
+    rootStoreMock.userStore.userAllowedNavigation.parole = ["publicCalendar"];
+    renderLinks();
+
+    expect(screen.getAllByRole("menuitem")).toHaveLength(1);
+  });
+
   it("Should render a link for Tasks page if enabled", async () => {
     rootStoreMock.workflowsStore.isSupervisionTasksLinkEnabled = true;
     renderLinks();

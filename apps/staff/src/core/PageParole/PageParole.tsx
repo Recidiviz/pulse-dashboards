@@ -26,6 +26,7 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   NAV_BAR_HEIGHT,
@@ -36,6 +37,7 @@ import { MaxWidth } from "../sharedComponents";
 import { PAROLE_PATHS, paroleRoute } from "../views";
 import { ParoleCaseProfile } from "./ParoleCaseProfile";
 import { ParoleDocketView } from "./ParoleDocketView";
+import { ParolePublicCalendar } from "./ParolePublicCalendar";
 import { ParoleResidentsView } from "./ParoleResidentsView";
 
 const Wrapper = styled.div<{ $backgroundColor: string }>`
@@ -45,12 +47,16 @@ const Wrapper = styled.div<{ $backgroundColor: string }>`
   width: 100%;
 `;
 
-const Main = styled.main<{ isMobile?: boolean; $isFullWidth: boolean }>`
+const Main = styled.main<{
+  isMobile?: boolean;
+  $isFullWidth: boolean;
+  $isFlush: boolean;
+}>`
   display: flex;
   flex-direction: column;
   flex: auto;
 
-  padding: 2rem 1.5rem 5rem;
+  padding: ${({ $isFlush }) => ($isFlush ? 0 : "2rem 1.5rem 5rem")};
 
   height: ${({ isMobile }) =>
     isMobile
@@ -64,8 +70,19 @@ const Main = styled.main<{ isMobile?: boolean; $isFullWidth: boolean }>`
 const PageParole: React.FC = observer(function PageParole() {
   const { isMobile } = useIsMobile(true);
   const { pathname } = useLocation();
+  const {
+    userStore: { userAllowedNavigation },
+  } = useRootStore();
+  // A user granted only the Public Calendar still has a parole navigation
+  // entry, which lets every /parole path through DashboardLayout. Case
+  // profiles open from the docket, so they need it, like the Parole nav link.
+  const canViewCases = (userAllowedNavigation?.parole ?? []).includes("docket");
   const isCaseProfile = useMatch(PAROLE_PATHS.caseProfile) !== null;
   const isDocket = useMatch(PAROLE_PATHS.docket) !== null;
+  // Each state's Public Calendar lays out its own page, so it gets no padding
+  // or max width.
+  const isPublicCalendar =
+    useMatch(`${PAROLE_PATHS.publicCalendar}/*`) !== null;
   const backgroundColor = isCaseProfile ? palette.marble3 : palette.marble1;
 
   useEffect(() => {
@@ -85,7 +102,11 @@ const PageParole: React.FC = observer(function PageParole() {
         <NavigationLayout>
           <OverviewNavLinks />
         </NavigationLayout>
-        <Main isMobile={isMobile} $isFullWidth={isDocket}>
+        <Main
+          isMobile={isMobile}
+          $isFullWidth={isDocket || isPublicCalendar}
+          $isFlush={isPublicCalendar}
+        >
           <Routes>
             <Route
               path={paroleRoute({ routeName: "docket" })}
@@ -96,9 +117,15 @@ const PageParole: React.FC = observer(function PageParole() {
               element={<ParoleResidentsView />}
             />
             <Route
-              path={paroleRoute({ routeName: "caseProfile" })}
-              element={<ParoleCaseProfile />}
+              path={`${paroleRoute({ routeName: "publicCalendar" })}/*`}
+              element={<ParolePublicCalendar />}
             />
+            {canViewCases && (
+              <Route
+                path={paroleRoute({ routeName: "caseProfile" })}
+                element={<ParoleCaseProfile />}
+              />
+            )}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Main>

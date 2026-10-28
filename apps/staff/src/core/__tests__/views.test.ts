@@ -81,6 +81,10 @@ describe("paroleUrl", () => {
     expect(paroleUrl("docket")).toEqual("/parole/docket");
   });
 
+  it("returns the kebab-case Public Calendar path", () => {
+    expect(paroleUrl("publicCalendar")).toEqual("/parole/public-calendar");
+  });
+
   it("substitutes pseudonymizedId into the case profile path", () => {
     expect(paroleUrl("caseProfile", { pseudonymizedId: "DOC-45821" })).toEqual(
       "/parole/case/DOC-45821",

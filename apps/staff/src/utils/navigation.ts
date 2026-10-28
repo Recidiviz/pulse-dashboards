@@ -24,10 +24,26 @@ import {
   DASHBOARD_VIEWS,
   INSIGHTS_PAGES,
   PAROLE_PAGES,
+  ParolePage,
   WORKFLOWS_PATH_SECTIONS,
 } from "../core/views";
 import { TenantId } from "../RootStore/types";
 import { TENANT_CONFIGS } from "../tenants";
+
+/**
+ * Returns a page's URL segment. Navigation lists a parole page by its
+ * PAROLE_PAGES key, and a multi-word page's segment is kebab-case
+ * (publicCalendar is served at /parole/public-calendar).
+ */
+function getPageSegment(view: string, page: string): string {
+  if (
+    view === DASHBOARD_VIEWS.parole &&
+    Object.prototype.hasOwnProperty.call(PAROLE_PAGES, page)
+  ) {
+    return PAROLE_PAGES[page as ParolePage];
+  }
+  return page;
+}
 
 export function getPathsFromNavigation(
   userAllowedNavigation: Navigation,
@@ -37,7 +53,9 @@ export function getPathsFromNavigation(
     const view: string = navItem[0];
     const pages: string[] = navItem[1] || [];
     return pages.length
-      ? pages.map((page) => `/${view}/${page}`).concat([`/${view}`])
+      ? pages
+          .map((page) => `/${view}/${getPageSegment(view, page)}`)
+          .concat([`/${view}`])
       : [`/${view}`];
   });
 }

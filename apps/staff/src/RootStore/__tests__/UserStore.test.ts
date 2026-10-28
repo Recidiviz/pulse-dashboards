@@ -1121,6 +1121,157 @@ describe("parole board route-based access (US_ID)", () => {
   });
 });
 
+describe("parole Public Calendar route-based access (US_CO)", () => {
+  async function authorizeUser(
+    appMetadata: Record<string, unknown>,
+    tenantFeatureVariants: Record<string, unknown> = {
+      usCoParolePublicCalendar: {},
+    },
+  ) {
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: appMetadata,
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: "US_CO",
+        firestoreStore: {
+          authenticate: vi.fn(),
+        },
+        tenantStore: {
+          tenantFeatureVariants,
+        },
+      } as unknown as typeof RootStore,
+    });
+    await store.authorize(mockHandleUrl);
+    return store;
+  }
+
+  test("hides the Public Calendar when the user lacks the parolePublicCalendar route", async () => {
+    const store = await authorizeUser({ stateCode: "US_CO", routes: {} });
+
+    expect(store.userAllowedNavigation?.parole).toBeUndefined();
+  });
+
+  test("shows only the Public Calendar when the user has only the parolePublicCalendar route", async () => {
+    const store = await authorizeUser({
+      stateCode: "US_CO",
+      routes: { parolePublicCalendar: true },
+    });
+
+    expect(store.userAllowedNavigation?.parole).toEqual(["publicCalendar"]);
+  });
+
+  test("gives a user with only the parole route the parole pages and not the Public Calendar", async () => {
+    const store = await authorizeUser({
+      stateCode: "US_CO",
+      routes: { parole: true },
+    });
+
+    expect(store.userAllowedNavigation?.parole).toEqual([
+      "docket",
+      "residents",
+    ]);
+  });
+
+  test("keeps the docket first for a user with both routes, so they land on it", async () => {
+    const store = await authorizeUser({
+      stateCode: "US_CO",
+      routes: { parole: true, parolePublicCalendar: true },
+    });
+
+    expect(store.userAllowedNavigation?.parole).toEqual([
+      "docket",
+      "residents",
+      "publicCalendar",
+    ]);
+  });
+
+  test("shows the Public Calendar to a Recidiviz user", async () => {
+    const store = await authorizeUser({ stateCode: "RECIDIVIZ" });
+
+    expect(store.userAllowedNavigation?.parole).toContain("publicCalendar");
+  });
+
+  test("hides the Public Calendar without the usCoParolePublicCalendar feature variant", async () => {
+    const store = await authorizeUser(
+      {
+        stateCode: "US_CO",
+        routes: { parole: true, parolePublicCalendar: true },
+      },
+      {},
+    );
+
+    expect(store.userAllowedNavigation?.parole).toEqual([
+      "docket",
+      "residents",
+    ]);
+  });
+
+  test("hides the Public Calendar from a Recidiviz user, who has every route, without the usCoParolePublicCalendar feature variant", async () => {
+    const store = await authorizeUser({ stateCode: "RECIDIVIZ" });
+    // A session override toggles off a variant that is otherwise active.
+    store.setFeatureVariantOverride("usCoParolePublicCalendar", true);
+
+    expect(
+      store.activeFeatureVariants.usCoParolePublicCalendar,
+    ).toBeUndefined();
+    expect(store.userAllowedNavigation?.parole).not.toContain("publicCalendar");
+    sessionStorage.clear();
+  });
+
+  describe("usCoParolePublicCalendar feature variant from the US_CO tenant config", () => {
+    // The tenant config reads VITE_DEPLOY_ENV when the module loads, so each
+    // case stubs the env and imports a fresh copy.
+    async function authorizeStateUserIn(deployEnv: string) {
+      vi.stubEnv("VITE_DEPLOY_ENV", deployEnv);
+      vi.resetModules();
+      const { default: usCoConfig } = await import("../../tenants/US_CO");
+
+      mockIsAuthenticated.mockResolvedValue(true);
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        [metadataField]: {
+          stateCode: "US_CO",
+          routes: { parolePublicCalendar: true },
+        },
+      });
+      const store = new UserStore({
+        authSettings: testAuthSettings,
+        rootStore: {
+          currentTenantId: "US_CO",
+          firestoreStore: { authenticate: vi.fn() },
+          tenantStore: { tenantFeatureVariants: usCoConfig.featureVariants },
+        } as unknown as typeof RootStore,
+      });
+      await store.authorize(mockHandleUrl);
+      return store;
+    }
+
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    test("is on for a state user with the route outside production", async () => {
+      const store = await authorizeStateUserIn("staging");
+
+      expect(store.activeFeatureVariants.usCoParolePublicCalendar).toEqual({});
+      expect(store.userAllowedNavigation?.parole).toEqual(["publicCalendar"]);
+    });
+
+    test("is off for a state user with the route in production", async () => {
+      const store = await authorizeStateUserIn("production");
+
+      expect(
+        store.activeFeatureVariants.usCoParolePublicCalendar,
+      ).toBeUndefined();
+      expect(store.userAllowedNavigation?.parole).toBeUndefined();
+    });
+  });
+});
+
 test("does not identify authorized users without ID hash", async () => {
   mockIsAuthenticated.mockResolvedValue(true);
   mockGetUser.mockResolvedValue({
@@ -1354,6 +1505,7 @@ describe("feature variants", () => {
         "tasksPermasnooze": {},
         "usAzAdminSupervisionApprovalFlow": {},
         "usCaEnableSMS": {},
+        "usCoParolePublicCalendar": {},
         "usIaEarlyDischargeCustomizations": {},
         "usIaEarlyDischargeForms": {},
         "usIaFinesAndFees": {},
@@ -1454,6 +1606,7 @@ describe("feature variants", () => {
         "tasksPermasnooze": {},
         "usAzAdminSupervisionApprovalFlow": {},
         "usCaEnableSMS": {},
+        "usCoParolePublicCalendar": {},
         "usIaEarlyDischargeCustomizations": {},
         "usIaEarlyDischargeForms": {},
         "usIaFinesAndFees": {},
@@ -1552,6 +1705,7 @@ describe("feature variants", () => {
         "tasksPermasnooze": {},
         "usAzAdminSupervisionApprovalFlow": {},
         "usCaEnableSMS": {},
+        "usCoParolePublicCalendar": {},
         "usIaEarlyDischargeCustomizations": {},
         "usIaEarlyDischargeForms": {},
         "usIaFinesAndFees": {},

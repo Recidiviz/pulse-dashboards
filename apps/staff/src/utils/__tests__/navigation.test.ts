@@ -97,6 +97,19 @@ describe("getPathWithoutParams", () => {
       getPathWithoutParams("/parole/residents"),
     );
   });
+
+  it("maps the publicCalendar parole page to its kebab-case path", () => {
+    expect(getPathsFromNavigation({ parole: ["publicCalendar"] })).toEqual([
+      "/parole/public-calendar",
+      "/parole",
+    ]);
+  });
+
+  it("strips the month from a parole Public Calendar path", () => {
+    expect(getPathWithoutParams("/parole/public-calendar/2026-10")).toEqual(
+      "/parole/public-calendar",
+    );
+  });
 });
 
 describe("convertSlugToId", () => {

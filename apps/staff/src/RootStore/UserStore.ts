@@ -608,6 +608,16 @@ export default class UserStore {
    * or, if subpageName is not provided, to the route /pageName
    */
   getRoutePermission(route: string, subpage?: string): boolean {
+    // Recidiviz users get every route, so until launch this variant keeps the
+    // unfinished Public Calendar hidden from them too. TODO(CO-811): Remove at
+    // launch.
+    if (
+      route === "parole" &&
+      subpage === "publicCalendar" &&
+      !this.activeFeatureVariants.usCoParolePublicCalendar
+    )
+      return false;
+
     if (this.isRecidivizUser) return true;
 
     // When hideWorkflowsOpportunities is turned on, we'll restrict workflows access to just
@@ -637,6 +647,13 @@ export default class UserStore {
           hideWorkflowsResidentsPage
         ) {
           return false;
+        }
+
+        // The Public Calendar subpage has its own route permission,
+        // parolePublicCalendar (Auth0 sends parole_parolePublicCalendar), so
+        // the parole permission doesn't grant it.
+        if (route === "parole" && subpage === "publicCalendar") {
+          return permissionName === "parolePublicCalendar";
         }
 
         return (

@@ -439,4 +439,8 @@ export default class TenantStore {
   get directorDashboardConfig() {
     return this.currentTenantConfig?.directorDashboard;
   }
+
+  get calendarConfig() {
+    return this.currentTenantConfig?.calendarConfig;
+  }
 }
