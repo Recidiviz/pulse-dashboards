@@ -19,5 +19,6 @@
 // ~design-system parts and never edits libs/design-system or apps/staff.
 export * from "./Badge";
 export * from "./Callout";
+export * from "./ChoiceGrid";
 export * from "./ParoleBoardButton";
 export * from "./StatusMessage";

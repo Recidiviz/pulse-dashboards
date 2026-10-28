@@ -117,6 +117,27 @@ describe("semantics", () => {
     },
   );
 
+  test("text.onColor passes AA on surface.selected", () => {
+    expect(
+      contrastOn(semantics.text.onColor, semantics.surface.selected),
+    ).toBeGreaterThanOrEqual(AA_TEXT);
+  });
+
+  test.each(["selected", "focus"] as const)(
+    "border.%s shows at 3:1 on white",
+    (role) => {
+      expect(
+        contrastOn(semantics.border[role], semantics.surface.bg),
+      ).toBeGreaterThanOrEqual(NON_TEXT);
+    },
+  );
+
+  test("the tile measurements are rem values or em tracking", () => {
+    for (const value of Object.values(semantics.tile)) {
+      expect(value).toMatch(/^(\d*\.?\d+r?em ?)+$/);
+    }
+  });
+
   test.each(["info", "success", "warning", "error"] as const)(
     "status.%s passes AA on white and on its own surface",
     (tone) => {

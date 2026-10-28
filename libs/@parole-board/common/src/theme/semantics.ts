@@ -44,6 +44,9 @@ export const text = {
   secondary: palette.slate80,
   // Disabled text is exempt from WCAG contrast (1.4.3), so it stays lighter.
   disabled: palette.slate60,
+  // A disabled option's name, a step lighter than its disabled caption, as
+  // the Add a month design draws "Already added" months.
+  disabledSubtle: palette.slate40,
   link: palette.signal.links,
   onColor: palette.white,
 } as const;
@@ -82,6 +85,10 @@ export const surface = {
   muted: palette.marble3,
   // DS001 surfaceHover is slate20.
   hover: palette.slate20,
+  // A selected option drawn as a solid fill, such as the chosen day. The
+  // design's #0099FF has no token and is 3.0:1 under white text;
+  // signal.notification is the nearest palette blue that passes AA (4.6:1).
+  selected: palette.signal.notification,
   callout: palette.slate05,
   // DS001 surfaceBadge is slate10.
   badge: palette.slate10,
@@ -102,6 +109,9 @@ export const border = {
   focus: palette.signal.notification,
   // DS001 borderAction is pine4.
   action: palette.pine4,
+  // The ring around a selected tile. signal.selected is the palette blue
+  // nearest the design's #0099FF and shows at 3.2:1 on white.
+  selected: palette.signal.selected,
 } as const;
 
 export const action = {
@@ -120,12 +130,45 @@ export const radius = {
   card: rem(8),
   // The DS Button's default pill shape and DS001 radiusPill.
   pill: rem(999),
+  // The design's tile corner, the same 2px the DS Checkbox draws its box with.
+  // TODO(CO-935): Waiting on ~design-system to export a 2px radius token. Alias it here once it lands.
+  tile: rem(2),
 } as const;
 
 // TODO(CO-935): Waiting on ~design-system to export stroke tokens. Replace with the DS export once it lands.
 export const stroke = {
   // DS001 strokeDefault.
   default: rem(spacing.xxs),
+  // The focus outline's width and its gap from the control, as the DS
+  // Checkbox and Radio draw theirs.
+  focus: rem(2),
+  focusOffset: rem(2),
+} as const;
+
+// TODO(CO-935): Waiting on ~design-system to add a selectable tile (a checkbox or radio drawn as a bordered card) with its own spacing and type steps. Use them and delete this group once they land.
+/**
+ * The checkbox and radio tiles' measurements from the Calendar Unit Dashboard
+ * design. Each falls between two DS spacing or type steps, so they stay
+ * together here rather than in space or type.
+ */
+export const tile = {
+  // One-line tiles (meeting types, facilities) are padded 11px by 10px and
+  // two-line tiles (months) 12px by 10px.
+  padding: `${rem(11)} ${rem(10)}`,
+  paddingDescribed: `${rem(12)} ${rem(10)}`,
+  // Day tiles are 34px by 32px with a 6px gap, which fits 13 days per row in
+  // the 524px Add a hearing dialog.
+  compactWidth: rem(34),
+  compactHeight: rem(32),
+  compactGap: rem(6),
+  // A one-line tile's name, between Sans12 and Sans14.
+  nameSize: rem(13),
+  // The line that gives a one-line tile the design's 36px height.
+  nameLineHeight: rem(12),
+  // The caption under a month's name: 9.5px uppercase on a 13px line.
+  captionSize: rem(9.5),
+  captionLineHeight: rem(13),
+  captionTracking: "0.08em",
 } as const;
 
 export const space = spacing;
