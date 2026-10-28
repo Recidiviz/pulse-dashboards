@@ -17,10 +17,12 @@
 
 import { rem } from "polished";
 import { FC } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { Card, JIIButton, RowDivider, SlateCopy } from "~@jii/common-ui";
 import { sendEdovoReferral, useRootStore } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 import { Icon, spacing } from "~design-system";
 
@@ -46,16 +48,25 @@ export const PolicyExplainerCard: FC = () => {
   const {
     userStore: { segmentClient },
   } = useRootStore();
+  const params = useTypedParams(State.Resident.UsArMoreInformation);
 
   const handleGoToCourses = () => {
     if (sendEdovoReferral())
       segmentClient.trackEdovoReferralSent({ type: "program-navigation" });
   };
 
+  const policyUrl =
+    State.Resident.UsArMoreInformation.EarnedReleaseCredits.buildPath(params);
+  const coursesUrl = policyUrl + "#courses";
+  const resourcesUrl = policyUrl + "#resources";
+
   return (
     <Card>
       <SlateCopy options={{ forceBlock: true }}>
-        {t(($) => $.programs.onMyTablet.progressExplainer)}
+        {t(($) => $.programs.onMyTablet.progressExplainer, {
+          coursesUrl,
+          resourcesUrl,
+        })}
       </SlateCopy>
       <ExplainerDivider />
       <TightSlateCopy options={{ forceBlock: true }}>
@@ -64,9 +75,8 @@ export const PolicyExplainerCard: FC = () => {
       <SlateCopy options={{ forceBlock: true }}>
         {t(($) => $.programs.onMyTablet.carryOverOver)}
       </SlateCopy>
-      {/* TODO(JII2-119): make this a link to the AR policy page */}
       <SlateCopy options={{ forceBlock: true }}>
-        {t(($) => $.programs.onMyTablet.learnMore)}
+        {t(($) => $.programs.onMyTablet.learnMore, { policyUrl })}
       </SlateCopy>
       <CoursesButton kind="primary" onClick={handleGoToCourses}>
         <span>{t(($) => $.programs.onMyTablet.coursesButton)}</span>

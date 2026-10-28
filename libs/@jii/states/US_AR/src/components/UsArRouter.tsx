@@ -21,7 +21,8 @@ import { NotFound } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { ProgramCatalog, UsArMoreInformation } from "~@jii/paths";
 
-import { PageMoreInformationImportantDates } from "./PageMoreInformationImportantDates";
+import { PageMoreInformationEarnedReleaseCredits } from "../pages/PageMoreInformationEarnedReleaseCredits";
+import { PageMoreInformationImportantDates } from "../pages/PageMoreInformationImportantDates";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./Programs/ProgramsNavBar/ProgramsNavBar.styles";
 import { UsArOnMyTablet } from "./Programs/UsArOnMyTablet";
 import { UsArProgramCatalog } from "./Programs/UsArProgramCatalog";
@@ -38,6 +39,12 @@ export function UsArRouter() {
           path={UsArMoreInformation.ImportantDates.path}
           element={<PageMoreInformationImportantDates />}
         />
+        {residentFlags.usArEdovoCredits && (
+          <Route
+            path={UsArMoreInformation.EarnedReleaseCredits.path}
+            element={<PageMoreInformationEarnedReleaseCredits />}
+          />
+        )}
       </Route>
       {residentFlags.usArEdovoCredits ? (
         <Route path={ProgramCatalog.path} element={<UsArProgramsLayout />}>

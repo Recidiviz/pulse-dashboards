@@ -15,16 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import { FC } from "react";
+import styled from "styled-components";
 
-import { CopyProps, CopyWrapper } from "~@jii/common-ui";
-import { usePageTitle } from "~@jii/common-ui";
+import { CopyProps, CopyWrapper, usePageTitle } from "~@jii/common-ui";
+import { spacing } from "~design-system";
 
 import { HeadingsAggregator, TableOfContents } from "./TableOfContents";
 import { useScrollToHash } from "./useScrollToHash";
 
+const Intro = styled.div`
+  margin-bottom: ${rem(spacing.xl)};
+`;
+
 export interface InfoPageProps {
   heading: string;
+  intro?: string;
   body: string;
   CopyWrapperOverride?: FC<CopyProps>;
   tocHeadingsAggregatorOverride?: HeadingsAggregator;
@@ -34,6 +41,7 @@ export interface InfoPageProps {
  * Renders the page content along with a table of contents for jumping between sections.
  * @param props
  * @param props.heading - Will be rendered as an `h1`, and set as the page title
+ * @param props.intro - Will be rendered with a Markdown parser, above the TOC
  * @param props.body - Will be rendered with a Markdown parser. Should not contain any
  * headings higher than `h2`. All `h2` elements will be included in the table of contents.
  * @param props.CopyWrapperOverride - optional alternative component for rendering Markdown copy.
@@ -41,6 +49,7 @@ export interface InfoPageProps {
  */
 export const InfoPage: FC<InfoPageProps> = ({
   heading,
+  intro,
   body,
   CopyWrapperOverride,
   tocHeadingsAggregatorOverride,
@@ -53,6 +62,11 @@ export const InfoPage: FC<InfoPageProps> = ({
   return (
     <article>
       <CopyWrapperComponent>{`# ${heading}`}</CopyWrapperComponent>
+      {intro && (
+        <Intro>
+          <CopyWrapperComponent>{intro}</CopyWrapperComponent>
+        </Intro>
+      )}
       <TableOfContents
         body={body}
         headingsAggregator={tocHeadingsAggregatorOverride}

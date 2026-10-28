@@ -80,6 +80,7 @@ export const UsArMoreInformation = route(
     ImportantDates: route("important-dates", {
       searchParams: { backTarget: string() },
     }),
+    EarnedReleaseCredits: route("earned-release-credits"),
   },
 );
 
