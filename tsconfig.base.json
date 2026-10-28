@@ -117,6 +117,17 @@
       "~@modules-server/trpc-types": [
         "./libs/@modules-server/trpc-types/src/index.ts"
       ],
+      "~@parole-board/common": ["./libs/@parole-board/common/src/index.ts"],
+      "~@parole-board/common/fixtures": [
+        "./libs/@parole-board/common/src/fixtures/index.ts"
+      ],
+      "~@parole-board/common/loading": [
+        "./libs/@parole-board/common/src/loading/index.ts"
+      ],
+      "~@parole-board/common/testing": [
+        "./libs/@parole-board/common/src/testing/index.ts"
+      ],
+      "~@parole-board/us-co": ["./libs/@parole-board/us-co/src/index.ts"],
       "~@reentry/frontend-shared": [
         "./libs/@reentry/frontend-shared/src/index.ts"
       ],

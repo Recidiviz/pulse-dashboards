@@ -123,6 +123,59 @@ export const Group = () => {
 
 This is fine — the example is still a "single state" from the rendering perspective (one URL, one screenshot).
 
+## Parole Board: injecting data hooks
+
+Examples under `libs/@parole-board/` render through the shared config in `libs/@parole-board/common/.examples/`, whose `preview.ts` wraps every story, outermost first, in:
+
+1. A `MemoryRouter`, at `parameters.route` when the story sets it (`Draft.parameters = { route: "/2026-09" }`), otherwise `/`.
+2. A `QueryClientProvider` with a new `QueryClient` per story and retries off.
+3. A `ParoleBoardHostProvider` with `createFakeHost()`, so `useCalendarCode()` returns `PAROLE_BOARD_PUBLIC` and analytics are no-ops.
+
+It also applies the `~design-system` `GlobalStyle` and the staff fonts, and nothing from `apps/staff`.
+
+A presentational component renders from props, with no injection. A container that calls a data hook from `~@parole-board/common` can't reach a server here, so its example swaps the hook for fixture data with `react-magnetic-di`. The hooks and fixtures below arrive with CO-869 and CO-829:
+
+```tsx
+import { injectable, withDi } from "react-magnetic-di";
+
+import { useCalendarConfig, useMonth } from "~@parole-board/common";
+import {
+  paroleBoardConfig,
+  queryResult,
+  september2026,
+  suspendedQuery,
+} from "~@parole-board/common/fixtures";
+
+const useMonthDi = injectable(useMonth, () =>
+  queryResult(september2026.monthDetail),
+);
+// The view's SuspenseBoundary shows its skeleton while useMonth suspends.
+const useMonthSuspendedDi = injectable(useMonth, suspendedQuery);
+const useConfigDi = injectable(useCalendarConfig, () =>
+  queryResult(paroleBoardConfig),
+);
+
+// Shared by every story in the file.
+const defaults = [useConfigDi];
+
+const DraftView = withDi(ParoleCalendarAdminView, [...defaults, useMonthDi]);
+const LoadingView = withDi(ParoleCalendarAdminView, [
+  ...defaults,
+  useMonthSuspendedDi,
+]);
+
+export default {};
+
+export const Draft = () => <DraftView />;
+export const Loading = () => <LoadingView />;
+```
+
+- **`withDi(Component, injectables)` is the recommended form.** It wraps the component in a `DiProvider` for you. Keep injectables a file shares in a plain array and spread it into each story's list; for the same hook, the later entry wins, so a story overrides a shared default by listing its own after the spread.
+- **Render the `withDi` component from an arrow function** (`export const Draft = () => <DraftView />`). Don't export `withDi(...)` directly: it returns a forwardRef object, which Storybook reads as a story object and fails to render ("Maximum call stack size exceeded").
+- Create injectables and `withDi` components at module scope, not inside the story, so each render reuses them.
+- The Babel plugin only wraps **imported** values. A hook declared in the example file itself can't be replaced, so inject the hook the component imports. `us-co/src/DiSmoke.examples.tsx` is the minimal working case.
+- `react-magnetic-di` may only be imported from `*.examples.tsx`, `examples/*.tsx` and `.examples/` files, and `~@parole-board/common/fixtures` from those files and tests. Lint rejects them elsewhere, because the Babel plugin runs only in the examples build, so `injectable` would do nothing in the app, and neither package (nor the Storybook code the fixtures import) may ship in it.
+
 ## Dir form: when to use
 
 Reach for dir form when:
@@ -152,7 +205,7 @@ The renderer hot-reloads on file changes — adding a new export, editing an exi
 
 If a new id you derived doesn't show up after editing, check:
 
-1. **Path matches the glob**: file lives under `apps/staff/src/**` (or your scoped subdir).
+1. **Path matches the glob**: file lives under `apps/staff/src/**`, or the booted library's `src/**` (or your scoped subdir).
 2. **Top-level named export**: the export is `export const StateName = …` at module scope, not buried inside a function or namespaced.
 3. **Default export exists**: `export default {};` — empty object is fine, but it must exist for CSF parsing to treat the file as a story module.
 4. **Server is running**: `nx examples staff` is still alive in the worktree (HMR doesn't help if the server crashed).

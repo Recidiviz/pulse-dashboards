@@ -1,0 +1,34 @@
+{
+  "name": "@parole-board/us-co",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@parole-board/us-co/src",
+  "projectType": "library",
+  "tags": ["scope:client", "domain:parole-board", "parole-board:state"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "examples": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "EXAMPLES_PATHS=\"{args}\" storybook dev --config-dir ../common/.examples --no-open",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build-examples": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/examples-static"],
+      "options": {
+        "command": "EXAMPLES_PATHS=\"{args}\" storybook build --config-dir ../common/.examples --output-dir examples-static",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

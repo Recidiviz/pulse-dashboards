@@ -1,6 +1,6 @@
 ---
 name: ui-examples
-description: Render, read, and add component examples in the examples renderer. Files take two forms — colocated `*.examples.tsx` (e.g. `Checkbox.examples.tsx` next to `Checkbox.tsx`) or grouped `examples/*.tsx` (e.g. `Checkbox/examples/Default.tsx`). Covers exact iframe URLs per example, story-id derivation, multi-worktree-aware server discovery, file conventions, and the onboarding gate. Onboarded products (the authoritative validation list — only invoke this skill when the work touches one of these): `apps/staff/`. Verify at runtime with `nx show projects --with-target examples`. Use to render, screenshot, inspect, or extend an example in an onboarded product. For anything outside the onboarded list, this skill does not apply.
+description: Render, read, and add component examples in the examples renderer. Files take two forms — colocated `*.examples.tsx` (e.g. `Checkbox.examples.tsx` next to `Checkbox.tsx`) or grouped `examples/*.tsx` (e.g. `Checkbox/examples/Default.tsx`). Covers exact iframe URLs per example, story-id derivation, multi-worktree-aware server discovery, file conventions, and the onboarding gate. Onboarded products (the authoritative validation list — only invoke this skill when the work touches one of these): `apps/staff/`, `libs/@parole-board/common/` and `libs/@parole-board/us-co/`. Verify at runtime with `nx show projects --with-target examples`. Use to render, screenshot, inspect, or extend an example in an onboarded product. For anything outside the onboarded list, this skill does not apply.
 allowed-tools: Bash(curl:*), Bash(jq:*), Bash(lsof:*), Bash(nx:*)
 ---
 
@@ -28,6 +28,7 @@ Both forms render the same way. Pick whichever fits the component.
 The skill only applies inside the **onboarded products** below. Check the user's target path against this list before proceeding.
 
 - **`apps/staff/`** — examples renderer config at `apps/staff/.examples/`; targets `examples` and `build-examples` in `apps/staff/project.json`; stories glob anchored to `apps/staff/src/`.
+- **`libs/@parole-board/common/`** and **`libs/@parole-board/us-co/`** — each library has its own `examples` and `build-examples` targets (`nx examples @parole-board/us-co`), and both run the shared config at `libs/@parole-board/common/.examples/`. Paths are relative to the library's root, and with no path it scans that library's `src/`. Examples there can inject fixture data in place of data hooks with `react-magnetic-di`'s `withDi`; see [references/file-conventions.md](references/file-conventions.md#parole-board-injecting-data-hooks).
 
 Live verification (the authoritative source if this list ever drifts):
 
@@ -35,7 +36,7 @@ Live verification (the authoritative source if this list ever drifts):
 nx show projects --with-target examples
 ```
 
-Today this returns only `staff`. The nx-target scoping enforces the gate naturally — running the target against an un-onboarded project fails immediately:
+Today this returns `@parole-board/common`, `@parole-board/us-co` and `staff`. The project name is what you pass to `nx examples`. The nx-target scoping enforces the gate naturally — running the target against an un-onboarded project fails immediately:
 
 ```bash
 $ nx examples jii
@@ -61,6 +62,8 @@ http://<server>/iframe.html?args=&globals=&id=<story-id>&viewMode=story
   3. **The custom indexer strips a trailing `.examples` segment** from the path. So `Checkbox.examples.tsx` → path `components/Checkbox/Checkbox.examples` → after strip → `components/Checkbox/Checkbox`. _(Dir-form files like `Checkbox/examples/Default.tsx` end in `Default`, not `.examples`, so no strip happens — the `examples` dir name stays in the id.)_
   4. Replace `/` with `-`. Lowercase.
   5. Append `--` + kebab-case of the export name.
+
+**Parole Board ids don't depend on scope.** A Parole Board story's title is the library's folder name plus the file's path from the library root, so `libs/@parole-board/us-co/src/AdminRootContent.examples.tsx` → `OfflineOrDemo` is always `us-co-src-adminrootcontent--offline-or-demo`, and `libs/@parole-board/common/src/components/StatusMessage/StatusMessage.examples.tsx` → `TitleOnly` is always `common-src-components-statusmessage-statusmessage--title-only`, whatever path you booted with. Steps 2 to 5 below still apply.
 
 **Worked examples** (verified live against `index.json`):
 
@@ -92,7 +95,7 @@ For scope edge cases, dir-form id derivation, kebab-case escaping, and the title
 
 ## 4. Server discovery
 
-`nx examples staff` picks a random port; multiple worktrees can each run their own. To find the right one:
+`nx examples <project>` picks a random port; multiple worktrees can each run their own. The Parole Board targets run with `--no-open`, so no browser opens; the URL is printed in the terminal, and you open it yourself. To find the right one:
 
 1. **List listening localhost ports**:
 
@@ -108,9 +111,9 @@ For scope edge cases, dir-form id derivation, kebab-case escaping, and the title
 
    Keep ports that return valid JSON with an `entries` key.
 
-3. **Filter to the examples renderer** — inspect any entry's `importPath`. The staff examples renderer's entries point at `apps/staff/src/...`. This is how you distinguish it from `apps/@jii/storybook/` (whose entries point at `libs/@jii/...`) if both are running.
+3. **Filter to the examples renderer** — inspect any entry's `importPath`. The staff examples renderer's entries point at `apps/staff/src/...`. Parole Board entries have an `importPath` relative to the library (`./src/...`), so tell them apart by `title` instead: it starts with the library's folder name (`us-co/` for `@parole-board/us-co`, `common/` for `@parole-board/common`). This is how you tell the renderers apart from each other and from `apps/@jii/storybook/` (whose entries point at `libs/@jii/...`) if several are running.
 
-4. **Disambiguate to this worktree** when multiple staff servers match:
+4. **Disambiguate to this worktree** when multiple servers of the same product match:
 
    ```bash
    # port → PID
@@ -122,7 +125,7 @@ For scope edge cases, dir-form id derivation, kebab-case escaping, and the title
 
    The cwd whose path contains this worktree root is yours.
 
-5. **If zero match**: don't start the server from inside the skill — it's a long-running process the user owns. Tell them which command to run (§5), with any path scoping they need.
+5. **If zero match**: by default, tell the user which command to run (§5), with any path scoping they need, since the server is a long-running process they own. When your task asks you to boot it yourself, start it in the background from your worktree, then poll `curl -s --max-time 2 http://localhost:<port>/index.json` in a short loop until it returns `entries`. `nx examples` prints its port when it is ready; to choose the port, use the direct `storybook dev … -p <port>` command at the end of §5.
 
 Once you have the port, the next step is **URL construction** per §3 — not opening `http://<server>/` (the Storybook home page) and browsing. The whole point of the recipe is that the agent never needs to see the sidebar.
 
@@ -136,7 +139,27 @@ Once you have the port, the next step is **URL construction** per §3 — not op
 | Multiple paths                 | `nx examples staff a b c`                                          |
 | Static build (same scoping)    | `nx build-examples staff [paths…]` → `apps/staff/examples-static/` |
 
+For a Parole Board library, use its project name, with paths relative to that library's root:
+
+| Goal                        | Command                                                                                        |
+| --------------------------- | ---------------------------------------------------------------------------------------------- |
+| Full scan of the library    | `nx examples @parole-board/us-co` (or `@parole-board/common`)                                  |
+| Scope to a directory        | `nx examples @parole-board/us-co src/MonthHeader`                                              |
+| Scope to a single file      | `nx examples @parole-board/us-co src/AdminRootContent.examples.tsx`                            |
+| Static build (same scoping) | `nx build-examples @parole-board/us-co [paths…]` → `libs/@parole-board/us-co/examples-static/` |
+
 If positional args aren't forwarded by your shell or nx version, the `--` escape works: `nx examples staff -- src/components/Checkbox`.
+
+**Booting Storybook directly (optional, faster).** Agents only need `iframe.html` and `index.json`, so when you want to pick the port or skip building the manager UI, run Storybook without nx from the project folder:
+
+```bash
+# apps/staff
+EXAMPLES_PATHS="<paths>" npx storybook dev --config-dir .examples --ci -p <port>
+# libs/@parole-board/<library>, which uses common's shared config
+EXAMPLES_PATHS="<paths>" npx storybook dev --config-dir ../common/.examples --ci -p <port>
+```
+
+`<paths>` are the same as the nx arguments (relative to the project folder), separated by spaces or commas; leave it empty for the default scope. Add `--preview-only` to skip the manager UI and boot faster; the iframe URLs and `index.json` work the same.
 
 ## 6. Reading the source file
 
@@ -166,7 +189,7 @@ For the full grammar, advanced patterns (controlled state, multi-sub-component e
 
 ## 7. Adding a new example
 
-Within `apps/staff/`:
+Within `apps/staff/` (the same forms apply under `libs/@parole-board/<library>/src/`):
 
 - **Suffix form** (default for a small number of states): drop `Foo.examples.tsx` next to `apps/staff/src/.../Foo.tsx`. Add `export default {};` and one named export per state.
 - **Dir form** (preferred when a component has 5+ states or you want one file per state): create `apps/staff/src/.../Foo/examples/` and add one file per state (`Default.tsx`, `Disabled.tsx`, …). Each file uses the same plain `export default {};` + named-export shape.

@@ -52972,6 +52972,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-magnetic-di@npm:3.2.5":
+  version: 3.2.5
+  resolution: "react-magnetic-di@npm:3.2.5"
+  peerDependencies:
+    prop-types: ^15.0.0
+    react: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: 10c0/c7acef88a3a13df0bcaa4c8a36f12a2fa3eecce5a027ba087fd8a1669c60338eaefc1e6ca98c006d0411e5c63dbe172cf3e70d3cb58b09b91ea1e8475a2a822f
+  languageName: node
+  linkType: hard
+
 "react-markdown@npm:~9.0.1":
   version: 9.0.3
   resolution: "react-markdown@npm:9.0.3"
@@ -54390,6 +54403,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     react-is: "npm:18.3.1"
     react-loading-skeleton: "npm:^3.5.0"
+    react-magnetic-di: "npm:3.2.5"
     react-minimal-pie-chart: "npm:^9.1.0"
     react-modal: "npm:^3.12.1"
     react-native: "npm:0.83.10"

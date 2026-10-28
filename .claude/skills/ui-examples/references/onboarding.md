@@ -15,6 +15,8 @@ Before doing any work, answer:
 
 The cheapest path when only this new product wants the renderer.
 
+Two products use it today: `apps/staff/`, and the Parole Board libraries. The second lives in **library** folders, not an app, and shares one config across libraries: `libs/@parole-board/common/.examples/` holds `main.ts`, `preview.ts` and `manager.ts`, and each library (`common`, `us-co`) has `examples` and `build-examples` targets that run Storybook with `--config-dir ../common/.examples` from its own folder. `main.ts` reads the library from the cwd, scans its `src/`, and prefixes titles with the library's folder name. It swaps the React plugin from common's `vite.config.mts` for one that adds the `react-magnetic-di` Babel plugin, which runs nowhere else. Fixture data and the query-result builders live in common behind `~@parole-board/common/fixtures`, which only tests and example files may import. A new state library adds the two targets and nothing else. **A third product should reopen Option B** rather than copy a third config.
+
 ### Files to create in the new app (modeled on `apps/staff/`)
 
 ```

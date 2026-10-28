@@ -28,6 +28,18 @@ When the user passes path args to `nx examples staff <subdir>`, the stories glob
 
 This is why **`index.json` lookup beats derivation** when you don't know the active scope. The server is always authoritative — `curl -s http://<port>/index.json | jq '.entries | keys[]'` lists exactly what's available, no guessing.
 
+## Parole Board ids
+
+Each Parole Board library runs its own server (`nx examples @parole-board/<library>`), with the shared config in `libs/@parole-board/common/.examples/`. That config roots every stories specifier at the library and sets `titlePrefix` to the library's folder name, so scope never changes an id. The title is `<library>/` plus the path from the library root, minus the extension and any `.examples` suffix (verified against `index.json`):
+
+| File                                                                                | Scope                                 | Title                                               | Story id                                                        |
+| ----------------------------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------- |
+| `libs/@parole-board/us-co/src/AdminRootContent.examples.tsx`                        | default (`src`)                       | `us-co/src/AdminRootContent`                        | `us-co-src-adminrootcontent--offline-or-demo`                   |
+| `libs/@parole-board/us-co/src/DiSmoke.examples.tsx`                                 | narrowed (`src/DiSmoke.examples.tsx`) | `us-co/src/DiSmoke`                                 | `us-co-src-dismoke--injected`                                   |
+| `libs/@parole-board/common/src/components/StatusMessage/StatusMessage.examples.tsx` | default (`src`)                       | `common/src/components/StatusMessage/StatusMessage` | `common-src-components-statusmessage-statusmessage--title-only` |
+
+The `importPath` in `index.json` is relative to the library folder (`./src/AdminRootContent.examples.tsx`), the same for every library, so match a server to a library by the title prefix, or by the server process's cwd (SKILL.md §4).
+
 ## Dir-form ids
 
 For dir-form files (e.g. `apps/staff/src/components/Drawer/examples/Open.tsx`) at default scope:

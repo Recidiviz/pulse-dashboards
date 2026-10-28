@@ -34,10 +34,35 @@ export const TYPE_TAGS = {
   app: "type:app",
 };
 
+const TEST_FILES = [
+  "**/*.test.ts",
+  "**/*.test.tsx",
+  "**/*.test.js",
+  "**/*.test.jsx",
+];
+
+const MAGNETIC_DI_RESTRICTION = {
+  name: "react-magnetic-di",
+  message: "react-magnetic-di is for examples only (D29).",
+};
+
+const PAROLE_BOARD_FIXTURES_RESTRICTION = {
+  name: "~@parole-board/common/fixtures",
+  message:
+    "Parole Board fixtures are for tests and examples only; they import Storybook.",
+};
+
+const PAROLE_BOARD_TESTING_RESTRICTION = {
+  name: "~@parole-board/common/testing",
+  message: "Parole Board test helpers are for tests and examples only.",
+};
+
 export default tseslint.config(
   {
     ignores: [
       "**/dist",
+      // Static builds from `nx build-examples`.
+      "**/examples-static",
       "vite.config.mts.timestamp-*",
       "**/.next/**",
       "**/next-env.d.ts",
@@ -145,6 +170,21 @@ export default tseslint.config(
                 TYPE_TAGS.state,
               ],
             },
+            // The generic calendar never depends on a product that uses it.
+            {
+              sourceTag: "domain:calendar",
+              notDependOnLibsWithTags: ["domain:parole-board"],
+            },
+            // Shared Parole Board code never depends on a state's library.
+            {
+              sourceTag: "parole-board:common",
+              notDependOnLibsWithTags: ["parole-board:state"],
+            },
+            // A state's library never depends on another state's library.
+            {
+              sourceTag: "parole-board:state",
+              notDependOnLibsWithTags: ["parole-board:state"],
+            },
           ],
         },
       ],
@@ -157,6 +197,47 @@ export default tseslint.config(
       "vitest/expect-expect": [
         "error",
         { assertFunctionNames: ["expect", "expectTypeOf"] },
+      ],
+    },
+  },
+  // react-magnetic-di is for examples only (D29). Its Babel plugin runs only in
+  // the Parole Board examples build, so `injectable` anywhere else would do
+  // nothing, and the package must never reach a production bundle. This uses
+  // the typescript-eslint copy of the rule because several app configs set
+  // their own no-restricted-imports, which would replace this one. The
+  // Parole Board fixtures are synthetic data and import Storybook, and the
+  // Parole Board test helpers wrap Testing Library, so tests and example files
+  // may use them but production code may not.
+  {
+    files: ["**/*.*ts", "**/*.*tsx", "**/*.*js", "**/*.*jsx"],
+    ignores: [
+      "**/*.examples.tsx",
+      "**/examples/*.tsx",
+      "**/.examples/**",
+      ...TEST_FILES,
+    ],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            MAGNETIC_DI_RESTRICTION,
+            PAROLE_BOARD_FIXTURES_RESTRICTION,
+            PAROLE_BOARD_TESTING_RESTRICTION,
+          ],
+        },
+      ],
+    },
+  },
+  // Tests may import the fixtures and test helpers, but not react-magnetic-di. This block
+  // replaces the one above for test files, so it lists only the DI restriction.
+  {
+    files: TEST_FILES,
+    ignores: ["**/*.examples.tsx", "**/examples/*.tsx", "**/.examples/**"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        { paths: [MAGNETIC_DI_RESTRICTION] },
       ],
     },
   },
