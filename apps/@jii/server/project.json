@@ -268,7 +268,7 @@
       }
     },
     "test": {
-      "dependsOn": ["^prepare-test-db"]
+      "dependsOn": ["^prisma-generate", "^prepare-test-db"]
     }
   }
 }

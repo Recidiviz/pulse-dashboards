@@ -7980,6 +7980,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@full-ui/headless-calendar@npm:7.1.3":
+  version: 7.1.3
+  resolution: "@full-ui/headless-calendar@npm:7.1.3"
+  peerDependencies:
+    temporal-polyfill: ^1.0.1
+  checksum: 10c0/22b4e79887f94a853694ffef5a0d1f87b2b1aaee43fcc3f000906be22f1aef29456fae741d9fd4b1c455bece0016d291233394dccef93f31ccb1d6fff46c767d
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/core@npm:7.1.3":
+  version: 7.1.3
+  resolution: "@fullcalendar/core@npm:7.1.3"
+  peerDependencies:
+    "@full-ui/headless-calendar": 7.1.3
+    temporal-polyfill: ^1.0.1
+  checksum: 10c0/63156938fd25733b3e9ab3470c0331fc7be534515dcbb8fb187f850f0b87da0fd85290464b4760473f2fefd76e2971cdbc8342dc04cc0d9e7dad1b1a72e4756b
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/react@npm:7.1.3":
+  version: 7.1.3
+  resolution: "@fullcalendar/react@npm:7.1.3"
+  dependencies:
+    "@full-ui/headless-calendar": "npm:7.1.3"
+    "@fullcalendar/core": "npm:7.1.3"
+  peerDependencies:
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+    temporal-polyfill: ^1.0.1
+  checksum: 10c0/dd8b2706648c33e8d374940e7f8190cc57afcd2c8b975893eb78ed961c1b54a6d1c67acfb73ca8fe06379beacaa1b3a555264ac95de7347144f990efade451e3
+  languageName: node
+  linkType: hard
+
 "@google-cloud/bigquery@npm:^7.9.1":
   version: 7.9.1
   resolution: "@google-cloud/bigquery@npm:7.9.1"
@@ -54516,6 +54549,7 @@ __metadata:
     "@floating-ui/react": "npm:^0.26.1"
     "@formatjs/intl-durationformat": "npm:^0.10.5"
     "@foundernest/namecase": "npm:^1.0.5"
+    "@fullcalendar/react": "npm:7.1.3"
     "@google-cloud/bigquery": "npm:^7.9.1"
     "@google-cloud/cloud-sql-connector": "npm:^1.9.2"
     "@google-cloud/discoveryengine": "npm:^1.14.0"
@@ -54922,7 +54956,7 @@ __metadata:
     supertest: "npm:^6.0.1"
     tailwindcss: "npm:^3.4.17"
     tailwindcss-scoped-preflight: "npm:^3.5.3"
-    temporal-polyfill: "npm:^1.0.5"
+    temporal-polyfill: "npm:1.0.5"
     testcontainers: "npm:^11.6.0"
     timekeeper: "npm:^2.2.0"
     ts-jest: "npm:^29.4.0"
@@ -59557,7 +59591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"temporal-polyfill@npm:^1.0.5":
+"temporal-polyfill@npm:1.0.5":
   version: 1.0.5
   resolution: "temporal-polyfill@npm:1.0.5"
   dependencies:
