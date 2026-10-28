@@ -15,7 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleBoardHost } from "../host";
+import type { ParoleBoardAnalytics, ParoleBoardHost } from "../host";
+
+/**
+ * Analytics methods that do nothing, so tests and examples can spy on them
+ * with vi.spyOn(host.analyticsStore, "trackPbPublicCalendarHearingMoved").
+ */
+function createFakeAnalytics(): ParoleBoardAnalytics {
+  return {
+    trackPbPublicCalendarAdminViewed: () => undefined,
+    trackPbPublicCalendarMonthAdded: () => undefined,
+    trackPbPublicCalendarHearingAdded: () => undefined,
+    trackPbPublicCalendarHearingDeleted: () => undefined,
+    trackPbPublicCalendarHearingMoved: () => undefined,
+    trackPbPublicCalendarMonthPublished: () => undefined,
+    trackPbPublicCalendarMonthUnpublished: () => undefined,
+    trackPbPublicCalendarPatternEdited: () => undefined,
+  };
+}
 
 /**
  * Builds a ParoleBoardHost for a US_CO tenant with the Parole Board calendar
@@ -39,7 +56,7 @@ export function createFakeHost(
         },
       },
     },
-    analyticsStore: {},
+    analyticsStore: createFakeAnalytics(),
     ...overrides,
   };
 }

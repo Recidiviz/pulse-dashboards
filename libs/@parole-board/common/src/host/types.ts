@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Analytics events the Parole Board calendar reports through its host. Empty
- * until the admin calendar reports events.
- */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type -- methods arrive with the admin screens
-export interface ParoleBoardAnalytics {}
+import type { ParoleBoardAnalytics } from "./analytics";
 
 /** The calendar a tenant shows, and the label its nav link uses. */
 export interface CalendarConfig {

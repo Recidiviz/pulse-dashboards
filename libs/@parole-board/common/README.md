@@ -53,13 +53,14 @@ const host: ParoleBoardHost = {
   currentTenantId: rootStore.currentTenantId,
   userStore: rootStore.userStore,
   tenantStore: rootStore.tenantStore,
-  analyticsStore: rootStore.analyticsStore,
+  // createParoleBoardAnalytics lives in the same staff folder.
+  analyticsStore: createParoleBoardAnalytics(rootStore.analyticsStore),
 };
 
 <UsCoParoleCalendarAdmin host={host} />;
 ```
 
-`useCalendarCode()` reads `tenantStore.currentTenantConfig.calendarConfig.calendarCode` and throws when the tenant has none, so no component names a calendar code itself. CO-869 adds `calendarTrpc` to the host and the `createCalendarTrpc` step the host app runs to build it. CO-841 adds the analytics methods.
+`useCalendarCode()` reads `tenantStore.currentTenantConfig.calendarConfig.calendarCode` and throws when the tenant has none, so no component names a calendar code itself. CO-869 adds `calendarTrpc` to the host and the `createCalendarTrpc` step the host app runs to build it. `ParoleBoardAnalytics` declares one method per admin calendar event; the staff adapter `createParoleBoardAnalytics` sends each to `AnalyticsStore.track` under its `frontend.pb_public_calendar_*` name. Event metadata holds months, counts, kind codes and public location codes only, never emails, ids or free text, because it goes to Segment.
 
 ## Tests, lint and examples
 
