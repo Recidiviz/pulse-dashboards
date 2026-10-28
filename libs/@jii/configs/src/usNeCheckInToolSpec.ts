@@ -34,7 +34,7 @@ export type CheckInSectionId =
   | "sectionHobbiesLeisure"
   | "sectionMoney"
   | "sectionWellness"
-  | "sectionPhysicalHealth"
+  | "sectionHealth"
   | "sectionSupportSystem"
   | "sectionStrengthsSkills"
   | "sectionEnd";
@@ -75,10 +75,6 @@ export const checkInToolSpec: CheckInSectionSpec[] = [
     ],
   },
   {
-    id: "sectionHobbiesLeisure",
-    questions: ["DO_FOR_FUN", "STAY_AWAY_FROM", "STAY_AWAY_FROM_DESCRIPTION"],
-  },
-  {
     id: "sectionMoney",
     questions: [
       "FINES_AND_FEES",
@@ -91,11 +87,15 @@ export const checkInToolSpec: CheckInSectionSpec[] = [
     ],
   },
   {
+    id: "sectionHobbiesLeisure",
+    questions: ["DO_FOR_FUN", "STAY_AWAY_FROM", "STAY_AWAY_FROM_DESCRIPTION"],
+  },
+  {
     id: "sectionWellness",
     questions: ["WELLNESS_SUPPORT", "WELLNESS_SUPPORT_OTHER", "WELLNESS_STEP"],
   },
   {
-    id: "sectionPhysicalHealth",
+    id: "sectionHealth",
     questions: [
       "MEDICAL_CONCERNS",
       "MEDICAL_CONCERNS_DESCRIPTION",

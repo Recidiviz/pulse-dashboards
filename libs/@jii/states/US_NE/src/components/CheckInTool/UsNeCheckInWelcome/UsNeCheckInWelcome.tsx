@@ -18,7 +18,7 @@
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "../hooks/useResidentGivenNames";
-import { InfoBox } from "../styles";
+import { WelcomeScreenKind } from "../types";
 import { useUsNeCheckInContext } from "../UsNeCheckInContext";
 import { UsNeCheckInFooter } from "../UsNeCheckInFooter/UsNeCheckInFooter";
 import {
@@ -27,11 +27,11 @@ import {
   Wrapper,
 } from "./UsNeCheckInWelcome.styles";
 
-export const UsNeCheckInWelcome = () => {
+export const UsNeCheckInWelcome = ({ kind }: { kind: WelcomeScreenKind }) => {
   const { markSeen } = useUsNeCheckInContext();
   const { t } = useUsNeTranslations();
 
-  const { heading, description, info } = t(($) => $.checkIn.welcome, {
+  const { heading, description } = t(($) => $.checkIn[kind], {
     returnObjects: true,
     name: useResidentGivenNames(),
   });
@@ -42,13 +42,9 @@ export const UsNeCheckInWelcome = () => {
 
       <Description>{description}</Description>
 
-      <InfoBox>
-        <Description>{info}</Description>
-      </InfoBox>
-
       <UsNeCheckInFooter
-        onButtonClick={() => markSeen({ screenKind: "welcome" })}
-        buttonText={t(($) => $.checkIn.footer.getStarted)}
+        onButtonClick={() => markSeen({ screenKind: kind })}
+        buttonText={t(($) => $.checkIn.footer.next)}
       />
     </Wrapper>
   );

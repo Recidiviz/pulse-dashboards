@@ -488,8 +488,8 @@
         "title": "Bienestar",
         "subheading": "Ahora hablemos sobre el bienestar y el apoyo que tal vez necesites, {{name}}, ahora que planeas regresar a casa."
       },
-      "sectionPhysicalHealth": {
-        "title": "Salud física",
+      "sectionHealth": {
+        "title": "Salud mental y física",
         "subheading": "Ahora te haremos unas preguntas sobre tu salud."
       },
       "sectionSupportSystem": {
@@ -507,13 +507,16 @@
     },
     "welcome": {
       "heading": "¡Bienvenido, {{name}}!",
-      "description": "Esta herramienta le hace preguntas sobre sus planes de reinserción social y le ayudará a prepararse para su junta de los 120 días con su Especialista de Reinserción.\n\nLe preguntaremos sobre sus metas, sus fortalezas y sus próximos pasos.\n\nCompletar este formulario le indicará a su Especialista de Reinserción que usted está listo para la junta.",
-      "info": "Le tomará entre 15 y 20 minutos completarlo.\n\nPuedes salirte y regresar más tarde. **Solo presiona «Siguiente» primero para que se guarden tus respuestas.**"
+      "description": "Esta herramienta le hace preguntas sobre sus planes de reinserción social y le ayudará a prepararse para su junta de los 120 días con su Especialista de Reinserción.\n\nLe preguntaremos sobre sus metas, sus fortalezas y sus próximos pasos.\n\nCompletar este formulario le indicará a su Especialista de Reinserción que usted está listo para la junta.\n\nNo hay respuestas «correctas» ni «incorrectas»"
+    },
+    "instructions": {
+      "heading": "¡Bienvenido, {{name}}!",
+      "description": "Le tomará entre 15 y 20 minutos completarlo.\n\nPuedes salirte y regresar más tarde. **Solo presiona «Siguiente» primero para que se guarden tus respuestas.**\n\nUna vez que presiones «Siguiente», no podrás regresar a tu respuesta anterior. Siempre puedes avisarle a tu Especialista de Reinserción si escribiste algo incorrecto."
     },
     "completion": {
       "heading": "¡Ya terminaste, {{name}}!",
       "subheading": "Gracias por hacer esto hoy.",
-      "description": "Ya pensaste en:\n- Tus planes de vivienda\n- Tus planes de transporte\n- Tus finanzas\n- Quién te apoyará\n\nTu Especialista de Reinserción usará lo que tú compartiste en tu junta de los 120 días para crear tu Success Plan junto contigo.",
+      "description": "Compartiste tus planes de reinserción para:\n- Tus planes de vivienda\n- Tus planes de transporte\n- Tus finanzas\n- Quién te apoyará\n\nTu Especialista de Reinserción usará lo que tú compartiste en tu junta de los 120 días para crear tu plan de liberación (Release Plan) y tu Success Plan junto contigo.",
       "close": "Cerrar"
     },
     "questionPage": {
@@ -526,8 +529,7 @@
       "next": "Siguiente",
       "nextInfo": "Tu respuesta se guardará cuando toques «Siguiente»",
       "savingInfo": "Guardando…",
-      "errorInfo": "No se pudo guardar tu respuesta. Inténtalo de nuevo.",
-      "getStarted": "Empezar"
+      "errorInfo": "No se pudo guardar tu respuesta. Inténtalo de nuevo."
     },
     "supportSystem": {
       "name": "Nombre",

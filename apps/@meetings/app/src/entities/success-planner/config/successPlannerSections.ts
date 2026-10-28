@@ -210,9 +210,9 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "sectionPhysicalHealth",
-    navLabel: "Physical Health",
-    heading: "PHYSICAL HEALTH",
+    id: "sectionHealth",
+    navLabel: "Mental & Physical Health",
+    heading: "MENTAL & PHYSICAL HEALTH",
     questions: [
       {
         id: "MEDICAL_CONCERNS",

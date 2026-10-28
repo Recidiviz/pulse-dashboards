@@ -38,7 +38,8 @@ export type QuestionInfo = {
   sectionId: CheckInSectionId;
 };
 
-export type WelcomeScreen = { screenKind: "welcome" };
+export type WelcomeScreenKind = "welcome" | "instructions";
+export type WelcomeScreen = { screenKind: WelcomeScreenKind };
 export type SectionIntroScreen = {
   screenKind: "sectionIntro";
   sectionId: CheckInSectionId;

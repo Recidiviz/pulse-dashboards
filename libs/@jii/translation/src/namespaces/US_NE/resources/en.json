@@ -486,10 +486,10 @@
       },
       "sectionWellness": {
         "title": "Wellness",
-        "subheading": "Now let’s talk about wellness and support you might want, {{name}}, as you plan to go home."
+        "subheading": "Now let’s talk about wellness and support you might want as you go home, {{name}}."
       },
-      "sectionPhysicalHealth": {
-        "title": "Physical Health",
+      "sectionHealth": {
+        "title": "Mental & Physical Health",
         "subheading": "Now we’ll ask you a few quick questions about your health."
       },
       "sectionSupportSystem": {
@@ -507,13 +507,16 @@
     },
     "welcome": {
       "heading": "Welcome, {{name}}!",
-      "description": "This tool asks about your plans for reentry and will help you get ready for your 120-Day meeting with your Reentry Specialist. \n\nWe will ask you about your goals, your strengths, and your next steps.\n\nFilling this out will let your Reentry Specialist know that you’re prepared to meet.",
-      "info": "This should take 15-20 minutes to complete.\n\nYou can stop and come back later. **Just hit “Next” first so your answers are saved.**"
+      "description": "This tool asks about your plans for reentry and will help you get ready for your 120-Day meeting with your Reentry Specialist. \n\nWe will ask you about your goals, your strengths, and your next steps.\n\nFilling this out will let your Reentry Specialist know that you’re prepared to meet.\n\nThere are no “right” or “wrong” answers."
+    },
+    "instructions": {
+      "heading": "Welcome, {{name}}!",
+      "description": "This should take 15-20 minutes to complete.\n\nYou can stop and come back later. **Just hit “Next” first so your answers are saved.**\n\nOnce you hit “Next”, you won’t be able to go back to your previous answer. You can always let your Reentry Specialist know if you’ve input something incorrectly."
     },
     "completion": {
       "heading": "You’re done, {{name}}!",
       "subheading": "Thanks for doing this today.",
-      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Who will support you\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in to build your Success Plan with you.",
+      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Your support system\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in to build your Release Plan and Success Plan with you.",
       "close": "Close"
     },
     "questionPage": {
@@ -526,8 +529,7 @@
       "next": "Next",
       "nextInfo": "Your answer will be saved when you tap Next",
       "savingInfo": "Saving...",
-      "errorInfo": "There was a problem saving your answer, please try again.",
-      "getStarted": "Get Started"
+      "errorInfo": "There was a problem saving your answer, please try again."
     },
     "supportSystem": {
       "name": "Name",

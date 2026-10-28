@@ -20,10 +20,10 @@ import { createContext, ReactNode, useState } from "react";
 import { CheckInSectionId } from "~@jii/configs";
 import { useRequiredContext } from "~utils";
 
-import { SectionIntroScreen, WelcomeScreen } from "./types";
+import { SectionIntroScreen, WelcomeScreen, WelcomeScreenKind } from "./types";
 
 export type SeenPage =
-  | { screenKind: "welcome" }
+  | { screenKind: WelcomeScreenKind }
   | { screenKind: "sectionIntro"; sectionId: CheckInSectionId };
 
 // Provides FE state relevant to the check-in form pages
@@ -45,14 +45,17 @@ export function UsNeCheckInContextProvider({
 
   // Helper functions for dealing with the list of seen pages.
   const hasSeenScreen = (screen: WelcomeScreen | SectionIntroScreen) => {
-    if (screen.screenKind === "welcome") {
-      return seenPages.some((seenPage) => seenPage.screenKind === "welcome");
-    }
+    const currentScreenKind = screen.screenKind;
 
+    if (currentScreenKind === "sectionIntro") {
+      return seenPages.some(
+        (seenPage) =>
+          seenPage.screenKind === "sectionIntro" &&
+          seenPage.sectionId === screen.sectionId,
+      );
+    }
     return seenPages.some(
-      (seenPage) =>
-        seenPage.screenKind === "sectionIntro" &&
-        seenPage.sectionId === screen.sectionId,
+      (seenPage) => seenPage.screenKind === currentScreenKind,
     );
   };
 

@@ -48,6 +48,9 @@ export function useCheckInFlow(data: CheckInFormData): CheckInScreen {
         screenKind: "welcome",
       },
       {
+        screenKind: "instructions",
+      },
+      {
         screenKind: "sectionIntro",
         sectionId: firstSectionId,
       },

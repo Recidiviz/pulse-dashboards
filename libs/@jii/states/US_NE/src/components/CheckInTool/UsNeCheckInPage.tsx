@@ -70,7 +70,8 @@ const UsNeCheckInPageContent = () => {
       case "completion":
         return <UsNeCheckInCompletion onClose={exit} />;
       case "welcome":
-        return <UsNeCheckInWelcome />;
+      case "instructions":
+        return <UsNeCheckInWelcome kind={screen.screenKind} />;
       case "sectionIntro":
         return <UsNeCheckInSectionIntro sectionId={screen.sectionId} />;
       case "question":
