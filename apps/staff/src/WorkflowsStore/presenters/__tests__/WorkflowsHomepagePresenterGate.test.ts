@@ -214,6 +214,42 @@ describe("refreshCounts", () => {
   });
 });
 
+describe("which people the homepage hydrates", () => {
+  /** A presenter over a one-person caseload whose manager is unhydrated. */
+  function presenterOver(gateOn: boolean) {
+    const opportunityManager = {
+      incomingOpportunityTypes: [LSU_TYPE],
+      hydrationState: { status: "needs hydration" },
+      hydrate: vi.fn().mockResolvedValue(undefined),
+    };
+    const presenter = makePresenter({
+      searchStore: {
+        isTypesenseHomepageEnabled: gateOn,
+        opportunitySearchManager: { search: vi.fn() },
+      },
+      caseloadPersons: [{ opportunityManager }],
+      // Keeps tasks out of it; those have their own cases below.
+      activeSystem: "INCARCERATION",
+    });
+    return { presenter, opportunityManager };
+  }
+
+  test("nobody under the gate", async () => {
+    // Nothing on the page reads them; the counts come from Typesense.
+    const { presenter, opportunityManager } = presenterOver(true);
+    await presenter.populateCaseloads();
+
+    expect(opportunityManager.hydrate).not.toHaveBeenCalled();
+  });
+
+  test("the whole caseload off the gate", async () => {
+    const { presenter, opportunityManager } = presenterOver(false);
+    await presenter.populateCaseloads();
+
+    expect(opportunityManager.hydrate).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("what the presenter hands the components", () => {
   function presenter(state: Record<string, unknown>) {
     return makePresenter({

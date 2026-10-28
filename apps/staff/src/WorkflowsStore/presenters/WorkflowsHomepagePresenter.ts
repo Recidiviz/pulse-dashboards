@@ -35,6 +35,7 @@ import {
 import { Client } from "../Client";
 import { Opportunity, OpportunityTab } from "../Opportunity";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { JusticeInvolvedPerson } from "../types";
 import { opportunitiesByTabForType } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
@@ -139,6 +140,13 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     );
   }
 
+  /**
+   * Under typesense we generate the homepage summaries without actually hydrating anyone
+   */
+  protected override get personsToHydrate(): JusticeInvolvedPerson[] {
+    return this.useTypesenseHomepage ? [] : super.personsToHydrate;
+  }
+
   get shouldHydrateTasks() {
     if (
       this.workflowsStore.activeSystem === "INCARCERATION" ||
@@ -197,16 +205,13 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       return { status: "hydrated" };
     }
 
-    const opportunityHydrators = this.useTypesenseHomepage
-      ? [
-          this.workflowsStore as Hydratable,
-          this.workflowsStore.searchStore.opportunitySearchManager,
-        ]
-      : [this.workflowsStore as Hydratable].concat(
-          this.workflowsStore.caseloadPersons
-            .map((person) => person.opportunityManager)
-            .concat(),
-        );
+    const opportunityHydrators: Hydratable[] = [
+      this.workflowsStore,
+      ...this.personsToHydrate.map((person) => person.opportunityManager),
+      ...(this.useTypesenseHomepage
+        ? [this.workflowsStore.searchStore.opportunitySearchManager]
+        : []),
+    ];
 
     if (this.shouldHydrateTasks) {
       // If tasks are available, take into account tasks in the hydration state,

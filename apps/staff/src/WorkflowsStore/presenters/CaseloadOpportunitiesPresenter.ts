@@ -25,6 +25,7 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
+import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 
 // TODO: (#6695) [Workflows] Colocate the presenters on Workflows with their components
@@ -92,8 +93,12 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
     return 4000;
   }
 
+  protected get personsToHydrate(): JusticeInvolvedPerson[] {
+    return this.workflowsStore.caseloadPersons;
+  }
+
   async populateCaseloads() {
-    const unhydratedPersons = this.workflowsStore.caseloadPersons.filter(
+    const unhydratedPersons = this.personsToHydrate.filter(
       (person) => !isHydrated(person.opportunityManager),
     );
 
@@ -145,7 +150,7 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
       ? { status: "hydrated" }
       : compositeHydrationState(
           [this.workflowsStore as Hydratable].concat(
-            this.workflowsStore.caseloadPersons
+            this.personsToHydrate
               .map((person) => person.opportunityManager)
               .concat(),
           ),

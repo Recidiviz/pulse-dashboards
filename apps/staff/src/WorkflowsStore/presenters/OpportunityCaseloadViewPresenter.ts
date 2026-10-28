@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { computed, makeObservable } from "mobx";
-import pluralize from "pluralize";
 
 import { OpportunityType } from "~datatypes";
 
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
 
@@ -50,40 +50,17 @@ export class OpportunityCaseloadViewPresenter extends CaseloadOpportunitiesPrese
     return this._opportunityType;
   }
 
-  // ===== COPY =====
+  private get surfacedOpportunityTypes(): OpportunityType[] {
+    const linked = this.opportunityConfiguration?.linkedOverdueOpportunityType;
+    return linked ? [this.opportunityType, linked] : [this.opportunityType];
+  }
 
-  get ctaTextAndHeaderText() {
-    const { workflowsSearchFieldTitle, justiceInvolvedPersonTitle } =
-      this.labels;
-
-    const opportunityDisplayName =
-      this.opportunityConfiguration?.label || undefined;
-    const defaultOpportunityInitialHeader =
-      this.opportunityConfiguration?.initialHeader;
-
-    const selectedSearchIdsCount = this.selectedSearchIds?.length || 0;
-
-    if (selectedSearchIdsCount === 0)
-      return {
-        headerText: opportunityDisplayName,
-        ctaText:
-          defaultOpportunityInitialHeader ||
-          `Search for ${pluralize(workflowsSearchFieldTitle)} \
-    above to review and refer eligible \
-    ${pluralize(justiceInvolvedPersonTitle)} for \
-    ${opportunityDisplayName?.toLowerCase()}.`,
-      };
-    else if (!this.hasOpportunities)
-      return {
-        ctaText: `None of the ${justiceInvolvedPersonTitle} on the selected \
-    ${pluralize(workflowsSearchFieldTitle, selectedSearchIdsCount)} caseloads \
-    are eligible for ${opportunityDisplayName?.toLowerCase()}. Search for \
-    another ${workflowsSearchFieldTitle}.`,
-      };
-    else
-      return {
-        headerText: opportunityDisplayName,
-      };
+  protected override get personsToHydrate(): JusticeInvolvedPerson[] {
+    return this.workflowsStore.caseloadPersons.filter((person) =>
+      person.opportunityManager.incomingOpportunityTypes.some((type) =>
+        this.surfacedOpportunityTypes.includes(type),
+      ),
+    );
   }
 
   hydrate(): void {

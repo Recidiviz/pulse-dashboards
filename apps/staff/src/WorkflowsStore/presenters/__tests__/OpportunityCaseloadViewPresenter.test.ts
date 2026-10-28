@@ -27,20 +27,12 @@ let presenter: OpportunityCaseloadViewPresenter;
 
 const MOCK_OPPORTUNITY_TYPE = "type1";
 const MOCK_OPPORTUNITY_CONFIG = {
-  type1: {
-    label: "Opportunity Type 1",
-    initialHeader: "Initial Header for Opportunity Type 1",
-  },
+  type1: { label: "Opportunity Type 1" },
 };
 
-function initPresenter(
-  selectedSearchIds: OpportunityCaseloadViewPresenter["selectedSearchIds"] = [],
-  hasOpportunities: OpportunityCaseloadViewPresenter["hasOpportunities"] = false,
-) {
+beforeEach(() => {
   workflowsStore = {
     selectedOpportunityType: MOCK_OPPORTUNITY_TYPE,
-    justiceInvolvedPersonTitle: "client",
-    searchStore: { selectedSearchIds, workflowsSearchFieldTitle: "find" },
   } as unknown as WorkflowsStore;
 
   opportunityConfigurationStore = {
@@ -52,67 +44,65 @@ function initPresenter(
     opportunityConfigurationStore,
     MOCK_OPPORTUNITY_TYPE as OpportunityType,
   );
-
-  vi.spyOn(presenter, "hasOpportunities", "get").mockReturnValue(
-    hasOpportunities,
-  );
-}
-
-beforeEach(() => {
-  initPresenter();
 });
 
-describe("when producing the cta and header text", () => {
+describe("the page's opportunity type", () => {
   it("returns the selected opportunity type from workflowsStore", () => {
     expect(presenter.opportunityType).toBe(MOCK_OPPORTUNITY_TYPE);
   });
 
   it("returns the opportunity configuration based on the selected opportunity type", () => {
-    // Accessing private property `opportunityConfiguration` via @ts-ignore for testing
-    // @ts-ignore
+    // @ts-expect-error opportunityConfiguration is private
     expect(presenter.opportunityConfiguration).toEqual(
       MOCK_OPPORTUNITY_CONFIG[MOCK_OPPORTUNITY_TYPE],
     );
   });
+});
 
-  describe("OpportunityCaseloadViewPresenter - ctaTextAndHeaderText", () => {
-    it("returns ctaText with default header when no IDs are selected", () => {
-      const result = presenter.ctaTextAndHeaderText;
+describe("which people the page hydrates", () => {
+  /** A person whose manager reports the given incoming types. */
+  function personWith(incomingOpportunityTypes: string[]) {
+    return {
+      opportunityManager: {
+        incomingOpportunityTypes,
+        hydrationState: { status: "needs hydration" },
+        hydrate: vi.fn().mockResolvedValue(undefined),
+      },
+    };
+  }
 
-      expect(result).toEqual({
-        headerText: MOCK_OPPORTUNITY_CONFIG.type1.label,
-        ctaText: "Initial Header for Opportunity Type 1",
-      });
+  function presenterFor(
+    persons: ReturnType<typeof personWith>[],
+    config: Record<string, unknown> = {},
+  ) {
+    return new OpportunityCaseloadViewPresenter(
+      { caseloadPersons: persons } as unknown as WorkflowsStore,
+      {
+        opportunities: { type1: config },
+      } as unknown as OpportunityConfigurationStore,
+      MOCK_OPPORTUNITY_TYPE as OpportunityType,
+    );
+  }
 
-      expect(result).toMatchInlineSnapshot(`
-        {
-          "ctaText": "Initial Header for Opportunity Type 1",
-          "headerText": "Opportunity Type 1",
-        }
-      `);
-    });
+  it("hydrates only the people the page's type could surface", async () => {
+    const surfaced = personWith(["type1", "type2"]);
+    const other = personWith(["type2"]);
 
-    it("returns message when no eligible opportunities are available for selected IDs", () => {
-      initPresenter(["one", "two"], false);
+    await presenterFor([surfaced, other]).populateCaseloads();
 
-      const result = presenter.ctaTextAndHeaderText;
-      expect(result.ctaText).toContain("None of the");
-      expect(result.ctaText).toContain("are eligible for opportunity type 1");
-    });
+    // The surfaced person still loads every type, not just this page's.
+    expect(surfaced.opportunityManager.hydrate).toHaveBeenCalledTimes(1);
+    expect(other.opportunityManager.hydrate).not.toHaveBeenCalled();
+  });
 
-    it("returns only headerText when there are eligible opportunities", () => {
-      initPresenter(["one"], true);
+  it("also hydrates the people the linked overdue type could surface", async () => {
+    // The list's overdue callout counts that type's eligible opportunities.
+    const overdue = personWith(["overdueType"]);
 
-      const result = presenter.ctaTextAndHeaderText;
+    await presenterFor([overdue], {
+      linkedOverdueOpportunityType: "overdueType",
+    }).populateCaseloads();
 
-      expect(result).toEqual({
-        headerText: MOCK_OPPORTUNITY_CONFIG.type1.label,
-      });
-      expect(result).toMatchInlineSnapshot(`
-        {
-          "headerText": "Opportunity Type 1",
-        }
-      `);
-    });
+    expect(overdue.opportunityManager.hydrate).toHaveBeenCalledTimes(1);
   });
 });
