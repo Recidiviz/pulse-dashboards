@@ -87,7 +87,12 @@
       "progressExplainer": "The progress bar tracks how many hours of Edovo courses you have completed and passed this month. Only [courses]({{coursesUrl}}) count — not [resources]({{resourcesUrl}}). This updates once a day.",
       "carryOverUnder": "Under 16 hours? They all carry over to next month.",
       "carryOverOver": "Over 16 hours? Only 2 hours carry over.",
-      "learnMore": "[Learn more about the tablet programming policy]({{policyUrl}})"
+      "learnMore": "[Learn more about the tablet programming policy]({{policyUrl}})",
+      "title": "Programs on my tablet",
+      "ineligible": {
+        "heading": "Courses on your tablet are open to you",
+        "body": "You may have heard that Edovo courses now count toward release. This currently only applies to people sentenced under the Protect Arkansas Act, which does not include your sentence. Edovo courses are still open to you and can help you build new skills. Ask Records if you have any questions about your release date."
+      }
     }
   },
   "edovoBanner": {

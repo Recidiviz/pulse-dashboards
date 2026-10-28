@@ -87,7 +87,12 @@
       "progressExplainer": "[US_AR]programs.onMyTablet.progressExplainer",
       "carryOverUnder": "[US_AR]programs.onMyTablet.carryOverUnder",
       "carryOverOver": "[US_AR]programs.onMyTablet.carryOverOver",
-      "learnMore": "[US_AR]programs.onMyTablet.learnMore"
+      "learnMore": "[US_AR]programs.onMyTablet.learnMore",
+      "title": "[US_AR]programs.onMyTablet.title",
+      "ineligible": {
+        "heading": "[US_AR]programs.onMyTablet.ineligible.heading",
+        "body": "[US_AR]programs.onMyTablet.ineligible.body"
+      }
     }
   },
   "edovoBanner": {

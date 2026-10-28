@@ -225,6 +225,10 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_edovo_return_failed");
   }
 
+  trackEdovoTabClicked(metadata: { isEligibleForCredit: boolean }) {
+    this.track("frontend_edovo_tab_clicked", metadata);
+  }
+
   trackEdovoBannerImpression() {
     this.track("frontend_edovo_banner_impression");
   }

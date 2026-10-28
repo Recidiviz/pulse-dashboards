@@ -20,16 +20,12 @@ import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
-import { Card, JIIButton, RowDivider, SlateCopy } from "~@jii/common-ui";
-import { sendEdovoReferral, useRootStore } from "~@jii/data";
+import { Card, RowDivider, SlateCopy } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
-import { Icon, spacing } from "~design-system";
+import { spacing } from "~design-system";
 
-const CoursesButton = styled(JIIButton)`
-  width: 100%;
-  justify-content: center;
-`;
+import { GoToCoursesButton } from "./GoToCoursesButton";
 
 const ExplainerDivider = styled(RowDivider)`
   margin-bottom: ${rem(spacing.md)};
@@ -45,15 +41,7 @@ const TightSlateCopy = styled(SlateCopy)`
 
 export const PolicyExplainerCard: FC = () => {
   const { t } = useUsArTranslations();
-  const {
-    userStore: { segmentClient },
-  } = useRootStore();
   const params = useTypedParams(State.Resident.UsArMoreInformation);
-
-  const handleGoToCourses = () => {
-    if (sendEdovoReferral())
-      segmentClient.trackEdovoReferralSent({ type: "program-navigation" });
-  };
 
   const policyUrl =
     State.Resident.UsArMoreInformation.EarnedReleaseCredits.buildPath(params);
@@ -78,10 +66,7 @@ export const PolicyExplainerCard: FC = () => {
       <SlateCopy options={{ forceBlock: true }}>
         {t(($) => $.programs.onMyTablet.learnMore, { policyUrl })}
       </SlateCopy>
-      <CoursesButton kind="primary" onClick={handleGoToCourses}>
-        <span>{t(($) => $.programs.onMyTablet.coursesButton)}</span>
-        <Icon kind="Open" size={12} />
-      </CoursesButton>
+      <GoToCoursesButton />
     </Card>
   );
 };

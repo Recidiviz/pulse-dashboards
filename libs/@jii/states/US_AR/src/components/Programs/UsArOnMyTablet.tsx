@@ -17,14 +17,19 @@
 
 import { FC } from "react";
 
+import { HomepageSectionHeading } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
+import { useUsArTranslations } from "~@jii/translation";
 
+import { isPaaResident } from "../../isPaaResident";
+import { IneligibleCard } from "./IneligibleCard";
 import { PolicyExplainerCard } from "./PolicyExplainerCard";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./ProgramsNavBar/ProgramsNavBar.styles";
 
 export const UsArOnMyTablet: FC = () => {
   const metadata = useResidentMetadata("US_AR");
+  const { t } = useUsArTranslations();
 
   return (
     <>
@@ -33,7 +38,10 @@ export const UsArOnMyTablet: FC = () => {
         lastUpdatedDate={metadata.lastUpdatedDate}
         stickyOffset={PROGRAMS_NAV_BAR_HEIGHT}
       />
-      <PolicyExplainerCard />
+      <HomepageSectionHeading>
+        {t(($) => $.programs.onMyTablet.title)}
+      </HomepageSectionHeading>
+      {isPaaResident(metadata) ? <PolicyExplainerCard /> : <IneligibleCard />}
     </>
   );
 };

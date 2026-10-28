@@ -19,19 +19,22 @@ import { observer } from "mobx-react-lite";
 import { NavLink } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { useRootStore } from "~@jii/data";
+import { useResidentMetadata, useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useCommonTranslations, useUsArTranslations } from "~@jii/translation";
 
+import { isPaaResident } from "../../../isPaaResident";
 import { Tabs, Wrapper } from "./ProgramsNavBar.styles";
 
 export const ProgramsNavBar = observer(function ProgramsNavBar() {
   const {
     uiStore: { hideHeaderBar },
+    userStore: { segmentClient },
   } = useRootStore();
   const routeParams = useTypedParams(State.Resident);
   const { t } = useUsArTranslations();
   const { t: tCommon } = useCommonTranslations();
+  const metadata = useResidentMetadata("US_AR");
 
   return (
     <Wrapper
@@ -47,6 +50,11 @@ export const ProgramsNavBar = observer(function ProgramsNavBar() {
         </NavLink>
         <NavLink
           to={State.Resident.ProgramCatalog.OnMyTablet.buildPath(routeParams)}
+          onClick={() =>
+            segmentClient.trackEdovoTabClicked({
+              isEligibleForCredit: isPaaResident(metadata),
+            })
+          }
         >
           {t(($) => $.programs.navBar.onMyTablet)}
         </NavLink>
