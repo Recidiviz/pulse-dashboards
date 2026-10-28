@@ -135,6 +135,10 @@ export function shouldShowSexualHistoryContent(
  * header. Manually-entered ORAS data isn't synced on a schedule, so we show
  * that it was entered by staff instead of a sync timestamp.
  *
+ * Manual entries store the moment staff saved them, so they display in the
+ * user's local time. Imported values are date-only and stored as midnight UTC,
+ * so they display in UTC; local time would show the previous day in US zones.
+ *
  * e.g. "Data manually added"
  * e.g. "Last Updated: 1/2/2026"
  */
@@ -143,7 +147,10 @@ export function getOrasUpdatedText(
   ORASEnteredManually: boolean,
 ): string {
   const label = ORASEnteredManually ? "Data Manually Added:" : `Last Updated: `;
-  return `${label} ${formatDisplayDate(ORASLastUpdatedAt, { fallback: "Unknown" })}`;
+  return `${label} ${formatDisplayDate(ORASLastUpdatedAt, {
+    fallback: "Unknown",
+    local: ORASEnteredManually,
+  })}`;
 }
 
 // Domain keys used for conditional rendering based on ORAS type

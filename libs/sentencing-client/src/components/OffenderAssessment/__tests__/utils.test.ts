@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { deriveDomainRiskLevel } from "../assessmentTypeUtils";
 import {
   buildStatic99RReportText,
   deriveStatic99RRiskCategory,
   getAgeAtAssessmentPoint,
+  getOrasUpdatedText,
   getScoreWithAgePoint,
   STATIC_99R_INTRO,
 } from "../utils";
@@ -144,5 +145,35 @@ describe("buildStatic99RReportText", () => {
     expect(buildStatic99RReportText("J. Doe", undefined, 0)).toContain(
       "relative to other adult sex offenders.",
     );
+  });
+});
+
+describe("getOrasUpdatedText", () => {
+  // Tests run in UTC by default, which hides the difference between UTC and
+  // local formatting.
+  let originalTZ: string | undefined;
+  beforeEach(() => {
+    originalTZ = process.env.TZ;
+    process.env.TZ = "America/Chicago";
+  });
+  afterEach(() => {
+    process.env.TZ = originalTZ;
+  });
+
+  test("shows an imported date-only value as the same calendar day", () => {
+    expect(
+      getOrasUpdatedText(new Date("2026-10-27T00:00:00.000Z"), false),
+    ).toBe("Last Updated:  10/27/2026");
+  });
+
+  test("shows a manual entry in the user's local time", () => {
+    // 8pm Central on 10/26 is already 10/27 in UTC.
+    expect(getOrasUpdatedText(new Date("2026-10-27T01:00:00.000Z"), true)).toBe(
+      "Data Manually Added: 10/26/2026",
+    );
+  });
+
+  test("falls back to Unknown when there is no date", () => {
+    expect(getOrasUpdatedText(null, false)).toBe("Last Updated:  Unknown");
   });
 });
