@@ -97,7 +97,8 @@
   "protectAct": {
     "moreInfo": {
       "heading": "[US_AR]protectAct.moreInfo.heading",
-      "body": "[US_AR]protectAct.moreInfo.body"
+      "body": "[US_AR]protectAct.moreInfo.body",
+      "edovoBody": "[US_AR]protectAct.moreInfo.edovoBody"
     }
   },
   "earnedReleaseCredits": {

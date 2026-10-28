@@ -21,7 +21,7 @@ import {
 } from "react-router-typesafe-routes/dom";
 
 import { ImportantDatesCopyWrapper } from "~@jii/common-ui";
-import { useResidentMetadata } from "~@jii/data";
+import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
@@ -31,6 +31,7 @@ import { isPaaResident } from "../isPaaResident";
 export function PageMoreInformationImportantDates() {
   const { t } = useUsArTranslations();
   const metadata = useResidentMetadata("US_AR");
+  const { residentFlags } = useSingleResidentContext();
   const params = useTypedParams(State.Resident.UsArMoreInformation);
   const [{ backTarget }] = useTypedSearchParams(
     State.Resident.UsArMoreInformation.ImportantDates,
@@ -47,7 +48,13 @@ export function PageMoreInformationImportantDates() {
         };
 
   const { heading, body } = isPaaResident(metadata)
-    ? t(($) => $.protectAct.moreInfo, { returnObjects: true })
+    ? {
+        heading: t(($) => $.protectAct.moreInfo.heading),
+        // TODO(JII2-128): use edovoBody as the body once usArEdovoCredits is retired
+        body: residentFlags.usArEdovoCredits
+          ? t(($) => $.protectAct.moreInfo.edovoBody)
+          : t(($) => $.protectAct.moreInfo.body),
+      }
     : t(($) => $.importantDates.moreInfo, { returnObjects: true });
 
   return (
