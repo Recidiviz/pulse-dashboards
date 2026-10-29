@@ -261,7 +261,7 @@ export const ProfileMeetings = ({
   // Sort meetings
   const sortedMeetings = useMemo(() => {
     if (!processedMeetings) return [];
-    const sortedMeetings = processedMeetings.sort((a, b) => {
+    return [...processedMeetings].sort((a, b) => {
       if (sortBy === MeetingsSort.NEWEST_FIRST) {
         return new Date(b.start).getTime() - new Date(a.start).getTime();
       } else if (sortBy === MeetingsSort.OLDEST_FIRST) {
@@ -274,15 +274,6 @@ export const ProfileMeetings = ({
         };
         return parseDuration(b.duration) - parseDuration(a.duration);
       }
-    });
-
-    return sortedMeetings.sort((a, b) => {
-      const statusOrder = (status: string) => {
-        if (status === "NOT_STARTED") return 0;
-        if (status === "COMPLETED") return 2;
-        return 1;
-      };
-      return statusOrder(a.status) - statusOrder(b.status);
     });
   }, [sortBy, processedMeetings]);
 
