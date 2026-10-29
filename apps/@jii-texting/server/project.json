@@ -68,7 +68,7 @@
         "generatePackageJson": true,
         "target": "node22",
         "minify": true,
-        "external": ["@prisma/jii-texting"],
+        "external": ["@prisma/client"],
         "assets": [
           {
             "glob": "prisma/schema.prisma",

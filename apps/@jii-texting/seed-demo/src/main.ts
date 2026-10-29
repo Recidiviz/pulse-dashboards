@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient, StateCode } from "@prisma/jii-texting/client";
-
+import { Prisma, PrismaClient, StateCode } from "~@jii-texting/prisma/client";
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma/utils";
 import { seedUsId } from "~@jii-texting/seed-demo/seedUsId";
 import { seedUsTx } from "~@jii-texting/seed-demo/seedUsTx";
@@ -24,9 +23,7 @@ import { seedUsTx } from "~@jii-texting/seed-demo/seedUsTx";
 const usIdPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 const usTxPrismaClient = getPrismaClientForStateCode(StateCode.US_TX);
 
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
 export async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(

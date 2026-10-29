@@ -31,7 +31,6 @@ RUN chmod +x scripts/*.sh
 
 # Copy node_modules from builder stage
 COPY --chown=node:node --from=builder /usr/src/app .
-RUN yarn prisma generate
 
 USER node
 EXPOSE ${PORT}

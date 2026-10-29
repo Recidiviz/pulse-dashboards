@@ -16,13 +16,14 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { addDays } from "date-fns";
+
 import {
   Prisma,
   PrismaClient,
   StateCode,
   Status,
-} from "@prisma/jii-texting/client";
-import { addDays } from "date-fns";
+} from "~@jii-texting/prisma/client";
 
 async function createPersonWithContact(
   prismaClient: PrismaClient,

@@ -16,12 +16,13 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+
 import {
   Prisma,
   PrismaClient,
   StateCode,
   Status,
-} from "@prisma/jii-texting/client";
+} from "~@jii-texting/prisma/client";
 
 export async function seedUsId(prismaClient: PrismaClient) {
   const topic = await prismaClient.topic.create({

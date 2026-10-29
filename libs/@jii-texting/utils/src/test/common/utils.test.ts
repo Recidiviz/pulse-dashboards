@@ -15,14 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  MessageAttemptStatus,
-  MessageType,
-  Prisma,
-  PrismaClient,
-  StateCode,
-  Status,
-} from "@prisma/jii-texting/client";
 import { flush, init } from "@sentry/node";
 import sentryTestkit from "sentry-testkit";
 import {
@@ -31,6 +23,14 @@ import {
 } from "twilio/lib/rest/api/v2010/account/message";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
+import {
+  MessageAttemptStatus,
+  MessageType,
+  Prisma,
+  PrismaClient,
+  StateCode,
+  Status,
+} from "~@jii-texting/prisma/client";
 import {
   auditNumMessagesAttemptedChangeRatio,
   getOrderedMessageAttemptsForCurrentPhoneNumber,
@@ -55,9 +55,7 @@ const testTwilioClient = new TwilioAPIClient(
   "subaccount",
 );
 
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
 async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(

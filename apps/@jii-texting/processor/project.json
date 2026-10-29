@@ -51,7 +51,7 @@
         "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
         "generatePackageJson": true,
         "minify": true,
-        "external": ["@prisma/jii-texting", "commander"]
+        "external": ["@prisma/client", "commander"]
       },
       "configurations": {
         "dev": {

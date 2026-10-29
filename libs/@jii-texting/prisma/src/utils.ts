@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/jii-texting/client";
+
+import { PrismaClient } from "~@jii-texting/prisma/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
 

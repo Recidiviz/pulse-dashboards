@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting/client";
 import { beforeAll, describe, expect, test } from "vitest";
 
 import { PERSON_FILE_NAME } from "~@jii-texting/import/constants";
@@ -25,6 +24,7 @@ import {
   TEST_PERSON_FILE_NAME,
   TEST_STATE_CODE,
 } from "~@jii-texting/import/test/setup/constants";
+import { StateCode } from "~@jii-texting/prisma/client";
 import {
   fakeFullyEligibleGroup,
   fakePersonOne,

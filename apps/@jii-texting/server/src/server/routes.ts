@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting/client";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import moment from "moment";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
+import { StateCode } from "~@jii-texting/prisma/client";
 import { getAuthenticateInternalRequestPreHandlerFn } from "~@jii-texting/server/server/authUtils";
 import { RequestWithStateCodeParam } from "~@jii-texting/server/server/types";
 

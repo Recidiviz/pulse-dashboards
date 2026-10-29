@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting/client";
 import { init } from "@sentry/node";
 import sentryTestkit from "sentry-testkit";
 import { beforeAll, beforeEach, vi } from "vitest";
@@ -24,6 +23,7 @@ import { seed } from "~@jii-texting/import/test/setup/seed";
 import { seedContacts } from "~@jii-texting/import/test/setup/seed-contacts";
 import { resetDb } from "~@jii-texting/import/test/setup/utils";
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
+import { StateCode } from "~@jii-texting/prisma/client";
 import { MockImportHandler } from "~data-import-plugin/testkit";
 
 export const testUsIdPrismaClient = getPrismaClientForStateCode(

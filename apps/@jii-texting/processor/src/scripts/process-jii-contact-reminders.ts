@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting/client";
-
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
+import { StateCode } from "~@jii-texting/prisma/client";
 import {
   auditNumMessagesAttemptedChangeRatio,
   PERSON_WITH_CONTACTS_AND_MESSAGES,
@@ -82,23 +81,21 @@ export async function processJiiContactReminders({
     REMINDER_TEXT_SENT: [],
   };
 
-  const processPromiseFns = jiiToText.map((jii) =>
-    async () => {
-      const actions = await processIndividualJiiContactReminders(
-        jii,
-        workflowExecutionId,
-        dryRun,
-        prisma,
-        twilioClient,
-        i18nInstance,
-      );
+  const processPromiseFns = jiiToText.map((jii) => async () => {
+    const actions = await processIndividualJiiContactReminders(
+      jii,
+      workflowExecutionId,
+      dryRun,
+      prisma,
+      twilioClient,
+      i18nInstance,
+    );
 
-      return {
-        id: jii.pseudonymizedId,
-        actions: actions as ScriptAction[],
-      };
-    },
-  );
+    return {
+      id: jii.pseudonymizedId,
+      actions: actions as ScriptAction[],
+    };
+  });
 
   // TODO(#10425): Rather than batching promises, consider scoping out how to do batched writes
   const allProcessedResults = await throttlePromises(
