@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { deleteField } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { ChangeEventHandler, useState } from "react";
 
@@ -185,10 +184,13 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
     if (value === "" || Number(value) < 0 || !/^\d+$/.test(value)) {
       setError("Required. Enter a whole number of 0 or more");
       setInputNumber(value);
-      opportunityForm.updateDraftData(selectionKey, deleteField());
+      // this can't be deleteField() because that comes through as 0
+      // which then doesn't work for the remaining field section
+      opportunityForm.updateDraftData(selectionKey, "");
       setRequired(true);
       return;
     }
+
     const number = Number(value);
     if (bounds && number > bounds) {
       setError(boundsMessage(bounds));

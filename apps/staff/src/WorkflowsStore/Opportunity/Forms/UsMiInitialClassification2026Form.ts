@@ -65,6 +65,8 @@ function getVfoOptionText(vfoLevelDetail: string | null | undefined) {
   }
 }
 
+export const MAX_TOTAL_SCORE = 60;
+
 // The female VFO question has no "High" option, so a high score falls back to
 // "None", which carries the same score as "Medium".
 export function getQuestionVfoOptionSelection(
@@ -191,6 +193,7 @@ export function getMultiplierScore(
 ): number | undefined {
   if (amount === undefined || question.type !== "NUMBER") return undefined;
 
+  if (typeof amount !== "number") return undefined;
   return Number(
     (question.multiplier * capToBounds(question, amount)).toFixed(2),
   );
@@ -362,7 +365,7 @@ export function deriveMiClassification(
     s3q10Score,
     s3q11Score,
     subscores: [s1SubScore, s2SubScore, s3SubScore],
-    totalScore,
+    totalScore: Math.min(totalScore, MAX_TOTAL_SCORE),
     s1q1Notes,
     s1q2Notes,
     s2q3Notes,

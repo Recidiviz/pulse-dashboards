@@ -30,8 +30,11 @@ import {
   ClassificationForm,
   FormFooter,
   FormTitle,
+  LeftFooter,
   LevelBadge,
   RemainingFields,
+  ScoreSection,
+  ScoreSupportingText,
   ScoringNote,
   SectionHeading,
   StatusBadge,
@@ -89,7 +92,11 @@ export const FormUsMiClassification = observer(
             <LevelBadge $headerVisible={headerVisible}>
               <div style={{ fontSize: rem(12) }}>CURRENT LEVEL</div>
               <div
-                style={{ fontWeight: 700, color: "black", padding: "0px 5px" }}
+                style={{
+                  fontWeight: 700,
+                  color: palette.text.primary,
+                  padding: "0px 5px",
+                }}
               >
                 {displayCustodyLevel}
               </div>
@@ -134,25 +141,33 @@ export const FormUsMiClassification = observer(
           })}
           <hr style={{ width: "100%" }} />
           <FormFooter>
-            <div
-              id="remaining-fields"
-              style={{ display: "flex", flexDirection: "column" }}
-            >
+            <LeftFooter>
+              <ScoreSection>
+                <ScoreSupportingText>
+                  {remainingFields ? `SUBTOTAL SO FAR` : `TOTAL SCORE`}
+                </ScoreSupportingText>
+                <div>
+                  <span style={{ fontSize: rem(24), color: "black" }}>
+                    {derivedData.totalScore.toFixed(1)}{" "}
+                  </span>
+                  <ScoreSupportingText>pts</ScoreSupportingText>
+                </div>
+              </ScoreSection>
               {remainingFields ? (
-                <>
-                  <ScoringNote>
-                    The score and recommended level appear after you calculate
-                  </ScoringNote>
+                <div style={{ display: "flex", flexDirection: "column" }}>
                   <RemainingFields $remaining={!!remainingFields}>
                     {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
                   </RemainingFields>
-                </>
+                  <ScoringNote>
+                    The score and recommended level appear after you calculate
+                  </ScoringNote>
+                </div>
               ) : (
                 <RemainingFields $remaining={!!remainingFields}>
                   All required fields complete
                 </RemainingFields>
               )}
-            </div>
+            </LeftFooter>
             <Button type="button" kind="primary" disabled={remainingFields > 0}>
               Calculate Classification
             </Button>

@@ -27,7 +27,10 @@ import {
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { Resident } from "../../Resident";
 import { FormBase } from "./FormBase";
-import { calculateRemaining } from "./UsMiInitialClassification2026Form";
+import {
+  calculateRemaining,
+  MAX_TOTAL_SCORE,
+} from "./UsMiInitialClassification2026Form";
 import {
   classificationNote,
   countIncidents,
@@ -427,7 +430,7 @@ export function deriveMiClassification(
     s3q15Score,
     s3q16Score,
     subscores: [s1SubScore, s2SubScore, s3SubScore],
-    totalScore,
+    totalScore: Math.min(totalScore, MAX_TOTAL_SCORE),
     s1q1Notes,
     s1q2Notes,
     s2q3Notes,

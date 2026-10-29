@@ -325,3 +325,24 @@ export const NoteField = styled.div`
   flex-direction: row;
   padding-left: 5px;
 `;
+
+export const LeftFooter = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+export const ScoreSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid ${palette.slate10};
+  padding-right: 20px;
+  margin-right: 20px;
+`;
+
+export const ScoreSupportingText = styled.span`
+  font-size: ${rem(14)};
+  color: ${palette.slate80};
+  font-weight: 600;
+`;
