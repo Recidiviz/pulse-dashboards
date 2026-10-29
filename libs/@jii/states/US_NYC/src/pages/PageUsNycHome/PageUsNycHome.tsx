@@ -18,20 +18,27 @@
 import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { Redirect } from "~@jii/common-ui";
+import { CallToActionCard, Redirect } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
+import connectionsCoverSrc from "../../components/Banner/assets/connections-cover-cropped.png";
 import { UsNycHomePresenter } from "../PageUsNyc/UsNycHomePresenter";
 import {
+  HomepageSectionHeading,
   PageContainer,
-  PageHeader,
-  SpacedSection,
+  SpacedDiv,
 } from "./PageUsNycHome.styles";
 
 const COPY = {
   title: "Learn more about your case",
+  communityResourceTitle: "Find community resources",
+  reentryTitle: "Preparing for reentry",
+  reentryDescription:
+    "Find organizations in NYC that help with housing, jobs, food, health care, and more.",
+  reentryAction: "Find community resources",
 };
 
 const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
@@ -50,9 +57,25 @@ const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
 
     return (
       <PageContainer>
-        <SpacedSection>
-          <PageHeader>{COPY.title}</PageHeader>
-        </SpacedSection>
+        <SpacedDiv>
+          <HomepageSectionHeading>{COPY.title}</HomepageSectionHeading>
+        </SpacedDiv>
+        <SpacedDiv $gap={24}>
+          <HomepageSectionHeading>
+            {COPY.communityResourceTitle}
+          </HomepageSectionHeading>
+          <CallToActionCard
+            //TODO(OBT-55734) Add Segment tracking
+            linkTo={State.Resident.ResourceExplorer.buildPath(
+              residentUrlParams,
+            )}
+            heading={COPY.reentryTitle}
+            description={COPY.reentryDescription}
+            linkText={COPY.reentryAction}
+            illustrationSrc={connectionsCoverSrc}
+            illustrationBackground={palette.white}
+          />
+        </SpacedDiv>
       </PageContainer>
     );
   },

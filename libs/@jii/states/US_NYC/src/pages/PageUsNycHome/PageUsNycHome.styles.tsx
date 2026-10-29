@@ -16,32 +16,34 @@
 // =============================================================================
 
 import { rem } from "polished";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-import { PageContainer as BasePageContainer } from "~@jii/common-ui";
-import { palette, typography } from "~design-system";
+import {
+  HomepageSectionHeading as BaseHomepageSectionHeading,
+  PageContainer as BasePageContainer,
+} from "~@jii/common-ui";
 
 export const PageContainer = styled(BasePageContainer)`
   display: flex;
-  padding: ${rem(48)} ${rem(66)} ${rem(96)} ${rem(66)};
   flex-direction: column;
   align-items: flex-start;
   gap: ${rem(64)};
   align-self: stretch;
 `;
 
-export const SpacedSection = styled.section`
+export const SpacedDiv = styled.div<{
+  $gap?: number;
+}>`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: ${rem(20)};
   align-self: stretch;
+  align-items: flex-start;
+  flex-direction: column;
+
+  ${({ $gap }) => css`
+    gap: ${$gap ? rem($gap) : rem(20)};
+  `}
 `;
 
-export const PageHeader = styled.div`
-  ${typography.Sans24};
-  color: ${palette.pine1};
+export const HomepageSectionHeading = styled(BaseHomepageSectionHeading)`
   font-weight: 500;
-
-  align-self: stretch;
 `;
