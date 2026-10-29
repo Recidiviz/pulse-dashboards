@@ -40,11 +40,11 @@ const opportunityInfo: OpportunityCardInfo = {
   urlSection: "AnnualReportStatusV2",
 };
 
-function renderCard() {
+function renderCard(cardInfo: OpportunityCardInfo = opportunityInfo) {
   render(
     <MemoryRouter>
       <InsightsSupervisorOpportunityReviewCard
-        opportunityInfo={opportunityInfo}
+        opportunityInfo={cardInfo}
         supervisorPseudoId="pSupervisor123"
         supervisorLabel="supervisor"
       />
@@ -104,5 +104,25 @@ describe("InsightsSupervisorOpportunityReviewCard", () => {
     ).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ viewedBy: undefined }),
     );
+  });
+
+  it("titles the card as requiring supervisor review by default", () => {
+    renderCard();
+
+    expect(
+      screen.getByText("Annual Report Status requires supervisor review"),
+    ).toBeInTheDocument();
+  });
+
+  it("uses the configured card title when one is set", () => {
+    renderCard({
+      ...opportunityInfo,
+      insightsSupervisorOpportunityReviewCardTitle: "Annual Report Status",
+    });
+
+    expect(screen.getByText("Annual Report Status")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Annual Report Status requires supervisor review"),
+    ).not.toBeInTheDocument();
   });
 });

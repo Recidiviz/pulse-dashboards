@@ -81,5 +81,6 @@ export type OpportunityCardInfo = {
   opportunityType: OpportunityType;
   zeroGrantsTooltip?: string;
   supervisorReviewCounts?: Record<string, number>;
+  insightsSupervisorOpportunityReviewCardTitle?: string;
   urlSection: string;
 };

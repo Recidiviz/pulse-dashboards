@@ -162,6 +162,7 @@ export interface OpportunityConfiguration {
 
   supervisorReviewTabTitle: OpportunityTab;
   insightsSupervisorReviewTabTitle?: OpportunityTab;
+  insightsSupervisorOpportunityReviewCardTitle?: string;
   awaitingRevisionsTabTitle: OpportunityTab;
   grantApprovedTabTitle: OpportunityTab;
   historicalReviewTabTitle: OpportunityTab;

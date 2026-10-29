@@ -114,6 +114,7 @@ export const InsightsSupervisorOpportunityReviewCard: React.FC<
 > = ({
   opportunityInfo: {
     label,
+    insightsSupervisorOpportunityReviewCardTitle,
     supervisorReviewCounts,
     urlSection,
     opportunityType,
@@ -130,7 +131,9 @@ export const InsightsSupervisorOpportunityReviewCard: React.FC<
 
   if (!supervisorReviewCounts) return null;
 
-  const reviewLabel = `${label} requires ${supervisorLabel} review`;
+  const reviewLabel =
+    insightsSupervisorOpportunityReviewCardTitle ??
+    `${label} requires ${supervisorLabel} review`;
 
   return (
     <SupervisorReviewCardLink

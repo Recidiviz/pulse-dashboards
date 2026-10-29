@@ -674,11 +674,18 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   protected initializeOpportunityDetail(
     opportunityType: OpportunityType,
   ): RawOpportunityInfo {
-    const { homepagePosition, priority, label, zeroGrantsTooltip, urlSection } =
-      this.opportunityConfigurationStore.opportunities[opportunityType];
+    const {
+      homepagePosition,
+      priority,
+      label,
+      zeroGrantsTooltip,
+      urlSection,
+      insightsSupervisorOpportunityReviewCardTitle,
+    } = this.opportunityConfigurationStore.opportunities[opportunityType];
     return {
       priority,
       label,
+      insightsSupervisorOpportunityReviewCardTitle,
       officersWithRelevantClients: [],
       relevantClientsCount: 0,
       homepagePosition,

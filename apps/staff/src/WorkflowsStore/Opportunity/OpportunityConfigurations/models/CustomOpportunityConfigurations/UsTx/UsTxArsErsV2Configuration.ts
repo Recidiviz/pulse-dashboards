@@ -89,6 +89,12 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
     return "Awaiting Review";
   }
 
+  // The supervisor homepage card counts requests that may not need any
+  // supervisor action, so the title omits "requires supervisor review"
+  get insightsSupervisorOpportunityReviewCardTitle(): string {
+    return this.label;
+  }
+
   get grantApprovedTabTitle(): OpportunityTab {
     return "Approved in OIMS";
   }
