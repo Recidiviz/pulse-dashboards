@@ -661,4 +661,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get hideWorkflowsTabGroupSelector(): boolean {
     return false;
   }
+
+  /** True when supervisor review statuses should appear even with zero clients in them. */
+  get showEmptySupervisorReviewStatuses(): boolean {
+    return false;
+  }
 }

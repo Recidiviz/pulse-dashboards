@@ -127,6 +127,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   hideCtaButton: false,
   enableSupervisorReviewChain: false,
   hideWorkflowsTabGroupSelector: false,
+  showEmptySupervisorReviewStatuses: false,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

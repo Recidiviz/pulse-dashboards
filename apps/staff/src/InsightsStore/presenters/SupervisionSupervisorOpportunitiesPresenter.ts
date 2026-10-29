@@ -43,7 +43,11 @@ import {
   RawOpportunityInfo,
   RawOpportunityInfoByOpportunityType,
 } from "./types";
-import { addSupervisorReviewCounts, countRelevantOpportunities } from "./utils";
+import {
+  addSupervisorReviewCounts,
+  countRelevantOpportunities,
+  initializeSupervisorReviewCounts,
+} from "./utils";
 
 export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvolvedPersonStore(
   SupervisionBasePresenter,
@@ -580,6 +584,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           insightsSupervisorReviewTabTitle,
           historicalReviewTabTitle,
           awaitingRevisionsTabTitle,
+          showEmptySupervisorReviewStatuses,
         } = this.opportunityConfigurationStore.opportunities[opportunityType];
 
         // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
@@ -602,6 +607,16 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           supportsSupervisorReview &&
           insightsSupervisorReviewTabTitle
         ) {
+          if (showEmptySupervisorReviewStatuses) {
+            initializeSupervisorReviewCounts(oppDetail, [
+              insightsSupervisorReviewTabTitle,
+              awaitingRevisionsTabTitle,
+              // Past reviews are only hydrated behind this feature variant
+              ...(this.showPreviouslyReviewedOpportunities
+                ? [historicalReviewTabTitle]
+                : []),
+            ]);
+          }
           addSupervisorReviewCounts(
             oppDetail,
             oppsByTab,

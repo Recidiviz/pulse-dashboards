@@ -184,4 +184,5 @@ export interface OpportunityConfiguration {
   hideCtaButton: boolean;
   enableSupervisorReviewChain: boolean;
   hideWorkflowsTabGroupSelector: boolean;
+  showEmptySupervisorReviewStatuses: boolean;
 }

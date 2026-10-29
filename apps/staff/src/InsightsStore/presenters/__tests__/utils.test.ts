@@ -20,7 +20,11 @@ import {
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 
-import { getBreadcrumbsPages } from "../utils";
+import { RawOpportunityInfo } from "../types";
+import {
+  getBreadcrumbsPages,
+  initializeSupervisorReviewCounts,
+} from "../utils";
 
 const testSupervisorInfo = supervisionOfficerSupervisorsFixture[0];
 const testSupervisionOfficerRecord = supervisionOfficerFixture[0];
@@ -82,5 +86,50 @@ describe("getBreadcrumbsPages", () => {
         url: "/insights/supervision/staff/hashed-so1",
       },
     ]);
+  });
+});
+
+describe("initializeSupervisorReviewCounts", () => {
+  function rawOpportunityInfo(
+    supervisorReviewCounts: Record<string, number>,
+  ): RawOpportunityInfo {
+    return {
+      label: "Annual Report Status",
+      priority: "NORMAL",
+      officersWithRelevantClients: [],
+      relevantClientsCount: 0,
+      opportunityType: "usTxAnnualReportStatusV2",
+      supervisorReviewCounts,
+      urlSection: "AnnualReportStatusV2",
+      homepagePosition: 1,
+    };
+  }
+
+  it("adds a zero count for each status without a count", () => {
+    const oppDetail = rawOpportunityInfo({});
+
+    initializeSupervisorReviewCounts(oppDetail, [
+      "Awaiting Review",
+      "Awaiting Revisions",
+    ]);
+
+    expect(oppDetail.supervisorReviewCounts).toEqual({
+      "Awaiting Review": 0,
+      "Awaiting Revisions": 0,
+    });
+  });
+
+  it("keeps existing counts", () => {
+    const oppDetail = rawOpportunityInfo({ "Awaiting Review": 2 });
+
+    initializeSupervisorReviewCounts(oppDetail, [
+      "Awaiting Review",
+      "Awaiting Revisions",
+    ]);
+
+    expect(oppDetail.supervisorReviewCounts).toEqual({
+      "Awaiting Review": 2,
+      "Awaiting Revisions": 0,
+    });
   });
 });

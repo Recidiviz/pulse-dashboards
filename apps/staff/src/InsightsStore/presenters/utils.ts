@@ -148,6 +148,21 @@ export function countRelevantOpportunities(
  * Increments `oppDetail.supervisorReviewCounts` by eligibility status label for every
  * opportunity found in any of `reviewTabTitles` within `oppsByTab`.
  */
+/**
+ * Adds a zero count for each review status that does not have a count yet, so
+ * those statuses still appear on the supervisor review card.
+ */
+export function initializeSupervisorReviewCounts(
+  oppDetail: RawOpportunityInfo,
+  statusLabels: string[],
+): void {
+  statusLabels.forEach((statusLabel) => {
+    if (oppDetail.supervisorReviewCounts) {
+      oppDetail.supervisorReviewCounts[statusLabel] ??= 0;
+    }
+  });
+}
+
 export function addSupervisorReviewCounts(
   oppDetail: RawOpportunityInfo,
   oppsByTab: Record<OpportunityTab, Opportunity[]>,
