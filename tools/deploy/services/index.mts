@@ -25,6 +25,7 @@ import {
   meetingsFrontend,
   meetingsMobileOta,
 } from "./meetings.mts";
+import { modulesBackend } from "./modules.mts";
 import {
   oppsBackend,
   oppsDemoFrontend,
@@ -55,6 +56,7 @@ export const services = {
   meetingsBackend,
   meetingsFrontend,
   meetingsMobileOta,
+  modulesBackend,
 } satisfies Record<string, ServiceDefinition>;
 
 export type ServiceKey = keyof typeof services;
