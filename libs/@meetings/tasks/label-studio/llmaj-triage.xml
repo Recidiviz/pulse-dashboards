@@ -1,0 +1,212 @@
+<!--
+  The labeling config of the LLMAJ triage Label Studio project, kept here as a
+  record. Label Studio runs the xml file pasted into the project's Settings >
+  Labeling Interface, and nothing in the repo reads this file at runtime, so
+  when you change the config in Label Studio, paste the new version here too.
+
+  The $field names come from LlmajTriageTaskSchema, and the control names must
+  match LLMAJ_TRIAGE_RESULT_FIELDS, both in
+  libs/@meetings/tasks/src/label-studio-llmaj-triage.ts;
+  __tests__/label-studio-llmaj-triage-config.test.ts checks both. Every
+  section can be graded: raters must grade the ones the judge graded BAD and
+  may grade the others. The audio player plays only in a project whose GCS
+  storage connection can sign the task's gs:// URI; anywhere else it shows a
+  load error.
+
+  Header clamps size to 1-5, so the small field labels set their size with
+  style instead. Header and HyperText fill in $field and $field.key
+  references inside a longer string. The summary line uses that to show the
+  meeting details without a Table (Table sorts its rows alphabetically and
+  takes up a lot of room), and each section's HyperText badge uses it to put
+  the judge's grade in a data-grade attribute, which the Style block colors.
+  It is an attribute rather than a class because "Not available" has a
+  space. That grade matches no color rule and keeps the gray base style.
+
+  The notes boxes hide the Add button: Label Studio saves text left in the box
+  when the rater submits, and transcription="true" keeps it editable after.
+
+  The instructions are a first draft to iterate on with the rater guide
+  (MM-643). They are Header and Text tags because this Label Studio's config
+  check rejects the Markdown tag.
+-->
+<View className="jr-page">
+  <Style>
+    .jr-page { background: #f3f5f8; padding: 16px; border-radius: 8px; }
+    .jr-instructions { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 8px; padding: 4px 20px 12px; margin: 12px 0 20px; line-height: 1.5; }
+    .jr-grid { display: flex; gap: 20px; align-items: flex-start; }
+    .jr-col { flex: 1; min-width: 0; }
+    .jr-side { position: sticky; top: 0; background: #fff; border: 1px solid #d0d7e2; border-radius: 8px; padding: 8px 16px 12px; }
+    .jr-transcript-scroll { max-height: calc(100vh - 260px); overflow-y: auto; }
+    .jr-section { background: #fff; border: 1px solid #d0d7e2; border-radius: 8px; padding: 12px 16px 16px; margin-bottom: 20px; }
+    .jr-section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .jr-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; background: #f0f0f0; color: #555; border: 1px solid #d9d9d9; }
+    .jr-badge[data-grade="BAD"] { background: #fff1f0; color: #a8071a; border-color: #ffa39e; }
+    .jr-badge[data-grade="PARTIAL"] { background: #fff7e6; color: #ad4e00; border-color: #ffd591; }
+    .jr-badge[data-grade="GOOD"] { background: #f6ffed; color: #237804; border-color: #b7eb8f; }
+    .jr-judge { background: #eef3fb; border-left: 4px solid #6f8fc7; border-radius: 6px; padding: 4px 14px 10px; margin-bottom: 12px; }
+    .jr-output { border-left: 4px solid #d0d7e2; padding: 0 0 0 14px; margin-bottom: 12px; }
+    .jr-review { border-top: 1px dashed #d0d7e2; padding-top: 4px; }
+  </Style>
+
+  <Header value="Did the LLM judge get it right?" size="4" style="margin: 4px 0 4px"/>
+  <Header value="$state_code &#183; $recording_date &#183; $meta.Duration &#183; Meeting $meeting_id" style="font-size: 13px; font-weight: 400; color: #555; margin: 0"/>
+
+  <View className="jr-instructions">
+    <Header value="How to review this meeting" style="font-size: 15px; font-weight: 600; margin: 12px 0 4px"/>
+    <Text name="instructions_intro" value="The LLM judge graded at least one section of this meeting BAD. Your job is to check the judge, not to grade the meeting from scratch. Each section shows what the judge said first, then the output it graded. The recording and transcript are on the right."/>
+    <Header value="For each section the judge graded BAD" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
+    <Text name="instructions_step_1" value="1. Check the judge's findings. Do the hallucinations and omissions that would make this section BAD really happen in the transcript? Focus on the findings that lead to the BAD rating. The smaller findings that aren't the cause of the BAD rating are optional to review; you can review them if something stands out to you that might actually rise to the level of BAD, in which case you can add notes in the free text box."/>
+    <Text name="instructions_step_2" value="2. Give your own grade, using the grade definitions below. You can agree with the judge's facts and still decide they don't rise to the level of BAD."/>
+    <Text name="instructions_step_3" value="3. Write a short note on why, especially when you disagree with the judge. You can use this space to mention any other relevant notes, including smaller errors."/>
+    <Text name="instructions_other_sections" value="You don't need to review sections the judge graded PARTIAL or GOOD, but if you notice one that should be BAD, grade it."/>
+    <Header value="The recording" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
+    <Text name="instructions_audio" value="You don't need to listen to the full recording. It's there in case you want to check something in the transcript."/>
+    <Header value="Can't grade" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
+    <Text name="instructions_cant_grade" value="Choose &quot;Can't grade&quot; only when you can't judge the section, for example when the transcript is too garbled to tell what was said, or the task is missing something it needs, such as an empty case note. Say what's wrong in the note."/>
+    <Collapse>
+      <Panel value="Grade definitions">
+        <Text name="grade_def_good" value="GOOD: The output is broadly accurate and only contains small distortions or inaccuracies. A caseworker reading it would have a reliable picture of the meeting. Note smaller mistakes in your note."/>
+        <Text name="grade_def_partial" value="PARTIAL: The output contains significant inaccuracies or problematic content, but nothing likely to cause real harm. &quot;Significant&quot; means something that makes a material difference. Slight mischaracterizations, speculation, timing mistakes that don't affect anything material, contradictions that context obviously resolves, and small exaggerations should be noted but don't rise to PARTIAL."/>
+        <Text name="grade_def_bad" value="BAD: Inaccurate in a way that could cause real harm to the client, or materially affect a high-stakes decision about a parole or probation violation, if it stayed in the system of record. For example, it misleads a caseworker into thinking the client said or did something they did not, or omits a critical safety issue, in a way that could plausibly lead to a return to prison for a violation, a change in risk level, another punitive action, or a safety risk. This includes incorrect information that could itself cause a violation, such as a wrong date that makes the client miss an important deadline. BAD is reserved for violations, criminal activity, conditions of supervision (such as completing programming or travel limits), and risk to physical safety. Errors in logistics, appointment dates or locations, transportation, which resources to use, or housing and employment status should be noted but graded GOOD or PARTIAL. Omissions almost never rise to BAD."/>
+        <Header value="Specific notes" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
+        <Text name="grade_note_1" value="- Almost all employment mistakes are PARTIAL at most. Only the employer name, employment status, or large differences in wages rise to PARTIAL."/>
+        <Text name="grade_note_2" value="- Almost all housing mistakes are PARTIAL at most. Only housing status (for example staying with family vs. renting, or temporary vs. permanent) and housing location rise to PARTIAL."/>
+        <Text name="grade_note_3" value="- Mistakes about financial obligations count as PARTIAL only if they relate to legal requirements."/>
+        <Text name="grade_note_4" value="- Wrongly saying the client traveled outside a city, county or state can be PARTIAL or even BAD, because travel is often restricted. Assume there may be travel restrictions unless the meeting says otherwise."/>
+        <Text name="grade_note_5" value="- CLARIFY items should never be the reason for a PARTIAL or BAD grade, even if the clarification is unnecessary."/>
+        <Text name="grade_note_6" value="- Omitted action items should be noted, but are almost never PARTIAL, unless there are no action items at all when there should be, which is PARTIAL."/>
+        <Text name="grade_note_7" value="- Wrongly assigned action items should be noted, but are almost never PARTIAL or BAD."/>
+        <Text name="grade_note_8" value="- Note, but don't grade down for, action items that may be superfluous (already done), conditional (&quot;update address if you move&quot; when the client isn't moving), unnecessary clarifications, or an empty deadline."/>
+      </Panel>
+    </Collapse>
+  </View>
+
+  <View className="jr-grid">
+    <!-- Left: one block per section: what the judge said, then the output it graded, then the rater's review -->
+    <View className="jr-col">
+
+      <View className="jr-section">
+        <View className="jr-section-title">
+          <Header value="Case note" size="5" style="margin: 0"/>
+          <HyperText name="judge_case_note_grade_badge" value="&lt;span class='jr-badge' data-grade='$judge_case_note_grade'&gt;Judge: $judge_case_note_grade&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
+        </View>
+        <View className="jr-judge">
+          <Header value="What the judge said" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_case_note_rationale_text" value="$judge_case_note_rationale"/>
+          <Header value="Hallucinations" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_case_note_hallucinations_text" value="$judge_case_note_hallucinations"/>
+          <Header value="Omissions" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_case_note_omissions_text" value="$judge_case_note_omissions"/>
+        </View>
+        <View className="jr-output">
+          <Header value="Case note (as generated)" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="case_note_text" value="$case_note"/>
+        </View>
+        <View className="jr-review">
+          <Header value="Are the judge's findings about BAD mistakes accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Choices name="case_note_findings_accuracy" toName="judge_case_note_rationale_text" choice="single" showInline="true">
+            <Choice value="All accurate" alias="ALL_ACCURATE"/>
+            <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
+            <Choice value="All inaccurate" alias="ALL_INACCURATE"/>
+          </Choices>
+          <Header value="Your grade" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Choices name="case_note_rater_grade" toName="judge_case_note_rationale_text" choice="single" showInline="true">
+            <Choice value="BAD" alias="BAD"/>
+            <Choice value="PARTIAL" alias="PARTIAL"/>
+            <Choice value="GOOD" alias="GOOD"/>
+            <Choice value="Can't grade" alias="OTHER"/>
+          </Choices>
+          <TextArea name="case_note_notes" toName="judge_case_note_rationale_text" placeholder="Why you agree or disagree with the judge, and any smaller errors (required for Can't grade)" rows="2" maxSubmissions="1" editable="true" transcription="true" showSubmitButton="false"/>
+        </View>
+      </View>
+
+      <View className="jr-section">
+        <View className="jr-section-title">
+          <Header value="Action items" size="5" style="margin: 0"/>
+          <HyperText name="judge_action_items_grade_badge" value="&lt;span class='jr-badge' data-grade='$judge_action_items_grade'&gt;Judge: $judge_action_items_grade&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
+        </View>
+        <View className="jr-judge">
+          <Header value="What the judge said" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_action_items_rationale_text" value="$judge_action_items_rationale"/>
+          <Header value="Hallucinations" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_action_items_hallucinations_text" value="$judge_action_items_hallucinations"/>
+          <Header value="Omissions" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_action_items_omissions_text" value="$judge_action_items_omissions"/>
+        </View>
+        <View className="jr-output">
+          <Header value="Action items (as generated)" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="action_items_text" value="$action_items"/>
+        </View>
+        <View className="jr-review">
+          <Header value="Are the judge's findings about BAD mistakes accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Choices name="action_items_findings_accuracy" toName="judge_action_items_rationale_text" choice="single" showInline="true">
+            <Choice value="All accurate" alias="ALL_ACCURATE"/>
+            <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
+            <Choice value="All inaccurate" alias="ALL_INACCURATE"/>
+          </Choices>
+          <Header value="Your grade" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Choices name="action_items_rater_grade" toName="judge_action_items_rationale_text" choice="single" showInline="true">
+            <Choice value="BAD" alias="BAD"/>
+            <Choice value="PARTIAL" alias="PARTIAL"/>
+            <Choice value="GOOD" alias="GOOD"/>
+            <Choice value="Can't grade" alias="OTHER"/>
+          </Choices>
+          <TextArea name="action_items_notes" toName="judge_action_items_rationale_text" placeholder="Why you agree or disagree with the judge, and any smaller errors (required for Can't grade)" rows="2" maxSubmissions="1" editable="true" transcription="true" showSubmitButton="false"/>
+        </View>
+      </View>
+
+      <View className="jr-section">
+        <View className="jr-section-title">
+          <Header value="Overall" size="5" style="margin: 0"/>
+          <HyperText name="judge_overall_grade_badge" value="&lt;span class='jr-badge' data-grade='$judge_overall_grade'&gt;Judge: $judge_overall_grade&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
+        </View>
+        <View className="jr-judge">
+          <Header value="What the judge said" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_overall_rationale_text" value="$judge_overall_rationale"/>
+          <Header value="Hallucinations" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_overall_hallucinations_text" value="$judge_overall_hallucinations"/>
+          <Header value="Omissions" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+          <Text name="judge_overall_omissions_text" value="$judge_overall_omissions"/>
+        </View>
+        <View className="jr-review">
+          <Header value="Are the judge's findings about BAD mistakes accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Choices name="overall_findings_accuracy" toName="judge_overall_rationale_text" choice="single" showInline="true">
+            <Choice value="All accurate" alias="ALL_ACCURATE"/>
+            <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
+            <Choice value="All inaccurate" alias="ALL_INACCURATE"/>
+          </Choices>
+          <Header value="Your grade" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Choices name="overall_rater_grade" toName="judge_overall_rationale_text" choice="single" showInline="true">
+            <Choice value="BAD" alias="BAD"/>
+            <Choice value="PARTIAL" alias="PARTIAL"/>
+            <Choice value="GOOD" alias="GOOD"/>
+            <Choice value="Can't grade" alias="OTHER"/>
+          </Choices>
+          <View visibleWhen="choice-selected" whenTagName="overall_rater_grade" whenChoiceValue="BAD,PARTIAL">
+            <Header value="Which section(s) does it apply to?" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+            <Choices name="overall_applies_to" toName="judge_overall_rationale_text" choice="multiple" showInline="true" required="true">
+              <Choice value="Case note" alias="CASE_NOTE"/>
+              <Choice value="Action items" alias="ACTION_ITEMS"/>
+              <Choice value="Neither" alias="NEITHER"/>
+            </Choices>
+          </View>
+          <TextArea name="overall_notes" toName="judge_overall_rationale_text" placeholder="Why you agree or disagree with the judge, and any smaller errors (required for Can't grade)" rows="2" maxSubmissions="1" editable="true" transcription="true" showSubmitButton="false"/>
+        </View>
+      </View>
+
+    </View>
+
+    <!-- Right: the recording stays at the top while the notes and transcript scroll under it -->
+    <View className="jr-col jr-side">
+      <Header value="Recording" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
+      <Header value="You don't need to listen. It's here in case you want to check something in the transcript." style="font-size: 12px; font-weight: 400; color: #777; margin: 0 0 6px"/>
+      <Audio name="audio" value="$audio"/>
+      <View className="jr-transcript-scroll">
+        <Header value="Staff notes typed during the meeting" style="font-size: 12px; font-weight: 600; color: #555; margin: 12px 0 2px"/>
+        <Text name="staff_notes_text" value="$staff_notes"/>
+        <Header value="Transcript" style="font-size: 12px; font-weight: 600; color: #555; margin: 12px 0 2px"/>
+        <Text name="transcript_text" value="$transcript"/>
+      </View>
+    </View>
+  </View>
+</View>

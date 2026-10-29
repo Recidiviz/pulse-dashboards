@@ -58,10 +58,12 @@ const stateCode = z.custom<StateCode>(
 // The two go to separate Label Studio projects.
 //
 // The task shows the judge's grade, rationale and findings for each section
-// next to the case note and action items the judge graded. The rater records
-// one verdict per flagged section, using the same outcomes as
-// MeetingReviewOutcome. For example, a meeting whose case note the judge
-// graded BAD exports a task like (fields abridged):
+// next to the case note and action items the judge graded. The rater grades
+// each section the judge flagged and may grade the others. On a flagged
+// section the grade decodes to a verdict with the same outcomes as
+// MeetingReviewOutcome; on an unflagged section it stays a plain grade. For
+// example, a meeting whose case note the judge graded BAD exports a task like
+// (fields abridged):
 //
 //   meeting_id: "c3f1..."
 //   case_note_flagged: true
@@ -70,7 +72,7 @@ const stateCode = z.custom<StateCode>(
 //   judge_case_note_hallucinations: "- Says the client starts work Monday; ..."
 //   case_note: "Met with the client to review ..."
 //
-// and a rater who disagrees produces a verdict like:
+// and a rater who grades the case note PARTIAL produces a verdict like:
 //
 //   { section: "CASE_NOTE", outcome: "NOT_BAD", correctedGrade: "PARTIAL",
 //     notes: "The start date is in the transcript at 12:40." }
@@ -213,36 +215,68 @@ export const LlmajTriageTaskSchema = z
 export type LlmajTriageTask = z.infer<typeof LlmajTriageTaskSchema>;
 
 /**
- * Names of the labeling config's result controls for each section. Each
- * outcome and corrected-grade Choice uses the Prisma enum name as its alias,
- * so the stored value maps straight onto MeetingReviewOutcome.
+ * The aliases of a section's grade choices, which is what Label Studio
+ * exports. On a flagged section, BAD decodes to a CONFIRMED_BAD verdict, GOOD
+ * or PARTIAL to NOT_BAD with that corrected grade, and OTHER (shown as "Can't
+ * grade") to OTHER.
+ */
+export const LLMAJ_TRIAGE_GRADE = {
+  BAD: "BAD",
+  PARTIAL: "PARTIAL",
+  GOOD: "GOOD",
+  OTHER: "OTHER",
+} as const;
+
+/**
+ * The aliases of a section's findings-accuracy choices: whether the judge's
+ * findings about BAD mistakes are true to the transcript, asked before the
+ * rater grades the section. It separates the judge getting the facts wrong
+ * from a disagreement about whether true facts are BAD. The question is about
+ * BAD-level findings only, so it has no answer for a section without any.
+ */
+export const LLMAJ_TRIAGE_FINDINGS_ACCURACY = {
+  ALL_ACCURATE: "ALL_ACCURATE",
+  SOME_INACCURATE: "SOME_INACCURATE",
+  ALL_INACCURATE: "ALL_INACCURATE",
+} as const;
+
+/**
+ * Names of the labeling config's result controls for each section. The grade
+ * controls are not named like the full-review project's overall_grade slot,
+ * because the admin code reads full-review grades by slot name.
  */
 export const LLMAJ_TRIAGE_RESULT_FIELDS = {
   [SECTION.CASE_NOTE]: {
-    outcome: "case_note_outcome",
-    correctedGrade: "case_note_corrected_grade",
+    findingsAccuracy: "case_note_findings_accuracy",
+    grade: "case_note_rater_grade",
     notes: "case_note_notes",
   },
   [SECTION.ACTION_ITEMS]: {
-    outcome: "action_items_outcome",
-    correctedGrade: "action_items_corrected_grade",
+    findingsAccuracy: "action_items_findings_accuracy",
+    grade: "action_items_rater_grade",
     notes: "action_items_notes",
   },
   [SECTION.OVERALL]: {
-    outcome: "overall_outcome",
-    correctedGrade: "overall_corrected_grade",
+    findingsAccuracy: "overall_findings_accuracy",
+    grade: "overall_rater_grade",
     notes: "overall_notes",
     /**
      * A required multi-select of CASE_NOTE, ACTION_ITEMS and
-     * APPLIES_TO_NEITHER. Label Studio exports nothing for an empty
-     * multi-select, so "neither" needs its own choice to tell it apart from
-     * an unanswered question.
+     * APPLIES_TO_NEITHER, shown when the overall grade is BAD or PARTIAL.
+     * Label Studio exports nothing for an empty multi-select, so "neither"
+     * needs its own choice to tell it apart from an unanswered question. A
+     * GOOD overall grade has no applies-to and decodes as neither.
      */
     appliesTo: "overall_applies_to",
   },
 } as const satisfies Record<
   ReviewSection,
-  { outcome: string; correctedGrade: string; notes: string; appliesTo?: string }
+  {
+    findingsAccuracy: string;
+    grade: string;
+    notes: string;
+    appliesTo?: string;
+  }
 >;
 
 /**

@@ -1,0 +1,194 @@
+<!--
+  The labeling config of the full-review Label Studio project, kept here as a
+  record. Label Studio runs the xml file pasted into the project's Settings >
+  Labeling Interface, and nothing in the repo reads this file at runtime, so
+  when you change the config in Label Studio, paste the new version here too.
+
+  The $field names come from buildLabelStudioTask in
+  libs/@meetings/tasks/src/label-studio.ts. The admin Flagged Meetings code
+  reads results by control name (LS_SLOT_TO_DIMENSION and
+  LS_TRANSCRIPT_QUALITY_FIELD_NAME in
+  libs/@meetings/tasks/src/admin/label-studio-grades.ts), so renaming
+  overall_grade, case_note_accuracy, action_items_accuracy or
+  transcript_quality breaks it.
+-->
+<View>
+
+  <Style>
+    .section {
+      margin-bottom: 20px;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .instructions {
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .grade-legend {
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .grade-bad {
+      color: #c0392b;
+      font-weight: bold;
+    }
+    .grade-partial {
+      color: #e67e22;
+      font-weight: bold;
+    }
+    .grade-good {
+      color: #27ae60;
+      font-weight: bold;
+    }
+  </Style>
+
+  <!-- ===== INSTRUCTIONS ===== -->
+  <View className="instructions">
+    <Header value="📋 Evaluator Instructions"/>
+    <Text name="instructions" value="Listen to the audio recording alongside each section of this document. For each section, select the appropriate grade and add comments where needed."/>
+    <View style="margin-top:12px;"/>
+    <Text name="grade_legend_label" value="Grading scale:"/>
+    <Text name="grade_good_label" value="GOOD — The output is broadly accurate and only contains small distortions or inaccuracies. A caseworker reading this note would have a reliable picture of the meeting. Mistakes that don't rise to the level of PARTIAL/BAD should still be noted in free text feedback."/>
+    <View style="margin-top:12px;"/>
+    <Text name="grade_partial_label" value="PARTIAL — The output contains significant inaccuracies or problematic content, but nothing likely to cause real harm. &quot;Significant&quot; here means something that makes a material difference. Slight mischaracterizations, speculation, mistakes about timing that don't affect anything material, contradictions that are obviously resolved from context, or small exaggerations should be noted in the free text output but don't rise to the level of PARTIAL."/>
+    <View style="margin-top:12px;"/>
+    <Text name="grade_bad_label" value="BAD — Not just inaccurate, but inaccurate in a way that could cause real harm to the client or materially affect a high-stakes decision related to a parole/probation violation if it stayed in the system of record. For example: it misleads a caseworker into thinking the client said or did something they did not, or omits a critical safety issue, in a way that could plausibly lead to a consequence like being sent back to prison for a parole violation, a change in risk level, another punitive action against the client, or a safety risk. This also includes incorrect information that itself could cause a violation to occur (e.g. an incorrect date that could cause an important deadline to be missed). BAD is reserved for the highest-scrutiny categories: violations, criminal activity, conditions of supervision (e.g. completing programming or failing to comply, travel outside certain areas), or risk to physical safety. Errors outside of that — e.g. logistics, appointment dates or locations, transportation details, which resources to use, housing/employment status, etc. — should be noted but graded GOOD or PARTIAL. Omissions almost never rise to the level of BAD."/>
+    <View style="margin-top:12px;"/>
+    <Text name="grade_na_label" value="N/A — Use only when the audio was not clear enough to judge the output. Do not use N/A just because you disagree with the output."/>
+    <View style="margin-top:12px;"/>
+    <Text name="grade_specific_notes" value="Specific notes and clarifications:"/>
+    <View style="padding-left:16px;">
+  		<Text name="specific_note_1" value="• Almost all mistakes related to employment are PARTIAL at most, as they wouldn’t impact a violation. Within employment, the only things that rise to the level of PARTIAL are mistakes in employer name or employment status, or egregious differences in things like wages. Other mistakes related to employment (mischaracterizing the company type, etc.) should be noted but don’t rise to PARTIAL."/>
+		<Text name="specific_note_2" value="• Similarly, almost all mistakes related to housing are PARTIAL at most. Only housing status (including e.g. whether they’re staying with family vs. renting, temporary vs. permanent housing) and housing location rise to the level of PARTIAL; other mistakes should be noted but don’t rise to that level."/>
+  		<Text name="specific_note_3" value="• Mistakes related to financial obligations only count as PARTIAL if they're related to legal requirements."/>
+  		<Text name="specific_note_4" value="• Mistakenly claiming that a client traveled outside a city/county/state can count as at least a PARTIAL mistake, if not BAD, because there are often travel restrictions. (You don’t need to know that particular client’s terms of supervision; unless specifically stated otherwise you can assume that there may be travel restrictions when you give your grade.)"/>
+  		<Text name="specific_note_5" value="• CLARIFY items should never be the reason for a PARTIAL/BAD grade, even if the issue is already clear and the clarification is unnecessary. In this case simply note this but don't use it to penalize the grade."/>
+  		<Text name="specific_note_6" value="• Omitted action items should be noted, but almost never rise to the level of PARTIAL, unless there are no action items at all even though there should be, in which case the grade should be PARTIAL."/>
+  		<Text name="specific_note_7" value="• Incorrect assignments of action items should be noted, almost never rise to the level of PARTIAL or BAD."/>
+  		<Text name="specific_note_8" value="• Mistakes in action items related to the following should be noted but don’t count against the grade: potentially superfluous items (e.g. they may have already been completed), conditional items (e.g. &quot;update address if you move&quot; when the client doesn't plan to move), clarification items (even if the issue doesn't need clarification), an empty deadline field."/>
+	</View>
+    <View style="margin-top:12px;"/>
+    <Text name="instructions_end" value="At the end, record your Overall Grade across all outputs together."/>
+  </View>
+
+  <!-- ===== METADATA ===== -->
+  <View className="section">
+    <Header value="Meeting Info"/>
+    <Table name="meta" value="$meta"/>
+  </View>
+
+  <!-- ===== AUDIO ===== -->
+  <View className="section">
+    <Header value="🎙 Audio Recording"/>
+    <Audio name="audio" value="$audio"/>
+  </View>
+
+  <!-- ===== TRANSCRIPT ===== -->
+  <View className="section">
+    <Header value="📝 Transcripts"/>
+
+    <Header value="Is the audio clear?"/>
+    <Text name="audio_audible_hint" value="If the recording can't be understood, the transcripts and every output derived from them are likely unusable — select &quot;No&quot; and grade the remaining sections N/A."/>
+    <Choices name="audio_audible" toName="audio" choice="single">
+      <Choice value="Yes — audio is clear" alias="YES"/>
+      <Choice value="Partially — some portions are unclear" alias="PARTIAL"/>
+      <Choice value="No — audio is not clear enough to evaluate" alias="NO"/>
+    </Choices>
+
+    <Text name="transcript_compare_hint" value="Listen to the audio and review both transcripts. Note any errors in the comments below."/>
+
+    <View style="display:flex; gap:16px; margin-bottom:12px;">
+      <View style="flex:1; padding:12px; border:1px solid #e0e0e0; border-radius:6px; background:#fff;">
+        <Header value="AssemblyAI"/>
+        <Text name="transcript_assemblyai" value="$transcript_assemblyai"/>
+      </View>
+      <View style="flex:1; padding:12px; border:1px solid #e0e0e0; border-radius:6px; background:#fff;">
+        <Header value="Deepgram"/>
+        <Text name="transcript_deepgram" value="$transcript_deepgram"/>
+      </View>
+    </View>
+
+    <Header value="Which transcript is more accurate?"/>
+    <Choices name="transcript_better" toName="audio" choice="single">
+      <Choice value="AssemblyAI" alias="ASSEMBLYAI"/>
+      <Choice value="Deepgram" alias="DEEPGRAM"/>
+      <Choice value="About the same" alias="ABOUT_THE_SAME"/>
+      <Choice value="Both have significant errors" alias="NONE"/>
+      <Choice value="N/A: Only one transcript generated" alias="SINGLE_PROVIDER"/>
+    </Choices>
+
+    <Header value="Overall Transcript Grade"/>
+    <Text name="transcript_grade_hint" value="Grade based on the transcript we selected as best ($transcript_best_provider, confidence: $transcript_best_confidence)."/>
+    <Choices name="transcript_quality" toName="audio" choice="single">
+      <Choice value="GOOD — Accurate, only minor errors" alias="GOOD"/>
+      <Choice value="PARTIAL — Significant errors but not harmful" alias="PARTIAL"/>
+      <Choice value="BAD — Errors severe enough to cause real harm to the client" alias="BAD"/>
+      <Choice value="N/A — Audio not clear enough to judge" alias="N/A"/>
+    </Choices>
+
+    <TextArea name="transcript_notes" toName="audio"
+              placeholder="Note any errors or differences between the two transcripts..."
+              rows="2"/>
+  </View>
+
+  <!-- ===== CASE NOTE ===== -->
+  <View className="section">
+    <Header value="📋 Case Note"/>
+    <Text name="case_note_display" value="$case_note"/>
+
+    <Header value="Case Note Grade"/>
+    <Text name="case_note_grade_hint" value="Does the case note accurately reflect what was discussed? Would any inaccuracies mislead a caseworker reading it later?"/>
+    <Choices name="case_note_accuracy" toName="case_note_display" choice="single">
+      <Choice value="GOOD — Broadly accurate, only minor distortions" alias="GOOD"/>
+      <Choice value="PARTIAL — Significant inaccuracies, unlikely to cause real harm" alias="PARTIAL"/>
+      <Choice value="BAD — Inaccurate in a way that could cause real harm to the client" alias="BAD"/>
+      <Choice value="N/A — Audio not clear enough to judge" alias="N/A"/>
+    </Choices>
+
+    <TextArea name="case_note_notes" toName="case_note_display"
+              placeholder="What is missing, incorrect, or potentially harmful?"
+              rows="3"/>
+  </View>
+
+  <!-- ===== ACTION ITEMS ===== -->
+  <View className="section">
+    <Header value="✅ Action Items"/>
+    <Text name="action_items_display" value="$action_items"/>
+
+    <Header value="Action Items Grade"/>
+    <Text name="action_items_grade_hint" value="Are the action items complete and correctly attributed (PO vs. client)? Would any missing or wrong items cause a caseworker to miss a follow-up?"/>
+    <Choices name="action_items_accuracy" toName="action_items_display" choice="single">
+      <Choice value="GOOD — Broadly accurate, only minor distortions" alias="GOOD"/>
+      <Choice value="PARTIAL — Significant inaccuracies, unlikely to cause real harm" alias="PARTIAL"/>
+      <Choice value="BAD — Missing/wrong items that could cause real harm to the client" alias="BAD"/>
+      <Choice value="N/A — Audio not clear enough to judge" alias="N/A"/>
+    </Choices>
+
+    <TextArea name="action_items_notes" toName="action_items_display"
+              placeholder="Which items are missing, wrong, or misattributed?"
+              rows="2"/>
+  </View>
+
+  <!-- ===== OVERALL ===== -->
+  <View className="section">
+    <Header value="⭐ Overall Grade"/>
+    <Text name="overall_anchor" value="Give the whole output the rating of its worst section (case note, action items). If any section was BAD, the overall grade is BAD."/>
+    <Choices name="overall_grade" toName="overall_anchor" choice="single">
+      <Choice value="GOOD — Outputs were broadly accurate; only small distortions that could appear in human-taken notes" alias="GOOD"/>
+      <Choice value="PARTIAL — Significant inaccuracies or omissions, but nothing likely to cause real harm" alias="PARTIAL"/>
+      <Choice value="BAD — One or more outputs could cause real harm to the client" alias="BAD"/>
+      <Choice value="N/A — Audio not clear enough to judge" alias="N/A"/>
+    </Choices>
+    <TextArea name="overall_notes" toName="overall_anchor"
+              placeholder="Any overall comments..."
+              rows="3"/>
+  </View>
+
+</View>
