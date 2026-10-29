@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -38,8 +37,8 @@ import { LearnMoreModal, LearnMoreSheet } from "./ui/LearnMore";
 
 export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
   const { authorize, error, clearCredentials } = useAuth0();
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const [learnMoreModalVisible, setLearnMoreModalVisible] = useState(false);
+  const [learnMoreSheetVisible, setLearnMoreSheetVisible] = useState(false);
   const [accessDeniedMessage, setAccessDeniedMessage] = useState<
     string | undefined
   >(undefined);
@@ -92,7 +91,7 @@ export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
         break;
       case "ios":
       case "android":
-        bottomSheetRef.current?.expand();
+        setLearnMoreSheetVisible(true);
         break;
     }
   };
@@ -154,7 +153,10 @@ export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
         visible={learnMoreModalVisible}
         onClose={() => setLearnMoreModalVisible(false)}
       />
-      <LearnMoreSheet ref={bottomSheetRef} />
+      <LearnMoreSheet
+        visible={learnMoreSheetVisible}
+        onClose={() => setLearnMoreSheetVisible(false)}
+      />
     </SafeAreaView>
   );
 }

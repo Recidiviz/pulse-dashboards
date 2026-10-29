@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -60,13 +59,11 @@ export function AuthenticatedContent() {
   return (
     <NewRecordingProvider>
       <SafeAreaProvider>
-        <BottomSheetModalProvider>
-          <DrawerNavigator />
-          <MeetingModal />
-          <AudioUpload />
-          <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
-          <FeedbackLauncher onPress={openMessenger} />
-        </BottomSheetModalProvider>
+        <DrawerNavigator />
+        <MeetingModal />
+        <AudioUpload />
+        <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
+        <FeedbackLauncher onPress={openMessenger} />
       </SafeAreaProvider>
     </NewRecordingProvider>
   );

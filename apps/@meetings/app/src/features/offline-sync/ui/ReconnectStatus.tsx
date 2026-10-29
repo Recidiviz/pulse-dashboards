@@ -15,13 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 import clsx from "clsx";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ImageBackground,
@@ -36,7 +31,6 @@ import {
   ChevronUpIcon,
   XIcon,
 } from "react-native-heroicons/solid";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import simplur from "simplur";
 import { match } from "ts-pattern";
 
@@ -55,6 +49,7 @@ import { Expandable } from "~@meetings/app/shared/ui/Expandable";
 import { FadeContainer } from "~@meetings/app/shared/ui/FadeContainer";
 import { FloatingCard } from "~@meetings/app/shared/ui/FloatingCard";
 import { HorizontalDivider } from "~@meetings/app/shared/ui/HorizontalDivider";
+import { Sheet, SheetScrollView } from "~@meetings/app/shared/ui/Sheet";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useUploadTimeRemaining } from "../lib/useUploadTimeRemaining";
@@ -201,8 +196,6 @@ export function ReconnectStatus({
   const [isExpanded, setIsExpanded] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
-  const insets = useSafeAreaInsets();
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { uploads, activeUploadedBytes, activeTotalBytes } =
     useOfflineUploads();
   const timeRemaining = useUploadTimeRemaining(
@@ -212,15 +205,7 @@ export function ReconnectStatus({
   const { isOnline } = useIsOnline();
   const { clear: clearUploadStatuses } = useReconnectUploadStore();
 
-  const toggleExpanded = () => {
-    if (isExpanded) {
-      bottomSheetRef.current?.dismiss();
-      setIsExpanded(false);
-    } else {
-      bottomSheetRef.current?.present();
-      setIsExpanded(true);
-    }
-  };
+  const toggleExpanded = () => setIsExpanded((expanded) => !expanded);
 
   // Prevent jumpy scrollbar appearing before the expand animation finishes.
   useEffect(() => {
@@ -243,7 +228,6 @@ export function ReconnectStatus({
       // before we're actually done dequeueing our events
       if (uploadsComplete && !isVisible) {
         clearUploadStatuses();
-        bottomSheetRef.current?.dismiss();
         setIsExpanded(false);
       }
     },
@@ -258,7 +242,7 @@ export function ReconnectStatus({
   );
 
   const dismiss = () => {
-    bottomSheetRef.current?.dismiss();
+    setIsExpanded(false);
     setIsDismissed(true);
   };
 
@@ -385,30 +369,16 @@ export function ReconnectStatus({
             {header}
           </FloatingCard>
         </FadeContainer>
-        <BottomSheetModal
-          ref={bottomSheetRef}
-          enableDynamicSizing
-          enablePanDownToClose
-          enableContentPanningGesture
-          onDismiss={() => setIsExpanded(false)}
-          handleComponent={null}
-          backdropComponent={(props) => (
-            <BottomSheetBackdrop
-              {...props}
-              appearsOnIndex={0}
-              disappearsOnIndex={-1}
-              opacity={0.5}
-              pressBehavior="close"
-            />
-          )}
+        <Sheet
+          visible={isExpanded}
+          onClose={() => setIsExpanded(false)}
+          showDragIndicator={false}
         >
-          <BottomSheetView
-            style={{ padding: 20, paddingBottom: insets.bottom + 20 }}
-          >
-            <View className="mb-5">{header}</View>
+          <View className="p-5 pb-0">{header}</View>
+          <SheetScrollView contentContainerClassName="p-5">
             {rowContent}
-          </BottomSheetView>
-        </BottomSheetModal>
+          </SheetScrollView>
+        </Sheet>
       </>
     );
   }

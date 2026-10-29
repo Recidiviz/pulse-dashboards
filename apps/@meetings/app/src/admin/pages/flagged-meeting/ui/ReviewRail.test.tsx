@@ -337,8 +337,9 @@ describe("ReviewRail", () => {
 
     expect(screen.getByText("Record outcome")).toBeTruthy();
     expect(
-      screen.getByRole("radio", { name: /Confirmed BAD/ }).props
-        .accessibilityState.checked,
+      screen.getByRole("radio", { name: /Confirmed BAD/ }).props[
+        "accessibilityState"
+      ].checked,
     ).toBe(true);
   });
 

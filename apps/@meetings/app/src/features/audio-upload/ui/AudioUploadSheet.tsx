@@ -15,19 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { format } from "date-fns";
 import { ComponentProps, useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
-import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
-import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import NotesSvg from "~@meetings/app/shared/assets/icons/notes.svg";
 import { Button } from "~@meetings/app/shared/ui/Button";
+import { Sheet, SheetScrollView } from "~@meetings/app/shared/ui/Sheet";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useAudioUploadStore } from "../model/store";
@@ -35,7 +29,7 @@ import { RawFileInfo } from "../model/types";
 import { useFilePicker } from "../model/useFilePicker";
 import { FileCard } from "./FileCard";
 import { NotesSheet } from "./NotesSheet";
-import { PickerTrigger } from "./PickerTrigger";
+import { RecordingDateTimeFields } from "./RecordingDateTimeFields";
 import { RecordingDateTimePicker } from "./RecordingDateTimePicker";
 
 type AudioUploadSheetProps = {
@@ -43,19 +37,28 @@ type AudioUploadSheetProps = {
   onRemoveFile: () => Promise<void>;
   onConfirm: () => Promise<void>;
   onCancel: () => void;
+  onScreenChange: (isOnScreen: boolean) => void;
 };
 
-type PickerMode = ComponentProps<typeof RecordingDateTimePicker>["mode"];
+type PickerMode = NonNullable<
+  ComponentProps<typeof RecordingDateTimePicker>["mode"]
+>;
 
 export function AudioUploadSheet({
   onAddFile,
   onRemoveFile,
   onConfirm,
   onCancel,
+  onScreenChange,
 }: AudioUploadSheetProps) {
   const [isConfirming, setIsConfirming] = useState(false);
-  const [pickerMode, setPickerMode] = useState<PickerMode>(null);
-  const [isNotesSheetOpen, setIsNotesSheetOpen] = useState(false);
+  // "closing" until the notes have animated out
+  const [notesSheet, setNotesSheet] = useState<"open" | "closing" | null>(null);
+  const [pickerSheet, setPickerSheet] = useState<{
+    mode: PickerMode;
+    isClosing: boolean;
+  } | null>(null);
+  const isIOS = Platform.OS === "ios";
   const {
     meetingId,
     status,
@@ -100,6 +103,19 @@ export function AudioUploadSheet({
     onCancel();
   };
 
+  // Hidden while the file picker, a dialog or the notes are open.
+  const isSheetVisible =
+    status !== "selecting" &&
+    dialog === null &&
+    notesSheet === null &&
+    !(isIOS && pickerSheet !== null);
+
+  useEffect(() => {
+    if (isSheetVisible) onScreenChange(true);
+  }, [isSheetVisible, onScreenChange]);
+
+  useEffect(() => () => onScreenChange(false), [onScreenChange]);
+
   const canConfirm =
     status === "uploaded" &&
     file !== null &&
@@ -109,23 +125,14 @@ export function AudioUploadSheet({
 
   return (
     <>
-      <BottomSheet
-        enableDynamicSizing
-        handleComponent={null}
-        enableContentPanningGesture={false}
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            opacity={0.5}
-            pressBehavior="collapse"
-            onPress={onCancel}
-          />
-        )}
+      <Sheet
+        visible={isSheetVisible}
+        onClose={onCancel}
+        onDismissed={() => onScreenChange(false)}
+        showDragIndicator={false}
       >
-        <BottomSheetView>
-          <View className="pb-safe-offset-4 p-6">
+        <SheetScrollView>
+          <View className="p-6">
             <View className="mb-1 flex-row items-center justify-between">
               <Typography variant="heading-4">Upload audio</Typography>
               <Button
@@ -143,31 +150,9 @@ export function AudioUploadSheet({
             <Typography variant="body-s-regular" className="mt-5 !text-primary">
               Date and time of the meeting recording
             </Typography>
-            <View className="mt-4 flex-row gap-3">
-              <PickerTrigger
-                icon={CalendarIcon}
-                onPress={() => setPickerMode("date")}
-              >
-                {recordingDate
-                  ? format(recordingDate, "MMM d, yyyy")
-                  : "Select date"}
-              </PickerTrigger>
-              <PickerTrigger
-                icon={ClockIcon}
-                onPress={() => setPickerMode("time")}
-              >
-                {recordingTime
-                  ? format(recordingTime, "h:mm a")
-                  : "Pick a time"}
-              </PickerTrigger>
-            </View>
-            <RecordingDateTimePicker
-              date={recordingDate}
-              time={recordingTime}
-              mode={pickerMode}
-              onClose={() => setPickerMode(null)}
-              onDateChange={setRecordingDate}
-              onTimeChange={setRecordingTime}
+            <RecordingDateTimeFields
+              className="mt-4"
+              onPick={(mode) => setPickerSheet({ mode, isClosing: false })}
             />
 
             {file && (
@@ -201,7 +186,7 @@ export function AudioUploadSheet({
                 <Button
                   variant="secondary"
                   className="ml-auto px-3 py-2"
-                  onPress={() => setIsNotesSheetOpen(true)}
+                  onPress={() => setNotesSheet("open")}
                 >
                   Add
                 </Button>
@@ -217,11 +202,28 @@ export function AudioUploadSheet({
               Confirm
             </Button>
           </View>
-        </BottomSheetView>
-      </BottomSheet>
-      {isNotesSheetOpen && (
-        <NotesSheet onClose={() => setIsNotesSheetOpen(false)} />
+        </SheetScrollView>
+      </Sheet>
+      {Platform.OS !== "web" && (
+        <RecordingDateTimePicker
+          date={recordingDate}
+          time={recordingTime}
+          mode={pickerSheet && !pickerSheet.isClosing ? pickerSheet.mode : null}
+          onClose={() =>
+            setPickerSheet((sheet) =>
+              sheet && isIOS ? { ...sheet, isClosing: true } : null,
+            )
+          }
+          onDismissed={() => setPickerSheet(null)}
+          onDateChange={setRecordingDate}
+          onTimeChange={setRecordingTime}
+        />
       )}
+      <NotesSheet
+        visible={notesSheet === "open"}
+        onClose={() => setNotesSheet("closing")}
+        onDismissed={() => setNotesSheet(null)}
+      />
     </>
   );
 }

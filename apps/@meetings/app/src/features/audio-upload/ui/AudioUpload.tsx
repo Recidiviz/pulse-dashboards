@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useState } from "react";
 import { Platform } from "react-native";
 import { useWindowDimensions } from "react-native";
 
@@ -33,6 +34,7 @@ export function AudioUpload() {
   const audioUpload = useAudioUpload();
   const status = useAudioUploadStore((s) => s.status);
   const dialog = useAudioUploadStore((s) => s.dialog);
+  const [isSheetOnScreen, setIsSheetOnScreen] = useState(false);
 
   if (!status) return null;
 
@@ -51,28 +53,35 @@ export function AudioUpload() {
   const isUploadModalVisible =
     isWeb && !isDialogVisible && width >= mdBreakpoint;
   const isBottomSheetVisible = isWeb ? width < mdBreakpoint : true;
+  // iOS won't present a dialog while the sheet is still animating out.
+  const visibleDialog = isSheetOnScreen ? null : dialog;
 
   return (
     <>
       {isUploadModalVisible && <AudioUploadModal {...contentHandlers} />}
 
-      {isBottomSheetVisible && <AudioUploadSheet {...contentHandlers} />}
+      {isBottomSheetVisible && (
+        <AudioUploadSheet
+          {...contentHandlers}
+          onScreenChange={setIsSheetOnScreen}
+        />
+      )}
 
-      {dialog === "cancel" && (
+      {visibleDialog === "cancel" && (
         <DiscardUploadModal
           onContinue={audioUpload.continueUpload}
           onDiscard={audioUpload.discardUpload}
         />
       )}
 
-      {dialog === "error" && (
+      {visibleDialog === "error" && (
         <UploadErrorModal
           onClose={audioUpload.discardUpload}
           onRetry={audioUpload.confirmUpload}
         />
       )}
 
-      {dialog === "success" && (
+      {visibleDialog === "success" && (
         <UploadSuccessModal onClose={audioUpload.closeModal} />
       )}
     </>

@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useRef } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
@@ -36,7 +35,7 @@ type Props = {
 };
 
 export function MeetingCaseNoteSummary({ person }: Props) {
-  const sheetRef = useRef<BottomSheetModal>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { stateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();
@@ -69,11 +68,12 @@ export function MeetingCaseNoteSummary({ person }: Props) {
     <>
       <CaseNoteSummaryCard
         segments={segments}
-        onPress={() => sheetRef.current?.present()}
+        onPress={() => setIsSheetOpen(true)}
         lastUpdatedAt={lastUpdatedAt}
       />
       <CaseNoteSummarySheet
-        ref={sheetRef}
+        visible={isSheetOpen}
+        onClose={() => setIsSheetOpen(false)}
         segments={segments}
         lastUpdatedAt={lastUpdatedAt}
       />

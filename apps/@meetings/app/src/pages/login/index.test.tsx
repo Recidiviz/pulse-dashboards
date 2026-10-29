@@ -31,8 +31,8 @@ jest.mock("~@meetings/app/shared/lib/platform/useSetDocumentTitle", () => ({
   useSetDocumentTitle: () => null,
 }));
 
-// Mock out the "Learn more" sheet/modal - it pulls in @gorhom/bottom-sheet,
-// which is unrelated to what this file's tests cover.
+// Mock out the "Learn more" sheet/modal - it pulls in native @expo/ui views,
+// which are unrelated to what this file's tests cover.
 jest.mock("./ui/LearnMore", () => ({
   LearnMoreModal: () => null,
   LearnMoreSheet: () => null,

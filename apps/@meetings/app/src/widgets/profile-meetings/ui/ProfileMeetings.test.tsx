@@ -107,7 +107,10 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: jest.fn(), goBack: jest.fn() }),
   useIsFocused: () => false,
-  Link: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock("~@meetings/app/shared/ui/BlockLink", () => ({
+  BlockLink: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 jest.mock("react-native-safe-area-context", () => ({

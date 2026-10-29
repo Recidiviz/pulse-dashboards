@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
@@ -49,7 +48,7 @@ export const NewMeeting = ({
   header,
 }: Props) => {
   const insets = useSafeAreaInsets();
-  const notepadSheetRef = useRef<BottomSheetModal>(null);
+  const [isNotepadOpen, setIsNotepadOpen] = useState(false);
 
   const { meetingType, meetingTypeCategory, note, setNote, controlsDisabled } =
     useActiveMeetingStore();
@@ -91,12 +90,13 @@ export const NewMeeting = ({
         <View className="flex-1 gap-4 bg-secondary px-4 pt-4">
           <NotepadCard
             note={note ?? ""}
-            onPress={() => notepadSheetRef.current?.present()}
+            onPress={() => setIsNotepadOpen(true)}
           />
           <NotepadSheet
             note={note ?? ""}
             onConfirm={setNote}
-            ref={notepadSheetRef}
+            visible={isNotepadOpen}
+            onClose={() => setIsNotepadOpen(false)}
           />
           <MeetingCaseNoteSummary person={person} />
         </View>

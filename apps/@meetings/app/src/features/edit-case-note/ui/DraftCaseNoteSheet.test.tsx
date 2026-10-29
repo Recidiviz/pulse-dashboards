@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { createRef } from "react";
 
 import { DraftCaseNoteSheet } from "./DraftCaseNoteSheet";
 
@@ -35,18 +33,14 @@ jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
   useSnackbar: () => ({ showSnackbar: jest.fn(), isShowing: false }),
 }));
 
-jest.mock("react-native-safe-area-context", () => ({
-  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-}));
-
 jest.mock("@react-native-clipboard/clipboard", () => ({
   __esModule: true,
   default: { setString: jest.fn() },
 }));
 
-jest.mock("@gorhom/bottom-sheet", () =>
-  require("~@meetings/app/tests/mocks/bottomSheet").bottomSheetMock(),
-);
+jest.mock("~@meetings/app/shared/ui/Sheet", () => ({
+  Sheet: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 jest.mock("react-native-heroicons/outline/ChevronLeftIcon", () => ({
   __esModule: true,
@@ -58,6 +52,7 @@ jest.mock("react-native-heroicons/outline/DocumentDuplicateIcon", () => ({
 }));
 
 const NOTES = "Draft case note text";
+const mockOnClose = jest.fn();
 
 function renderSheet(canEdit?: boolean) {
   render(
@@ -66,7 +61,8 @@ function renderSheet(canEdit?: boolean) {
       notes={NOTES}
       clientName="Test Person"
       meetingDate={new Date("2026-01-01T10:00:00Z")}
-      ref={createRef<BottomSheetModal>()}
+      visible
+      onClose={mockOnClose}
       personId="person-1"
       canEdit={canEdit}
     />,
@@ -82,7 +78,7 @@ describe("DraftCaseNoteSheet", () => {
     it("makes the note read-only and shows only a Close button", () => {
       renderSheet(false);
 
-      expect(screen.getByDisplayValue(NOTES).props.readOnly).toBe(true);
+      expect(screen.getByDisplayValue(NOTES).props["readOnly"]).toBe(true);
       expect(screen.getByText("Close")).toBeTruthy();
       expect(screen.queryByText("Save changes")).toBeNull();
     });
@@ -90,7 +86,7 @@ describe("DraftCaseNoteSheet", () => {
     it("is read-only by default when canEdit is omitted (deny-by-default)", () => {
       renderSheet();
 
-      expect(screen.getByDisplayValue(NOTES).props.readOnly).toBe(true);
+      expect(screen.getByDisplayValue(NOTES).props["readOnly"]).toBe(true);
       expect(screen.getByText("Close")).toBeTruthy();
       expect(screen.queryByText("Save changes")).toBeNull();
     });
@@ -100,7 +96,7 @@ describe("DraftCaseNoteSheet", () => {
     it("makes the note editable and saves the edited value on Save changes", () => {
       renderSheet(true);
 
-      expect(screen.getByDisplayValue(NOTES).props.readOnly).toBe(false);
+      expect(screen.getByDisplayValue(NOTES).props["readOnly"]).toBe(false);
       expect(screen.getByText("Cancel")).toBeTruthy();
 
       // Edit before saving, so we verify the edit actually propagates.
@@ -111,6 +107,16 @@ describe("DraftCaseNoteSheet", () => {
         meetingId: "m1",
         caseNote: "Edited note",
       });
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    it("closes without saving on Cancel", () => {
+      renderSheet(true);
+
+      fireEvent.press(screen.getByText("Cancel"));
+
+      expect(mockOnClose).toHaveBeenCalled();
+      expect(mockMutate).not.toHaveBeenCalled();
     });
   });
 });

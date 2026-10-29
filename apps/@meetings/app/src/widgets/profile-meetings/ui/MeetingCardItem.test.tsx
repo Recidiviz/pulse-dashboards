@@ -54,9 +54,8 @@ jest.mock("~@meetings/app/shared/api", () => ({}));
 jest.mock("../lib/useProcessingText", () => ({
   useProcessingText: () => ({ title: "", subtitle: "" }),
 }));
-jest.mock("@gorhom/bottom-sheet", () => ({ BottomSheetModal: () => null }));
-jest.mock("@react-navigation/native", () => ({
-  Link: ({ children }: { children: React.ReactNode }) => children,
+jest.mock("~@meetings/app/shared/ui/BlockLink", () => ({
+  BlockLink: ({ children }: { children: React.ReactNode }) => children,
 }));
 jest.mock("@react-native-clipboard/clipboard", () => ({
   __esModule: true,

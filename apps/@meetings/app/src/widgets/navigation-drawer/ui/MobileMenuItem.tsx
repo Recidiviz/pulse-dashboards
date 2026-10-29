@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
 import React from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type MobileMenuItemProps = {
@@ -38,7 +38,7 @@ const MobileMenuItem = ({
   onPress,
 }: MobileMenuItemProps) => {
   return (
-    <Link className="py-4" screen={screen} onPress={onPress} params={{}}>
+    <BlockLink className="py-4" screen={screen} onPress={onPress} params={{}}>
       <View className="w-full flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
           <IconComponent className="size-6 fill-primary" />
@@ -56,7 +56,7 @@ const MobileMenuItem = ({
         </View>
         <ChevronRightIcon className="size-4 stroke-primary stroke-[3px]" />
       </View>
-    </Link>
+    </BlockLink>
   );
 };
 

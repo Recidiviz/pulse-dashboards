@@ -19,7 +19,7 @@ import clsx from "clsx";
 import { ComponentType, ReactNode } from "react";
 import {
   Modal as RNModal,
-  ModalBaseProps,
+  ModalProps as RNModalProps,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -27,7 +27,7 @@ import {
 
 import { Typography } from "./Typography";
 
-type ModalProps = ModalBaseProps & {
+type ModalProps = RNModalProps & {
   onClickOutside?: () => void;
   containerClassName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,9 +68,6 @@ const ModalContent = ({
   );
 };
 
-// On Android, avoid RN Modal to prevent an intermittent Yoga layout crash
-// in Fabric (YGNodeGetOwner assertion failure) when coexisting with @gorhom/bottom-sheet.
-// https://github.com/facebook/react-native/issues/52349
 const Modal = ({
   onClickOutside,
   backdrop: customBackdrop,
@@ -78,28 +75,6 @@ const Modal = ({
   containerClassName = "",
   ...modalProps
 }: ModalProps) => {
-  // AVild - Modals weren't rendering correct on Android, and we've had
-
-  // const { width, height } = useWindowDimensions();
-
-  // Expo/RN updates since this patch was in. I wanna try moving forward
-  // and remove this in the future if you come across this comment
-  // and there hasn't been any major regressions
-  // if (Platform.OS === "android") {
-  //   if (!modalProps.visible) return null;
-  //   return (
-  //     <View className="absolute left-0 top-0 z-50 size-full">
-  //       <ModalContent
-  //         onClickOutside={onClickOutside}
-  //         backdrop={customBackdrop}
-  //         containerClassName={containerClassName}
-  //       >
-  //         {children}
-  //       </ModalContent>
-  //     </View>
-  //   );
-  // }
-
   return (
     <RNModal {...modalProps} id="rnmodal">
       <ModalContent

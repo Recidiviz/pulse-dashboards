@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link, StackActions, useIsFocused } from "@react-navigation/native";
+import { StackActions, useIsFocused } from "@react-navigation/native";
 import { format } from "date-fns";
 import React, {
   ReactNode,
@@ -52,6 +52,7 @@ import {
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
+import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
@@ -349,7 +350,7 @@ export const ProfileMeetings = ({
                 <ScrollView className="flex-1">
                   <View className="mx-auto w-full max-w-[960px] flex-1">
                     <View className="flex flex-1 flex-row pt-10">
-                      <Link
+                      <BlockLink
                         className="flex flex-row items-center gap-2"
                         screen={
                           personType === "client" ? "Clients" : "Residents"
@@ -361,7 +362,7 @@ export const ProfileMeetings = ({
                       >
                         <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
                         <Typography variant="body-s-medium">Back</Typography>
-                      </Link>
+                      </BlockLink>
                     </View>
                     <MeetingsHeaderContent
                       person={person}
@@ -404,34 +405,33 @@ export const ProfileMeetings = ({
           ),
         })}
       </View>
-      {isNewMeetingSheetOpen && !audioUploadStatus && (
-        <NewMeetingRecordingSheet
-          person={person}
-          onClose={() => setIsNewMeetingSheetOpen(false)}
-          onStartMeeting={() => {
-            const startMeeting = () => {
-              setIsNewMeetingSheetOpen(false);
-              handleCreateMeeting();
-            };
+      <NewMeetingRecordingSheet
+        visible={isNewMeetingSheetOpen && !audioUploadStatus}
+        person={person}
+        onClose={() => setIsNewMeetingSheetOpen(false)}
+        onStartMeeting={() => {
+          const startMeeting = () => {
+            setIsNewMeetingSheetOpen(false);
+            handleCreateMeeting();
+          };
 
-            validateAndStart({
-              meetingTypes,
-              meetingType: meetingTypeValue,
-              meetingTypeCategoryValue,
-              setMeetingTypeCategoryError,
-              startCallback: startMeeting,
-            });
-          }}
-          onUploadFile={handleAudioUpload}
-          isMeetingCreating={isCreating}
-          meetingTypeValue={meetingTypeValue}
-          meetingTypes={meetingTypes}
-          setMeetingType={setMeetingTypeValue}
-          meetingTypeCategory={meetingTypeCategoryValue}
-          setMeetingTypeCategory={setMeetingTypeCategoryValue}
-          meetingTypeCategoryError={meetingTypeCategoryError}
-        />
-      )}
+          validateAndStart({
+            meetingTypes,
+            meetingType: meetingTypeValue,
+            meetingTypeCategoryValue,
+            setMeetingTypeCategoryError,
+            startCallback: startMeeting,
+          });
+        }}
+        onUploadFile={handleAudioUpload}
+        isMeetingCreating={isCreating}
+        meetingTypeValue={meetingTypeValue}
+        meetingTypes={meetingTypes}
+        setMeetingType={setMeetingTypeValue}
+        meetingTypeCategory={meetingTypeCategoryValue}
+        setMeetingTypeCategory={setMeetingTypeCategoryValue}
+        meetingTypeCategoryError={meetingTypeCategoryError}
+      />
       {isNewMeetingModalOpen && (
         <NewMeetingOptionsModal
           person={person}

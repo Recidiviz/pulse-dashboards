@@ -15,32 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetFooter,
-} from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import {
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import ArrowLeftIcon from "react-native-heroicons/solid/ArrowLeftIcon";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import NotesSvg from "~@meetings/app/shared/assets/icons/notes.svg";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
+import { Sheet } from "~@meetings/app/shared/ui/Sheet";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useAudioUploadStore } from "../model/store";
 
 type Props = {
+  visible: boolean;
   onClose: () => void;
+  onDismissed: () => void;
 };
 
-export function NotesSheet({ onClose }: Props) {
-  const insets = useSafeAreaInsets();
+export function NotesSheet({ visible, onClose, onDismissed }: Props) {
+  const { height: windowHeight } = useWindowDimensions();
   const { userNotepadNotes, setUserNotepadNotes } = useAudioUploadStore();
   const [inputValue, setInputValue] = useState(userNotepadNotes);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const handleSave = () => {
     setUserNotepadNotes(inputValue);
@@ -57,35 +61,74 @@ export function NotesSheet({ onClose }: Props) {
 
   const handleDiscardAndExit = () => {
     setIsConfirmationModalOpen(false);
+    // iOS ignores dismissing the sheet while the confirmation over it is
+    // still being dismissed, so leave once the confirmation is gone.
+    if (Platform.OS === "ios") setIsLeaving(true);
+    else onClose();
+  };
+
+  const handleConfirmationDismissed = () => {
+    if (!isLeaving) return;
+    setIsLeaving(false);
     onClose();
   };
 
   useEffect(() => {
-    return () => {
-      setInputValue(null);
-    };
-  }, []);
+    if (visible) setInputValue(userNotepadNotes);
+  }, [visible, userNotepadNotes]);
+
+  // On web the sheet blocks clicks outside itself, so the confirmation opens
+  // next to it while the sheet steps aside. Natively it opens over the sheet.
+  const isWeb = Platform.OS === "web";
+  const confirmationModal = (
+    <ConfirmationModal
+      visible={isConfirmationModalOpen}
+      onStay={() => setIsConfirmationModalOpen(false)}
+      onDiscardAndExit={handleDiscardAndExit}
+      onDismiss={handleConfirmationDismissed}
+    />
+  );
 
   return (
-    <BottomSheet
-      enableDynamicSizing={false}
-      snapPoints={["95%"]}
-      handleComponent={null}
-      enableContentPanningGesture={false}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          opacity={0.5}
-          pressBehavior="collapse"
-          onPress={handleCancel}
-        />
-      )}
-      footerComponent={(props) =>
-        inputValue !== userNotepadNotes ? (
-          <BottomSheetFooter {...props} bottomInset={insets.bottom}>
-            <View className="w-full p-4">
+    <>
+      <Sheet
+        visible={visible && !(isWeb && isConfirmationModalOpen)}
+        onClose={handleCancel}
+        onDismissed={() => {
+          if (!visible) onDismissed();
+        }}
+        showDragIndicator={false}
+        dismissible={false}
+      >
+        <View className="flex flex-col p-4">
+          <View className="w-full py-4">
+            <TouchableOpacity onPress={handleCancel} className="w-fit">
+              <ArrowLeftIcon className="fill-tertiary" />
+            </TouchableOpacity>
+          </View>
+          <Typography className="mb-4 mt-2 font-libre-baskerville text-[28px] font-semibold leading-10 text-primary">
+            Notepad
+          </Typography>
+          <View>
+            <View className="mb-3 flex flex-row gap-2.5">
+              <NotesSvg className="size-6 stroke-secondary" />
+              <Typography variant="body-m-regular">Notepad</Typography>
+            </View>
+            <TextInput
+              style={{
+                height: windowHeight * 0.2,
+                outlineColor: "transparent",
+              }}
+              className="text-base text-primary"
+              value={inputValue || ""}
+              onChangeText={setInputValue}
+              placeholder="Add any notes you took during the meeting — these will be used to generate your draft case note. (optional)"
+              textAlignVertical="top"
+              multiline
+            />
+          </View>
+          {inputValue !== userNotepadNotes && (
+            <View className="w-full pt-4">
               <Button
                 variant="primary"
                 className="px-5 py-3"
@@ -94,57 +137,36 @@ export function NotesSheet({ onClose }: Props) {
                 Save
               </Button>
             </View>
-          </BottomSheetFooter>
-        ) : null
-      }
-    >
-      <View className="flex flex-1 flex-col p-4">
-        <View className="w-full py-4">
-          <TouchableOpacity onPress={handleCancel} className="w-fit">
-            <ArrowLeftIcon className="fill-tertiary" />
-          </TouchableOpacity>
+          )}
         </View>
-        <Typography className="mb-4 mt-2 font-libre-baskerville text-[28px] font-semibold leading-10 text-primary">
-          Notepad
-        </Typography>
-        <View className="flex-1">
-          <View className="mb-3 flex flex-row gap-2.5">
-            <NotesSvg className="size-6 stroke-secondary" />
-            <Typography variant="body-m-regular">Notepad</Typography>
-          </View>
-          <TextInput
-            style={{ flex: 1, outlineColor: "transparent" }}
-            className="text-base text-primary"
-            value={inputValue || ""}
-            onChangeText={setInputValue}
-            placeholder="Add any notes you took during the meeting — these will be used to generate your draft case note. (optional)"
-            textAlignVertical="top"
-            multiline
-          />
-        </View>
-      </View>
-      {isConfirmationModalOpen && (
-        <ConfirmationModal
-          onStay={() => setIsConfirmationModalOpen(false)}
-          onDiscardAndExit={handleDiscardAndExit}
-        />
-      )}
-    </BottomSheet>
+        {!isWeb && confirmationModal}
+      </Sheet>
+      {isWeb && confirmationModal}
+    </>
   );
 }
 
 type ConfirmationModalProps = {
+  visible: boolean;
   onStay: () => void;
   onDiscardAndExit: () => void;
+  onDismiss: () => void;
 };
 
 function ConfirmationModal({
+  visible,
   onStay,
   onDiscardAndExit,
+  onDismiss,
 }: ConfirmationModalProps) {
   return (
-    <Modal visible transparent onClickOutside={onStay}>
-      <View className="flex w-[320px] flex-1 flex-col p-5">
+    <Modal
+      visible={visible}
+      transparent
+      onClickOutside={onStay}
+      onDismiss={onDismiss}
+    >
+      <View className="flex w-[320px] flex-col p-5">
         <View className="mb-5 flex w-full flex-col gap-1">
           <Typography variant="heading-4" className="mb-1 text-center">
             Leave Notepad?

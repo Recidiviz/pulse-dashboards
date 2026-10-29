@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import {
   Platform,
@@ -191,9 +190,6 @@ function FreeTextInput({
 }) {
   const [isFocused, setIsFocused] = useState(false);
 
-  const TextInputComponent =
-    Platform.OS === "web" ? TextInput : BottomSheetTextInput;
-
   return (
     <View
       className="w-full flex-1 flex-row items-center rounded-xl border bg-secondary px-3 py-2"
@@ -204,7 +200,7 @@ function FreeTextInput({
         boxShadow: isFocused ? theme["boxShadow"]["focus-brand"] : "",
       }}
     >
-      <TextInputComponent
+      <TextInput
         className="flex-1 py-0 pr-2 font-inter text-sm text-primary outline-none"
         placeholder={placeholder}
         placeholderTextColor={theme["colors"]["secondary"]}

@@ -98,7 +98,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     orientation: "portrait",
     icon: "./src/shared/assets/images/Apple_icon.png",
     scheme,
-    userInterfaceStyle: "automatic",
+    userInterfaceStyle: "light",
     ios: {
       supportsTablet: false,
       bundleIdentifier: bundleIdentifier,

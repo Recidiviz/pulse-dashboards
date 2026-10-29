@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
 import React from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
@@ -28,6 +27,7 @@ import {
   getInitials,
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
+import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -58,7 +58,7 @@ export function PersonCardItem({
   return (
     <View key={person.personId} className="mb-2 w-full px-4">
       <View className="flex w-full flex-1 flex-col gap-2 rounded-[20px] bg-primary p-3">
-        <Link
+        <BlockLink
           screen={personType === "client" ? "ClientProfile" : "ResidentProfile"}
           params={{ personId: person.personId.toString() }}
         >
@@ -85,7 +85,7 @@ export function PersonCardItem({
             </View>
             <ChevronRightIcon className="ml-auto !size-6 stroke-tertiary stroke-[2px]" />
           </View>
-        </Link>
+        </BlockLink>
         {hasActiveMeeting && (
           <MeetingInProgressBar
             recordingState={recordingState || "recording"}
@@ -101,7 +101,7 @@ export function PersonCardItem({
           />
         )}
         {hasLastMeeting && !hasActiveMeeting && (
-          <Link
+          <BlockLink
             className="flex flex-1"
             screen={
               personType === "client" ? "ClientMeeting" : "ResidentMeeting"
@@ -134,7 +134,7 @@ export function PersonCardItem({
                 {person.meetingDetails.caseNote ?? "Case note is empty. \n"}
               </Typography>
             </View>
-          </Link>
+          </BlockLink>
         )}
       </View>
     </View>

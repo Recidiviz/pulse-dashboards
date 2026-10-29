@@ -15,19 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
-import { ReactNode, RefObject, useState } from "react";
+import { ReactNode, useState } from "react";
 import { View } from "react-native";
 import LightBulbIcon from "react-native-heroicons/outline/LightBulbIcon";
 import XIcon from "react-native-heroicons/outline/XIcon";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BackgroundPressable } from "~@meetings/app/shared/ui/BackgroundPressable";
 import { Button } from "~@meetings/app/shared/ui/Button";
+import { Sheet, SheetScrollView } from "~@meetings/app/shared/ui/Sheet";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { CaseNoteSummarySegment } from "../model/types";
@@ -37,7 +32,8 @@ import { CitationCard } from "./CitationCard";
 
 type Props = {
   segments: CaseNoteSummarySegment[];
-  ref: RefObject<BottomSheetModal | null>;
+  visible: boolean;
+  onClose: () => void;
   /** Rendered above the close button, e.g. the feedback controls. */
   footer?: ReactNode;
   lastUpdatedAt?: Date;
@@ -45,39 +41,19 @@ type Props = {
 
 export function CaseNoteSummarySheet({
   segments,
-  ref,
+  visible,
+  onClose,
   footer,
   lastUpdatedAt,
 }: Props) {
-  const { top: topSafeArea, bottom: bottomSafeArea } = useSafeAreaInsets();
   const [selectedIndex, setSelectedIndex] = useState<number>();
-
-  const handleClose = () => ref.current?.dismiss();
 
   const citation =
     selectedIndex === undefined ? undefined : segments[selectedIndex]?.citation;
 
   return (
-    <BottomSheetModal
-      ref={ref}
-      enableDynamicSizing
-      topInset={topSafeArea}
-      handleComponent={null}
-      enablePanDownToClose
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          opacity={0.5}
-          pressBehavior="close"
-        />
-      )}
-    >
-      <BottomSheetScrollView
-        contentContainerClassName="p-6"
-        contentContainerStyle={{ paddingBottom: bottomSafeArea }}
-      >
+    <Sheet visible={visible} onClose={onClose} showDragIndicator={false}>
+      <SheetScrollView contentContainerClassName="p-6">
         <BackgroundPressable
           onBackgroundPress={() => setSelectedIndex(undefined)}
           className="gap-4"
@@ -86,7 +62,7 @@ export function CaseNoteSummarySheet({
             <View className="flex-row items-start justify-between gap-4">
               <Typography variant="heading-4">Client context</Typography>
               <Button
-                onPress={handleClose}
+                onPress={onClose}
                 variant="secondary"
                 shape="circle"
                 icon={{
@@ -119,11 +95,11 @@ export function CaseNoteSummarySheet({
 
           {footer}
 
-          <Button variant="primary" className="py-4" onPress={handleClose}>
+          <Button variant="primary" className="py-4" onPress={onClose}>
             Close
           </Button>
         </BackgroundPressable>
-      </BottomSheetScrollView>
-    </BottomSheetModal>
+      </SheetScrollView>
+    </Sheet>
   );
 }

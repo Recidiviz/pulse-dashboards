@@ -359,7 +359,7 @@ describe("FlaggedMeetingsScreen", () => {
     expect(
       screen
         .getAllByText(/^(All|DEMO|NE)$/)
-        .map((element) => element.props.children),
+        .map((element) => element.props["children"]),
     ).toEqual(["All", "All", "DEMO", "NE"]);
   });
 

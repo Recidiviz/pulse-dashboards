@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import clsx from "clsx";
-import { useRef } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
@@ -38,14 +37,18 @@ import {
 } from "~@meetings/app/shared/lib/platform";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { CaseNoteSummaryFeedbackButtons } from "./CaseNoteSummaryFeedbackButtons";
+import { useCaseNoteSummaryFeedback } from "../model/useCaseNoteSummaryFeedback";
+import {
+  CaseNoteSummaryFeedbackButtons,
+  CaseNoteSummaryFeedbackForm,
+} from "./CaseNoteSummaryFeedbackButtons";
 
 type Props = {
   person: Person;
 };
 
 export function ClientCaseNoteSummary({ person }: Props) {
-  const sheetRef = useRef<BottomSheetModal>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { isWeb } = usePlatform();
   const isMobileWidth = useIsMobileWidth();
   const { stateCode } = useStateSelection();
@@ -61,6 +64,7 @@ export function ClientCaseNoteSummary({ person }: Props) {
     isClient,
     showCNI,
   });
+  const feedback = useCaseNoteSummaryFeedback({ person, summaries, segments });
 
   if (!segments || !summaries || !enabled) return null;
 
@@ -69,21 +73,17 @@ export function ClientCaseNoteSummary({ person }: Props) {
       <View className="px-4 pt-3">
         <CaseNoteSummaryCard
           segments={segments}
-          onPress={() => sheetRef.current?.present()}
+          onPress={() => setIsSheetOpen(true)}
           lastUpdatedAt={lastUpdatedAt}
         />
         <CaseNoteSummarySheet
-          ref={sheetRef}
+          visible={isSheetOpen && !feedback.isMessageFormVisible}
+          onClose={() => setIsSheetOpen(false)}
           segments={segments}
           lastUpdatedAt={lastUpdatedAt}
-          footer={
-            <CaseNoteSummaryFeedbackButtons
-              person={person}
-              summaries={summaries}
-              segments={segments}
-            />
-          }
+          footer={<CaseNoteSummaryFeedbackButtons feedback={feedback} />}
         />
+        <CaseNoteSummaryFeedbackForm feedback={feedback} />
       </View>
     );
   }
@@ -99,13 +99,10 @@ export function ClientCaseNoteSummary({ person }: Props) {
           <View className="flex-1">
             <CaseNoteSummaryWithTooltips segments={segments} person={person} />
           </View>
-          <CaseNoteSummaryFeedbackButtons
-            person={person}
-            summaries={summaries}
-            segments={segments}
-          />
+          <CaseNoteSummaryFeedbackButtons feedback={feedback} />
         </View>
       </View>
+      <CaseNoteSummaryFeedbackForm feedback={feedback} />
     </View>
   );
 }

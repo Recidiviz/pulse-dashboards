@@ -15,15 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useEffect, useRef } from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
 
+import { Sheet } from "~@meetings/app/shared/ui/Sheet";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
@@ -31,6 +26,7 @@ type Props = {
   time: Date | null;
   mode: "date" | "time" | null;
   onClose: () => void;
+  onDismissed?: () => void;
   onDateChange: (date: Date) => void;
   onTimeChange: (time: Date) => void;
 };
@@ -40,19 +36,10 @@ export function RecordingDateTimePicker({
   time,
   mode,
   onClose,
+  onDismissed,
   onDateChange,
   onTimeChange,
 }: Props) {
-  const iosSheetRef = useRef<BottomSheetModal>(null);
-
-  useEffect(() => {
-    if (mode === null) {
-      iosSheetRef.current?.dismiss();
-    } else {
-      iosSheetRef.current?.present();
-    }
-  }, [mode]);
-
   const handleValueChange = (_: unknown, selected: Date) => {
     if (Platform.OS === "android") onClose();
 
@@ -80,47 +67,35 @@ export function RecordingDateTimePicker({
   }
 
   return (
-    <BottomSheetModal
-      ref={iosSheetRef}
-      enableDynamicSizing
-      handleComponent={null}
-      enableContentPanningGesture={false}
-      onDismiss={onClose}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          opacity={0.3}
-          pressBehavior="collapse"
-        />
-      )}
+    <Sheet
+      visible={mode !== null}
+      onClose={onClose}
+      onDismissed={onDismissed}
+      showDragIndicator={false}
     >
-      <BottomSheetView>
-        <View className="pb-10">
-          <View className="flex-row items-center justify-between px-6 pt-4">
-            <Typography variant="button-l">
-              {mode === "date" ? "Select date" : "Pick a time"}
+      <View className="pb-10">
+        <View className="flex-row items-center justify-between px-6 pt-4">
+          <Typography variant="button-l">
+            {mode === "date" ? "Select date" : "Pick a time"}
+          </Typography>
+          <TouchableOpacity onPress={onClose}>
+            <Typography variant="button-l" className="!text-brand">
+              Done
             </Typography>
-            <TouchableOpacity onPress={onClose}>
-              <Typography variant="button-l" className="!text-brand">
-                Done
-              </Typography>
-            </TouchableOpacity>
-          </View>
-          {mode !== null && (
-            <View className="items-center">
-              <DateTimePicker
-                mode={mode}
-                value={value}
-                maximumDate={maxDate}
-                onValueChange={handleValueChange}
-                display="spinner"
-              />
-            </View>
-          )}
+          </TouchableOpacity>
         </View>
-      </BottomSheetView>
-    </BottomSheetModal>
+        {mode !== null && (
+          <View className="items-center">
+            <DateTimePicker
+              mode={mode}
+              value={value}
+              maximumDate={maxDate}
+              onValueChange={handleValueChange}
+              display="spinner"
+            />
+          </View>
+        )}
+      </View>
+    </Sheet>
   );
 }

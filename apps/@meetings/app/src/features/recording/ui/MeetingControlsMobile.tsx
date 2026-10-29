@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { ChevronRightIcon } from "react-native-heroicons/outline";
 import XIcon from "react-native-heroicons/outline/XIcon";
@@ -25,6 +25,7 @@ import PauseSvg from "../../../shared/assets/icons/pause.svg";
 import PlaySvg from "../../../shared/assets/icons/play.svg";
 import StopSvg from "../../../shared/assets/icons/stop.svg";
 import { formatDurationNumeric } from "../../../shared/lib/format";
+import { BlockLink } from "../../../shared/ui/BlockLink";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { useActiveMeetingStore, useNewRecording } from "../model";
@@ -97,14 +98,14 @@ export function MeetingControlsMobile() {
                 {person.fullName}
               </Typography>
             ) : (
-              <Link {...linkProps}>
+              <BlockLink {...linkProps}>
                 <View className="flex flex-row items-center gap-1">
                   <Typography className="text-lg font-semibold leading-[26px] text-primary">
                     {person.fullName}
                   </Typography>
                   <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
                 </View>
-              </Link>
+              </BlockLink>
             )}
           </View>
           <View className="w-[42px]" />

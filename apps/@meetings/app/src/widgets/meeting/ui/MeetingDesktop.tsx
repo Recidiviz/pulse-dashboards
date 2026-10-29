@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
 import React, { ReactNode, useRef, useState } from "react";
 import { ImageBackground, ScrollView, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
@@ -37,6 +36,7 @@ import {
   getInitials,
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
+import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { FadeContainer } from "~@meetings/app/shared/ui/FadeContainer";
 import { useSnackbarBottomOffset } from "~@meetings/app/shared/ui/Snackbar";
@@ -152,7 +152,7 @@ const MeetingDesktop = ({
       {header}
       <View className="flex-1 grow flex-row border-t border-subtle">
         <View className="w-36 shrink-0 pl-10 pt-12">
-          <Link
+          <BlockLink
             className="flex flex-row items-center gap-2"
             screen={
               personType === "client" ? "ClientProfile" : "ResidentProfile"
@@ -161,7 +161,7 @@ const MeetingDesktop = ({
           >
             <ChevronLeftIcon className="size-3 stroke-tertiary stroke-[3px]" />
             <Typography variant="body-s-medium">Back</Typography>
-          </Link>
+          </BlockLink>
         </View>
 
         <View className="flex-1 pt-8">

@@ -15,18 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetTextInput,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Platform, TextInput, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { Button } from "./Button";
 import Modal from "./Modal";
+import { Sheet } from "./Sheet";
 import { Typography } from "./Typography";
 
 type FeedbackMessageModalProps = {
@@ -47,16 +42,9 @@ export function FeedbackMessageModal({
   isSubmitting = false,
 }: FeedbackMessageModalProps) {
   const [message, setMessage] = useState("");
-  const sheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     if (!visible) setMessage("");
-    if (Platform.OS === "web") return;
-    if (visible) {
-      sheetRef.current?.present();
-    } else {
-      sheetRef.current?.dismiss();
-    }
   }, [visible]);
 
   const handleSubmit = () => {
@@ -65,9 +53,6 @@ export function FeedbackMessageModal({
   };
 
   const hasText = message.trim().length > 0;
-
-  const FeedbackTextInput =
-    Platform.OS === "web" ? TextInput : BottomSheetTextInput;
 
   const innerContent = (
     <View className="gap-4 px-6 pb-6">
@@ -87,8 +72,8 @@ export function FeedbackMessageModal({
         />
       </View>
 
-      <FeedbackTextInput
-        className="min-h-[72px] rounded-lg border border-subtle bg-primary p-3 text-base text-primary"
+      <TextInput
+        className="max-h-[160px] min-h-[72px] rounded-lg border border-subtle bg-primary p-3 text-base text-primary"
         placeholder="Type your feedback here..."
         multiline
         value={message}
@@ -139,26 +124,13 @@ export function FeedbackMessageModal({
   }
 
   return (
-    <BottomSheetModal
-      ref={sheetRef}
-      enableDynamicSizing
-      enablePanDownToClose
-      onDismiss={onClose}
-      keyboardBehavior="interactive"
-      keyboardBlurBehavior="restore"
-      handleIndicatorStyle={{ opacity: 0 }}
-      containerStyle={{ flex: 1 }}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          pressBehavior="close"
-          opacity={0.5}
-        />
-      )}
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      showDragIndicator={false}
+      className="pt-6"
     >
-      <BottomSheetView>{innerContent}</BottomSheetView>
-    </BottomSheetModal>
+      {innerContent}
+    </Sheet>
   );
 }

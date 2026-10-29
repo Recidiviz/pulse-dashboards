@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { Ref, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import { theme } from "~@meetings/app/shared/config";
 import Modal from "~@meetings/app/shared/ui/Modal";
+import { Sheet, SheetScrollView } from "~@meetings/app/shared/ui/Sheet";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 const title = "Restricted to authorized users";
@@ -66,29 +64,14 @@ export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
 };
 
 type LearnMoreSheetProps = {
-  ref?: Ref<BottomSheet>;
+  visible: boolean;
+  onClose: () => void;
 };
 
-export const LearnMoreSheet = ({ ref }: LearnMoreSheetProps) => {
-  const snapPoints = useMemo(() => ["70%"], []);
-
-  const handleClose = () => {
-    if (ref && "current" in ref && ref.current) {
-      ref.current.close();
-    }
-  };
-
+export const LearnMoreSheet = ({ visible, onClose }: LearnMoreSheetProps) => {
   return (
-    <BottomSheet
-      ref={ref}
-      index={-1}
-      snapPoints={snapPoints}
-      enablePanDownToClose
-      handleIndicatorStyle={{
-        backgroundColor: theme["backgroundColor"]["strong"],
-      }}
-    >
-      <BottomSheetScrollView className="px-5">
+    <Sheet visible={visible} onClose={onClose} className="pt-4">
+      <SheetScrollView className="px-5">
         <Typography
           variant="body-m-regular"
           className="mb-4 leading-6 !text-gray-700"
@@ -97,13 +80,13 @@ export const LearnMoreSheet = ({ ref }: LearnMoreSheetProps) => {
         </Typography>
         <TouchableOpacity
           className="mb-6 mt-4 rounded-full border border-gray-300 bg-white py-4"
-          onPress={handleClose}
+          onPress={onClose}
         >
           <Typography className="text-center font-semibold text-gray-700">
             Close
           </Typography>
         </TouchableOpacity>
-      </BottomSheetScrollView>
-    </BottomSheet>
+      </SheetScrollView>
+    </Sheet>
   );
 };

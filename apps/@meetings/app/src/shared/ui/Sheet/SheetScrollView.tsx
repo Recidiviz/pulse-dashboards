@@ -15,27 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Clipboard from "@react-native-clipboard/clipboard";
+import { ScrollView, ScrollViewProps, StyleSheet } from "react-native";
 
-type Params = {
-  userNotepadNotes: string | null;
-  actionItems: string[] | null;
-};
+const styles = StyleSheet.create({
+  fitContent: { flexGrow: 0, flexShrink: 1 },
+});
 
-function formatBulletList(label: string, items: string[]) {
-  return `${label}:\n- ${items.join("\n- ")}`;
-}
-
-export function copyMeetingNotes({ userNotepadNotes, actionItems }: Params) {
-  const parts: string[] = [];
-
-  if (userNotepadNotes) {
-    parts.push(`Notes: ${userNotepadNotes}`);
-  }
-
-  if (actionItems && actionItems.length > 0) {
-    parts.push(formatBulletList("Action Items", actionItems));
-  }
-
-  Clipboard.setString(parts.join("\n\n"));
+/** The ScrollView to use inside a Sheet, for content that can outgrow it. */
+export function SheetScrollView({ style, ...props }: ScrollViewProps) {
+  return <ScrollView style={[styles.fitContent, style]} {...props} />;
 }

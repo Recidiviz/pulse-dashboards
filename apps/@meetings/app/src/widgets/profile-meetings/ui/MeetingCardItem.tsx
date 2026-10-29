@@ -15,11 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { Link } from "@react-navigation/native";
 import clsx from "clsx";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import {
   ChevronDownIcon,
@@ -37,6 +35,7 @@ import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
+import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
@@ -74,7 +73,8 @@ const MeetingCardItem = ({
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
-  const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
+  const [isDraftCaseNoteSheetOpen, setIsDraftCaseNoteSheetOpen] =
+    useState(false);
   const [canEditNote, setCanEditNote] = useState(false);
   const { email: currentUserEmail } = useUserContext();
   const isMeetingCreator =
@@ -117,12 +117,12 @@ const MeetingCardItem = ({
   };
 
   const handleDraftCaseNoteEdit = () => {
-    draftCaseNoteSheetRef.current?.present();
+    setIsDraftCaseNoteSheetOpen(true);
     setCanEditNote(true);
   };
 
   const handleDraftCaseNoteShow = () => {
-    draftCaseNoteSheetRef.current?.present();
+    setIsDraftCaseNoteSheetOpen(true);
     setCanEditNote(false);
   };
 
@@ -151,7 +151,7 @@ const MeetingCardItem = ({
             </View>
           </View>
         ) : (
-          <Link {...linkProps}>
+          <BlockLink {...linkProps}>
             <View
               className={clsx(
                 "w-full flex-row items-center justify-between",
@@ -182,7 +182,7 @@ const MeetingCardItem = ({
               </View>
               <ChevronRightIcon className="!size-6 stroke-tertiary stroke-[2px]" />
             </View>
-          </Link>
+          </BlockLink>
         )}
         {isError && (
           <ProcessingErrorBanner
@@ -266,7 +266,8 @@ const MeetingCardItem = ({
         notes={meeting?.caseNote || ""}
         clientName={person.fullName}
         meetingDate={meeting?.start}
-        ref={draftCaseNoteSheetRef}
+        visible={isDraftCaseNoteSheetOpen}
+        onClose={() => setIsDraftCaseNoteSheetOpen(false)}
         canEdit={canEditNote && isMeetingCreator}
         personId={person.personId.toString()}
       />

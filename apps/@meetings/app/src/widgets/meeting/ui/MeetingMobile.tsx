@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Link, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   ImageBackground,
@@ -50,7 +49,6 @@ import {
 } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
-import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import {
   notifyFeedbackLauncherOfScroll,
   useIsFeedbackLauncherPresent,
@@ -68,6 +66,7 @@ import {
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
 import { usePlatform } from "~@meetings/app/shared/lib/platform";
+import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -76,7 +75,6 @@ import { ActionItemsTab } from "./ActionItemsTab";
 import { ApprovalFooter } from "./ApprovalFooter";
 import AudioPlayer from "./AudioPlayer";
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
-import MeetingNotesSheet from "./MeetingNotesSheet";
 import MeetingTabs, { Tab } from "./MeetingTabs";
 import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
 import OutputVote from "./OutputVote";
@@ -138,8 +136,6 @@ const MeetingMobile = ({
       meetingDetails.staffEmail.toLowerCase() || isSkipAuthUser;
   const collapse = useSharedValue(0);
   const isCollapsed = useSharedValue(false);
-  const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
-  const meetingNotesSheetRef = useRef<BottomSheetModal>(null);
 
   const {
     footerTab,
@@ -414,14 +410,14 @@ const MeetingMobile = ({
           className="flex flex-row items-center justify-between"
           style={{ height: HEADER_HEIGHT }}
         >
-          <Link
+          <BlockLink
             screen={
               personType === "client" ? "ClientProfile" : "ResidentProfile"
             }
             params={{ personId: person.personId.toString() }}
           >
             <ChevronLeftIcon className="text-muted" />
-          </Link>
+          </BlockLink>
 
           <View className="flex-1" />
 
@@ -557,22 +553,6 @@ const MeetingMobile = ({
           </Button>
         </View>
       )}
-      <DraftCaseNoteSheet
-        meetingId={meetingId}
-        notes={meetingDetails?.caseNote || ""}
-        clientName={person.fullName}
-        meetingDate={meetingDetails?.startTime}
-        ref={draftCaseNoteSheetRef}
-        personId={person.personId.toString()}
-        canEdit={isMeetingCreator}
-      />
-      <MeetingNotesSheet
-        meetingDetails={meetingDetails}
-        clientName={person.fullName}
-        bottomSheetRef={meetingNotesSheetRef}
-        personId={person.personId.toString()}
-        canEdit={isMeetingCreator}
-      />
       {isShareReviewModalVisible && (
         <ReviewBeforeCopyModal
           onClose={() => setIsShareReviewModalVisible(false)}

@@ -275,7 +275,7 @@ describe("DraftCaseNoteTab", () => {
       const { input, queryByText } = renderTab(ORIGINAL_NOTE, false);
 
       expect(queryByText(EDIT_HINT)).toBeNull();
-      expect(input.props.readOnly).toBe(true);
+      expect(input.props["readOnly"]).toBe(true);
     });
 
     it("does not save when the text changes", () => {
@@ -300,7 +300,7 @@ describe("DraftCaseNoteTab", () => {
       );
 
       expect(queryByText(EDIT_HINT)).toBeNull();
-      expect(getByDisplayValue(ORIGINAL_NOTE).props.readOnly).toBe(true);
+      expect(getByDisplayValue(ORIGINAL_NOTE).props["readOnly"]).toBe(true);
     });
   });
 
@@ -309,7 +309,7 @@ describe("DraftCaseNoteTab", () => {
       const { input, getByText } = renderTab();
 
       expect(getByText(EDIT_HINT)).toBeTruthy();
-      expect(input.props.readOnly).toBe(false);
+      expect(input.props["readOnly"]).toBe(false);
     });
   });
 

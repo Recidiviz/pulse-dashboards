@@ -15,13 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
 import clsx from "clsx";
-import { ReactNode, useCallback, useRef, useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -31,11 +26,10 @@ import {
 } from "react-native";
 import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
-import XIcon from "react-native-heroicons/outline/XIcon";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { theme } from "../../config/theme";
 import { Typography } from "../Typography";
+import { DropdownSheet } from "./DropdownSheet";
 
 export type DropdownContentProps = {
   close: () => void;
@@ -51,6 +45,8 @@ type DropdownContainerProps = {
   title?: string;
   placeholder?: string;
   errorMessage?: string | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children: (props: DropdownContentProps) => ReactNode;
 };
 
@@ -62,24 +58,22 @@ const DropdownContainer = ({
   title,
   placeholder,
   errorMessage,
+  open: controlledOpen,
+  onOpenChange,
   children,
 }: DropdownContainerProps) => {
-  const insets = useSafeAreaInsets();
-  const [open, setOpen] = useState(false);
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = controlledOpen ?? uncontrolledOpen;
 
-  const handleToggle = useCallback(() => {
-    if (Platform.OS === "web") {
-      setOpen((open) => !open);
-    } else {
-      bottomSheetRef.current?.present();
-    }
-  }, []);
+  const setOpen = (next: boolean) => {
+    if (isControlled) onOpenChange?.(next);
+    else setUncontrolledOpen(next);
+  };
 
-  const close = useCallback(() => {
-    setOpen(false);
-    bottomSheetRef.current?.close();
-  }, []);
+  const handleToggle = () => setOpen(!open);
+
+  const close = () => setOpen(false);
 
   return (
     <View className={clsx("flex flex-col items-center gap-2", className)}>
@@ -153,51 +147,10 @@ const DropdownContainer = ({
             </View>
           </>
         )}
-        {Platform.OS !== "web" && (
-          <BottomSheetModal
-            ref={bottomSheetRef}
-            onChange={(index) => setOpen(index >= 0)}
-            onDismiss={() => setOpen(false)}
-            keyboardBehavior="interactive"
-            keyboardBlurBehavior="restore"
-            enableDynamicSizing
-            enablePanDownToClose
-            handleIndicatorStyle={{
-              backgroundColor: theme["backgroundColor"]["strong"],
-            }}
-            containerStyle={{ flex: 1 }}
-            backdropComponent={(props) => (
-              <BottomSheetBackdrop
-                {...props}
-                disappearsOnIndex={-1}
-                appearsOnIndex={1}
-                pressBehavior="close"
-                opacity={0.5}
-              />
-            )}
-          >
-            <BottomSheetScrollView className="flex max-h-full flex-1 flex-col px-4">
-              <View className="mb-4 flex flex-row items-center justify-between">
-                <View className="pointer-events-none size-8" />
-                {title && (
-                  <Typography className="text-lg font-semibold text-primary">
-                    {title}
-                  </Typography>
-                )}
-                <Pressable onPress={close}>
-                  <View className="flex size-8 items-center justify-center rounded-full bg-secondary">
-                    <XIcon className="!size-4 stroke-tertiary" />
-                  </View>
-                </Pressable>
-              </View>
-              <View
-                className="flex size-full flex-col py-1"
-                style={{ paddingBottom: insets.bottom + 32 }}
-              >
-                {children({ close, isOpen: open })}
-              </View>
-            </BottomSheetScrollView>
-          </BottomSheetModal>
+        {Platform.OS !== "web" && !isControlled && (
+          <DropdownSheet visible={open} onClose={close} title={title}>
+            {children({ close, isOpen: open })}
+          </DropdownSheet>
         )}
       </View>
       {errorMessage && (
