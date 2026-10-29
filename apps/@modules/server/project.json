@@ -23,7 +23,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["create-base-package-json"],
+      "dependsOn": ["create-base-package-json", "^prisma-generate"],
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
