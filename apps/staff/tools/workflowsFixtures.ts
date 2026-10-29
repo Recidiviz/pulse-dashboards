@@ -17,7 +17,7 @@
 
 /* eslint-disable no-console */
 
-import { Firestore, Timestamp } from "@google-cloud/firestore";
+import { BulkWriter, Firestore, Timestamp } from "@google-cloud/firestore";
 import { subDays } from "date-fns";
 import { mapValues } from "lodash";
 
@@ -327,11 +327,21 @@ async function loadClientUpdatesV2(logger: Logger): Promise<void> {
     .then(() => logger(`new milestonesMessages data loaded successfully`));
 }
 
-async function loadOpportunityUpdates(logger: Logger): Promise<void> {
-  const collectionName = generateCollectionName({ key: "clientUpdatesV2" });
-  const subcollection =
-    FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates;
+function opportunityUpdateDocRef({
+  recordId,
+  opportunityType,
+}: {
+  recordId: string;
+  opportunityType: string;
+}) {
+  return db
+    .collection(generateCollectionName({ key: "clientUpdatesV2" }))
+    .doc(recordId)
+    .collection(FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates)
+    .doc(opportunityType);
+}
 
+function writeUsNeGoodTimeRestorationUpdates(bulkWriter: BulkWriter): void {
   const submittedUpdates: Array<{
     recordId: string;
     opportunityType: string;
@@ -372,6 +382,30 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     },
   ];
 
+  for (const update of submittedUpdates) {
+    const docRef = opportunityUpdateDocRef(update);
+    bulkWriter.set(docRef, {
+      submitted: {
+        date: Timestamp.fromDate(subDays(new Date(), update.submittedDaysAgo)),
+        by: "staff@recidiviz.org",
+      },
+      stateCode: update.stateCode,
+    });
+  }
+
+  for (const update of staleLastViewedUpdates) {
+    const docRef = opportunityUpdateDocRef(update);
+    bulkWriter.set(docRef, {
+      lastViewed: {
+        date: Timestamp.fromDate(subDays(new Date(), update.lastViewedDaysAgo)),
+        by: "staff@recidiviz.org",
+      },
+      stateCode: update.stateCode,
+    });
+  }
+}
+
+function writeUsTxArsErsReviewUpdates(bulkWriter: BulkWriter): void {
   /**
    * TX records sitting in the supervisor approval flow.
    */
@@ -397,31 +431,86 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     },
   ];
 
-  logger(`loading opportunity update fixtures...`);
-  const bulkWriter = db.bulkWriter();
-
-  for (const update of submittedUpdates) {
-    const docRef = db
-      .collection(collectionName)
-      .doc(update.recordId)
-      .collection(subcollection)
-      .doc(update.opportunityType);
-
-    bulkWriter.set(docRef, {
-      submitted: {
-        date: Timestamp.fromDate(subDays(new Date(), update.submittedDaysAgo)),
-        by: "staff@recidiviz.org",
-      },
-      stateCode: update.stateCode,
-    });
-  }
+  /**
+   * TX records that supervisors reviewed and sent up the approval chain, so
+   * they appear in each of those supervisors' Submitted for Review tabs.
+   * approvalChain starts with the officer's request; each later entry approved
+   * the previous one, and the last entry sent the record to currentReviewerId.
+   */
+  const pastReviewUpdates: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+    approvalChain: Array<{
+      stableStaffExternalId: string;
+      name: string;
+      daysAgo: number;
+    }>;
+    currentReviewerId: string;
+  }> = [
+    {
+      recordId: "us_tx_015",
+      opportunityType: "usTxAnnualReportStatusV2",
+      stateCode: "US_TX",
+      approvalChain: [
+        {
+          stableStaffExternalId: "STABLE_OFFICER1",
+          name: "Link Linkus",
+          daysAgo: 12,
+        },
+        {
+          stableStaffExternalId: "STABLE_agonzalez123",
+          name: "Alejandro Gonzalez",
+          daysAgo: 9,
+        },
+      ],
+      currentReviewerId: "STABLE_dlee456",
+    },
+    {
+      recordId: "us_tx_016",
+      opportunityType: "usTxAnnualReportStatusV2",
+      stateCode: "US_TX",
+      approvalChain: [
+        {
+          stableStaffExternalId: "STABLE_OFFICER2",
+          name: "Arthur Jones",
+          daysAgo: 7,
+        },
+        {
+          stableStaffExternalId: "STABLE_agonzalez123",
+          name: "Alejandro Gonzalez",
+          daysAgo: 4,
+        },
+      ],
+      currentReviewerId: "STABLE_rsmith789",
+    },
+    {
+      recordId: "us_tx_009",
+      opportunityType: "usTxEarlyReleaseFromSupervisionV2",
+      stateCode: "US_TX",
+      approvalChain: [
+        {
+          stableStaffExternalId: "STABLE_OFFICER4",
+          name: "Stephanie Smith",
+          daysAgo: 20,
+        },
+        {
+          stableStaffExternalId: "STABLE_agonzalez123",
+          name: "Alejandro Gonzalez",
+          daysAgo: 16,
+        },
+        {
+          stableStaffExternalId: "STABLE_dlee456",
+          name: "David Lee",
+          daysAgo: 11,
+        },
+      ],
+      currentReviewerId: "STABLE_rsmith789",
+    },
+  ];
 
   for (const update of approvalFlowUpdates) {
-    const docRef = db
-      .collection(collectionName)
-      .doc(update.recordId)
-      .collection(subcollection)
-      .doc(update.opportunityType);
+    const docRef = opportunityUpdateDocRef(update);
     bulkWriter.set(docRef, {
       actionHistory: [
         {
@@ -446,21 +535,45 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     });
   }
 
-  for (const update of staleLastViewedUpdates) {
-    const docRef = db
-      .collection(collectionName)
-      .doc(update.recordId)
-      .collection(subcollection)
-      .doc(update.opportunityType);
-
+  for (const update of pastReviewUpdates) {
+    const docRef = opportunityUpdateDocRef(update);
+    const actionHistory = update.approvalChain.map((approval, i) => {
+      const nextApproval = update.approvalChain[i + 1];
+      return {
+        type: "APPROVAL",
+        date: Timestamp.fromDate(subDays(new Date(), approval.daysAgo)),
+        by: approval.name,
+        updateById: approval.stableStaffExternalId,
+        reviewerId:
+          nextApproval?.stableStaffExternalId ?? update.currentReviewerId,
+        isStale: false,
+        ...(nextApproval && {
+          supervisorResponse: {
+            type: "APPROVAL",
+            date: Timestamp.fromDate(subDays(new Date(), nextApproval.daysAgo)),
+            by: nextApproval.name,
+            updateById: nextApproval.stableStaffExternalId,
+          },
+        }),
+      };
+    });
     bulkWriter.set(docRef, {
-      lastViewed: {
-        date: Timestamp.fromDate(subDays(new Date(), update.lastViewedDaysAgo)),
-        by: "staff@recidiviz.org",
-      },
+      actionHistory,
+      currentReviewerId: update.currentReviewerId,
+      allUniqueReviewerIds: update.approvalChain.map(
+        (approval) => approval.stableStaffExternalId,
+      ),
       stateCode: update.stateCode,
     });
   }
+}
+
+async function loadOpportunityUpdates(logger: Logger): Promise<void> {
+  logger(`loading opportunity update fixtures...`);
+  const bulkWriter = db.bulkWriter();
+
+  writeUsNeGoodTimeRestorationUpdates(bulkWriter);
+  writeUsTxArsErsReviewUpdates(bulkWriter);
 
   bulkWriter
     .close()
