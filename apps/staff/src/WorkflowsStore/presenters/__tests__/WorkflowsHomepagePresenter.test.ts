@@ -163,11 +163,15 @@ describe("WorkflowsHomepagePresenter", () => {
       expect(presenter.ctaAndHeaderText).toEqual({ ctaText: NO_RESULTS });
     });
 
-    it("shows only the page title for results when the FV is on", () => {
+    it("keeps both lines in place for results when the FV is on", () => {
+      // Neither line may empty or change when a caseload is selected: the page
+      // resized under the cursor and read as broken.
       setOpportunities({ type1: [oppInTab("Eligible Now")], type2: [] });
       (workflowsStore as any).searchStore.isTypesenseSearchEnabled = true;
       expect(presenter.ctaAndHeaderText).toEqual({
         headerText: "Opportunities",
+        // This fixture's active system is INCARCERATION.
+        ctaText: "Search a facility to see the people in it.",
       });
     });
 
@@ -205,7 +209,7 @@ describe("WorkflowsHomepagePresenter", () => {
         noSearchSelectedWith({ typesenseEnabled: true });
         (workflowsStore as any).activeSystem = activeSystem;
         expect(presenter.ctaAndHeaderText).toEqual({
-          headerText: "Find people eligible for opportunities",
+          headerText: "Opportunities",
           ctaText,
         });
       },

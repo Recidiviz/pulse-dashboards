@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useRef } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -45,13 +46,22 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     tasks,
     aboveHeaderCopy,
     workflowsResultCopy,
+    resultsSettled,
+    hasSelectedSearch,
   } = presenter;
+
+  // Hold the last settled line while a new search runs.
+  const settledCallToAction = useRef(aboveHeaderCopy.callToActionText);
+  // Not a length check on the ids: searching all caseloads selects none.
+  if (resultsSettled || !hasSelectedSearch) {
+    settledCallToAction.current = aboveHeaderCopy.callToActionText;
+  }
 
   return (
     <WorkflowsNavLayout>
       <WorkflowsResultsHeader
         headerText={aboveHeaderCopy.headerText}
-        callToActionText={aboveHeaderCopy.callToActionText}
+        callToActionText={settledCallToAction.current}
         align="left"
       />
       <CaseloadTypeSelect />

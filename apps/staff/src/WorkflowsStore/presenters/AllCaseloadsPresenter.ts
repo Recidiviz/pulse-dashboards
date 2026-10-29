@@ -124,8 +124,8 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
     );
   }
 
-  get headerCallToActionText(): string | undefined {
-    return this.isInitial ? this.initialCallToActionText : undefined;
+  get headerCallToActionText(): string {
+    return this.initialCallToActionText;
   }
 
   // Whether to show the table-view toggle in line with the search bar (typesense

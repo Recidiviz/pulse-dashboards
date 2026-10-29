@@ -313,7 +313,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   get welcomeCtaAndHeaderText(): { ctaText: string; headerText: string } {
     if (this.isTypesenseSearchEnabled) {
       return {
-        headerText: "Find people eligible for opportunities",
+        headerText: "Opportunities",
         ctaText: this.searchPromptForActiveSystem,
       };
     }
@@ -438,26 +438,30 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
         : { headerText: `${salutation} ${foundItems}` };
     }
 
-    // With the FV, the page title is the header, and only the no-results copy
-    // gets a line below it.
-    return noSearchResults
-      ? { headerText: "Opportunities", ctaText: noResultsCta }
-      : { headerText: "Opportunities" };
+    // With the FV, both lines are fixed in place. The header never changes and
+    // the line below it is never empty, so selecting a caseload swaps the copy
+    // rather than resizing the page under the cursor.
+    return {
+      headerText: "Opportunities",
+      ctaText: noSearchResults
+        ? noResultsCta
+        : this.searchPromptForActiveSystem,
+    };
   }
 
-  // Copy for the header rendered above the search bar (typesense search FV):
-  // the welcome greeting until the selected caseload's results are ready, then
-  // the found / no-results copy. Empty when the FV is off (the copy renders
-  // below the search bar instead — see `workflowsResultCopy`).
+  get hasSelectedSearch(): boolean {
+    return this.workflowsStore.searchStore.hasSelectedSearch;
+  }
+
+  get resultsSettled(): boolean {
+    return this.hasSelectedSearch && this.isCaseloadLoaded && isHydrated(this);
+  }
+
+  // Copy for the header rendered above the search bar (typesense search FV)
   get aboveHeaderCopy(): { headerText?: string; callToActionText?: string } {
     if (!this.isTypesenseSearchEnabled) return {};
 
-    const resultsReady =
-      this.workflowsStore.searchStore.hasSelectedSearch &&
-      this.isCaseloadLoaded &&
-      isHydrated(this);
-
-    const { headerText, ctaText } = resultsReady
+    const { headerText, ctaText } = this.resultsSettled
       ? this.ctaAndHeaderText
       : this.welcomeCtaAndHeaderText;
 
