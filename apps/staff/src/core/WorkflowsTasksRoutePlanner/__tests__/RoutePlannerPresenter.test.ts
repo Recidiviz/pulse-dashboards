@@ -16,12 +16,18 @@
 // =============================================================================
 
 import { RootStore } from "../../../RootStore";
+import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import { Client, WorkflowsStore } from "../../../WorkflowsStore";
 import { SearchStore } from "../../../WorkflowsStore/SearchStore";
 import RoutePlannerClientStore from "../ClientStore/ClientStoreBase";
 import { RoutePlannerPresenter } from "../RoutePlannerPresenter";
+
+const mockAnalyticsStore = {
+  trackRoutePlannerClientSelected: vi.fn(),
+  trackRoutePlannerClientDeselected: vi.fn(),
+} as any as AnalyticsStore;
 
 const mockTenantStore = {
   currentTenantId: vi.fn(),
@@ -38,6 +44,7 @@ const mockSearchStore = {
 
 const mockWorkflowsStore = {
   rootStore: {
+    analyticsStore: mockAnalyticsStore,
     tenantStore: mockTenantStore,
     userStore: mockUserStore,
     currentTenantId: undefined,
@@ -103,7 +110,10 @@ describe("Selected clients pii only gets sent out if FV HCRPPIIEmail is true", (
     });
 
     it("sends selected clients to approved users", () => {
-      rpClientStore.removeFromAllPeople(clients[clients.length - 1]);
+      rpClientStore.removeFromAllPeople(
+        clients[clients.length - 1],
+        "client_card",
+      );
 
       const emailBody = rpPresenter.mapDirectionsBody?.emailBody;
 

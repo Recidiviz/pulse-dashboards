@@ -27,6 +27,7 @@ import {
 import AnalyticsStore, {
   RoutePlannerClientEvent,
   RoutePlannerRouteEvent,
+  RoutePlannerSelectionOrigin,
 } from "../../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client } from "../../../WorkflowsStore/Client";
 import {
@@ -97,7 +98,7 @@ export default class RoutePlannerClientStore {
     this._allPeople.push(person);
   }
 
-  removeFromAllPeople(person: Client) {
+  removeFromAllPeople(person: Client, origin: RoutePlannerSelectionOrigin) {
     const i = this._allPeople.findIndex(
       (p) => p.pseudonymizedId === person.pseudonymizedId,
     );
@@ -109,13 +110,18 @@ export default class RoutePlannerClientStore {
       );
     } else {
       this._allPeople.splice(i, 1);
+      this.analyticsStore.trackRoutePlannerClientDeselected({
+        pseudonymizedId: person.pseudonymizedId,
+        selectedCount: this.selectedClientPseudoIds.length,
+        origin,
+      });
     }
   }
 
   /** this removes people when clicked from the main screen */
   removeAddedMorePeople(person: Client) {
     this.spliceIndexOf(person, this._addMorePeopleList);
-    this.removeFromAllPeople(person);
+    this.removeFromAllPeople(person, "add_more_clients");
   }
 
   /** functions on add more people */
@@ -123,13 +129,35 @@ export default class RoutePlannerClientStore {
     const finalizedIds = new Set(
       finalizedSelections.map((p) => p.pseudonymizedId),
     );
+
+    const existingIds = new Set(this._allPeople.map((p) => p.pseudonymizedId));
+
     this._addMorePeopleList
       .filter((p) => !finalizedIds.has(p.pseudonymizedId))
-      .forEach((p) => this.removeFromAllPeople(p));
+      .forEach((p) => this.removeFromAllPeople(p, "add_more_clients"));
+
     this._addMorePeopleList = [...finalizedSelections];
     this._allPeople = [
       ...new Set([...this._allPeople, ...finalizedSelections]),
     ];
+
+    const newSelections = finalizedSelections.filter(
+      (p) => !existingIds.has(p.pseudonymizedId),
+    );
+
+    newSelections.forEach((p, index) => {
+      // Because the clients are being added all at once - in order to maintain
+      // an accurate count index - we need to subtract the new selections length
+      // from the existing selected clients and increment
+      const count =
+        this.selectedClientPseudoIds.length - newSelections.length + index + 1;
+
+      this.analyticsStore.trackRoutePlannerClientSelected({
+        pseudonymizedId: p.pseudonymizedId,
+        selectedCount: count,
+        origin: "add_more_clients",
+      });
+    });
   }
 
   indexOfPerson(person: Client) {
@@ -296,6 +324,11 @@ export default class RoutePlannerClientStore {
     if (Object.keys(this.placeIds).includes(person.pseudonymizedId)) {
       if (!list) {
         this.addSelectedPerson(person);
+        this.analyticsStore.trackRoutePlannerClientSelected({
+          pseudonymizedId: person.pseudonymizedId,
+          selectedCount: this.selectedClientPseudoIds.length,
+          origin: "client_card",
+        });
         return;
       } else {
         list.push(person);
@@ -328,10 +361,15 @@ export default class RoutePlannerClientStore {
           list.push(person);
         }
         this.isAddingPerson = false;
-        this.analyticsStore.trackRoutePlannerClientSelected({
-          pseudonymizedId: person.pseudonymizedId,
-          selectedCount: this.selectedClientPseudoIds.length,
-        });
+        // this tracking should only fire if the client was selected in
+        // the client card.
+        if (!list) {
+          this.analyticsStore.trackRoutePlannerClientSelected({
+            pseudonymizedId: person.pseudonymizedId,
+            selectedCount: this.selectedClientPseudoIds.length,
+            origin: "client_card",
+          });
+        }
       });
     } else {
       toast(this.getBadAddressCopy(), {

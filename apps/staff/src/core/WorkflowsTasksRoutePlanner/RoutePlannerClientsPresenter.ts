@@ -242,7 +242,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   }
 
   removePerson(person: Client) {
-    this.routePlannerClientStore.removeFromAllPeople(person);
+    this.routePlannerClientStore.removeFromAllPeople(person, "client_card");
   }
 
   async optimizeRoute(startingAddress: string, endingAddress?: string) {

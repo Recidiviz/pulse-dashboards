@@ -283,6 +283,8 @@ export type PersonSearchResultClickedMetadata = {
   searchInput: string;
 };
 
+export type RoutePlannerSelectionOrigin = "client_card" | "add_more_clients";
+
 // Categorizes the search query's shape for analytics without transmitting the raw value itself
 // TODO: Verify this is the desired behaviour (OBT-42980)
 function classifySearchInput(value: string): "id" | "name" | "other" {
@@ -934,6 +936,7 @@ export default class AnalyticsStore {
   trackRoutePlannerClientSelected(metadata: {
     pseudonymizedId: string;
     selectedCount: number;
+    origin: RoutePlannerSelectionOrigin;
   }) {
     this.track("frontend.route_planner_client_selected", metadata);
   }
@@ -941,6 +944,7 @@ export default class AnalyticsStore {
   trackRoutePlannerClientDeselected(metadata: {
     pseudonymizedId: string;
     selectedCount: number;
+    origin: RoutePlannerSelectionOrigin;
   }) {
     this.track("frontend.route_planner_client_deselected", metadata);
   }
