@@ -1552,13 +1552,6 @@ describe("getPseudIdFromReviewerId", () => {
       ),
     ).toBe(mockSupervisionOfficers[0].pseudonymizedId);
   });
-  test("returns the pseudonymized ID for a reviewer ID recorded before stable IDs", () => {
-    expect(
-      opp.getPseudoIdFromReviewerId(
-        getStableStaffExternalId(mockSupervisionOfficers[0]),
-      ),
-    ).toBe(mockSupervisionOfficers[0].pseudonymizedId);
-  });
 });
 
 describe("current user IDs", () => {
@@ -1592,24 +1585,11 @@ describe("current user IDs", () => {
       expect(opp.userId).toBe(officer.stableStaffExternalId);
     });
 
-    test("stableUserId is the current user's stable staff external ID", () => {
-      expect(opp.stableUserId).toBe(officer.stableStaffExternalId);
-      expect(opp.stableUserId).not.toBe(officer.staffExternalId);
-    });
-
-    test("stableUserId is undefined when the current user has no staff record", () => {
+    test("userId is undefined when the current user has no staff record", () => {
       vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue(undefined);
 
-      expect(opp.stableUserId).toBeUndefined();
+      expect(opp.userId).toBeUndefined();
     });
-  });
-
-  test("stableUserId is undefined without useStableExternalId", () => {
-    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue(
-      {},
-    );
-
-    expect(opp.stableUserId).toBeUndefined();
   });
 });
 

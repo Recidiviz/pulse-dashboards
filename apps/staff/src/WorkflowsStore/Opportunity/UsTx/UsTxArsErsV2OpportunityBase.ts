@@ -159,35 +159,24 @@ export abstract class UsTxArsErsV2OpportunityBase<
   /**
    * Returns whether the selected staff is not this opportunity's current reviewer.
    */
-  private isPastReviewFor(
-    reviewerId: string | undefined,
-    legacyReviewerId: string | undefined,
-  ): boolean {
-    if (!reviewerId && !legacyReviewerId) return false;
+  private isPastReviewFor(reviewerId: string | undefined): boolean {
+    if (!reviewerId) return false;
     const { currentReviewerId } = this;
     if (!currentReviewerId) return true;
-    return (
-      currentReviewerId !== reviewerId &&
-      // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
-      currentReviewerId !== legacyReviewerId
-    );
+    return currentReviewerId !== reviewerId;
   }
 
   eligibilityStatusLabel(
     includeReasons?: boolean,
     category?: OpportunityTabGroup,
     reviewerId?: string,
-    legacyReviewerId?: string,
   ): string | null {
     if (this.isGrantApproved) return this.grantApprovedStatusMessage;
 
     // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
     // Use historical label if opportunity is under review
     // but selected supervisor is not the current reviewer
-    if (
-      category === "REVIEW STATUS" &&
-      this.isPastReviewFor(reviewerId, legacyReviewerId)
-    ) {
+    if (category === "REVIEW STATUS" && this.isPastReviewFor(reviewerId)) {
       return this.config.historicalReviewTabTitle;
     }
 
@@ -211,16 +200,12 @@ export abstract class UsTxArsErsV2OpportunityBase<
   tabTitle(
     category?: OpportunityTabGroup,
     reviewerId?: string,
-    legacyReviewerId?: string,
   ): OpportunityTab {
     // Approved tab
     if (this.isGrantApproved) return this.grantApprovedTabTitle;
 
     // Submitted for Review tab in REVIEW STATUS
-    if (
-      category === "REVIEW STATUS" &&
-      this.isPastReviewFor(reviewerId, legacyReviewerId)
-    ) {
+    if (category === "REVIEW STATUS" && this.isPastReviewFor(reviewerId)) {
       return this.config.historicalReviewTabTitle;
     }
 

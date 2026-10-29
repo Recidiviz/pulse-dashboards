@@ -113,9 +113,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
     (officer) => {
       const reviewerId = getStableStaffExternalId(officer);
       const wasPreviousReviewer =
-        (!!reviewerId && previousReviewerIds.has(reviewerId)) ||
-        // TODO(OBT-53651): Remove once updater fields are migrated to stable IDs
-        previousReviewerIds.has(officer.staffExternalId);
+        !!reviewerId && previousReviewerIds.has(reviewerId);
       return reviewerId && wasPreviousReviewer ? [{ officer, reviewerId }] : [];
     },
   );

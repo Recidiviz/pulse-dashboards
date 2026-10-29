@@ -106,17 +106,6 @@ export function WithJusticeInvolvedPersonStore<
       return supervisor?.stableStaffExternalId ?? undefined;
     }
 
-    /**
-     * Returns the external ID that opportunity reviewer fields written before
-     * stable IDs hold for the given supervisor.
-     * TODO(OBT-53651): Remove once those reviewer fields are migrated to stable IDs.
-     */
-    protected legacyReviewerIdForSupervisor(
-      supervisor: SupervisionOfficerSupervisor | undefined,
-    ): string | undefined {
-      return supervisor?.externalId;
-    }
-
     get opportunityMapping(): JusticeInvolvedPersonOpportunityMapping {
       return this._opportunityMapping;
     }
@@ -222,40 +211,17 @@ export function WithJusticeInvolvedPersonStore<
      * will return opportunities based on the opportunity mapping of the implementing class.
      *
      * @param reviewerId - The stable ID of the reviewer to look up opportunities.
-     * @param legacyReviewerId - The external ID that the reviewer's opportunities
-     * written before stable IDs hold.
      * @returns An object with lists of opportunities assigned to keys of the same type.
      * @see {Opportunity}
      * @see {OpportunityType}
      */
     protected opportunitiesByTypeForReviewer(
       reviewerId: string | undefined,
-      legacyReviewerId: string | undefined,
       opportunityMappingOverride?: JusticeInvolvedPersonOpportunityMapping,
     ): Record<OpportunityType, Opportunity[]> {
-      const isReviewer = (id: string | undefined) =>
-        !!id &&
-        (id === reviewerId ||
-          // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
-          id === legacyReviewerId);
+      const isReviewer = (id: string | undefined) => !!id && id === reviewerId;
 
-      // The legacy caseload is keyed separately, so the same client can appear
-      // in both; keep the stable caseload's copy.
-      const withLegacyClients = (
-        clients: JusticeInvolvedPerson[],
-        legacyClients: JusticeInvolvedPerson[],
-      ) => [
-        ...clients,
-        ...legacyClients.filter(
-          (legacy) => !clients.some((c) => c.recordId === legacy.recordId),
-        ),
-      ];
-
-      const clients = withLegacyClients(
-        reviewerId ? this.findClientsForReviewer(reviewerId) : [],
-        // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
-        legacyReviewerId ? this.findClientsForReviewer(legacyReviewerId) : [],
-      );
+      const clients = reviewerId ? this.findClientsForReviewer(reviewerId) : [];
 
       // A client can appear here because a *different* opportunity type's
       // update is assigned to this reviewer (or was reviewed by this reviewer),
@@ -274,13 +240,9 @@ export function WithJusticeInvolvedPersonStore<
 
       if (this.showPreviouslyReviewedOpportunities) {
         clientGroups.push({
-          clients: withLegacyClients(
-            reviewerId ? this.findHistoricalClientsForReviewer(reviewerId) : [],
-            // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
-            legacyReviewerId
-              ? this.findHistoricalClientsForReviewer(legacyReviewerId)
-              : [],
-          ),
+          clients: reviewerId
+            ? this.findHistoricalClientsForReviewer(reviewerId)
+            : [],
           includeInOpportunitiesByType: (opportunity: Opportunity) =>
             opportunity.allUniqueReviewerIds?.some(isReviewer) ?? false,
         });

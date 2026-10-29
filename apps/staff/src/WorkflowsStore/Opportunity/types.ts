@@ -192,8 +192,6 @@ export interface Opportunity<
   tabTitle: (
     category?: OpportunityTabGroup,
     reviewerId?: string,
-    // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
-    legacyReviewerId?: string,
   ) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
@@ -243,8 +241,6 @@ export interface Opportunity<
     includeReasons?: boolean,
     category?: OpportunityTabGroup,
     reviewerId?: string,
-    // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
-    legacyReviewerId?: string,
   ) => string | null;
   maxManualSnoozeDays(denialReasons: string[]): number | undefined;
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;

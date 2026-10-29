@@ -103,14 +103,13 @@ function resolveDisplayName(
   if (by.trim() !== "") {
     return by.trim();
   }
-  // With useStableExternalId, updateById may hold a stable staff external ID.
+  // With useStableExternalId, updateById holds a stable staff external ID.
   // Those must not be shown to users, so an unnamed match renders as the
   // officer's staffExternalId and an unmatched one as the action.by string.
   if (updateById && useStableExternalId) {
-    const officer =
-      officers.find((o) => getStableStaffExternalId(o) === updateById) ??
-      // TODO(OBT-53651): Remove once updater fields are migrated to stable IDs
-      officers.find((o) => o.staffExternalId === updateById);
+    const officer = officers.find(
+      (o) => getStableStaffExternalId(o) === updateById,
+    );
     return (
       getOfficerFullName(
         officers,

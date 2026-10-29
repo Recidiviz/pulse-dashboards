@@ -182,7 +182,6 @@ export function isUnchangedFromPrefilledValue(
 export function arsErsUserHasFilledNecessaryFields({
   formLastUpdatedId,
   currentUserId,
-  stableCurrentUserId,
   formData,
   draftData,
   fieldAuthors,
@@ -190,17 +189,16 @@ export function arsErsUserHasFilledNecessaryFields({
 }: {
   formLastUpdatedId: string | undefined;
   currentUserId: string | undefined;
-  stableCurrentUserId?: string;
   formData: Record<string, unknown> | undefined;
   draftData: Record<string, unknown> | undefined;
   fieldAuthors: Record<string, string> | undefined;
   isInRevisionsRequested: boolean | undefined;
 }): boolean {
-  if (currentUserId === undefined && stableCurrentUserId === undefined) {
+  if (currentUserId === undefined) {
     return false;
   }
   const isCurrentUser = (id: string | undefined) =>
-    id !== undefined && (id === currentUserId || id === stableCurrentUserId);
+    id !== undefined && id === currentUserId;
 
   const isFieldFilled = (
     field: string,
@@ -257,24 +255,20 @@ export function arsErsUserHasFilledNecessaryFields({
  */
 export function arsErsSectionEditedByCurrentUser({
   currentUserId,
-  stableCurrentUserId,
   draftData,
   fieldAuthors,
 }: {
   currentUserId: string | undefined;
-  stableCurrentUserId?: string;
   draftData: Record<string, unknown> | undefined;
   fieldAuthors: Record<string, string> | undefined;
 }): UsTxArsErsBlockingSubmitFieldKey | undefined {
-  if (currentUserId === undefined && stableCurrentUserId === undefined) {
+  if (currentUserId === undefined) {
     return undefined;
   }
 
   const isFieldByCurrentUser = (field: string) => {
     const author = fieldAuthors?.[field];
-    const isCurrentUser =
-      author !== undefined &&
-      (author === currentUserId || author === stableCurrentUserId);
+    const isCurrentUser = author !== undefined && author === currentUserId;
     return isCurrentUser && !!draftData?.[field];
   };
 

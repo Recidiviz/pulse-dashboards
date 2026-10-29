@@ -93,21 +93,6 @@ export class FormBase<
     return this.rootStore.userStore.externalId;
   }
 
-  /**
-   * The ID this form records as the author of the current user's edits.
-   */
-  get editorId(): string | undefined {
-    return this.currentUserId;
-  }
-
-  /**
-   * The current user's stable staff external ID, for forms whose updater fields
-   * may hold it alongside currentUserId.
-   */
-  get stableCurrentUserId(): string | undefined {
-    return undefined;
-  }
-
   get type(): OpportunityType {
     return this.opportunity.type;
   }
@@ -246,7 +231,7 @@ export class FormBase<
         updated: {
           by: this.currentUserEmail,
           date: serverTimestamp(),
-          updateById: this.editorId,
+          updateById: this.currentUserId,
         },
         data: { [name]: deleteField() },
         fieldAuthors: { [name]: deleteField() },
@@ -276,11 +261,11 @@ export class FormBase<
       updated: {
         by: this.currentUserEmail,
         date: serverTimestamp(),
-        updateById: this.editorId,
+        updateById: this.currentUserId,
       },
       data: { [name]: value },
-      ...(this.editorId && {
-        fieldAuthors: { [name]: this.editorId },
+      ...(this.currentUserId && {
+        fieldAuthors: { [name]: this.currentUserId },
       }),
     };
     const isFirstEdit = !this.formLastUpdated;

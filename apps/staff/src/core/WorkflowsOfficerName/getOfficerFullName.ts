@@ -34,13 +34,9 @@ export function getOfficerFullName(
   } else if (officerIdType === "staffExternalId") {
     officer = availableOfficers.find((o) => o.staffExternalId === officerId);
   } else {
-    officer =
-      availableOfficers.find(
-        (o) => getStableStaffExternalId(o) === officerId,
-      ) ??
-      // TODO(OBT-53651): Remove once reviewer and updater fields are migrated
-      // to stable IDs
-      availableOfficers.find((o) => o.staffExternalId === officerId);
+    officer = availableOfficers.find(
+      (o) => getStableStaffExternalId(o) === officerId,
+    );
   }
 
   let officerFullName: string | undefined;

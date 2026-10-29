@@ -88,15 +88,7 @@ export class UsTxEarlyReleaseFromSupervisionV2Form extends FormBase<
   UsTxEarlyReleaseFromSupervisionV2DraftData,
   UsTxEarlyReleaseFromSupervisionV2Opportunity
 > {
-  override get stableCurrentUserId(): string | undefined {
-    return this.opportunity.stableUserId;
-  }
-
-  /**
-   * Records edits under the opportunity's userId, so they match the IDs in its
-   * action history.
-   */
-  override get editorId(): string | undefined {
+  override get currentUserId(): string | undefined {
     return this.opportunity.userId;
   }
 
@@ -160,7 +152,6 @@ export class UsTxEarlyReleaseFromSupervisionV2Form extends FormBase<
     return arsErsUserHasFilledNecessaryFields({
       formLastUpdatedId: this?.formLastUpdated?.updateById,
       currentUserId: this?.currentUserId,
-      stableCurrentUserId: this?.stableCurrentUserId,
       formData: this?.formData,
       draftData: this?.draftData,
       fieldAuthors: this?.fieldAuthors,

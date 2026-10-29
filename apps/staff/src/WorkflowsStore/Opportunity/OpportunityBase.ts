@@ -1162,11 +1162,8 @@ export class OpportunityBase<
     if (!reviewerId) return undefined;
     const officers =
       this.rootStore.workflowsStore.availableOfficersWithOrWithoutCaseloads;
-    return (
-      officers.find((s) => getStableStaffExternalId(s) === reviewerId) ??
-      // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs
-      officers.find((s) => s.staffExternalId === reviewerId)
-    )?.pseudonymizedId;
+    return officers.find((s) => getStableStaffExternalId(s) === reviewerId)
+      ?.pseudonymizedId;
   }
 
   /**
@@ -1378,9 +1375,10 @@ export class OpportunityBase<
    * ID when useStableExternalId is on, otherwise their external ID.
    */
   get userId(): string | undefined {
-    const { userStore } = this.rootStore;
+    const { userStore, workflowsStore } = this.rootStore;
     if (userStore.activeFeatureVariants.useStableExternalId) {
-      return this.stableUserId;
+      const userInfo = workflowsStore.user?.info;
+      return userInfo ? getStableStaffExternalId(userInfo) : undefined;
     }
     return userStore.externalId;
   }
@@ -1393,17 +1391,6 @@ export class OpportunityBase<
   get byUidField(): Pick<UpdateLog, "byUid"> {
     const uid = this.rootStore.firestoreStore.currentUserUid;
     return uid ? { byUid: uid } : {};
-  }
-
-  /**
-   * The current user's stable staff external ID when useStableExternalId is on,
-   * which reviewer and updater fields may hold alongside userId.
-   */
-  get stableUserId(): string | undefined {
-    const { userStore, workflowsStore } = this.rootStore;
-    if (!userStore.activeFeatureVariants.useStableExternalId) return undefined;
-    const userInfo = workflowsStore.user?.info;
-    return userInfo ? getStableStaffExternalId(userInfo) : undefined;
   }
 
   get denialViewPrompt(): string {
