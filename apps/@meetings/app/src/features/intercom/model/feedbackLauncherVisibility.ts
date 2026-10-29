@@ -25,16 +25,26 @@ type FeedbackLauncherVisibilityStore = {
   isScrolling: boolean;
   // Set by screens (e.g. onboarding) where the launcher shouldn't show at all.
   isSuppressed: boolean;
+  bottomOffsets: Record<string, number>;
   setIsScrolling: (isScrolling: boolean) => void;
   setIsSuppressed: (isSuppressed: boolean) => void;
+  setBottomOffset: (key: string, offset: number | null) => void;
 };
 
 export const useFeedbackLauncherVisibilityStore =
   create<FeedbackLauncherVisibilityStore>()((set) => ({
     isScrolling: false,
     isSuppressed: false,
+    bottomOffsets: {},
     setIsScrolling: (isScrolling) => set({ isScrolling }),
     setIsSuppressed: (isSuppressed) => set({ isSuppressed }),
+    setBottomOffset: (key, offset) =>
+      set(({ bottomOffsets }) => {
+        const next = { ...bottomOffsets };
+        if (offset === null) delete next[key];
+        else next[key] = offset;
+        return { bottomOffsets: next };
+      }),
   }));
 
 let scrollHideTimeout: ReturnType<typeof setTimeout> | undefined;

@@ -46,11 +46,18 @@ export function FeedbackLauncher({ onPress }: Props) {
   const isSuppressed = useFeedbackLauncherVisibilityStore(
     (state) => state.isSuppressed,
   );
+  const bottomOffset = useFeedbackLauncherVisibilityStore((state) =>
+    Math.max(0, ...Object.values(state.bottomOffsets)),
+  );
 
   return (
     <View
       className="absolute right-0 z-50"
-      style={{ bottom: insets.bottom, width: 32, height: LABEL_LENGTH + 24 }}
+      style={{
+        bottom: insets.bottom + bottomOffset,
+        width: 32,
+        height: LABEL_LENGTH + 24,
+      }}
     >
       <FadeContainer
         isVisible={!isScrolling && !isSuppressed}

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { useRoute } from "@react-navigation/native";
+import { useEffect } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { ChevronRightIcon } from "react-native-heroicons/outline";
 import XIcon from "react-native-heroicons/outline/XIcon";
@@ -32,7 +33,11 @@ import { useActiveMeetingStore, useNewRecording } from "../model";
 import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
 import { MicIndicator } from "./MicIndicator";
 
-export function MeetingControlsMobile() {
+type Props = {
+  onHeightChange?: (height: number) => void;
+};
+
+export function MeetingControlsMobile({ onHeightChange }: Props) {
   const insets = useSafeAreaInsets();
   const route = useRoute();
   const {
@@ -56,7 +61,14 @@ export function MeetingControlsMobile() {
     audioLevel,
   });
 
-  if (!meetingId || !person) return null;
+  const isVisible = !!meetingId && !!person;
+
+  useEffect(() => {
+    if (!isVisible) return;
+    return () => onHeightChange?.(0);
+  }, [isVisible, onHeightChange]);
+
+  if (!isVisible) return null;
 
   const linkProps = {
     screen: personType === "client" ? "ClientNewMeeting" : "ResidentNewMeeting",
@@ -83,7 +95,10 @@ export function MeetingControlsMobile() {
 
   return (
     <>
-      <View className="flex flex-col items-center rounded-t-3xl bg-primary p-4">
+      <View
+        className="flex flex-col items-center rounded-t-3xl bg-primary p-4"
+        onLayout={(e) => onHeightChange?.(e.nativeEvent.layout.height)}
+      >
         <View className="flex-row items-center self-stretch">
           <View className="h-[24px] w-[42px] items-center justify-center rounded-full bg-secondary">
             <MicIndicator

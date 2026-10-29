@@ -44,6 +44,7 @@ import {
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useIsSuccessPlannerVisible } from "~@meetings/app/entities/success-planner";
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
+import { useFeedbackLauncherBottomOffset } from "~@meetings/app/features/intercom";
 import {
   MeetingControlsMobile,
   useActiveMeetingStore,
@@ -118,6 +119,8 @@ export const ProfileMeetings = ({
   const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
   const [isNewMeetingModalOpen, setIsNewMeetingModalOpen] = useState(false);
   const [preMeetingNote, setPreMeetingNote] = useState("");
+  const [controlsHeight, setControlsHeight] = useState(0);
+  useFeedbackLauncherBottomOffset(controlsHeight);
 
   const handleAudioUpload = useCallback(() => {
     const startUpload = () => {
@@ -317,7 +320,7 @@ export const ProfileMeetings = ({
                 setSortBy={setSortBy}
                 personType={personType}
               />
-              <MeetingControlsMobile />
+              <MeetingControlsMobile onHeightChange={setControlsHeight} />
             </>
           ),
           web: (

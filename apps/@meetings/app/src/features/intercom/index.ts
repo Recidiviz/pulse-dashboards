@@ -21,6 +21,7 @@ export {
   useIsFeedbackLauncherPresent,
 } from "./model/feedbackLauncherVisibility";
 export { openMessengerWithMessage } from "./model/openMessengerWithMessage";
+export { useFeedbackLauncherBottomOffset } from "./model/useFeedbackLauncherBottomOffset";
 export { useIntercom } from "./model/useIntercom";
 export { useSuppressFeedbackLauncher } from "./model/useSuppressFeedbackLauncher";
 export { FeedbackLauncher } from "./ui/FeedbackLauncher";

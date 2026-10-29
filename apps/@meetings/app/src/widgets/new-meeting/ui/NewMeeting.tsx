@@ -25,6 +25,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import { useFeedbackLauncherBottomOffset } from "~@meetings/app/features/intercom";
 import {
   MeetingControlsMobile,
   useActiveMeetingStore,
@@ -48,7 +49,9 @@ export const NewMeeting = ({
   header,
 }: Props) => {
   const insets = useSafeAreaInsets();
+  const [controlsHeight, setControlsHeight] = useState(0);
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
+  useFeedbackLauncherBottomOffset(controlsHeight);
 
   const { meetingType, meetingTypeCategory, note, setNote, controlsDisabled } =
     useActiveMeetingStore();
@@ -100,7 +103,7 @@ export const NewMeeting = ({
           />
           <MeetingCaseNoteSummary person={person} />
         </View>
-        <MeetingControlsMobile />
+        <MeetingControlsMobile onHeightChange={setControlsHeight} />
       </View>
     </TouchableWithoutFeedback>
   );
