@@ -28,7 +28,7 @@ import { UsNeCheckInCompletion } from "./UsNeCheckInCompletion/UsNeCheckInComple
 import { UsNeCheckInContextProvider } from "./UsNeCheckInContext";
 import { UsNeCheckInExitModal } from "./UsNeCheckInExitModal/UsNeCheckInExitModal";
 import { UsNeCheckInLayout } from "./UsNeCheckInLayout/UsNeCheckInLayout";
-import { UsNeCheckInQuestion } from "./UsNeCheckInQuestion";
+import { UsNeCheckInQuestion } from "./UsNeCheckInQuestion/UsNeCheckInQuestion";
 import { UsNeCheckInSectionIntro } from "./UsNeCheckInSectionIntro/UsNeCheckInSectionIntro";
 import { UsNeCheckInWelcome } from "./UsNeCheckInWelcome/UsNeCheckInWelcome";
 

@@ -20,16 +20,15 @@ import { useState } from "react";
 import { checkInQuestionConfig, SupportSystemContact } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
-import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
-import { QuestionScreenProps } from "./types";
-import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
+import { useResidentGivenNames } from "../hooks/useResidentGivenNames";
+import { QuestionScreenProps } from "../types";
+import { UsNeCheckInFooter } from "../UsNeCheckInFooter/UsNeCheckInFooter";
 import {
-  OptionalHint,
-  QuestionText,
   QuestionWrapper,
   SupportSystemTable,
   SupportSystemTextEntry,
 } from "./UsNeCheckInQuestion.styles";
+import { UsNeCheckInQuestionHeader } from "./UsNeCheckInQuestionHeader";
 
 const SupportSystemPersonRow = ({
   index,
@@ -102,12 +101,10 @@ export const UsNeCheckInSupportSystemQuestion = ({
   return (
     <>
       <QuestionWrapper>
-        <QuestionText>{questionCopy.question}</QuestionText>
-        {isOptional && (
-          <OptionalHint>
-            {t(($) => $.checkIn.questionPage.optional)}
-          </OptionalHint>
-        )}
+        <UsNeCheckInQuestionHeader
+          copy={questionCopy}
+          isOptional={isOptional}
+        />
         <SupportSystemTable>
           <thead>
             <tr>

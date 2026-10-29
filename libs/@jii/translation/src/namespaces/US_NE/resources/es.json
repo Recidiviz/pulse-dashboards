@@ -440,16 +440,20 @@
         "question": "¿Quiénes son las cuatro personas que más te apoyan?"
       },
       "STRENGTH_1": {
-        "question": "¿Cuál es una fortaleza que te ayudará después de tu liberación?"
+        "question": "¿Cuál es una fortaleza que te ayudará después de tu liberación?",
+        "description": "Una fortaleza es algo que se te da de forma natural, como ser paciente, trabajar duro o saber escuchar."
       },
       "STRENGTH_2": {
-        "question": "¿Cuál es otra fortaleza que tienes?"
+        "question": "¿Cuál es otra fortaleza que tienes?",
+        "description": "Una fortaleza es algo que se te da de forma natural, como ser paciente, trabajar duro o saber escuchar."
       },
       "SKILL_1": {
-        "question": "¿Cuál es una habilidad que te ayudará en tu futuro?"
+        "question": "¿Cuál es una habilidad que te ayudará en tu futuro?",
+        "description": "Una habilidad es algo que aprendiste o para lo que te capacitaste, como una certificación de montacargas o de soldadura, o hablar dos idiomas."
       },
       "SKILL_2": {
-        "question": "¿Qué otra habilidad tienes que te ayudará cuando regreses a casa?"
+        "question": "¿Qué otra habilidad tienes que te ayudará cuando regreses a casa?",
+        "description": "Una habilidad es algo que aprendiste o para lo que te capacitaste, como una certificación de montacargas o de soldadura, o hablar dos idiomas."
       },
       "OBSTACLES": {
         "question": "¿Qué podría impedirte tener éxito con tus planes de reinserción social, {{name}}?"
@@ -521,7 +525,7 @@
     },
     "questionPage": {
       "header": "Pregunta {{number}}",
-      "optional": "Opcional — puedes saltarla",
+      "optional": "(opcional)",
       "selectOne": "Elige una opción",
       "checkAll": "Marca todas las que apliquen"
     },

@@ -440,16 +440,20 @@
         "question": "Who are the four people who most support you?"
       },
       "STRENGTH_1": {
-        "question": "What’s one strength that will help you after release?"
+        "question": "What’s one strength that will help you after release?",
+        "description": "A strength is something that comes naturally to you, like being patient, a hard worker, or a good listener."
       },
       "STRENGTH_2": {
-        "question": "What’s another strength you have?"
+        "question": "What’s another strength you have?",
+        "description": "A strength is something that comes naturally to you, like being patient, a hard worker, or a good listener."
       },
       "SKILL_1": {
-        "question": "What is a skill that will help your future?"
+        "question": "What is a skill that will help your future?",
+        "description": "A skill is something you’ve learned or trained for, like a forklift or welding certification, or speaking two languages."
       },
       "SKILL_2": {
-        "question": "What’s another skill you have that will help you when you go home?"
+        "question": "What’s another skill you have that will help you when you go home?",
+        "description": "A skill is something you’ve learned or trained for, like a forklift or welding certification, or speaking two languages."
       },
       "OBSTACLES": {
         "question": "What could stop you from doing well with your release plans, {{name}}?"
@@ -521,7 +525,7 @@
     },
     "questionPage": {
       "header": "Question {{number}}",
-      "optional": "Optional — you can skip",
+      "optional": "(optional)",
       "selectOne": "Select one option below",
       "checkAll": "Check all that apply"
     },

@@ -19,21 +19,19 @@ import { useState } from "react";
 
 import { checkInQuestionConfig } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
-import { Radio, RadioGroup } from "~design-system";
+import { Checkbox, CheckboxGroup } from "~design-system";
 
-import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
-import { SelectQuestionScreenProps } from "./types";
-import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
+import { useResidentGivenNames } from "../hooks/useResidentGivenNames";
+import { SelectQuestionScreenProps } from "../types";
+import { UsNeCheckInFooter } from "../UsNeCheckInFooter/UsNeCheckInFooter";
 import {
-  AnswerHint,
-  OptionalHint,
   OptionCard,
   OptionsList,
-  QuestionText,
   QuestionWrapper,
 } from "./UsNeCheckInQuestion.styles";
+import { UsNeCheckInQuestionHeader } from "./UsNeCheckInQuestionHeader";
 
-export const UsNeCheckInRadioQuestion = ({
+export const UsNeCheckInCheckboxQuestion = ({
   id,
   answers,
   saveAnswer,
@@ -43,52 +41,44 @@ export const UsNeCheckInRadioQuestion = ({
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
 
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
     name: useResidentGivenNames(),
   });
-  const defaultRadioAnswers: Record<string, string> = t(
-    ($) => $.checkIn.standardRadioAnswers,
-    { returnObjects: true },
-  );
 
   // Not all questions have answer copy, but the existence of answer
-  // copy for radio questions is checked by a test in the @jii/translation library
+  // copy for checkbox questions is checked by a test in the @jii/translation library
   const answerCopy: Record<string, string> =
     "answers" in questionCopy ? questionCopy.answers : {};
 
   return (
     <>
       <QuestionWrapper>
-        <QuestionText>{questionCopy.question}</QuestionText>
-        {isOptional && (
-          <OptionalHint>
-            {t(($) => $.checkIn.questionPage.optional)}
-          </OptionalHint>
-        )}
-        <AnswerHint>{t(($) => $.checkIn.questionPage.selectOne)}</AnswerHint>
-        <RadioGroup
-          value={selected ?? undefined}
-          onChange={(value) => setSelected(value)}
+        <UsNeCheckInQuestionHeader
+          copy={questionCopy}
+          isOptional={isOptional}
+          answerHint={t(($) => $.checkIn.questionPage.checkAll)}
+        />
+        <CheckboxGroup
+          value={selected}
+          onChange={setSelected}
           ariaLabel={questionCopy.question}
         >
           <OptionsList>
             {answers.map((option) => (
-              <OptionCard key={option} $selected={option === selected}>
-                <Radio value={option}>
-                  {answerCopy[option] ?? defaultRadioAnswers[option]}
-                </Radio>
+              <OptionCard key={option} $selected={selected.includes(option)}>
+                <Checkbox value={option}>{answerCopy[option]}</Checkbox>
               </OptionCard>
             ))}
           </OptionsList>
-        </RadioGroup>
+        </CheckboxGroup>
       </QuestionWrapper>
 
       <UsNeCheckInFooter
-        onButtonClick={() => saveAnswer(selected)}
-        isDisabled={saveIsPending || (!isOptional && !selected)}
+        onButtonClick={() => saveAnswer(selected.length > 0 ? selected : null)}
+        isDisabled={saveIsPending || (!isOptional && selected.length === 0)}
         {...footerProps}
       />
     </>

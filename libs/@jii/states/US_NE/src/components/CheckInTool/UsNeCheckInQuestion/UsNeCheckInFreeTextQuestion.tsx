@@ -20,15 +20,11 @@ import { useState } from "react";
 import { checkInQuestionConfig } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
-import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
-import { QuestionScreenProps } from "./types";
-import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
-import {
-  OptionalHint,
-  QuestionText,
-  QuestionWrapper,
-  TextEntry,
-} from "./UsNeCheckInQuestion.styles";
+import { useResidentGivenNames } from "../hooks/useResidentGivenNames";
+import { QuestionScreenProps } from "../types";
+import { UsNeCheckInFooter } from "../UsNeCheckInFooter/UsNeCheckInFooter";
+import { QuestionWrapper, TextEntry } from "./UsNeCheckInQuestion.styles";
+import { UsNeCheckInQuestionHeader } from "./UsNeCheckInQuestionHeader";
 
 export const UsNeCheckInFreeTextQuestion = ({
   id,
@@ -48,12 +44,10 @@ export const UsNeCheckInFreeTextQuestion = ({
   return (
     <>
       <QuestionWrapper>
-        <QuestionText>{questionCopy.question}</QuestionText>
-        {isOptional && (
-          <OptionalHint>
-            {t(($) => $.checkIn.questionPage.optional)}
-          </OptionalHint>
-        )}
+        <UsNeCheckInQuestionHeader
+          copy={questionCopy}
+          isOptional={isOptional}
+        />
         <TextEntry
           id={id}
           value={answer}

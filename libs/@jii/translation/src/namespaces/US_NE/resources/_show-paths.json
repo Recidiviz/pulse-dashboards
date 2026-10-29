@@ -440,16 +440,20 @@
         "question": "[US_NE]checkIn.questions.SUPPORT_SYSTEM.question"
       },
       "STRENGTH_1": {
-        "question": "[US_NE]checkIn.questions.STRENGTH_1.question"
+        "question": "[US_NE]checkIn.questions.STRENGTH_1.question",
+        "description": "[US_NE]checkIn.questions.STRENGTH_1.description"
       },
       "STRENGTH_2": {
-        "question": "[US_NE]checkIn.questions.STRENGTH_2.question"
+        "question": "[US_NE]checkIn.questions.STRENGTH_2.question",
+        "description": "[US_NE]checkIn.questions.STRENGTH_2.description"
       },
       "SKILL_1": {
-        "question": "[US_NE]checkIn.questions.SKILL_1.question"
+        "question": "[US_NE]checkIn.questions.SKILL_1.question",
+        "description": "[US_NE]checkIn.questions.SKILL_1.description"
       },
       "SKILL_2": {
-        "question": "[US_NE]checkIn.questions.SKILL_2.question"
+        "question": "[US_NE]checkIn.questions.SKILL_2.question",
+        "description": "[US_NE]checkIn.questions.SKILL_2.description"
       },
       "OBSTACLES": {
         "question": "[US_NE]checkIn.questions.OBSTACLES.question"

@@ -27,8 +27,8 @@ import {
 import { useUsNeTranslations } from "~@jii/translation";
 import { JiiResidentAppRouter } from "~@jii/trpc-types";
 
-import { CheckInFormData, CheckInMutationInput } from "./types";
-import { QuestionInfo } from "./types";
+import { CheckInFormData, CheckInMutationInput } from "../types";
+import { QuestionInfo } from "../types";
 import { UsNeCheckInCheckboxQuestion } from "./UsNeCheckInCheckboxQuestion";
 import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
 import { QuestionNumber } from "./UsNeCheckInQuestion.styles";

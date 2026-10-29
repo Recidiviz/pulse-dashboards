@@ -38,7 +38,7 @@ export const QuestionText = styled.h2`
   ${typography.Sans24}
 `;
 
-export const OptionalHint = styled.span`
+export const QuestionDescription = styled.span`
   ${typography.Sans16}
 
   color: ${palette.slate85};
