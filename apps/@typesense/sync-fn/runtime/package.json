@@ -10,6 +10,7 @@
   "dependencies": {
     "firebase-admin": "13.9.0",
     "firebase-functions": "7.2.3",
-    "typesense": "1.8.2"
+    "typesense": "1.8.2",
+    "zod": "3.23.6"
   }
 }

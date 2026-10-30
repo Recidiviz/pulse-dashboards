@@ -18,7 +18,7 @@
 // An agreement between two separately deployed Cloud Functions that never call
 // each other. Divergence fails silently, so both writers import from here.
 
-import type { FirestoreDoc } from "./docIds";
+import { type FirestoreDoc, stateCodeFromRecordId } from "./docIds";
 
 export type OpportunityUpdateStatus =
   | "NONE"
@@ -30,8 +30,10 @@ export type OpportunityUpdateStatus =
 export type DerivedUpdateFields = {
   /** Equal to the document's own id, which is also the opportunity's. */
   opportunityDocId: string;
-  /** Derived from the document id */
-  stateCode: string;
+  /**
+   * The document's own `stateCode`, or the state read off its document id
+   */
+  stateCode?: string;
   updateStatus: OpportunityUpdateStatus;
   /**
    * Not `updateStatus !== "NONE"`: a snooze produces no `tabTitle` branch.
@@ -133,6 +135,12 @@ export function deriveUpdateFields(
 ): DerivedUpdateFields {
   const updateStatus = deriveStatus(data);
 
+  const docStateCode = data["stateCode"];
+  const stateCode =
+    typeof docStateCode === "string" && docStateCode !== ""
+      ? docStateCode.toUpperCase()
+      : stateCodeFromRecordId(docId);
+
   const history = data["actionHistory"];
   const hasOfficerAction =
     OFFICER_ACTION_FIELDS.some(
@@ -158,8 +166,7 @@ export function deriveUpdateFields(
     opportunityDocId: docId,
     updateStatus,
     hasOfficerAction,
-    // Omitted, not undefined: the import must reject a document with no state.
-    stateCode: data["stateCode"] as string,
+    ...(stateCode !== undefined ? { stateCode } : {}),
     // Spread, not assigned: absent and present-and-undefined differ to the
     // stale-alert partition.
     ...(submittedDateTimestamp !== undefined ? { submittedDateTimestamp } : {}),

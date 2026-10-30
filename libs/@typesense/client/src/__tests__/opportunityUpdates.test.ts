@@ -266,12 +266,25 @@ describe("deriveUpdateFields — stateCode", () => {
     );
   });
 
-  it("yields undefined when the document has none, so the import rejects", () => {
-    // The schema declares it required, and `JSON.stringify` drops an undefined
-    // value — so the field reaches Typesense absent and fails that one document
-    // loudly, rather than filing it under no state. Every update document
-    // carries it, and a state-scoped backfill filters on it directly.
-    expect(deriveUpdateFields({}, DOC_ID).stateCode).toBeUndefined();
+  it("falls back to the state in its own id", () => {
+    expect(deriveUpdateFields({}, DOC_ID).stateCode).toBe("US_TN");
+  });
+
+  it("upper-cases a lowercase value the document carries", () => {
+    expect(deriveUpdateFields({ stateCode: "us_nd" }, DOC_ID).stateCode).toBe(
+      "US_ND",
+    );
+  });
+
+  it("prefers the document's own value over the id", () => {
+    expect(
+      deriveUpdateFields({ stateCode: "US_ND" }, "us_tn_123_usTnExpiration")
+        .stateCode,
+    ).toBe("US_ND");
+  });
+
+  it("yields undefined when neither source has one, so the import rejects", () => {
+    expect(deriveUpdateFields({}, "malformed-id").stateCode).toBeUndefined();
   });
 
   it("always sets opportunityDocId to the document's own id", () => {

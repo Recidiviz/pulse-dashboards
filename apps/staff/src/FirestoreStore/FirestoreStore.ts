@@ -846,7 +846,7 @@ export default class FirestoreStore {
     >,
   ) {
     const {
-      person: { recordId: personRecordId },
+      person: { recordId: personRecordId, stateCode },
       firestoreUpdateDocId,
     } = opportunity;
 
@@ -859,6 +859,7 @@ export default class FirestoreStore {
       personRecordId,
       opportunityDocRef,
       {
+        stateCode,
         ...update,
       },
     );
@@ -1041,7 +1042,6 @@ export default class FirestoreStore {
   ): Promise<void> {
     return this.updateOpportunity(opportunity, {
       lastViewed: { by: userEmail, date: serverTimestamp() },
-      stateCode: opportunity.person.stateCode,
     });
   }
 

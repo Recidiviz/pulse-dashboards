@@ -37,6 +37,14 @@
         ]
       }
     },
+    "verify-runtime-deps": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "tsx ../../../libs/@typesense/tools/src/verifyRuntimeDeps.mts --project=backfill-fn",
+        "cwd": "{projectRoot}"
+      }
+    },
     "plan": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
@@ -55,7 +63,7 @@
     },
     "deploy": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "verify-runtime-deps"],
       "options": {
         "cwd": "{workspaceRoot}/libs/atmos"
       },

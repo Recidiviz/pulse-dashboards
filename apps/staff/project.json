@@ -243,6 +243,17 @@
         "staging": {},
         "production": {}
       }
+    },
+    "requires-sops-env:backfill-opportunity-update-state-codes": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/backfillOpportunityUpdateStateCodes.ts {args}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
     }
   }
 }

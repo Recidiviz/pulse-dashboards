@@ -752,6 +752,7 @@ describe("FirestoreStore", () => {
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
+          stateCode: "US_ID",
           adjudicationStatus: {
             adjudicationStatus: "Approved",
             by: "test-email",
@@ -767,6 +768,7 @@ describe("FirestoreStore", () => {
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
+          stateCode: "US_ID",
           adjudicationStatus: "mock-delete-fn",
         },
         { merge: true },
@@ -1042,7 +1044,9 @@ describe("FirestoreStore", () => {
         ],
         [
           "test-doc-ref",
-          { ...opportunityUpdate },
+          // Upper-case, unlike the person document above, which uses
+          // `recordId.slice(0, 5)`.
+          { stateCode: "US_ID", ...opportunityUpdate },
           {
             merge: true,
           },
@@ -1150,7 +1154,7 @@ describe("FirestoreStore", () => {
       expect(mockSetDoc).not.toBeCalled();
       // eslint-disable-next-line no-console
       expect(console.log).toBeCalledWith(
-        '[IMPERSONATOR IN PROD] Skipping update for: test-doc-ref with updates {"lastViewed":{"by":"user@domain.gov","date":"mock-timestamp"},"stateCode":"US_ID"}',
+        '[IMPERSONATOR IN PROD] Skipping update for: test-doc-ref with updates {"stateCode":"US_ID","lastViewed":{"by":"user@domain.gov","date":"mock-timestamp"}}',
       );
     });
 

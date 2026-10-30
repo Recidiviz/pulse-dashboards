@@ -1964,10 +1964,7 @@ describe("runBackfill — a subcollection group source", () => {
     ]);
   });
 
-  it("sends no stateCode for a document that carries none, so the import rejects it", async () => {
-    // The schema declares `stateCode` required, so a document without one fails
-    // that single line of the import rather than being filed under no state.
-    // Every update document carries it; this is the loud failure if one stops.
+  it("reads the state off the path when the document carries none", async () => {
     firestoreHolder.current = makeFirestore(
       {},
       {
@@ -1985,9 +1982,7 @@ describe("runBackfill — a subcollection group source", () => {
     await runBackfill([UPDATES_CONFIG]);
 
     const [doc] = ts.importedDocs["opportunityUpdates"];
-    expect(doc["stateCode"]).toBeUndefined();
-    // The rest of the document is still derived, so the failure is the missing
-    // field alone and not a collapsed projection.
+    expect(doc["stateCode"]).toBe("US_AR");
     expect(doc["updateStatus"]).toBe("DENIED");
   });
 

@@ -28,6 +28,7 @@ export {
   type DocIdPrefixOverride,
   type FirestoreDoc,
   mergeDocIdFromPath,
+  stateCodeFromRecordId,
   toTypesenseId,
 } from "./docIds";
 export {

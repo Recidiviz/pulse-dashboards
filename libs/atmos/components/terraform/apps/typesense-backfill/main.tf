@@ -17,7 +17,11 @@
 # whatever's currently in dist/ — fine if you just built, footgun otherwise.
 #
 # Cloud Functions builder runs `npm install` server-side against the bundled
-# package.json's runtime deps (firebase-admin, typesense).
+# package.json's runtime deps. ANY package the bundle `require`s must be listed
+# there: an undeclared one is absent at runtime, the container cannot start,
+# and Cloud Run serves its own 500 with no function log and no named module.
+# `nx verify-runtime-deps @typesense/backfill-fn` checks this, and `deploy`
+# depends on it.
 #
 # Triggering: HTTP for now (callable via authenticated curl with a Google
 # OIDC token). A Cloud Scheduler job pointed at this function's URL will be

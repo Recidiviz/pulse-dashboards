@@ -102,6 +102,11 @@ export function composeDocIdFromFields(
   return parts.length > 0 ? parts.join("_") : undefined;
 }
 
+export function stateCodeFromRecordId(recordId: string): string | undefined {
+  const match = /^([A-Za-z]{2})_([A-Za-z]{2})_/.exec(recordId);
+  return match ? `${match[1]}_${match[2]}`.toUpperCase() : undefined;
+}
+
 // Joins an update path's document-id segments (the odd ones) with `_`:
 //
 //   clientUpdatesV2/us_tn_123                                  → us_tn_123

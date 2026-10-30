@@ -19,7 +19,7 @@ import { z } from "zod";
 
 export const clientOpportunityUpdatesSchema = z
   .object({
-    stateCode: z.string().optional(),
+    stateCode: z.string(),
     currentReviewerId: z.string().optional(),
     // Populated from the Firestore document path (result.ref.parent.parent.id)
     // rather than the document data itself; used to look up the associated client.

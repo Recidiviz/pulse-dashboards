@@ -137,8 +137,8 @@ describe("JusticeInvolvedPersonsStore", () => {
     it("fetches opportunity updates for the reviewer and populates the caseload with the resulting Clients", async () => {
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
         [
-          { clientRecordId: CLIENT_RECORD_A.recordId },
-          { clientRecordId: CLIENT_RECORD_B.recordId },
+          { stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId },
+          { stateCode: "US_XX", clientRecordId: CLIENT_RECORD_B.recordId },
         ] as ClientOpportunityUpdateRecord[],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
@@ -167,8 +167,8 @@ describe("JusticeInvolvedPersonsStore", () => {
     it("dedupes clientRecordIds and filters out updates with no clientRecordId", async () => {
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
         [
-          { clientRecordId: CLIENT_RECORD_A.recordId },
-          { clientRecordId: CLIENT_RECORD_A.recordId },
+          { stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId },
+          { stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId },
           {},
         ] as ClientOpportunityUpdateRecord[],
       );
@@ -186,7 +186,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
     it("reuses an existing Client instance for the reviewer when its record ID is still present", async () => {
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
-        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+        [{ stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId }],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
         CLIENT_RECORD_A,
@@ -195,7 +195,7 @@ describe("JusticeInvolvedPersonsStore", () => {
       const existingClient = store.caseloadByReviewerId.get("reviewer-1")?.[0];
 
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
-        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+        [{ stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId }],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
         CLIENT_RECORD_A,
@@ -209,7 +209,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
     it("overwrites the caseload for that reviewer rather than appending to it", async () => {
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
-        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+        [{ stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId }],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
         CLIENT_RECORD_A,
@@ -217,7 +217,7 @@ describe("JusticeInvolvedPersonsStore", () => {
       await store.populateCaseloadForReviewer("reviewer-1");
 
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
-        [{ clientRecordId: CLIENT_RECORD_B.recordId }],
+        [{ stateCode: "US_XX", clientRecordId: CLIENT_RECORD_B.recordId }],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
         CLIENT_RECORD_B,
@@ -233,7 +233,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
     it("keeps caseloads for different reviewers separate", async () => {
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
-        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+        [{ stateCode: "US_XX", clientRecordId: CLIENT_RECORD_A.recordId }],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
         CLIENT_RECORD_A,
@@ -241,7 +241,7 @@ describe("JusticeInvolvedPersonsStore", () => {
       await store.populateCaseloadForReviewer("reviewer-1");
 
       firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
-        [{ clientRecordId: CLIENT_RECORD_B.recordId }],
+        [{ stateCode: "US_XX", clientRecordId: CLIENT_RECORD_B.recordId }],
       );
       firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
         CLIENT_RECORD_B,
