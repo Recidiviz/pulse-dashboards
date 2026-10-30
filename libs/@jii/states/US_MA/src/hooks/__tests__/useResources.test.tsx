@@ -27,12 +27,16 @@ import {
   makeResource,
   rentFilters,
 } from "../../components/Reentry/Resources/__tests__/testUtils";
+import { NO_SELECTION } from "../../components/Reentry/Resources/filters/filterConfig";
 import { useResources } from "../useResources";
 
 vi.mock("~@jii/data", async (importOriginal) => ({
   ...(await importOriginal()),
   useRootStore: vi.fn(),
 }));
+
+const trackCreFiltersUpdated = vi.fn();
+const trackCreFilterCleared = vi.fn();
 
 const QUERY_KEY = ["resources"];
 
@@ -81,6 +85,8 @@ let queryClient: QueryClient;
 beforeEach(() => {
   queryClient = new QueryClient({ defaultOptions: { queries: { retry: 0 } } });
   queryClient.setQueryData(QUERY_KEY, resources);
+  trackCreFiltersUpdated.mockReset();
+  trackCreFilterCleared.mockReset();
 
   vi.mocked(useRootStore).mockReturnValue({
     apiClient: {
@@ -96,6 +102,9 @@ beforeEach(() => {
           },
         },
       },
+    },
+    userStore: {
+      segmentClient: { trackCreFiltersUpdated, trackCreFilterCleared },
     },
   } as unknown as ReturnType<typeof useRootStore>);
 });
@@ -194,4 +203,36 @@ test("applyFilters replaces the filter IDs and keeps other params", () => {
   expect(result.current.appliedFilters).toEqual(
     rentFilters("free", "basedOnIncome"),
   );
+});
+
+test("applyFilters tracks the category and selected option ids", () => {
+  const { result } = renderResourcesHook("?rent=over200");
+
+  act(() => result.current.applyFilters(rentFilters("free")));
+
+  expect(trackCreFiltersUpdated).toHaveBeenCalledExactlyOnceWith({
+    justiceInvolvedPersonPseudoId: "abc",
+    category: "housing",
+    filters: {
+      subcategories: [],
+      counties: [],
+      gender: [],
+      lengthOfStay: [],
+      rent: ["free"],
+      accepts: [],
+    },
+  });
+  expect(trackCreFilterCleared).not.toHaveBeenCalled();
+});
+
+test("applyFilters tracks an empty selection as cleared", () => {
+  const { result } = renderResourcesHook("?rent=over200");
+
+  act(() => result.current.applyFilters(NO_SELECTION));
+
+  expect(trackCreFilterCleared).toHaveBeenCalledExactlyOnceWith({
+    justiceInvolvedPersonPseudoId: "abc",
+    category: "housing",
+  });
+  expect(trackCreFiltersUpdated).not.toHaveBeenCalled();
 });

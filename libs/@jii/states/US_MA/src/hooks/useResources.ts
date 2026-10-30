@@ -25,6 +25,7 @@ import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 
 import {
+  countSelectedOptions,
   getFilterGroups,
   parseSelectedFilters,
   toSearchParams,
@@ -37,6 +38,7 @@ export const ONE_HOUR_MS = 60 * 60 * 1000;
 export function useResources() {
   const {
     apiClient: { trpcQuerier },
+    userStore: { segmentClient },
   } = useRootStore();
   const { data } = useSuspenseQuery({
     ...trpcQuerier.resident.resources.getResources.queryOptions(),
@@ -44,7 +46,7 @@ export function useResources() {
   });
 
   const route = State.Resident.UsMaReentry.Resources.CategoryResults;
-  const { category } = useTypedParams(route);
+  const { category, personPseudoId } = useTypedParams(route);
   const [searchParams, setSearchParams] = useTypedSearchParams(route);
 
   const categoryResources = data.filter((resource) =>
@@ -62,10 +64,23 @@ export function useResources() {
     appliedFilters,
     filterGroups,
     // Keeps search params that the filters don't use, such as tags.
-    applyFilters: (filters: SelectedFilters) =>
+    applyFilters: (filters: SelectedFilters) => {
+      if (countSelectedOptions(filters) === 0) {
+        segmentClient.trackCreFilterCleared({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          category,
+        });
+      } else {
+        segmentClient.trackCreFiltersUpdated({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          category,
+          filters: toSearchParams(filters),
+        });
+      }
       setSearchParams((current) => ({
         ...current,
         ...toSearchParams(filters),
-      })),
+      }));
+    },
   };
 }

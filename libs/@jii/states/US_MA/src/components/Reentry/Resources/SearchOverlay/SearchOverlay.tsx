@@ -19,10 +19,12 @@ import { FC, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Button } from "~design-system";
 
+import { useAnonymousCreAnalytics } from "../../../../hooks/useAnonymousCreAnalytics";
 import { useResourceSearch } from "../../../../hooks/useResourceSearch";
 import { ResourceCard } from "../ResourceCard/ResourceCard";
 import { ResourceSummary } from "../types";
@@ -61,7 +63,16 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
 
   const { category, ...residentParams } = useTypedParams(CategoryResults);
   const location = useLocation();
-  const { results, isQueryPending } = useResourceSearch(resources, query, t);
+  const {
+    userStore: { segmentClient },
+  } = useRootStore();
+  const { trackSearchQueryAnonymously } = useAnonymousCreAnalytics();
+  const { results, isQueryPending } = useResourceSearch(
+    resources,
+    query,
+    t,
+    trackSearchQueryAnonymously,
+  );
 
   const trimmedQuery = query.trim();
   const noMatchesMessage = t(($) => $.reentry.resources.search.noMatches, {
@@ -171,7 +182,16 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
                   to={to}
                   primaryContact={resource.primaryContactValue}
                   chips={getResourceChips(resource, t)}
-                  onClick={handleNavigateAway}
+                  onClick={() => {
+                    segmentClient.trackCreResourceViewed({
+                      justiceInvolvedPersonPseudoId:
+                        residentParams.personPseudoId,
+                      resourceId: resource.organizationId,
+                      resourceName: resource.name,
+                      source: "search",
+                    });
+                    handleNavigateAway();
+                  }}
                 />
               );
             })}

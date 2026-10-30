@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { BottomSheet, usePageTitle } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
@@ -54,6 +55,9 @@ export const ResourceList = () => {
     applyFilters,
   } = useResources();
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
+  const {
+    userStore: { segmentClient },
+  } = useRootStore();
   const { category, ...residentParams } = useTypedParams(
     State.Resident.UsMaReentry.Resources.CategoryResults,
   );
@@ -123,6 +127,15 @@ export const ResourceList = () => {
                     count: resources.length,
                   })}
                   headerBorder
+                  onToggle={(isOpen) =>
+                    segmentClient.trackCreSubcategorySelected({
+                      justiceInvolvedPersonPseudoId:
+                        residentParams.personPseudoId,
+                      category,
+                      subcategory,
+                      isOpen,
+                    })
+                  }
                 >
                   <ResourceListWrapper>
                     {resources.map((resource) => (
@@ -132,6 +145,15 @@ export const ResourceList = () => {
                         to={detailPath(resource.organizationId)}
                         primaryContact={resource.primaryContactValue}
                         chips={getResourceChips(resource, t)}
+                        onClick={() =>
+                          segmentClient.trackCreResourceViewed({
+                            justiceInvolvedPersonPseudoId:
+                              residentParams.personPseudoId,
+                            resourceId: resource.organizationId,
+                            resourceName: resource.name,
+                            source: "category_list",
+                          })
+                        }
                       />
                     ))}
                   </ResourceListWrapper>

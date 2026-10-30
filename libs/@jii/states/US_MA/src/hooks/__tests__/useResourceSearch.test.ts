@@ -23,7 +23,7 @@ import {
   loadUsMaTranslations,
   makeResource,
 } from "../../components/Reentry/Resources/__tests__/testUtils";
-import { useResourceSearch } from "../useResourceSearch";
+import { SEARCH_DEBOUNCE_MS, useResourceSearch } from "../useResourceSearch";
 
 const resources = [
   makeResource(1, { name: "Vanderburgh House" }),
@@ -83,4 +83,23 @@ test("debounces results and reports isQueryPending until they settle", () => {
   });
   expect(result.current.results.map((r) => r.organizationId)).toEqual([1]);
   expect(result.current.isQueryPending).toBe(false);
+});
+
+test("tracks each settled query once with its result count", () => {
+  vi.useFakeTimers();
+  const trackSearchQuery = vi.fn();
+  const { rerender } = renderHook(
+    ({ query }) => useResourceSearch(resources, query, t, trackSearchQuery),
+    { initialProps: { query: "" } },
+  );
+
+  rerender({ query: "Vanderburgh" });
+  expect(trackSearchQuery).not.toHaveBeenCalled();
+
+  act(() => {
+    vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS);
+  });
+  rerender({ query: "Vanderburgh" });
+
+  expect(trackSearchQuery).toHaveBeenCalledExactlyOnceWith("Vanderburgh", 1);
 });

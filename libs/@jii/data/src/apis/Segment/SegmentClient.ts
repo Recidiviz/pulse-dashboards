@@ -268,12 +268,17 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_cre_subcategory_selected", metadata);
   }
 
-  trackCreFiltersUpdated(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    category: string;
-    subcategories: string[];
-    tags: string[];
-  }) {
+  trackCreFiltersUpdated(
+    metadata: {
+      justiceInvolvedPersonPseudoId: string;
+      category: string;
+    } & (
+      | { subcategories: string[]; tags: string[] }
+      // Selected option ids per filter group, so states can add groups
+      // without changing this event. Used by every state but NYC.
+      | { filters: Record<string, string[]> }
+    ),
+  ) {
     this.track("frontend_cre_filters_updated", metadata);
   }
 

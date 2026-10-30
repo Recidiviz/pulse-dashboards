@@ -16,7 +16,7 @@
 // =============================================================================
 
 import Fuse from "fuse.js";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { UsMaTFunction } from "~@jii/translation";
 
@@ -42,6 +42,7 @@ export function useResourceSearch(
   resources: ResourceSummary[],
   query: string,
   t: UsMaTFunction,
+  trackSearchQuery?: (query: string, resultCount: number) => void,
 ): ResourceSearchResult {
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
 
@@ -59,6 +60,11 @@ export function useResourceSearch(
     fuseIndex,
     t,
   ).slice(0, MAX_RESULTS);
+
+  useEffect(() => {
+    if (!debouncedQuery) return;
+    trackSearchQuery?.(debouncedQuery, results.length);
+  }, [debouncedQuery, results.length, trackSearchQuery]);
 
   return { results, isQueryPending: query.trim() !== debouncedQuery.trim() };
 }

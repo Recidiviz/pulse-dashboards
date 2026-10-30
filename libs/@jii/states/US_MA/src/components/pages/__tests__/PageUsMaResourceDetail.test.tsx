@@ -75,6 +75,7 @@ function mockGetResource(queryFn: () => Promise<unknown>) {
         },
       },
     },
+    userStore: { segmentClient: {} },
   } as unknown as ReturnType<typeof useRootStore>);
 }
 
