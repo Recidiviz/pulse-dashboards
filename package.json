@@ -74,7 +74,7 @@
     "@segment/analytics-next": "^1.72.1",
     "@segment/analytics-node": "^2.2.1",
     "@sentry/integrations": "^7.93.0",
-    "@sentry/nextjs": "^9.38.0",
+    "@sentry/nextjs": "^9.47.2",
     "@sentry/node": "^8.55.0",
     "@sentry/profiling-node": "^8.55.0",
     "@sentry/react": "^7.94.1",
