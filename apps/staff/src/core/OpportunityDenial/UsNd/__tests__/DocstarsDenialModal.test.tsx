@@ -466,5 +466,28 @@ describe("DocstarsDenialModal", () => {
         { code: "Other", description: "Other reason" },
       ]);
     });
+
+    it("uses the configured description for codes that contain OTHER", () => {
+      const out = buildJustificationReasons(
+        {
+          config: {
+            denialReasons: {
+              CODE: "Denial Code",
+              "CP NC OTHER": "Case Plan not complete due to other reasons",
+              [OTHER_KEY]: "Other Key",
+            },
+          },
+        } as unknown as Opportunity,
+        ["CP NC OTHER"],
+        "Typed explanation",
+      );
+
+      expect(out).toStrictEqual([
+        {
+          code: "CP NC OTHER",
+          description: "Case Plan not complete due to other reasons",
+        },
+      ]);
+    });
   });
 });

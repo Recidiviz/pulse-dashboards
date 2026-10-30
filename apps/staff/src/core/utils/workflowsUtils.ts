@@ -166,8 +166,13 @@ export function useStatusColors({
     : OPPORTUNITY_STATUS_COLORS.eligible;
 }
 
+// Matches the Other key exactly, ignoring case, because a configured denial code
+// can contain the word (such as "CP NC OTHER") and must keep its configured text.
 export function reasonsIncludesOtherKey(reasons?: string[]) {
-  return reasonsIncludesKey(OTHER_KEY, reasons);
+  return some(
+    reasons,
+    (reason) => reason.toUpperCase() === OTHER_KEY.toUpperCase(),
+  );
 }
 
 export function reasonsIncludesKey(key: string, reasons?: string[]) {

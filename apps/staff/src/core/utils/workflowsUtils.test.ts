@@ -27,4 +27,9 @@ describe("reasons includes other key", () => {
     expect(reasonsIncludesOtherKey(["A real reason"])).toBeFalse();
     expect(reasonsIncludesOtherKey(undefined)).toBeFalse();
   });
+  test("returns false for keys that only contain 'Other' as part of a longer code", async () => {
+    expect(reasonsIncludesOtherKey(["CP NC OTHER"])).toBeFalse();
+    expect(reasonsIncludesOtherKey(["OTHER_REASON"])).toBeFalse();
+    expect(reasonsIncludesOtherKey(["CP NC OTHER", "Other"])).toBeTrue();
+  });
 });
