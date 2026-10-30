@@ -48,14 +48,14 @@ export class UsArImportantDatesPresenter {
 
   private get programUnitsText(): string | undefined {
     const { metadata, t } = this;
-    return this.residentFlags.usArEdovoCredits &&
+    return this.residentFlags.usArMaxCpus &&
+      metadata.maxCpus && // hide if null or 0
       metadata.eligibilityDateName === "Release Eligibility Date"
       ? t(
           ($) =>
             $.importantDates.eligibilityDate.card["Release Eligibility Date"]
               .programUnitsRequired,
-          // TODO(JII2-115): placeholder until the backend sends the real count
-          { count: 14 },
+          { count: metadata.maxCpus },
         )
       : undefined;
   }

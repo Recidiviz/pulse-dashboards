@@ -58,6 +58,7 @@ enum ResidentFlagId {
     usCoEdovoCredits
     usArFslImprovements
     usArEdovoCredits
+    usArMaxCpus
     usNcRNAAutoEnablement
     usMaReentry
     usMaSentenceDatesV1

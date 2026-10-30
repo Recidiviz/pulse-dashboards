@@ -33,9 +33,8 @@ export const UsArOnMyTablet: FC = () => {
 
   return (
     <>
-      {/* TODO(JII2-110): swap to the Edovo freshness date */}
       <LastUpdatedBanner
-        lastUpdatedDate={metadata.lastUpdatedDate}
+        lastUpdatedDate={metadata.edovoLastRefreshedAt}
         stickyOffset={PROGRAMS_NAV_BAR_HEIGHT}
       />
       <HomepageSectionHeading>

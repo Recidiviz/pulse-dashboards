@@ -75,52 +75,80 @@ const transferEligibilityResident = usArStateDataSchema.parse({
   eligibilityDateName: "Transfer Eligibility Date",
 });
 
+const allFlagsOn = { usArEdovoCredits: true, usArMaxCpus: true };
+
 function createPresenter(
   metadata: UsArResidentJiiData,
-  usArEdovoCredits: boolean,
+  residentFlags: Partial<ResidentFlags> = {},
 ) {
   return new UsArImportantDatesPresenter(
     metadata,
-    { usArEdovoCredits } as ResidentFlags,
+    residentFlags as ResidentFlags,
     t,
   );
 }
 
 describe("dateEntries", () => {
-  it("shows the old description and no overlays when the flag is off", () => {
+  it("shows the old description and no overlays when the flags are off", () => {
     const [eligibilityEntry] = createPresenter(
       releaseEligibilityResident,
-      false,
     ).dateEntries;
 
     expect(eligibilityEntry.description).toBe("old RE description");
     expect(eligibilityEntry.overlays).toBeUndefined();
   });
 
-  it("adds the program units to the description for RE when the flag is on", () => {
+  it("adds the program units to the description for RE when the flags are on", () => {
     const [eligibilityEntry] = createPresenter(
       releaseEligibilityResident,
-      true,
+      allFlagsOn,
     ).dateEntries;
 
-    expect(eligibilityEntry.description).toBe("new RE description 14 units");
+    expect(eligibilityEntry.description).toBe("new RE description 4 units");
   });
 
   it("adds the program units to the RE programming overlay", () => {
     const [eligibilityEntry] = createPresenter(
       releaseEligibilityResident,
-      true,
+      allFlagsOn,
     ).dateEntries;
 
     expect(eligibilityEntry.overlays?.[1].body).toBe(
-      "14 units\n\nRE programming body",
+      "4 units\n\nRE programming body",
     );
   });
+
+  it("leaves out the program units when usArMaxCpus is off", () => {
+    const [eligibilityEntry] = createPresenter(releaseEligibilityResident, {
+      usArEdovoCredits: true,
+    }).dateEntries;
+
+    expect(eligibilityEntry.description).toBe("new RE description");
+    expect(eligibilityEntry.overlays?.[1].body).toBe("RE programming body");
+  });
+
+  it.each([0, null])(
+    "leaves out the program units when maxCpus is %s",
+    (maxCpus) => {
+      const resident = usArStateDataSchema.parse({
+        ...usArResidentJiiDataFixtures[0],
+        eligibilityDateName: "Release Eligibility Date",
+        maxCpus,
+      });
+      const [eligibilityEntry] = createPresenter(
+        resident,
+        allFlagsOn,
+      ).dateEntries;
+
+      expect(eligibilityEntry.description).toBe("new RE description");
+      expect(eligibilityEntry.overlays?.[1].body).toBe("RE programming body");
+    },
+  );
 
   it("leaves out the program units for TE", () => {
     const [eligibilityEntry] = createPresenter(
       transferEligibilityResident,
-      true,
+      allFlagsOn,
     ).dateEntries;
 
     expect(eligibilityEntry.description).toBe("new TE description");
@@ -128,10 +156,9 @@ describe("dateEntries", () => {
   });
 
   it("links each overlay to its section of the dates page", () => {
-    const [eligibilityEntry] = createPresenter(
-      releaseEligibilityResident,
-      true,
-    ).dateEntries;
+    const [eligibilityEntry] = createPresenter(releaseEligibilityResident, {
+      usArEdovoCredits: true,
+    }).dateEntries;
 
     expect(eligibilityEntry.overlays?.map((overlay) => overlay.id)).toEqual([
       "goodTime",

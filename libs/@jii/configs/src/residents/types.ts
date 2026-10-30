@@ -38,6 +38,7 @@ type ResidentFlag =
   | "usCoEdovoCredits"
   | "usArFslImprovements"
   | "usArEdovoCredits"
+  | "usArMaxCpus"
   | "usNcRNAAutoEnablement"
   | "usMaReentry"
   | "usMaSentenceDatesV1"
