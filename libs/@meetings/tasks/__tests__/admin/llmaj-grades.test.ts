@@ -105,6 +105,26 @@ describe("extractLlmajDimensions", () => {
     });
   });
 
+  test("carries single-provider inaccuracies and missing sections through", () => {
+    const [dimension] = extractLlmajDimensions(
+      scores({
+        transcriptComparison: {
+          rationale: "drops the closing minute",
+          winner: "SINGLE_PROVIDER",
+          assemblyAiGrade: "NONE",
+          deepgramGrade: "PARTIAL",
+          inaccuracies: ["'Main Street' should be 'Maine Street'"],
+          missingSections: ["closing scheduling discussion"],
+        },
+      }),
+    );
+
+    expect(dimension.hallucinations).toEqual([
+      "'Main Street' should be 'Maine Street'",
+    ]);
+    expect(dimension.omissions).toEqual(["closing scheduling discussion"]);
+  });
+
   test("transcript comparison is never a trigger, however bad it grades", () => {
     // It's a transcription-provider signal, not a notetaking-quality one, so
     // it can never flag a meeting on its own.

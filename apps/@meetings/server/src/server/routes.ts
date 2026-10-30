@@ -793,8 +793,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
             .send("Missing audio or transcripts for meeting; skipping.");
         }
 
-        const { byProvider: transcriptsByProvider, best: bestTranscript } =
-          formatTranscripts(meeting.transcriptions);
+        const {
+          timestampedByProvider: transcriptsByProvider,
+          best: bestTranscript,
+        } = formatTranscripts(meeting.transcriptions);
 
         const person = meeting.client ?? meeting.resident;
         const inputs = {

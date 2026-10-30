@@ -54,19 +54,30 @@ export function utterancesToRawText(
 export function formatTranscripts(
   transcriptions: {
     provider: string;
-    utterances: { speaker: string; text: string }[];
+    utterances: { speaker: string; text: string; startTimeMs: number }[];
   }[],
 ): {
   byProvider: Partial<Record<"assemblyai" | "deepgram", string>>;
+  /** byProvider with each line prefixed by its start in the audio, e.g. "12:05 [A]: Hi." */
+  timestampedByProvider: Partial<Record<"assemblyai" | "deepgram", string>>;
   best: string;
 } {
   const byProvider: Partial<Record<"assemblyai" | "deepgram", string>> = {};
+  const timestampedByProvider: typeof byProvider = {};
   for (const t of transcriptions) {
     const key = t.provider === "ASSEMBLYAI" ? "assemblyai" : "deepgram";
     byProvider[key] = utterancesToRawText(t.utterances);
+    timestampedByProvider[key] = t.utterances
+      .map((u) => {
+        const seconds = Math.floor(u.startTimeMs / 1000);
+        const start = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+        return `${start} [${u.speaker}]: ${u.text}`;
+      })
+      .join("\n");
   }
   return {
     byProvider,
+    timestampedByProvider,
     best: utterancesToRawText(transcriptions[0].utterances),
   };
 }

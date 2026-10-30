@@ -28,8 +28,9 @@ import {
   EvaluatorInputs,
   TextEvaluatorOutput,
   TextEvaluatorOutputSchema,
+  TranscriptComparisonLlmOutputSchema,
   TranscriptComparisonOutput,
-  TranscriptComparisonOutputSchema,
+  TranscriptQualityOutputSchema,
 } from "~@meetings/tasks/llm/evaluators/schemas";
 
 async function runTranscriptComparisonInternal(
@@ -45,10 +46,10 @@ async function runTranscriptComparisonInternal(
   const assemblyAiTranscript = inputs.transcriptsByProvider["assemblyai"];
   const deepgramTranscript = inputs.transcriptsByProvider["deepgram"];
 
-  if (!assemblyAiTranscript || !deepgramTranscript) {
+  if (!assemblyAiTranscript && !deepgramTranscript) {
     return {
-      rationale: "Only one transcript provider ran for this meeting.",
-      winner: "SINGLE_PROVIDER",
+      rationale: "No transcript provider ran for this meeting.",
+      winner: "NONE",
       assemblyAiGrade: "NONE",
       deepgramGrade: "NONE",
     };
@@ -69,26 +70,54 @@ async function runTranscriptComparisonInternal(
     inputs.audioBucket,
     inputs.audioPath,
   );
+  const audioPart: Part = {
+    fileData: { mimeType: audioMimeType, fileUri: audioUri },
+  };
 
-  const parts: Part[] = [
-    { fileData: { mimeType: audioMimeType, fileUri: audioUri } },
-    {
-      text: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.USER({
-        assemblyAiTranscript,
-        deepgramTranscript,
-        meetingContext: inputs.meetingContext,
-      }),
-    },
-  ];
+  if (assemblyAiTranscript && deepgramTranscript) {
+    return generateContentWithZodSchema({
+      client: gemini,
+      systemInstruction: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.SYSTEM,
+      parts: [
+        audioPart,
+        {
+          text: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.USER({
+            assemblyAiTranscript,
+            deepgramTranscript,
+            meetingContext: inputs.meetingContext,
+          }),
+        },
+      ],
+      schema: TranscriptComparisonLlmOutputSchema,
+      timeout,
+      tracingEnabled,
+    });
+  }
 
-  return generateContentWithZodSchema({
+  // Single provider: grade the one transcript directly against the audio.
+  const { grade, ...quality } = await generateContentWithZodSchema({
     client: gemini,
-    systemInstruction: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.SYSTEM,
-    parts,
-    schema: TranscriptComparisonOutputSchema,
+    systemInstruction: EVALUATOR_PROMPTS.TRANSCRIPT_QUALITY.SYSTEM,
+    parts: [
+      audioPart,
+      {
+        text: EVALUATOR_PROMPTS.TRANSCRIPT_QUALITY.USER({
+          transcript: assemblyAiTranscript || deepgramTranscript || "",
+          meetingContext: inputs.meetingContext,
+        }),
+      },
+    ],
+    schema: TranscriptQualityOutputSchema,
     timeout,
     tracingEnabled,
   });
+
+  return {
+    ...quality,
+    winner: "SINGLE_PROVIDER",
+    assemblyAiGrade: assemblyAiTranscript ? grade : "NONE",
+    deepgramGrade: deepgramTranscript ? grade : "NONE",
+  };
 }
 
 async function runCaseNoteInternal(

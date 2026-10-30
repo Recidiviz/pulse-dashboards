@@ -89,37 +89,60 @@ describe("Evaluator Agents", () => {
   });
 
   describe("runTranscriptComparison", () => {
-    test("should return SINGLE_PROVIDER when assemblyai transcript is missing", async () => {
-      const result = await runTranscriptComparison(
-        mockGemini,
-        mockFileManager,
-        {
-          audioBucket: "test-bucket",
-          audioPath: "meetings/final.m4a",
-          transcriptsByProvider: { deepgram: "Deepgram transcript only." },
-        },
-      );
+    test.each([
+      {
+        provider: "assemblyai",
+        assemblyAiGrade: "PARTIAL",
+        deepgramGrade: "NONE",
+      },
+      {
+        provider: "deepgram",
+        assemblyAiGrade: "NONE",
+        deepgramGrade: "PARTIAL",
+      },
+    ] as const)(
+      "should grade a $provider-only transcript against the audio",
+      async ({ provider, assemblyAiGrade, deepgramGrade }) => {
+        vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
+          uri: "gs://gemini-files/audio-123",
+          mimeType: "audio/m4a",
+        });
+        const generateSpy = spyOnGenerate().mockResolvedValue({
+          rationale: "Drops the closing minute.",
+          grade: "PARTIAL",
+          missingSections: ["Closing scheduling discussion"],
+          inaccuracies: [],
+        });
 
-      expect(result.winner).toBe("SINGLE_PROVIDER");
-      expect(result.assemblyAiGrade).toBe("NONE");
-      expect(result.deepgramGrade).toBe("NONE");
-    });
+        const result = await runTranscriptComparison(
+          mockGemini,
+          mockFileManager,
+          {
+            audioBucket: "test-bucket",
+            audioPath: "meetings/final.m4a",
+            transcriptsByProvider: { [provider]: "Only transcript." },
+          },
+        );
 
-    test("should return SINGLE_PROVIDER when deepgram transcript is missing", async () => {
-      const result = await runTranscriptComparison(
-        mockGemini,
-        mockFileManager,
-        {
-          audioBucket: "test-bucket",
-          audioPath: "meetings/final.m4a",
-          transcriptsByProvider: { assemblyai: "AssemblyAI transcript only." },
-        },
-      );
+        expect(geminiClient.uploadAudioToGemini).toHaveBeenCalled();
+        const parts = generateSpy.mock.calls[0]?.[0]?.parts as Array<{
+          text?: string;
+        }>;
+        expect(parts.find((p) => p.text)?.text).toContain("Only transcript.");
+        expect(result).toEqual({
+          rationale: "Drops the closing minute.",
+          winner: "SINGLE_PROVIDER",
+          assemblyAiGrade,
+          deepgramGrade,
+          missingSections: ["Closing scheduling discussion"],
+          inaccuracies: [],
+        } satisfies TranscriptComparisonOutput);
+      },
+    );
 
-      expect(result.winner).toBe("SINGLE_PROVIDER");
-    });
+    test("should return NONE without calling the judge when both transcripts are missing", async () => {
+      const generateSpy = spyOnGenerate();
 
-    test("should return SINGLE_PROVIDER when both transcripts are missing", async () => {
       const result = await runTranscriptComparison(
         mockGemini,
         mockFileManager,
@@ -130,7 +153,8 @@ describe("Evaluator Agents", () => {
         },
       );
 
-      expect(result.winner).toBe("SINGLE_PROVIDER");
+      expect(result.winner).toBe("NONE");
+      expect(generateSpy).not.toHaveBeenCalled();
     });
 
     test("should call uploadAudioToGemini and generateContentWithZodSchema when both transcripts are present", async () => {

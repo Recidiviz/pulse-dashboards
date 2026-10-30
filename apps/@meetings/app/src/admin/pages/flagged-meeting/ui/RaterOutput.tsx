@@ -150,6 +150,16 @@ function LlmItem({ dimension }: { dimension: Dimension }) {
         }
       >
         <Typography variant="body-s-regular">{dimension.rationale}</Typography>
+        <FindingList
+          label="Inaccuracies"
+          entries={dimension.hallucinations}
+          edge="border-attention"
+        />
+        <FindingList
+          label="Missing sections"
+          entries={dimension.omissions}
+          edge="border-warning"
+        />
       </Item>
     );
   }

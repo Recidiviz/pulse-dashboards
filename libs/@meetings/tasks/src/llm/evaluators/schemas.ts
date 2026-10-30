@@ -24,9 +24,9 @@ import type { ActionItem } from "~@meetings/tasks/llm/schemas";
 // Bump this string whenever any evaluator prompt or the evaluator model changes.
 // The script uses this to find pipeline runs that have not yet been evaluated
 // at the current version.
-export const EVALUATOR_VERSION = "6";
+export const EVALUATOR_VERSION = "7";
 
-export const TranscriptComparisonOutputSchema = z.object({
+export const TranscriptComparisonLlmOutputSchema = z.object({
   rationale: z.string(),
   winner: z.enum([
     "ASSEMBLYAI",
@@ -38,6 +38,21 @@ export const TranscriptComparisonOutputSchema = z.object({
   assemblyAiGrade: z.enum(["GOOD", "PARTIAL", "BAD", "NONE"]),
   deepgramGrade: z.enum(["GOOD", "PARTIAL", "BAD", "NONE"]),
 });
+
+// Used when only one provider ran; graded against the audio alone.
+export const TranscriptQualityOutputSchema = z.object({
+  rationale: z.string(),
+  grade: z.enum(["GOOD", "PARTIAL", "BAD"]),
+  missingSections: z.array(z.string()),
+  inaccuracies: z.array(z.string()),
+});
+
+export const TranscriptComparisonOutputSchema =
+  TranscriptComparisonLlmOutputSchema.extend({
+    // Only set for single-provider meetings.
+    missingSections: z.array(z.string()).optional(),
+    inaccuracies: z.array(z.string()).optional(),
+  });
 
 export const TextEvaluatorOutputSchema = z.object({
   // rationale precedes grade — forces reasoning before the label is committed
@@ -76,7 +91,7 @@ export interface EvaluatorInputs {
   audioBucket: string;
   /** GCS path to the final merged audio file within the bucket. */
   audioPath: string;
-  /** Per-provider transcript texts. Missing key means that provider did not run. */
+  /** Per-provider transcript texts, each line prefixed by its m:ss start in the audio. Missing key means that provider did not run. */
   transcriptsByProvider: Partial<Record<"assemblyai" | "deepgram", string>>;
   /** Best transcript text (already selected by the pipeline) */
   bestTranscript: string;

@@ -219,7 +219,7 @@ function buildEvaluatorInputs(
   if (!meeting.finalRecordingGCSPath) return null;
   if (meeting.transcriptions.length === 0) return null;
 
-  const { byProvider: transcriptsByProvider, best: bestTranscript } =
+  const { timestampedByProvider: transcriptsByProvider, best: bestTranscript } =
     formatTranscripts(meeting.transcriptions);
 
   const person = meeting.client ?? meeting.resident;

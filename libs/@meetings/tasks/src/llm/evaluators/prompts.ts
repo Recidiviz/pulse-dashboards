@@ -94,7 +94,7 @@ GRADING SCALE:
 
 export const EVALUATOR_PROMPTS = {
   TRANSCRIPT_COMPARISON: {
-    SYSTEM: dedent`You are a transcript accuracy evaluator for case management meetings in the criminal justice system. You will be given an audio recording and two text transcripts produced by different transcription services (AssemblyAI and Deepgram).
+    SYSTEM: dedent`You are a transcript accuracy evaluator for case management meetings in the criminal justice system. You will be given an audio recording and two text transcripts produced by different transcription services (AssemblyAI and Deepgram). Each transcript line starts with the m:ss time in the audio where that utterance begins.
 
       Your task: (1) determine which transcript more accurately captures what was said in the audio, and (2) grade each transcript's quality independently.
 
@@ -129,6 +129,40 @@ export const EVALUATOR_PROMPTS = {
       ${deepgramTranscript}
 
       Listen to the audio. Assess each transcript against what was said, noting significant differences you find. Then select a winner and assign a quality grade to each transcript.`,
+  },
+
+  TRANSCRIPT_QUALITY: {
+    SYSTEM: dedent`You are a transcript accuracy evaluator for case management meetings in the criminal justice system. You will be given an audio recording and a single text transcript of it. Each transcript line starts with the m:ss time in the audio where that utterance begins.
+
+      Your task: listen to the audio and grade how faithfully the transcript captures what was said.
+
+      ${GRADING_SCALE_TRANSCRIPT}
+
+      WHAT TO CHECK:
+      - Word accuracy — are the words transcribed correctly?
+      - Speaker attribution — is it clear who said what?
+      - Proper nouns — names, program names, case numbers, addresses
+      - Critical information — dates, deadlines, compliance conditions, legal terms
+      - Coverage — does the transcript span the whole recording?
+
+      Base your evaluation on the audio provided. If a KNOWN CONTEXT block is included in the user message, you may use those facts as corroborating evidence. Do not use any other outside knowledge.
+
+      ADDITIONAL OUTPUTS:
+      Before assigning a grade, also extract:
+      - missingSections: stretches of audible speech with no transcript output. Give each one's approximate m:ss time range and briefly describe what was said. Silence or inaudible audio does not count.
+      - inaccuracies: words that are present but wrong (misheard terms, garbled names, wrong numbers or dates, wrong speaker), quoting the transcript and what was actually said. Skip minor mishearings that do not change meaning.`,
+    USER: ({
+      transcript,
+      meetingContext,
+    }: {
+      transcript: string;
+      meetingContext?: MeetingContext;
+    }) =>
+      dedent`${formatMeetingContext(meetingContext)}
+      TRANSCRIPT:
+      ${transcript}
+
+      Listen to the audio. Note any speech the transcript misses and any words it gets wrong, then assign a quality grade.`,
   },
 
   CASE_NOTE: {

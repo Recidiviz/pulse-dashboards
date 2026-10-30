@@ -19,6 +19,7 @@ import { describe, expect, test } from "vitest";
 
 import {
   formatMeetingStartForPrompt,
+  formatTranscripts,
   normalizeNameCasing,
 } from "~@meetings/tasks/llm/utils";
 
@@ -86,5 +87,26 @@ describe("formatMeetingStartForPrompt", () => {
     expect(
       formatMeetingStartForPrompt(startTime, "US_ID", "America/Los_Angeles"),
     ).toBe("Tuesday, March 3, 2026 at 10:00 PM PST");
+  });
+});
+
+describe("formatTranscripts", () => {
+  test("prefixes each timestamped line with its m:ss start in the audio", () => {
+    const { byProvider, timestampedByProvider } = formatTranscripts([
+      {
+        provider: "DEEPGRAM",
+        utterances: [
+          { speaker: "A", text: "Any updates on work?", startTimeMs: 4200 },
+          { speaker: "B", text: "I start Monday.", startTimeMs: 725900 },
+        ],
+      },
+    ]);
+
+    expect(timestampedByProvider).toEqual({
+      deepgram: "0:04 [A]: Any updates on work?\n12:05 [B]: I start Monday.",
+    });
+    expect(byProvider.deepgram).toBe(
+      "[A]: Any updates on work?\n[B]: I start Monday.",
+    );
   });
 });

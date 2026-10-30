@@ -90,8 +90,9 @@ export function extractLlmajDimensions(
       label: LLMAJ_DIMENSION_LABELS.transcriptComparison,
       gradeOrWinner: transcript.winner,
       rationale: transcript.rationale,
-      hallucinations: [],
-      omissions: [],
+      // Only single-provider grading lists these.
+      hallucinations: transcript.inaccuracies ?? [],
+      omissions: transcript.missingSections ?? [],
       providerGrades: {
         assemblyai: transcript.assemblyAiGrade,
         deepgram: transcript.deepgramGrade,
