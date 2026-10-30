@@ -197,7 +197,7 @@
     "morgan": "^1.12.1",
     "multer": "^2.3.0",
     "nativewind": "^4.2.6",
-    "next": "15.5.27",
+    "next": "15.5.28",
     "next-remove-imports": "^1.0.12",
     "node-cache": "^5.1.0",
     "nosleep.js": "^0.12.0",
