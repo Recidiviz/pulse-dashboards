@@ -18,10 +18,12 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Chip, GoLink } from "~@jii/common-ui";
+import type { ReentryChecklistItemId } from "~@jii/configs";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { PersonalizationReason } from "../../../../hooks/types";
+import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { Popover } from "../../Popover/Popover";
 import {
   Field,
@@ -33,6 +35,7 @@ import {
 } from "./PersonalizedBadge.styles";
 
 type PersonalizedBadgeProps = {
+  itemId: ReentryChecklistItemId;
   reasons: PersonalizationReason[];
 };
 
@@ -41,9 +44,13 @@ type PersonalizedBadgeProps = {
  * it opens a popover listing the answers that put the item on the list, each
  * with a link to that answer on the questionnaire's Review page.
  */
-export const PersonalizedBadge = ({ reasons }: PersonalizedBadgeProps) => {
+export const PersonalizedBadge = ({
+  itemId,
+  reasons,
+}: PersonalizedBadgeProps) => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const trackEvent = useReentryAnalytics();
 
   const reasonsCopy = t(($) => $.reentry.checklist.personalizationReasons, {
     returnObjects: true,
@@ -60,6 +67,9 @@ export const PersonalizedBadge = ({ reasons }: PersonalizedBadgeProps) => {
       trigger={badge}
       heading={reasonsCopy.heading}
       closeLabel={reasonsCopy.close}
+      onOpen={() =>
+        trackEvent("frontend_reentry_checklist_why_opened", { itemId })
+      }
     >
       <ReasonList>
         {reasons.map((reason) => (
@@ -80,6 +90,11 @@ export const PersonalizedBadge = ({ reasons }: PersonalizedBadgeProps) => {
                 undefined,
                 reason.questionId,
               )}
+              onClick={() =>
+                trackEvent("frontend_reentry_profile_edit_started", {
+                  entryPoint: "checklist_popover",
+                })
+              }
             >
               {reasonsCopy.changeAnswer}
             </GoLink>

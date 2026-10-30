@@ -21,6 +21,12 @@ export * from "./apis/auth/OfflineAuthHandler";
 export * from "./apis/auth/types";
 export * from "./apis/data/interface";
 export * from "./apis/query/client";
+export type {
+  QuestionnaireExitScreen,
+  ReentryEvents,
+  ReentryPage,
+  TrackReentryEvent,
+} from "./apis/Segment/reentryEvents";
 export * from "./apis/Segment/SegmentClient";
 export * from "./apis/Sentry/initializeSentry";
 export * from "./components/StoreProvider/StoreContext";

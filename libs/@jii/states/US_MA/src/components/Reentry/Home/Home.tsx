@@ -21,6 +21,7 @@ import { usePageTitle } from "~@jii/common-ui";
 import { firstNameLastName, useSingleResidentContext } from "~@jii/data";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { SuspenseQueryBoundary } from "../SuspenseQueryBoundary";
 import { GuideCta } from "./GuideCta/GuideCta";
 import { Greeting, Wrapper } from "./Home.styles";
@@ -36,14 +37,18 @@ export const Home = () => {
   const { t } = useUsMaTranslations();
   const { resident } = useSingleResidentContext();
   const [videoIsOpen, setVideoIsOpen] = useState(false);
+  const trackEvent = useReentryAnalytics();
 
   usePageTitle(t(($) => $.reentry.overview.pageTitle));
 
-  const openVideo = () => setVideoIsOpen(true);
+  const openVideo = (entryPoint: "top_banner" | "bottom_cta") => {
+    trackEvent("frontend_reentry_video_cta_clicked", { entryPoint });
+    setVideoIsOpen(true);
+  };
 
   return (
     <Wrapper>
-      <ReentryVideoBanner onOpenVideo={openVideo} />
+      <ReentryVideoBanner onOpenVideo={() => openVideo("top_banner")} />
 
       <Greeting>
         {t(($) => $.reentry.overview.greeting, {
@@ -60,7 +65,7 @@ export const Home = () => {
 
       <ResourceCategoryCta />
 
-      <GuideCta onOpenVideo={openVideo} />
+      <GuideCta onOpenVideo={() => openVideo("bottom_cta")} />
 
       <ReentryVideoModal
         isOpen={videoIsOpen}

@@ -17,6 +17,8 @@
 
 import { act, renderHook } from "@testing-library/react";
 
+import type { ReentryEvents } from "~@jii/data";
+
 import { SaveAnswers } from "../../../../../hooks/types";
 import { ReentryQuestionnaireStatus } from "../../../types";
 import {
@@ -55,6 +57,7 @@ const questions: QuestionnaireQuestion[] = [
     options: [
       { value: "YES", label: "Yes" },
       { value: "NO", label: "No" },
+      { value: "DECLINED_TO_ANSWER", label: "I'd rather not say" },
     ],
     sectionDomain: "money",
   },
@@ -68,6 +71,11 @@ const sections: QuestionnaireSectionDisplay[] = [
 const save = vi.fn<SaveAnswers>();
 const onExit = vi.fn();
 const onGoToChecklist = vi.fn();
+const trackEvent = vi.fn();
+
+// The calls that sent one event, for counting them.
+const callsOf = (eventName: keyof ReentryEvents) =>
+  trackEvent.mock.calls.filter(([name]) => name === eventName);
 
 beforeEach(() => {
   // mockReset (in the vitest config) clears implementations before each test.
@@ -89,6 +97,7 @@ const render = (
         save,
         onExit,
         onGoToChecklist,
+        trackEvent,
       }),
     { initialProps: { storedAnswers } },
   );
@@ -780,5 +789,261 @@ describe("header action", () => {
     act(() => screenOf(result, "question").props.onBack?.());
     expect(questionIdOf(result)).toBe("needsCare");
     expect(screenOf(result, "question").props.error).toBeUndefined();
+  });
+});
+
+describe("analytics", () => {
+  const allAnswered = { needsCare: "NO", benefits: "YES" };
+
+  test("Start answering sends questionnaire_started and the first question viewed", () => {
+    const { result } = render("NOT_STARTED");
+    act(() => screenOf(result, "intro").props.onStart());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_started",
+      {},
+    );
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_viewed",
+      {
+        questionId: "needsCare",
+        sectionId: "health",
+        stepIndex: 1,
+        stepTotal: 2,
+        isEditingProfile: false,
+      },
+    );
+  });
+
+  test("reopening an unfinished questionnaire sends questionnaire_resumed and the question viewed", () => {
+    render("IN_PROGRESS", { needsCare: "NO" });
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_resumed",
+      {
+        questionId: "benefits",
+        questionsAnswered: 1,
+      },
+    );
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_viewed",
+      {
+        questionId: "benefits",
+        sectionId: "money",
+        stepIndex: 2,
+        stepTotal: 2,
+        isEditingProfile: false,
+      },
+    );
+  });
+
+  test("reopening with every question answered sends questionnaire_resumed without a question", () => {
+    render("IN_PROGRESS", allAnswered);
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_resumed",
+      {
+        questionsAnswered: 2,
+      },
+    );
+    expect(callsOf("frontend_reentry_question_viewed")).toHaveLength(0);
+  });
+
+  test("a new or completed questionnaire doesn't send questionnaire_resumed", () => {
+    render("NOT_STARTED");
+    render("COMPLETED", allAnswered);
+    expect(callsOf("frontend_reentry_questionnaire_resumed")).toHaveLength(0);
+  });
+
+  test("Next sends question_answered once the answer saves", () => {
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    answerAndNext(result, ["NO"]);
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_answered",
+      {
+        questionId: "needsCare",
+        sectionId: "health",
+        ratherNotSay: false,
+      },
+    );
+  });
+
+  test("a failed save on Next doesn't send question_answered", () => {
+    save.mockImplementation((_input, options) => options?.onError?.());
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    answerAndNext(result, ["NO"]);
+    expect(callsOf("frontend_reentry_question_answered")).toHaveLength(0);
+  });
+
+  test("question_answered marks I'd rather not say", () => {
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    answerAndNext(result, ["DECLINED_TO_ANSWER"]);
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_answered",
+      {
+        questionId: "benefits",
+        sectionId: "money",
+        ratherNotSay: true,
+      },
+    );
+  });
+
+  test("Back sends question_back_clicked", () => {
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    act(() => screenOf(result, "question").props.onBack?.());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_back_clicked",
+      {
+        questionId: "benefits",
+        isEditingProfile: false,
+      },
+    );
+  });
+
+  test("question_viewed and question_back_clicked mark views while editing a completed profile", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_viewed",
+      expect.objectContaining({
+        questionId: "needsCare",
+        isEditingProfile: true,
+      }),
+    );
+
+    answerAndNext(result, ["YES"]);
+    act(() => screenOf(result, "question").props.onBack?.());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_question_back_clicked",
+      {
+        questionId: "careDetails",
+        isEditingProfile: true,
+      },
+    );
+  });
+
+  test("Close sends questionnaire_exited with the screen", () => {
+    const { result } = render("IN_PROGRESS", allAnswered);
+    act(() => result.current.headerAction?.onClick());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_exited",
+      {
+        trigger: "close",
+        screen: "review_before_submit",
+      },
+    );
+    expect(onExit).toHaveBeenCalled();
+  });
+
+  test("Save and exit sends questionnaire_exited once the answers save", () => {
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    act(() => result.current.headerAction?.onClick());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_exited",
+      {
+        trigger: "save_and_exit",
+        screen: "question",
+        questionId: "benefits",
+      },
+    );
+  });
+
+  test("Go to checklist after saving an edit sends questionnaire_exited", () => {
+    const { result } = startEditing("COMPLETED", "benefits");
+    answerAndNext(result, ["NO"]);
+    act(() => editReviewOf(result).savedBanner?.onGoToChecklist());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_exited",
+      {
+        trigger: "go_to_checklist",
+        screen: "review_profile",
+      },
+    );
+    expect(onGoToChecklist).toHaveBeenCalled();
+  });
+
+  test("Submit sends questionnaire_completed with the I'd rather not say count", () => {
+    const { result } = render("IN_PROGRESS", {
+      needsCare: "NO",
+      benefits: "DECLINED_TO_ANSWER",
+    });
+    act(() => firstTimeReviewOf(result).onSubmit());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_completed",
+      {
+        ratherNotSayCount: 1,
+      },
+    );
+  });
+
+  test("the completion buttons send questionnaire_end_cta_clicked", () => {
+    const { result } = render("IN_PROGRESS", allAnswered);
+    act(() => firstTimeReviewOf(result).onSubmit());
+
+    act(() => screenOf(result, "completion").props.onGoToChecklist());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_end_cta_clicked",
+      {
+        cta: "checklist",
+      },
+    );
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_exited",
+      {
+        trigger: "go_to_checklist",
+        screen: "completion",
+      },
+    );
+    expect(onGoToChecklist).toHaveBeenCalled();
+
+    act(() => screenOf(result, "completion").props.onClose());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_end_cta_clicked",
+      {
+        cta: "home",
+      },
+    );
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_questionnaire_exited",
+      {
+        trigger: "close",
+        screen: "completion",
+      },
+    );
+  });
+
+  test("saving an edit sends profile_edit_answer_saved for each changed question, not question_answered", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    answerAndNext(result, ["YES"]);
+    answerAndNext(result, ["MEDS"]);
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_profile_edit_answer_saved",
+      {
+        questionId: "needsCare",
+        ratherNotSay: false,
+      },
+    );
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_profile_edit_answer_saved",
+      {
+        questionId: "careDetails",
+        ratherNotSay: false,
+      },
+    );
+    expect(callsOf("frontend_reentry_profile_edit_answer_saved")).toHaveLength(
+      2,
+    );
+    expect(callsOf("frontend_reentry_question_answered")).toHaveLength(0);
+  });
+
+  test("discarding an edit sends profile_edit_discarded", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    act(() => screenOf(result, "question").props.onChange(["YES"]));
+    act(() => screenOf(result, "question").props.editing?.onCancel());
+    act(() => screenOf(result, "question").cancelDialog.onLeave());
+    expect(trackEvent).toHaveBeenCalledWith(
+      "frontend_reentry_profile_edit_discarded",
+      {
+        questionId: "needsCare",
+      },
+    );
   });
 });

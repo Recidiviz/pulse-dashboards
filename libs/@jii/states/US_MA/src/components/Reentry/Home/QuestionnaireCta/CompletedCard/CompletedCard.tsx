@@ -22,6 +22,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
+import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import { useReentryChecklist } from "../../../../../hooks/useReentryChecklist";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
 import {
@@ -40,6 +41,9 @@ export const CompletedCard = () => {
     QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
   const checklistPath =
     State.Resident.UsMaReentry.Checklist.buildPath(routeParams);
+  const trackEvent = useReentryAnalytics();
+  const trackClick = () =>
+    trackEvent("frontend_reentry_home_cta_clicked", { cta: "checklist" });
 
   return (
     <IllustratedCard
@@ -47,6 +51,7 @@ export const CompletedCard = () => {
       illustrationAlt=""
       illustrationBackground={palette.slate10}
       illustrationLink={checklistPath}
+      illustrationOnClick={trackClick}
     >
       <SummaryContent>
         <Heading>{heading}</Heading>
@@ -55,7 +60,11 @@ export const CompletedCard = () => {
             {recommendedTaskCount(personalizedItemCount)}
           </Description>
         )}
-        <ViewChecklistButton kind="primary" to={checklistPath}>
+        <ViewChecklistButton
+          kind="primary"
+          to={checklistPath}
+          onClick={trackClick}
+        >
           {cta}
         </ViewChecklistButton>
       </SummaryContent>

@@ -22,6 +22,7 @@ import { GoLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
 import { Content, Description, Heading, Wrapper } from "./ReviewCard.styles";
 
@@ -29,6 +30,15 @@ export const ReviewCard = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
   const { reviewProfile } = QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
+  const trackEvent = useReentryAnalytics();
+
+  const trackClick = () => {
+    trackEvent("frontend_reentry_home_cta_clicked", {
+      cta: "questionnaire",
+      questionnaireState: "COMPLETED",
+    });
+    trackEvent("frontend_reentry_profile_edit_started", { entryPoint: "home" });
+  };
 
   return (
     <Wrapper>
@@ -39,6 +49,7 @@ export const ReviewCard = () => {
       </Content>
       <GoLink
         to={State.Resident.UsMaReentry.Questionnaire.buildPath(routeParams)}
+        onClick={trackClick}
       >
         {reviewProfile.cta}
       </GoLink>

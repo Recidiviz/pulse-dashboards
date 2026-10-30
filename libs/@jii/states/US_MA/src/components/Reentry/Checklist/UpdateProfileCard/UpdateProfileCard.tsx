@@ -21,6 +21,7 @@ import { ButtonLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { Callout } from "../../Callout/Callout";
 
 /**
@@ -30,6 +31,17 @@ import { Callout } from "../../Callout/Callout";
 export const UpdateProfileCard = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const trackEvent = useReentryAnalytics();
+
+  const trackClick = () => {
+    // The card only shows once the profile is completed.
+    trackEvent("frontend_reentry_checklist_questionnaire_cta_clicked", {
+      questionnaireState: "COMPLETED",
+    });
+    trackEvent("frontend_reentry_profile_edit_started", {
+      entryPoint: "checklist",
+    });
+  };
 
   return (
     <Callout
@@ -41,6 +53,7 @@ export const UpdateProfileCard = () => {
         <ButtonLink
           kind="secondary"
           to={State.Resident.UsMaReentry.Questionnaire.buildPath(routeParams)}
+          onClick={trackClick}
         >
           {t(($) => $.reentry.checklist.updateProfile.cta)}
         </ButtonLink>

@@ -30,6 +30,10 @@ export const Wrapper = styled(PageContainer)`
   padding-top: ${rem(spacing.md)};
 `;
 
+export const PageEndMarker = styled.div`
+  height: 1px;
+`;
+
 export const GuideCopy = styled(CopyWrapper)`
   p:last-child {
     margin-bottom: 0;

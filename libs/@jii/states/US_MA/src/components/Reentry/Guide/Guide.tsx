@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ComponentType } from "react";
+import { ComponentType, useEffect, useRef } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { NotFound } from "~@jii/common-ui";
@@ -23,9 +23,10 @@ import { useScrollToHash } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations, UsMaTFunction } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { GUIDE_TOPICS } from "../ctaConfigs";
 import { GuideTopicSlug } from "../types";
-import { Wrapper } from "./Guide.styles";
+import { PageEndMarker, Wrapper } from "./Guide.styles";
 import { GuideHeader } from "./GuideHeader/GuideHeader";
 import { HousingGuide } from "./HousingGuide/HousingGuide";
 import { IdDocumentsGuide } from "./IdDocumentsGuide/IdDocumentsGuide";
@@ -47,8 +48,26 @@ const GUIDE_PAGES: Record<
 export const Guide = () => {
   const { t } = useUsMaTranslations();
   const { topicSlug } = useTypedParams(State.Resident.UsMaReentry.Guide);
+  const trackEvent = useReentryAnalytics();
 
   useScrollToHash();
+
+  // Sends topic_scrolled_to_end the first time the bottom of the page is on screen
+  const pageEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const pageEnd = pageEndRef.current;
+    if (!pageEnd || !topicSlug) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      trackEvent("frontend_reentry_topic_scrolled_to_end", {
+        topicId: topicSlug,
+      });
+      observer.disconnect();
+    });
+    observer.observe(pageEnd);
+    return () => observer.disconnect();
+  }, [topicSlug, trackEvent]);
 
   const topic = GUIDE_TOPICS.find(({ slug }) => slug === topicSlug);
   if (!topic) return <NotFound />;
@@ -56,13 +75,17 @@ export const Guide = () => {
   const { intro, Content } = GUIDE_PAGES[topic.slug];
 
   return (
-    <Wrapper>
-      <GuideHeader
-        title={topic.label(t)}
-        iconSrc={topic.iconSrc}
-        intro={intro(t)}
-      />
-      <Content />
-    </Wrapper>
+    <>
+      <Wrapper>
+        <GuideHeader
+          title={topic.label(t)}
+          iconSrc={topic.iconSrc}
+          intro={intro(t)}
+        />
+        <Content />
+      </Wrapper>
+      {/* Outside Wrapper, so its gap doesn't add space below the content */}
+      <PageEndMarker ref={pageEndRef} />
+    </>
   );
 };

@@ -15,8 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import {
+  getExitScreen,
+  getQuestionViewed,
+  isRatherNotSay,
+} from "../../../../hooks/utils";
 import { FlowStep, QuestionAnswerValue } from "../types";
 import {
   allAnswersMatch,
@@ -50,6 +55,7 @@ export function useQuestionnaireFlow({
   save,
   onExit,
   onGoToChecklist,
+  trackEvent,
 }: UseQuestionnaireFlowParams): QuestionnaireScreen {
   const [answers, setAnswers] = useState(() =>
     fromStoredAnswers(allQuestions, storedAnswers),
@@ -73,14 +79,66 @@ export function useQuestionnaireFlow({
   // The answers as last saved, which cancelling an edit reverts to.
   const getSavedAnswers = () => fromStoredAnswers(allQuestions, storedAnswers);
 
+  const currentQuestionId =
+    step.kind === "question" ? step.questionId : undefined;
+
+  // Set only when reopening a questionnaire that was started but not submitted.
+  const [resumedOn] = useState(() =>
+    status === "IN_PROGRESS"
+      ? {
+          questionId: currentQuestionId,
+          questionsAnswered: visibleQuestions.filter(({ id }) =>
+            isAnswered(answers[id]),
+          ).length,
+          questionViewed: currentQuestionId
+            ? getQuestionViewed(visibleQuestions, currentQuestionId, false)
+            : undefined,
+        }
+      : undefined,
+  );
+
+  // Upon reopening an unfinished questionnaire, tracks questionnaire_resumed
+  // and question_viewed for the question it lands on.
+  useEffect(() => {
+    if (!resumedOn) return;
+    const { questionId, questionsAnswered, questionViewed } = resumedOn;
+    trackEvent("frontend_reentry_questionnaire_resumed", {
+      questionId,
+      questionsAnswered,
+    });
+    if (questionViewed)
+      trackEvent("frontend_reentry_question_viewed", questionViewed);
+  }, [trackEvent, resumedOn]);
+
+  const trackExit = (trigger: "close" | "save_and_exit" | "go_to_checklist") =>
+    trackEvent("frontend_reentry_questionnaire_exited", {
+      trigger,
+      screen: getExitScreen(step, isProfileCompleted),
+      questionId: currentQuestionId,
+    });
+
+  const exit = (trigger: "close" | "save_and_exit") => {
+    trackExit(trigger);
+    onExit();
+  };
+
+  const goToChecklist = () => {
+    trackExit("go_to_checklist");
+    onGoToChecklist();
+  };
+
   const closeAction: QuestionnaireHeaderAction = {
     kind: "close",
-    onClick: onExit,
+    onClick: () => exit("close"),
   };
 
   const goToQuestion = (questionId: string) => {
     setIsSectionListOpen(false);
     setStep({ kind: "question", questionId });
+    trackEvent(
+      "frontend_reentry_question_viewed",
+      getQuestionViewed(visibleQuestions, questionId, isProfileCompleted),
+    );
   };
 
   const goToReview = () => {
@@ -91,7 +149,10 @@ export function useQuestionnaireFlow({
   const backFromReview = () =>
     goToQuestion(visibleQuestions[visibleQuestions.length - 1].id);
 
-  const start = () => goToQuestion(visibleQuestions[0].id);
+  const start = () => {
+    trackEvent("frontend_reentry_questionnaire_started", {});
+    goToQuestion(visibleQuestions[0].id);
+  };
 
   const submit = () => {
     // Clears the last failed submit's error while this one saves.
@@ -99,7 +160,14 @@ export function useQuestionnaireFlow({
     save(
       { answers, isCompleted: true },
       {
-        onSuccess: () => setStep({ kind: "completion" }),
+        onSuccess: () => {
+          trackEvent("frontend_reentry_questionnaire_completed", {
+            ratherNotSayCount: visibleQuestions.filter(({ id }) =>
+              isRatherNotSay(answers[id]),
+            ).length,
+          });
+          setStep({ kind: "completion" });
+        },
         onError: () => setStep({ kind: "review", error: "submit" }),
       },
     );
@@ -120,6 +188,11 @@ export function useQuestionnaireFlow({
   };
 
   const discardEdit = () => {
+    if (editSession) {
+      trackEvent("frontend_reentry_profile_edit_discarded", {
+        questionId: editSession.startQuestionId,
+      });
+    }
     setAnswers(getSavedAnswers());
     goToReview();
   };
@@ -177,7 +250,7 @@ export function useQuestionnaireFlow({
           save(
             { answers, isCompleted: false },
             {
-              onSuccess: onExit,
+              onSuccess: () => exit("save_and_exit"),
               onError: () => setStep({ ...step, error: "saveAndExit" }),
             },
           );
@@ -203,14 +276,24 @@ export function useQuestionnaireFlow({
         // An edit of a completed profile only saves once it's finished, and
         // only if an answer changed.
         const isEditingProfile = isProfileCompleted && !!editSession;
-        const hasChanges = !allAnswersMatch(answers, getSavedAnswers());
+        const savedAnswers = getSavedAnswers();
+        const hasChanges = !allAnswersMatch(answers, savedAnswers);
         if (isEditingProfile && (!isLastQuestionBeforeReview || !hasChanges)) {
           goToNextStep();
         } else if (isEditingProfile) {
+          const changedQuestionIds = visibleQuestions
+            .filter(({ id }) => !answersMatch(answers[id], savedAnswers[id]))
+            .map(({ id }) => id);
           save(
             { answers, isCompleted: false },
             {
               onSuccess: () => {
+                changedQuestionIds.forEach((questionId) =>
+                  trackEvent("frontend_reentry_profile_edit_answer_saved", {
+                    questionId,
+                    ratherNotSay: isRatherNotSay(answers[questionId]),
+                  }),
+                );
                 setIsSavedBannerVisible(true);
                 goToNextStep();
               },
@@ -221,7 +304,14 @@ export function useQuestionnaireFlow({
           save(
             { answers, isCompleted: false },
             {
-              onSuccess: goToNextStep,
+              onSuccess: () => {
+                trackEvent("frontend_reentry_question_answered", {
+                  questionId: question.id,
+                  sectionId: question.sectionDomain,
+                  ratherNotSay: isRatherNotSay(currentAnswer),
+                });
+                goToNextStep();
+              },
               onError: () => setStep({ ...step, error: "next" }),
             },
           );
@@ -229,6 +319,10 @@ export function useQuestionnaireFlow({
       };
 
       const back = () => {
+        trackEvent("frontend_reentry_question_back_clicked", {
+          questionId: question.id,
+          isEditingProfile: isProfileCompleted,
+        });
         if (previousQuestion) {
           goToQuestion(previousQuestion.id);
         } else {
@@ -282,7 +376,10 @@ export function useQuestionnaireFlow({
 
       if (isProfileCompleted) {
         const savedBanner = isSavedBannerVisible
-          ? { onDismiss: () => setIsSavedBannerVisible(false), onGoToChecklist }
+          ? {
+              onDismiss: () => setIsSavedBannerVisible(false),
+              onGoToChecklist: goToChecklist,
+            }
           : undefined;
         return {
           kind: "review",
@@ -303,6 +400,23 @@ export function useQuestionnaireFlow({
     }
 
     case "completion":
-      return { kind: "completion", headerAction: closeAction };
+      return {
+        kind: "completion",
+        headerAction: closeAction,
+        props: {
+          onGoToChecklist: () => {
+            trackEvent("frontend_reentry_questionnaire_end_cta_clicked", {
+              cta: "checklist",
+            });
+            goToChecklist();
+          },
+          onClose: () => {
+            trackEvent("frontend_reentry_questionnaire_end_cta_clicked", {
+              cta: "home",
+            });
+            exit("close");
+          },
+        },
+      };
   }
 }

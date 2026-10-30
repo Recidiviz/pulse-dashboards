@@ -22,6 +22,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { useReentryQuestionnaire } from "../../../hooks/useReentryQuestionnaire";
 import { useReentryQuestionnaireDisplay } from "../../../hooks/useReentryQuestionnaireDisplay";
 import { useQuestionnaireFlow } from "./hooks/useQuestionnaireFlow";
@@ -45,6 +46,7 @@ export const ReentryQuestionnaire = () => {
   const goToChecklist = () =>
     navigate(State.Resident.UsMaReentry.Checklist.buildPath(routeParams));
 
+  const trackEvent = useReentryAnalytics();
   const { status, answers, save, isSaving } = useReentryQuestionnaire();
   const screen = useQuestionnaireFlow({
     questions,
@@ -54,6 +56,7 @@ export const ReentryQuestionnaire = () => {
     save,
     onExit: exit,
     onGoToChecklist: goToChecklist,
+    trackEvent,
   });
 
   // Each new screen starts at the top.
@@ -86,12 +89,7 @@ export const ReentryQuestionnaire = () => {
       case "review":
         return <QuestionnaireReview {...screen.props} isSaving={isSaving} />;
       case "completion":
-        return (
-          <QuestionnaireCompletion
-            onGoToChecklist={goToChecklist}
-            onClose={exit}
-          />
-        );
+        return <QuestionnaireCompletion {...screen.props} />;
     }
   };
 

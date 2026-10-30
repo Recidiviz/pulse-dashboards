@@ -25,8 +25,14 @@ import {
   type ReentryQuestionnaireAnswers,
   type ReentryQuestionnaireQuestionFormat,
 } from "~@jii/configs";
+import type { QuestionnaireExitScreen } from "~@jii/data";
 
-import { QuestionDisplay } from "../components/Reentry/Questionnaire/types";
+import {
+  FlowStep,
+  QuestionAnswerValue,
+  QuestionDisplay,
+  QuestionnaireQuestion,
+} from "../components/Reentry/Questionnaire/types";
 import {
   formatAnswerText,
   fromStoredAnswers,
@@ -156,4 +162,47 @@ export function toStoredAnswers(
   }
 
   return storedAnswers;
+}
+
+/** Analytics Helpers */
+
+const RATHER_NOT_SAY_OPTION = "DECLINED_TO_ANSWER";
+
+/**
+ * Returns whether the answer is "I'd rather not say".
+ */
+export function isRatherNotSay(
+  value: QuestionAnswerValue | undefined,
+): boolean {
+  return !!value?.includes(RATHER_NOT_SAY_OPTION);
+}
+
+/**
+ * Returns the screen questionnaire_exited reports for the current step.
+ */
+export function getExitScreen(
+  step: FlowStep,
+  isProfileCompleted: boolean,
+): QuestionnaireExitScreen {
+  if (step.kind !== "review") return step.kind;
+  return isProfileCompleted ? "review_profile" : "review_before_submit";
+}
+
+/**
+ * Returns the question_viewed properties for a question: where it falls among
+ * the visible questions, counting from 1.
+ */
+export function getQuestionViewed(
+  visibleQuestions: QuestionnaireQuestion[],
+  questionId: string,
+  isEditingProfile: boolean,
+) {
+  const index = visibleQuestions.findIndex(({ id }) => id === questionId);
+  return {
+    questionId,
+    sectionId: visibleQuestions[index].sectionDomain,
+    stepIndex: index + 1,
+    stepTotal: visibleQuestions.length,
+    isEditingProfile,
+  };
 }

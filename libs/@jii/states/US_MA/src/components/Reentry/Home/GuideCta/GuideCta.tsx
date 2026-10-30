@@ -20,6 +20,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { GUIDE_TOPICS } from "../../ctaConfigs";
 import { ReentryVideoLearnMoreRow } from "../ReentryVideo/ReentryVideoLearnMoreRow/ReentryVideoLearnMoreRow";
 import {
@@ -37,6 +38,7 @@ export type GuideCtaProps = {
 export const GuideCta = ({ onOpenVideo }: GuideCtaProps) => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const trackEvent = useReentryAnalytics();
 
   return (
     <div>
@@ -54,6 +56,12 @@ export const GuideCta = ({ onOpenVideo }: GuideCtaProps) => {
               ...routeParams,
               topicSlug: slug,
             })}
+            onClick={() =>
+              trackEvent("frontend_reentry_home_cta_clicked", {
+                cta: "topic_page",
+                topicId: slug,
+              })
+            }
           >
             <TopicIcon src={iconSrc} alt="" />
             <TopicLabel>{label(t)}</TopicLabel>

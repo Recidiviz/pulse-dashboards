@@ -22,6 +22,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
+import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../ctaConfigs";
 import { CompletedCard } from "./CompletedCard/CompletedCard";
@@ -42,6 +43,7 @@ export const QuestionnaireCta = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
   const { status } = useReentryQuestionnaire();
+  const trackEvent = useReentryAnalytics();
 
   if (status === "COMPLETED") {
     return (
@@ -57,6 +59,11 @@ export const QuestionnaireCta = () => {
       ? QUESTIONNAIRE_STATUS_COPY.IN_PROGRESS
       : QUESTIONNAIRE_STATUS_COPY.NOT_STARTED;
   const { heading, description, cta } = getCopy(t);
+  const trackClick = () =>
+    trackEvent("frontend_reentry_home_cta_clicked", {
+      cta: "questionnaire",
+      questionnaireState: status,
+    });
 
   return (
     <Wrapper>
@@ -81,6 +88,7 @@ export const QuestionnaireCta = () => {
       <StartButton
         kind="primary"
         to={State.Resident.UsMaReentry.Questionnaire.buildPath(routeParams)}
+        onClick={trackClick}
       >
         {cta}
       </StartButton>

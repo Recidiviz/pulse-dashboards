@@ -53,6 +53,7 @@ type CallToActionCardProps = {
   illustrationSrc: string;
   illustrationBackground: string;
   illustrationPlacement?: IllustrationPlacement;
+  onLinkClick?: () => void;
 };
 
 export function CallToActionCard({
@@ -63,6 +64,7 @@ export function CallToActionCard({
   illustrationSrc,
   illustrationBackground,
   illustrationPlacement,
+  onLinkClick,
 }: CallToActionCardProps) {
   return (
     <IllustratedCard
@@ -70,14 +72,19 @@ export function CallToActionCard({
       illustrationBackground={illustrationBackground}
       illustrationPlacement={illustrationPlacement}
       illustrationLink={linkTo}
+      illustrationOnClick={onLinkClick}
       // treated as decorative here since there is also a text CTA link
       illustrationAlt=""
     >
       <CardHeading>
-        <Link to={linkTo}>{heading}</Link>
+        <Link to={linkTo} onClick={onLinkClick}>
+          {heading}
+        </Link>
       </CardHeading>
       <CardDescription>{description}</CardDescription>
-      <GoLink to={linkTo}>{linkText}</GoLink>
+      <GoLink to={linkTo} onClick={onLinkClick}>
+        {linkText}
+      </GoLink>
     </IllustratedCard>
   );
 }

@@ -15,8 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect, useState } from "react";
+
+import type { ReentryChecklistSectionId } from "~@jii/configs";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import type { ReentryChecklistItem } from "../../../../hooks/types";
+import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { useReentryChecklist } from "../../../../hooks/useReentryChecklist";
 import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
 import { useReentryQuestionnaireDisplay } from "../../../../hooks/useReentryQuestionnaireDisplay";
@@ -42,10 +47,41 @@ export const ChecklistContent = () => {
   const sections = toChecklistSections(items);
   const itemSaveError = t(($) => $.reentry.checklist.itemSaveError);
 
+  const trackEvent = useReentryAnalytics();
+
+  // The checklist as it was when the page opened.
+  const [initialSnapshot] = useState(() => ({
+    itemsTotal: items.length,
+    itemsChecked: items.filter((item) => item.checked).length,
+    isPersonalized: isProfileCompleted,
+  }));
+
+  useEffect(() => {
+    trackEvent("frontend_reentry_checklist_viewed", initialSnapshot);
+  }, [trackEvent, initialSnapshot]);
+
+  const toggleChecked = (
+    item: ReentryChecklistItem,
+    band: ReentryChecklistSectionId,
+    checked: boolean,
+  ) => {
+    const itemProperties = {
+      itemId: item.id,
+      band,
+      isPersonalizedItem: item.isPersonalized,
+    };
+    if (checked) {
+      trackEvent("frontend_reentry_checklist_item_checked", itemProperties);
+    } else {
+      trackEvent("frontend_reentry_checklist_item_unchecked", itemProperties);
+    }
+    setChecked(item.id, checked);
+  };
+
   return (
     <>
       <PersonalizationBanner
-        isProfileCompleted={isProfileCompleted}
+        status={status}
         personalizedItemCount={personalizedItemCount}
       />
 
@@ -75,10 +111,13 @@ export const ChecklistContent = () => {
                   key={item.id}
                   label={t(($) => $.reentry.checklist.itemCopy[item.id].label)}
                   checked={item.checked}
-                  onCheckedChange={(checked) => setChecked(item.id, checked)}
+                  onCheckedChange={(checked) =>
+                    toggleChecked(item, section.id, checked)
+                  }
                   badge={
                     item.isPersonalized && (
                       <PersonalizedBadge
+                        itemId={item.id}
                         reasons={getPersonalizationReasons(
                           item.id,
                           questions,

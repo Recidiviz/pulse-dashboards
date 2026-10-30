@@ -27,6 +27,7 @@ import { isTestEnv } from "~client-env-utils";
 
 import { proxyHost } from "../../utils/proxy";
 import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
+import type { ReentryEvents } from "./reentryEvents";
 
 /**
  * Routes that exist only to move users through a login flow. Their URLs can contain
@@ -201,6 +202,8 @@ export class SegmentClient implements IntakeAnalytics {
     this.segment.page(properties, { context: this.trackingContextOverrides });
   }
 
+  // TODO(OBT-55751): move the events below onto typed event lists like ReentryEvents
+
   /* Program Catalog events */
 
   trackProgramDetailOpened(metadata: {
@@ -250,8 +253,17 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_aet_callout_clicked", metadata);
   }
 
-  /* Community Resource Explorer (CRE) events */
+  /* Reentry events, defined in reentryEvents.ts */
 
+  trackReentryEvent<Name extends keyof ReentryEvents>(
+    name: Name,
+    properties: ReentryEvents[Name] & { justiceInvolvedPersonPseudoId: string },
+  ) {
+    this.track(name, properties);
+  }
+
+  /* Community Resource Explorer (CRE) events */
+  // TODO(REE-211): Merge the CRE events into the reentry events above
   trackCreCategorySelected(metadata: {
     justiceInvolvedPersonPseudoId: string;
     category: string;

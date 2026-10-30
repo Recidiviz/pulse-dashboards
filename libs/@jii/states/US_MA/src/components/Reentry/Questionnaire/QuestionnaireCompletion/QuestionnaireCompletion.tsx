@@ -29,7 +29,7 @@ import {
   Wrapper,
 } from "./QuestionnaireCompletion.styles";
 
-type QuestionnaireCompletionProps = {
+export type QuestionnaireCompletionProps = {
   onGoToChecklist: () => void;
   onClose: () => void;
 };

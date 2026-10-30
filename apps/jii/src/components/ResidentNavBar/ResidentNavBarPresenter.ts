@@ -28,6 +28,8 @@ type AdditionalTopBarLink = {
   // Whether this link should stay highlighted while on any of its sub-routes,
   // rather than only when its own path is matched exactly. Defaults to false.
   activeOnSubroutes?: boolean;
+  // Only for side effects (e.g. analytics) - the link should navigate with `to`.
+  onClick?: () => void;
 };
 
 export class ResidentNavBarPresenter {
@@ -109,10 +111,19 @@ export class ResidentNavBarPresenter {
       ];
 
       if (this.residentFlags?.usMaReentry) {
+        const { personPseudoId } = this.routeParams;
         links.push({
           navKey: "reentryLink",
           to: State.Resident.UsMaReentry.buildPath(this.routeParams),
           activeOnSubroutes: true,
+          onClick: () =>
+            this.userStore.segmentClient.trackReentryEvent(
+              "frontend_reentry_entrypoint_clicked",
+              {
+                justiceInvolvedPersonPseudoId: personPseudoId,
+                entryPoint: "global_nav",
+              },
+            ),
         });
       }
 

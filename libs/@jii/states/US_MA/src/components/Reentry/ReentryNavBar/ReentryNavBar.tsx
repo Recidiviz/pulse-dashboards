@@ -18,16 +18,39 @@
 import { NavLink, useMatch } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import type { ReentryPage } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { RESOURCE_CATEGORIES } from "../ctaConfigs";
 import { Links, Wrapper } from "./ReentryNavBar.styles";
 
 export const ReentryNavBar = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
-  const isGuidePage = !!useMatch(State.Resident.UsMaReentry.Guide.path);
+
+  const isChecklistPage = !!useMatch(State.Resident.UsMaReentry.Checklist.path);
+  const isResourcesPage = !!useMatch(
+    `${State.Resident.UsMaReentry.Resources.path}/*`,
+  );
+  const guideMatch = useMatch(State.Resident.UsMaReentry.Guide.path);
+  const isGuidePage = !!guideMatch;
+  const trackEvent = useReentryAnalytics();
+
+  const getDeparturePage = (): ReentryPage => {
+    if (isGuidePage) return "topic_page";
+    if (isChecklistPage) return "checklist";
+    if (isResourcesPage) return "resource_explorer";
+    return "home";
+  };
+
+  const trackClick = (destination: Exclude<ReentryPage, "topic_page">) =>
+    trackEvent("frontend_reentry_local_nav_clicked", {
+      departurePage: getDeparturePage(),
+      topicId: guideMatch?.params.topicSlug,
+      destination,
+    });
 
   // Guides are reached from the Overview, so they keep it highlighted
   const overviewClassName = ({ isActive }: { isActive: boolean }) => {
@@ -42,12 +65,14 @@ export const ReentryNavBar = () => {
           to={State.Resident.UsMaReentry.Overview.buildPath(routeParams)}
           end
           className={overviewClassName}
+          onClick={() => trackClick("home")}
         >
           {t(($) => $.reentry.navBar.overview)}
         </NavLink>
         <NavLink
           to={State.Resident.UsMaReentry.Checklist.buildPath(routeParams)}
           end
+          onClick={() => trackClick("checklist")}
         >
           {t(($) => $.reentry.navBar.checklist)}
         </NavLink>
@@ -58,6 +83,7 @@ export const ReentryNavBar = () => {
             // this should link to a proper CRE landing page where users can select categories
             category: RESOURCE_CATEGORIES[0].category,
           })}
+          onClick={() => trackClick("resource_explorer")}
         >
           {t(($) => $.reentry.navBar.resourceExplorer)}
         </NavLink>

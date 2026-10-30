@@ -15,14 +15,71 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { QuestionDisplay } from "../../components/Reentry/Questionnaire/types";
 import {
+  QuestionDisplay,
+  QuestionnaireQuestion,
+} from "../../components/Reentry/Questionnaire/types";
+import {
+  getExitScreen,
   getPersonalizationReasons,
   getQuestionnaireStatus,
+  getQuestionViewed,
+  isRatherNotSay,
   toChecklistItems,
   toChecklistSections,
   toStoredAnswers,
 } from "../utils";
+
+describe("isRatherNotSay", () => {
+  test("is true only when the answer includes I'd rather not say", () => {
+    expect(isRatherNotSay(["DECLINED_TO_ANSWER"])).toBe(true);
+    expect(isRatherNotSay(["UNSURE"])).toBe(false);
+    expect(isRatherNotSay(undefined)).toBe(false);
+  });
+});
+
+describe("getExitScreen", () => {
+  test("names Review by whether the profile is completed", () => {
+    expect(getExitScreen({ kind: "review" }, false)).toBe(
+      "review_before_submit",
+    );
+    expect(getExitScreen({ kind: "review" }, true)).toBe("review_profile");
+  });
+
+  test("uses the step's kind for every other screen", () => {
+    expect(getExitScreen({ kind: "intro" }, false)).toBe("intro");
+    expect(
+      getExitScreen({ kind: "question", questionId: "HOUSING" }, false),
+    ).toBe("question");
+    expect(getExitScreen({ kind: "completion" }, true)).toBe("completion");
+  });
+});
+
+describe("getQuestionViewed", () => {
+  const question = (id: string, sectionDomain: string) =>
+    ({
+      id,
+      format: "RADIO",
+      heading: id,
+      options: [],
+      sectionDomain,
+    }) satisfies QuestionnaireQuestion;
+
+  test("counts the question's position among the visible questions from 1", () => {
+    const visibleQuestions = [
+      question("HOUSING", "HOUSING"),
+      question("WORK_PLANS", "WORK"),
+      question("HEALTHCARE_NEEDED", "HEALTH"),
+    ];
+    expect(getQuestionViewed(visibleQuestions, "WORK_PLANS", false)).toEqual({
+      questionId: "WORK_PLANS",
+      sectionId: "WORK",
+      stepIndex: 2,
+      stepTotal: 3,
+      isEditingProfile: false,
+    });
+  });
+});
 
 describe("toChecklistSections", () => {
   test("puts each item in its section, in section order", () => {

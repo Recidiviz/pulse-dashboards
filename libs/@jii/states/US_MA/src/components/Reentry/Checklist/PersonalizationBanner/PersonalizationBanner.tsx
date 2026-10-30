@@ -22,10 +22,12 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
+import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { Callout } from "../../Callout/Callout";
+import { ReentryQuestionnaireStatus } from "../../types";
 
 type PersonalizationBannerProps = {
-  isProfileCompleted: boolean;
+  status: ReentryQuestionnaireStatus;
   personalizedItemCount: number;
 };
 
@@ -35,13 +37,14 @@ type PersonalizationBannerProps = {
  * questionnaire to complete it.
  */
 export const PersonalizationBanner = ({
-  isProfileCompleted,
+  status,
   personalizedItemCount,
 }: PersonalizationBannerProps) => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const trackEvent = useReentryAnalytics();
 
-  if (isProfileCompleted) {
+  if (status === "COMPLETED") {
     return (
       <Callout
         tone="info"
@@ -66,6 +69,11 @@ export const PersonalizationBanner = ({
       action={
         <GoLink
           to={State.Resident.UsMaReentry.Questionnaire.buildPath(routeParams)}
+          onClick={() =>
+            trackEvent("frontend_reentry_checklist_questionnaire_cta_clicked", {
+              questionnaireState: status,
+            })
+          }
         >
           {t(($) => $.reentry.checklist.notPersonalized.cta)}
         </GoLink>

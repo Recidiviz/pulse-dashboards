@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { TrackReentryEvent } from "~@jii/data";
+
 import type { SaveAnswers } from "../../../../hooks/types";
 import type { ReentryQuestionnaireStatus } from "../../types";
 import type { QuestionnaireCancelModalProps } from "../QuestionnaireCancelModal/QuestionnaireCancelModal";
+import type { QuestionnaireCompletionProps } from "../QuestionnaireCompletion/QuestionnaireCompletion";
 import type { QuestionnaireFormProps } from "../QuestionnaireForm/QuestionnaireForm";
 import type { QuestionnaireIntroProps } from "../QuestionnaireIntro/QuestionnaireIntro";
 import type { QuestionnaireReviewProps } from "../QuestionnaireReview/QuestionnaireReview";
@@ -41,6 +44,7 @@ export type UseQuestionnaireFlowParams = {
   save: SaveAnswers;
   onExit: () => void;
   onGoToChecklist: () => void;
+  trackEvent: TrackReentryEvent;
 };
 
 export type QuestionnaireHeaderAction = {
@@ -71,6 +75,7 @@ export type ReviewScreen = ScreenBase & {
 
 export type CompletionScreen = ScreenBase & {
   kind: "completion";
+  props: QuestionnaireCompletionProps;
 };
 
 export type QuestionnaireScreen =

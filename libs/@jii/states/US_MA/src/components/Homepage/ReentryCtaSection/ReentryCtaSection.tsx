@@ -22,6 +22,7 @@ import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import backgroundSrc from "./reentryCtaBackground.png";
 import illustrationSrc from "./reentryCtaIllustration.svg";
 
@@ -29,6 +30,7 @@ export const ReentryCtaSection = () => {
   const { t } = useUsMaTranslations();
   const { residentFlags } = useSingleResidentContext();
   const routeParams = useTypedParams(State.Resident);
+  const trackEvent = useReentryAnalytics();
 
   if (!residentFlags.usMaReentry) return null;
 
@@ -44,6 +46,11 @@ export const ReentryCtaSection = () => {
         linkText={t(($) => $.reentry.homepageCta.link)}
         illustrationSrc={illustrationSrc}
         illustrationBackground={`url(${backgroundSrc}) center / cover no-repeat`}
+        onLinkClick={() =>
+          trackEvent("frontend_reentry_entrypoint_clicked", {
+            entryPoint: "home_card",
+          })
+        }
       />
     </section>
   );

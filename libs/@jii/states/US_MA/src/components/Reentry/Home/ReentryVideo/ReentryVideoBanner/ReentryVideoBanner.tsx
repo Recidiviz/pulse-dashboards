@@ -25,6 +25,7 @@ import {
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon, palette } from "~design-system";
 
+import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import {
   Banner,
   Description,
@@ -41,8 +42,14 @@ export const ReentryVideoBanner = observer(function ReentryVideoBanner({
 }: ReentryVideoBannerProps) {
   const { t } = useUsMaTranslations();
   const { userProperties, residentsStore } = useResidentsContext();
+  const trackEvent = useReentryAnalytics();
 
   if (userProperties?.hasSeenReentryOnboarding) return null;
+
+  const dismiss = () => {
+    trackEvent("frontend_reentry_video_banner_dismissed", {});
+    residentsStore.setUserReentryOnboardingSeen();
+  };
 
   const title = t(($) => $.reentry.overview.video.title);
 
@@ -56,7 +63,7 @@ export const ReentryVideoBanner = observer(function ReentryVideoBanner({
       <DismissButton
         type="button"
         aria-label={t(($) => $.reentry.overview.video.dismissBanner)}
-        onClick={() => residentsStore.setUserReentryOnboardingSeen()}
+        onClick={dismiss}
       >
         <Icon kind="Close" size={10} color={palette.slate85} />
       </DismissButton>

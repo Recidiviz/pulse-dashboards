@@ -44,6 +44,7 @@ type PopoverProps = {
   heading: ReactNode;
   closeLabel: string;
   children: ReactNode;
+  onOpen?: () => void;
 };
 
 /**
@@ -56,15 +57,21 @@ export const Popover = ({
   heading,
   closeLabel,
   children,
+  onOpen,
 }: PopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const headingId = useId();
   const arrowRef = useRef<SVGSVGElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open) onOpen?.();
+  };
+
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen,
+    onOpenChange: handleOpenChange,
     placement: "bottom-end",
     middleware: [
       // Leaves room for the arrow between the trigger and the dialog.
