@@ -21,7 +21,9 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 import {
   CaseStatus,
+  DomainRiskLevel,
   FrequencyOfUse,
+  Gender,
   LevelOfEducation,
   MethodOfUse,
   NeedToBeAddressed,
@@ -31,8 +33,12 @@ import {
   SubstanceType,
 } from "~@sentencing/prisma/client";
 import { appRouter } from "~@sentencing/trpc/router";
+import { saveInsightSnapshot } from "~@sentencing/trpc/routes/sar/sar.helpers";
 import { testPrismaClient } from "~@sentencing/trpc/test/setup";
 import {
+  fakeDispositions,
+  fakeInsightPrismaInput,
+  fakeOffense,
   fakeSAR,
   fakeSARClient,
   fakeSARStaff,
@@ -194,6 +200,223 @@ describe("SAR router", () => {
       const sar = await caller.sar.getSAR({ id: fakeSAR.id });
 
       expect(sar.id).toEqual(fakeSAR.id);
+    });
+  });
+
+  describe("getSARInsight", () => {
+    // fakeSARClient is MALE, and a LOW risk level is bucket 0, so this insight
+    // matches fakeSAR once its offense is set. The seeded FEMALE insight
+    // doesn't match.
+    const matchingInsight = {
+      ...fakeInsightPrismaInput,
+      gender: Gender.MALE,
+      assessmentScoreBucketStart: 0,
+      assessmentScoreBucketEnd: 0,
+      dispositionNumRecords: 42,
+      avgSentenceLengthYears: 3.5,
+      avgPctServed: 55,
+      timeServedNumRecords: 10,
+    };
+
+    beforeEach(async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: {
+          mostSevereOffenseName: fakeOffense.name,
+          assessmentRiskLevel: DomainRiskLevel.LOW,
+        },
+      });
+      await testPrismaClient.insight.create({ data: matchingInsight });
+    });
+
+    function getSnapshot() {
+      return testPrismaClient.sARInsightSnapshot.findUnique({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+        include: { dispositionData: true },
+      });
+    }
+
+    function lockSAR() {
+      return testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { lockedAt: new Date("2026-01-01") },
+      });
+    }
+
+    // Changes the live Insight so tests can tell it apart from a snapshot.
+    function changeLiveInsight() {
+      return testPrismaClient.insight.updateMany({
+        where: { gender: Gender.MALE, offense: { name: fakeOffense.name } },
+        data: { dispositionNumRecords: 99 },
+      });
+    }
+
+    const caller = () => makeCallerForStaff(fakeStaff.pseudonymizedId);
+
+    // Loading an unlocked SAR's insight saves it as the snapshot.
+    async function snapshotLiveInsight() {
+      await caller().sar.getSARInsight({ sarId: fakeSAR.id });
+    }
+
+    test("an unlocked SAR returns the live insight and saves it as the snapshot", async () => {
+      const insight = await caller().sar.getSARInsight({ sarId: fakeSAR.id });
+
+      expect(insight).toEqual(
+        expect.objectContaining({
+          gender: Gender.MALE,
+          assessmentRiskLevel: DomainRiskLevel.LOW,
+          offense: fakeOffense.name,
+          dispositionNumRecords: 42,
+          avgSentenceLengthYears: 3.5,
+          avgPctServed: 55,
+          timeServedNumRecords: 10,
+        }),
+      );
+      expect(insight?.dispositionData).toHaveLength(fakeDispositions.length);
+
+      const snapshot = await getSnapshot();
+      expect(snapshot).toEqual(
+        expect.objectContaining({
+          gender: Gender.MALE,
+          assessmentRiskLevel: DomainRiskLevel.LOW,
+          offenseName: fakeOffense.name,
+          dispositionNumRecords: 42,
+        }),
+      );
+      expect(snapshot?.dispositionData).toHaveLength(fakeDispositions.length);
+    });
+
+    test("an unlocked SAR replaces its snapshot on every load without duplicating dispositions", async () => {
+      await snapshotLiveInsight();
+      await changeLiveInsight();
+
+      const insight = await caller().sar.getSARInsight({ sarId: fakeSAR.id });
+
+      expect(insight?.dispositionNumRecords).toEqual(99);
+      const snapshot = await getSnapshot();
+      expect(snapshot?.dispositionNumRecords).toEqual(99);
+      expect(snapshot?.dispositionData).toHaveLength(fakeDispositions.length);
+    });
+
+    test("a locked SAR with a snapshot returns the snapshot, not the live insight", async () => {
+      await snapshotLiveInsight();
+      await lockSAR();
+      await changeLiveInsight();
+
+      const insight = await caller().sar.getSARInsight({ sarId: fakeSAR.id });
+
+      expect(insight?.dispositionNumRecords).toEqual(42);
+      expect(insight?.dispositionData).toHaveLength(fakeDispositions.length);
+    });
+
+    test("a locked SAR returns its snapshot even after the report's offense or risk level changes", async () => {
+      await snapshotLiveInsight();
+      await lockSAR();
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: {
+          mostSevereOffenseName: "A Different Offense",
+          assessmentRiskLevel: DomainRiskLevel.HIGH,
+        },
+      });
+
+      const insight = await caller().sar.getSARInsight({ sarId: fakeSAR.id });
+
+      expect(insight).toEqual(
+        expect.objectContaining({
+          gender: Gender.MALE,
+          assessmentRiskLevel: DomainRiskLevel.LOW,
+          offense: fakeOffense.name,
+          dispositionNumRecords: 42,
+        }),
+      );
+    });
+
+    test("a locked SAR without a snapshot returns the live insight without saving one", async () => {
+      await lockSAR();
+
+      const insight = await caller().sar.getSARInsight({ sarId: fakeSAR.id });
+
+      expect(insight?.dispositionNumRecords).toEqual(42);
+      expect(await getSnapshot()).toBeNull();
+    });
+
+    test("a locked SAR whose snapshot recorded no insight returns undefined", async () => {
+      await saveInsightSnapshot(testPrismaClient, fakeSAR.id, undefined);
+      await lockSAR();
+
+      expect(
+        await caller().sar.getSARInsight({ sarId: fakeSAR.id }),
+      ).toBeUndefined();
+    });
+
+    test("returns undefined when the SAR has no assessment date", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { assessmentDate: null },
+      });
+
+      expect(
+        await caller().sar.getSARInsight({ sarId: fakeSAR.id }),
+      ).toBeUndefined();
+    });
+
+    test("returns undefined when the SAR has no assessment risk level", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { assessmentRiskLevel: null },
+      });
+
+      expect(
+        await caller().sar.getSARInsight({ sarId: fakeSAR.id }),
+      ).toBeUndefined();
+    });
+
+    test("an unrelated PO cannot read the insight of a SAR they aren't assigned to or supervising", async () => {
+      await expect(() =>
+        makeCallerForStaff(fakeSARStaff.pseudonymizedId).sar.getSARInsight({
+          sarId: fakeSAR.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "NOT_FOUND",
+          message: "Sentencing Assessment Report with that id was not found",
+        }),
+      );
+    });
+
+    // Tasks lets a supervising officer download a client's finished SAR from
+    // their profile, so an archived SAR's insight is readable by any PO.
+    test("an unrelated PO can read the insight of a SAR archived in OPII, so they can download it from Tasks", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { completionDate: new Date("2020-01-01") },
+      });
+
+      const insight = await makeCallerForStaff(
+        fakeSARStaff.pseudonymizedId,
+      ).sar.getSARInsight({ sarId: fakeSAR.id });
+
+      expect(insight?.dispositionNumRecords).toEqual(42);
+    });
+
+    test("an internal user (no staffPseudonymizedId) can read any SAR's insight", async () => {
+      const insight = await makeCallerForStaff(undefined).sar.getSARInsight({
+        sarId: fakeSAR.id,
+      });
+
+      expect(insight?.dispositionNumRecords).toEqual(42);
+    });
+
+    test("throws NOT_FOUND if the SAR does not exist", async () => {
+      await expect(() =>
+        caller().sar.getSARInsight({ sarId: "not-a-real-id" }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "NOT_FOUND",
+          message: "Sentencing Assessment Report with that id was not found",
+        }),
+      );
     });
   });
 

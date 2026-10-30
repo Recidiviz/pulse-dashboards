@@ -362,7 +362,7 @@ export async function getInsight(
 }
 
 // Maps a risk level to the assessment score bucket insights are keyed on.
-export const RISK_LEVEL_TO_BUCKET: Record<DomainRiskLevel, number> = {
+const RISK_LEVEL_TO_BUCKET: Record<DomainRiskLevel, number> = {
   LOW: 0,
   MODERATE: 1,
   HIGH: 2,
@@ -377,7 +377,7 @@ export async function getSARInsight(
   offenseName: string,
   gender: Gender,
   assessmentRiskLevel: DomainRiskLevel,
-  prisma: PrismaClient,
+  prisma: Prisma.TransactionClient,
 ) {
   const assessmentScoreBucket = RISK_LEVEL_TO_BUCKET[assessmentRiskLevel];
   const insight = await prisma.insight.findFirst({
@@ -389,7 +389,11 @@ export async function getSARInsight(
       },
       gender: gender,
     },
-    ...INSIGHT_INCLUDES_AND_OMITS,
+    // SAR insights don't use the rollup recidivism data, so it isn't loaded.
+    include: {
+      offense: { select: { name: true, category: true } },
+      dispositionData: { omit: { id: true, insightId: true } },
+    },
   });
 
   if (!insight) {
@@ -404,13 +408,8 @@ export async function getSARInsight(
   return {
     ..._.pick(insight, [
       "gender",
-      "rollupGender",
-      "rollupAssessmentScoreBucketStart",
-      "rollupAssessmentScoreBucketEnd",
       "dispositionData",
       "dispositionNumRecords",
-      "rollupRecidivismSeries",
-      "rollupRecidivismNumRecords",
       "avgSentenceLengthYears",
       "avgPctServed",
       "timeServedNumRecords",
@@ -418,7 +417,5 @@ export async function getSARInsight(
     assessmentRiskLevel,
     offense: insight.offense.name,
     offenseCategory: insight.offense.category,
-    rollupOffenseName: insight.rollupOffenseName,
-    rollupOffenseDescription: formatRollupOffenseDescription(insight),
   };
 }

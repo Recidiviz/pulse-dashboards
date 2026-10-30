@@ -16,13 +16,7 @@
 // =============================================================================
 
 import { pick } from "lodash";
-import {
-  comparer,
-  flowResult,
-  makeAutoObservable,
-  reaction,
-  runInAction,
-} from "mobx";
+import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 import moment from "moment";
 
 import {
@@ -226,17 +220,15 @@ export class SARDetailsPresenter implements Hydratable {
       },
     });
 
-    // Insights are keyed on the offense and the risk level, so saving a new
-    // ORAS score that changes the level reloads them.
+    // Loads the insight once the SAR is loaded. The server looks it up from
+    // the saved report, so edits that change it reload it after their save
+    // instead (see updateMostSevereOffenseName and saveORASData).
     this.disposeInsightReaction = reaction(
-      () => [
-        this.SARData?.mostSevereOffenseName,
-        this.SARData?.assessmentRiskLevel,
-      ],
-      ([offenseName]) => {
-        if (offenseName) this.loadInsight();
+      () => this.SARData?.id,
+      (id) => {
+        if (id) this.loadInsight();
       },
-      { fireImmediately: true, equals: comparer.structural },
+      { fireImmediately: true },
     );
   }
 
@@ -256,37 +248,10 @@ export class SARDetailsPresenter implements Hydratable {
     const sarData = this.SARData;
     if (!sarData) return;
 
-    if (!sarData.assessmentDate) {
-      this.insight = null;
-      return;
-    }
-
-    const offense = sarData.mostSevereOffenseName;
-    const gender = sarData.client?.gender;
-    const riskLevel = sarData.assessmentRiskLevel;
-
-    if (!offense || !gender || !riskLevel) {
-      let missingField = "assessment risk level";
-      if (!offense) missingField = "offense";
-      else if (!gender) missingField = "gender";
-      console.warn(
-        `[SARDetailsPresenter] Cannot load insight: missing ${missingField}`,
-      );
-      this.insight = null;
-      return;
-    }
-
     try {
       this.insight = yield this.sentencingStore.apiClient.getSARInsight(
-        offense,
-        gender,
-        riskLevel,
+        sarData.id,
       );
-      if (!this.insight) {
-        console.warn(
-          `[SARDetailsPresenter] No insight found for offense="${offense}", gender=${gender}, riskLevel=${riskLevel}`,
-        );
-      }
     } catch (e) {
       console.warn(`[SARDetailsPresenter] Failed to load insight: ${e}`);
       this.insight = null;
@@ -492,6 +457,7 @@ export class SARDetailsPresenter implements Hydratable {
     if (!this.SARData || this.isLocked) return;
 
     const sarData = this.SARData;
+    const offenseChanged = offenseName !== sarData.mostSevereOffenseName;
     runInAction(() => {
       sarData.mostSevereOffenseName = offenseName;
     });
@@ -500,6 +466,8 @@ export class SARDetailsPresenter implements Hydratable {
       mostSevereOffenseName: offenseName,
       status: this.statusForUpdate,
     });
+
+    if (offenseChanged) this.loadInsight();
   }
 
   /** Get officer (staff) info */
@@ -1376,6 +1344,9 @@ export class SARDetailsPresenter implements Hydratable {
       ORASEnteredManually: true,
     };
 
+    const riskLevelChanged =
+      payload.assessmentRiskLevel !== sarData.assessmentRiskLevel;
+
     runInAction(() => {
       Object.assign(sarData, payload);
       this.markFieldAsEditedLocally("offenderAssessment");
@@ -1394,6 +1365,8 @@ export class SARDetailsPresenter implements Hydratable {
     runInAction(() => {
       this.updateLocalStatus(this.statusForUpdate);
     });
+
+    if (riskLevelChanged) this.loadInsight();
   }
 
   /** Update employed at offense */

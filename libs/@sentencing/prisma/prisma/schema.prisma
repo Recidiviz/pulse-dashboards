@@ -734,11 +734,10 @@ model SARInsightSnapshot {
   // Copied from the report and client when the snapshot is taken, so a later
   // correction to Client.gender or the report's offense or score doesn't change
   // which insight the snapshot describes.
-  gender                     Gender?
-  assessmentScoreBucketStart Int?
-  assessmentScoreBucketEnd   Int?
-  offenseName                String?
-  offenseCategory            String?
+  gender              Gender?
+  assessmentRiskLevel DomainRiskLevel?
+  offenseName         String?
+  offenseCategory     String?
 
   // Disposition Data
   dispositionNumRecords Int?

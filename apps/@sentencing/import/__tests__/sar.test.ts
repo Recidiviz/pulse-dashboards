@@ -286,4 +286,45 @@ describe("import SAR data", () => {
       );
     });
   });
+
+  describe("lockedAt", () => {
+    const COMPLETION_DATE = new Date("2026-10-01T00:00:00.000Z");
+
+    test("should set lockedAt from the completion date", async () => {
+      await createSAR();
+
+      await importSARs([
+        createSARImportRow({ completion_date: COMPLETION_DATE }),
+      ]);
+
+      expect((await findSAR())?.lockedAt).toEqual(COMPLETION_DATE);
+    });
+
+    test("should not overwrite a lockedAt that is already set", async () => {
+      const existingLockedAt = new Date("2026-09-15T00:00:00.000Z");
+      await createSAR({ lockedAt: existingLockedAt });
+
+      await importSARs([
+        createSARImportRow({ completion_date: COMPLETION_DATE }),
+      ]);
+
+      expect((await findSAR())?.lockedAt).toEqual(existingLockedAt);
+    });
+
+    test("should not update ORAS data on a locked SAR that has no completion date", async () => {
+      const existingLockedAt = new Date("2026-09-15T00:00:00.000Z");
+      await createSAR({ lockedAt: existingLockedAt, assessmentScore: 7 });
+
+      await importSARs([
+        createSARImportRow({ assessment_score: "12", assessment_level: "LOW" }),
+      ]);
+
+      expect(await findSAR()).toEqual(
+        expect.objectContaining({
+          lockedAt: existingLockedAt,
+          assessmentScore: 7,
+        }),
+      );
+    });
+  });
 });

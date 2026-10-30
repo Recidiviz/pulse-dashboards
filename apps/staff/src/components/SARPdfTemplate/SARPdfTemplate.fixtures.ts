@@ -239,9 +239,6 @@ export const mockSAR: SAR = {
 export const mockSARInsight: SARInsight = {
   gender: "MALE",
   assessmentRiskLevel: "HIGH",
-  rollupGender: "MALE",
-  rollupAssessmentScoreBucketStart: null,
-  rollupAssessmentScoreBucketEnd: null,
   dispositionData: [
     {
       recommendationType: "Deferred Prosecution",
@@ -287,16 +284,12 @@ export const mockSARInsight: SARInsight = {
     },
   ],
   dispositionNumRecords: 531,
-  rollupRecidivismSeries: [],
-  rollupRecidivismNumRecords: 1535,
   avgSentenceLengthYears: 5,
   avgPctServed: 65.3,
   timeServedNumRecords: 148,
   offense: "UNLAWFUL POSSESSION OF A FIREARM",
   offenseCategory: null,
-  rollupOffenseName: "UNLAWFUL POSSESSION OF A FIREARM",
-  rollupOffenseDescription: "UNLAWFUL POSSESSION OF A FIREARM offenses",
-} as unknown as SARInsight;
+};
 
 /**
  * A richer variant that fills the histories, narratives, recommendations and

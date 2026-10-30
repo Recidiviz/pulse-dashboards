@@ -21,7 +21,12 @@ import _ from "lodash";
 import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
 import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
-import { getSARInsight } from "~@sentencing/trpc/routes/common/utils";
+import {
+  lookUpSARInsight,
+  SAR_INSIGHT_SELECT,
+  saveInsightSnapshot,
+  snapshotToInsight,
+} from "~@sentencing/trpc/routes/sar/sar.helpers";
 import {
   createDrugHistorySchema,
   createEmploymentHistorySchema,
@@ -68,6 +73,44 @@ function markEmploymentHistoryManuallyUpdated(
 // @sentencing/trpc, so importing it back here would be a circular dependency.
 function isArchivedInOpii(sar: { completionDate: Date | null }): boolean {
   return !!sar.completionDate;
+}
+
+// The isArchivedInOpii rule as a Prisma filter.
+const ARCHIVED_IN_OPII_WHERE = {
+  completionDate: { not: null },
+} satisfies Prisma.SentencingAssessmentReportWhereInput;
+
+// Matches the SAR with this id if staffPseudonymizedId can read it: it's
+// accessible to them (sarAccessFilter), or it's archived in OPII
+// (ARCHIVED_IN_OPII_WHERE), so a Tasks supervision officer can download a
+// client's finished SAR from their profile page. Editing endpoints don't get
+// the archived carve-out. No staffPseudonymizedId means an internal user, who
+// is unrestricted -- handled as a separate branch rather than spreading
+// sarAccessFilter's {} into the OR array, since an empty object there isn't a
+// no-op match.
+async function readableSARWhere(
+  prisma: PrismaClient,
+  id: string,
+  staffPseudonymizedId: string | undefined,
+): Promise<Prisma.SentencingAssessmentReportWhereInput> {
+  if (!staffPseudonymizedId) return { id };
+
+  return {
+    id,
+    OR: [
+      ARCHIVED_IN_OPII_WHERE,
+      await sarAccessFilter(prisma, staffPseudonymizedId),
+    ],
+  };
+}
+
+// A SAR the caller can't read gets the same error as one that doesn't exist,
+// so the response doesn't reveal which SAR ids are real.
+function sarNotFoundError() {
+  return new TRPCError({
+    code: "NOT_FOUND",
+    message: "Sentencing Assessment Report with that id was not found",
+  });
 }
 
 // Throws FORBIDDEN unless the given SAR is accessible to staffPseudonymizedId
@@ -146,39 +189,42 @@ export const sarRouter = router({
   getSARInsight: baseProcedure
     .input(getSARInsightSchema)
     .query(
-      async ({
-        input: { offenseName, gender, assessmentRiskLevel },
-        ctx: { prisma },
-      }) => {
-        return await getSARInsight(
-          offenseName,
-          gender,
-          assessmentRiskLevel,
-          prisma,
-        );
+      async ({ input: { sarId }, ctx: { prisma, staffPseudonymizedId } }) => {
+        const sar = await prisma.sentencingAssessmentReport.findFirst({
+          where: await readableSARWhere(prisma, sarId, staffPseudonymizedId),
+          select: SAR_INSIGHT_SELECT,
+        });
+
+        if (!sar) throw sarNotFoundError();
+
+        if (sar.lockedAt !== null && sar.insightSnapshot) {
+          return snapshotToInsight(sar.insightSnapshot);
+        }
+
+        const insight = await lookUpSARInsight(sar, prisma);
+
+        // Until the report is locked, every load replaces its snapshot with
+        // the current insight, so the snapshot holds the last insight shown.
+        // TODO(MO-34): Save the snapshot only when the report is downloaded
+        // and locked, instead of on every load.
+        if (sar.lockedAt === null) {
+          await saveInsightSnapshot(prisma, sar.id, insight);
+          return insight;
+        }
+
+        // A locked report without a snapshot was locked before snapshots
+        // existed, so it shows the current insight, which may differ from
+        // what the officer saw when they submitted it.
+        return insight;
       },
     ),
 
   getSAR: baseProcedure
     .input(getSARByIDInputSchema)
     .query(async ({ input: { id }, ctx: { prisma, staffPseudonymizedId } }) => {
-      // Fold ownership check into the main query — one round trip instead of two.
-      // Archived SARs are also readable regardless of assignment (isArchivedInOpii),
-      // so a Tasks supervision officer can download a client's finished SAR from
-      // their profile page. Editing endpoints don't get this carve-out.
-      // No staffPseudonymizedId means an internal user, who is unrestricted --
-      // handled as a separate branch rather than spreading `sarAccessFilter`'s `{}`
-      // into the OR array below, since an empty object there isn't a no-op match.
+      // Fold the access check into the main query: one round trip instead of two.
       const sarData = await prisma.sentencingAssessmentReport.findFirst({
-        where: staffPseudonymizedId
-          ? {
-              id,
-              OR: [
-                { completionDate: { not: null } },
-                await sarAccessFilter(prisma, staffPseudonymizedId),
-              ],
-            }
-          : { id },
+        where: await readableSARWhere(prisma, id, staffPseudonymizedId),
         omit: {
           staffId: true,
           clientId: true,
@@ -250,12 +296,7 @@ export const sarRouter = router({
         },
       });
 
-      if (!sarData) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Sentencing Assessment Report with that id was not found",
-        });
-      }
+      if (!sarData) throw sarNotFoundError();
 
       return sarData;
     }),

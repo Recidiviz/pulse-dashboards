@@ -19,30 +19,18 @@ import type { APIClient } from "../../../api";
 import type { SAR, SARInsight } from "./SARPdfTemplate.types";
 
 /**
- * Fetches the Historical Outcome insight for a SAR without a presenter — a
- * standalone port of `SARDetailsPresenter.loadInsight` so callers that only
- * have a raw `SAR` (e.g. the client Full Profile's "Download Report") can build
- * the same PDF the SAR Summary page does. Returns `null` whenever the SAR lacks
- * the fields an insight is keyed on, or no matching insight exists.
- *
- * Intentionally duplicates the presenter's derivation rather than refactoring it
- * — the presenter stays untouched.
+ * Fetches the Historical Outcome insight for a SAR without a presenter, so
+ * callers that only have a raw SAR (e.g. the client Full Profile's "Download
+ * Report") can build the same PDF the SAR Summary page does. Returns null when
+ * no insight exists for the SAR or the request fails.
  */
 export async function loadSARInsight(
-  // Accept either the live or offline client — both expose `getSARInsight`.
+  // Accept either the live or offline client — both expose getSARInsight.
   apiClient: Pick<APIClient, "getSARInsight">,
   sar: SAR,
 ): Promise<SARInsight | null> {
-  if (!sar.assessmentDate) return null;
-
-  const offense = sar.mostSevereOffenseName;
-  const gender = sar.client?.gender;
-  const riskLevel = sar.assessmentRiskLevel;
-
-  if (!offense || !gender || !riskLevel) return null;
-
   try {
-    return await apiClient.getSARInsight(offense, gender, riskLevel);
+    return (await apiClient.getSARInsight(sar.id)) ?? null;
   } catch {
     return null;
   }

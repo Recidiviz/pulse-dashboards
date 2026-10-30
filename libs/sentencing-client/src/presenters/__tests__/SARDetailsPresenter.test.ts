@@ -207,11 +207,7 @@ describe("saveORASData", () => {
       undefined as never,
     );
     await presenter.hydrate();
-    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenLastCalledWith(
-      "Burglary",
-      "MALE",
-      "LOW",
-    );
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenCalledTimes(1);
 
     // 20 is Moderate on the ORAS-CST.
     await presenter.saveORASData({
@@ -222,11 +218,93 @@ describe("saveORASData", () => {
       assessmentAdministeredBy: "Officer Smith",
     });
 
-    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenLastCalledWith(
-      "Burglary",
-      "MALE",
-      "MODERATE",
+    // The reload happens after the save, so the server reads the new level.
+    expect(
+      vi.mocked(sentencingStore.apiClient.updateSARDetails).mock
+        .invocationCallOrder[0],
+    ).toBeLessThan(
+      vi.mocked(sentencingStore.apiClient.getSARInsight).mock
+        .invocationCallOrder[1],
     );
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenLastCalledWith(
+      sarId,
+    );
+  });
+
+  it("doesn't reload the insight when a new score keeps the risk level", async () => {
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      mostSevereOffenseName: "Burglary",
+      assessmentType: "ORAS_CST",
+      assessmentScore: 10,
+      assessmentRiskLevel: "LOW",
+      assessmentDate: new Date("2025-01-01"),
+    });
+    vi.spyOn(sentencingStore.apiClient, "getSARInsight").mockResolvedValue(
+      null as never,
+    );
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+
+    // 12 is still Low on the ORAS-CST.
+    await presenter.saveORASData({
+      ...ORAS_EMPTY_FORM,
+      assessmentType: "ORAS_CST",
+      assessmentScore: 12,
+      assessmentDate: new Date("2025-01-01"),
+      assessmentAdministeredBy: "Officer Smith",
+    });
+
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenCalledTimes(1);
+  });
+
+  it("reloads the insight after saving a new most severe offense", async () => {
+    // A completed SAR is locked, and a locked SAR's offense can't change.
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      completionDate: null,
+    });
+    vi.spyOn(sentencingStore.apiClient, "getSARInsight").mockResolvedValue(
+      null as never,
+    );
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenCalledTimes(1);
+
+    await presenter.updateMostSevereOffenseName("Burglary");
+
+    // The reload happens after the save, so the server reads the new offense.
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenCalledTimes(2);
+    expect(
+      vi.mocked(sentencingStore.apiClient.updateSARDetails).mock
+        .invocationCallOrder[0],
+    ).toBeLessThan(
+      vi.mocked(sentencingStore.apiClient.getSARInsight).mock
+        .invocationCallOrder[1],
+    );
+  });
+
+  it("doesn't reload the insight when the most severe offense stays the same", async () => {
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      completionDate: null,
+      mostSevereOffenseName: "Burglary",
+    });
+    vi.spyOn(sentencingStore.apiClient, "getSARInsight").mockResolvedValue(
+      null as never,
+    );
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+
+    await presenter.updateMostSevereOffenseName("Burglary");
+
+    expect(sentencingStore.apiClient.getSARInsight).toHaveBeenCalledTimes(1);
   });
 
   it("updates SARData locally after saving", async () => {

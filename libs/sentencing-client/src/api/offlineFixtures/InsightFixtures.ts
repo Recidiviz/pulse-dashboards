@@ -128,80 +128,12 @@ export const InsightFixture: Insight = {
 
 // MO-appropriate SAR insight fixture: uses sentence-length buckets and MO-specific
 // disposition types (Court-Ordered Treatment) instead of PSI types
-// (Rider, Term). rollupRecidivismSeries uses 12/24/36-month cohorts per MO data schema.
+// (Rider, Term).
 export const SARInsightFixture: NonNullable<SARInsight> = {
   gender: "MALE",
   offense: "Theft",
   offenseCategory: "Property",
   assessmentRiskLevel: "MODERATE",
-  rollupGender: "MALE",
-  rollupAssessmentScoreBucketStart: 1,
-  rollupAssessmentScoreBucketEnd: 1,
-  rollupOffenseName: "Theft",
-  rollupOffenseDescription: "Theft offenses",
-  rollupRecidivismNumRecords: 374,
-  rollupRecidivismSeries: [
-    {
-      recommendationType: "Probation",
-      sentenceLengthBucketStart: 0,
-      sentenceLengthBucketEnd: -1,
-      dataPoints: [
-        { cohortMonths: 12, eventRate: 0.12, lowerCI: 0.09, upperCI: 0.15 },
-        { cohortMonths: 24, eventRate: 0.22, lowerCI: 0.18, upperCI: 0.27 },
-        { cohortMonths: 36, eventRate: 0.31, lowerCI: 0.26, upperCI: 0.36 },
-      ],
-    },
-    {
-      recommendationType: "Court Ordered Treatment",
-      sentenceLengthBucketStart: 0,
-      sentenceLengthBucketEnd: -1,
-      dataPoints: [
-        { cohortMonths: 12, eventRate: 0.1, lowerCI: 0.07, upperCI: 0.13 },
-        { cohortMonths: 24, eventRate: 0.19, lowerCI: 0.15, upperCI: 0.24 },
-        { cohortMonths: 36, eventRate: 0.27, lowerCI: 0.22, upperCI: 0.33 },
-      ],
-    },
-    {
-      recommendationType: null,
-      sentenceLengthBucketStart: 0,
-      sentenceLengthBucketEnd: 1,
-      dataPoints: [
-        { cohortMonths: 12, eventRate: 0.15, lowerCI: 0.1, upperCI: 0.2 },
-        { cohortMonths: 24, eventRate: 0.28, lowerCI: 0.22, upperCI: 0.35 },
-        { cohortMonths: 36, eventRate: 0.38, lowerCI: 0.3, upperCI: 0.46 },
-      ],
-    },
-    {
-      recommendationType: null,
-      sentenceLengthBucketStart: 1,
-      sentenceLengthBucketEnd: 3,
-      dataPoints: [
-        { cohortMonths: 12, eventRate: 0.18, lowerCI: 0.13, upperCI: 0.24 },
-        { cohortMonths: 24, eventRate: 0.32, lowerCI: 0.25, upperCI: 0.4 },
-        { cohortMonths: 36, eventRate: 0.43, lowerCI: 0.34, upperCI: 0.52 },
-      ],
-    },
-    {
-      recommendationType: null,
-      sentenceLengthBucketStart: 3,
-      sentenceLengthBucketEnd: -1,
-      dataPoints: [
-        { cohortMonths: 12, eventRate: 0.2, lowerCI: 0.14, upperCI: 0.27 },
-        { cohortMonths: 24, eventRate: 0.35, lowerCI: 0.28, upperCI: 0.43 },
-        { cohortMonths: 36, eventRate: 0.46, lowerCI: 0.37, upperCI: 0.55 },
-      ],
-    },
-    {
-      recommendationType: "Treatment In Prison",
-      sentenceLengthBucketStart: 0,
-      sentenceLengthBucketEnd: -1,
-      dataPoints: [
-        { cohortMonths: 12, eventRate: 0.14, lowerCI: 0.09, upperCI: 0.2 },
-        { cohortMonths: 24, eventRate: 0.25, lowerCI: 0.19, upperCI: 0.32 },
-        { cohortMonths: 36, eventRate: 0.34, lowerCI: 0.27, upperCI: 0.42 },
-      ],
-    },
-  ],
   dispositionNumRecords: 847,
   dispositionData: [
     {

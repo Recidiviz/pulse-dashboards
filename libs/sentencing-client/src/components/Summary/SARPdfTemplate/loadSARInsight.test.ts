@@ -20,64 +20,35 @@ import { describe, expect, it, vi } from "vitest";
 import { loadSARInsight } from "./loadSARInsight";
 import type { SAR } from "./SARPdfTemplate.types";
 
-/** Minimal SAR carrying only the fields the insight derivation reads. */
-function makeSAR(overrides: Partial<SAR> = {}): SAR {
-  return {
-    assessmentDate: new Date("2026-01-15"),
-    mostSevereOffenseName: "POSSESSION OF CONTROLLED SUBSTANCE",
-    assessmentRiskLevel: "HIGH",
-    client: { gender: "MALE" },
-    ...overrides,
-  } as unknown as SAR;
-}
+const sar = { id: "sar-1" } as unknown as SAR;
 
 function makeApiClient() {
   return { getSARInsight: vi.fn() };
 }
 
 describe("loadSARInsight", () => {
-  it("returns null (and skips the fetch) when assessmentDate is missing", async () => {
-    const apiClient = makeApiClient();
-    const result = await loadSARInsight(
-      apiClient,
-      makeSAR({ assessmentDate: null }),
-    );
-    expect(result).toBeNull();
-    expect(apiClient.getSARInsight).not.toHaveBeenCalled();
-  });
-
-  it.each([
-    ["offense", { mostSevereOffenseName: null }],
-    ["risk level", { assessmentRiskLevel: null }],
-  ])("returns null when %s is missing", async (_field, overrides) => {
-    const apiClient = makeApiClient();
-    const result = await loadSARInsight(
-      apiClient,
-      makeSAR(overrides as Partial<SAR>),
-    );
-    expect(result).toBeNull();
-    expect(apiClient.getSARInsight).not.toHaveBeenCalled();
-  });
-
-  it("fetches the insight for the stored risk level on the happy path", async () => {
+  it("fetches the insight by SAR id", async () => {
     const insight = { dispositionData: [] };
     const apiClient = makeApiClient();
     apiClient.getSARInsight.mockResolvedValue(insight);
 
-    const result = await loadSARInsight(apiClient, makeSAR());
+    const result = await loadSARInsight(apiClient, sar);
 
-    expect(apiClient.getSARInsight).toHaveBeenCalledWith(
-      "POSSESSION OF CONTROLLED SUBSTANCE",
-      "MALE",
-      "HIGH",
-    );
+    expect(apiClient.getSARInsight).toHaveBeenCalledWith("sar-1");
     expect(result).toBe(insight);
+  });
+
+  it("returns null when no insight exists", async () => {
+    const apiClient = makeApiClient();
+    apiClient.getSARInsight.mockResolvedValue(undefined);
+    const result = await loadSARInsight(apiClient, sar);
+    expect(result).toBeNull();
   });
 
   it("returns null when getSARInsight throws", async () => {
     const apiClient = makeApiClient();
     apiClient.getSARInsight.mockRejectedValue(new Error("trpc kablooie"));
-    const result = await loadSARInsight(apiClient, makeSAR());
+    const result = await loadSARInsight(apiClient, sar);
     expect(result).toBeNull();
   });
 });

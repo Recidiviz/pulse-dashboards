@@ -21,7 +21,6 @@ import {
   AssessmentType,
   DomainRiskLevel,
   FrequencyOfUse,
-  Gender,
   LevelOfEducation,
   MethodOfUse,
   ProtectiveFactor,
@@ -37,9 +36,7 @@ import {
   UpsertSARInput,
 } from "~@sentencing/trpc/routes/sar/types";
 export const getSARInsightSchema = z.object({
-  offenseName: z.string(),
-  gender: z.nativeEnum(Gender),
-  assessmentRiskLevel: z.nativeEnum(DomainRiskLevel),
+  sarId: z.string(),
 });
 
 export const ORAS_FIELDS: ReadonlyArray<

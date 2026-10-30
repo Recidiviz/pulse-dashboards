@@ -166,7 +166,8 @@ export async function transformAndLoadSARData(
       completionDate: sarData.completion_date ?? null,
     };
 
-    // ORAS fields — only populated for incomplete SARs, and never overwrite manually-entered data
+    // ORAS fields — only populated for incomplete SARs, and never written to a
+    // locked SAR or over manually-entered data (see the updateMany below)
     const orasFields: Record<string, unknown> = {};
 
     if (!sarData.completion_date) {
@@ -250,6 +251,7 @@ export async function transformAndLoadSARData(
         create: {
           ...baseFields,
           ...orasFields,
+          lockedAt: sarData.completion_date ?? null,
           staff: createStaffConnection,
           client: clientConnection,
           externalId: sarData.external_id,
@@ -261,12 +263,22 @@ export async function transformAndLoadSARData(
         },
       });
 
+      // Lock a SAR when it's completed, keeping any lockedAt already set.
+      if (sarData.completion_date) {
+        await tx.sentencingAssessmentReport.updateMany({
+          where: { externalId: sarData.external_id, lockedAt: null },
+          data: { lockedAt: sarData.completion_date },
+        });
+      }
+
       // Only overwrite ORAS fields if the officer hasn't manually entered them
+      // and the SAR isn't locked
       if (Object.keys(orasFields).length > 0) {
         await tx.sentencingAssessmentReport.updateMany({
           where: {
             externalId: sarData.external_id,
             ORASEnteredManually: false,
+            lockedAt: null,
           },
           data: orasFields,
         });
