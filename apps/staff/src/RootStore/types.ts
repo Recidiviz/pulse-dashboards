@@ -430,6 +430,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         HCRPPIIEmail: { activeTenants: ["US_ID"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
+        typesenseCaseloadSearch: { activeTenants: ["US_NE"] },
+        typesenseHomepage: { activeTenants: ["US_NE"] },
+        workflowsSearchAllCaseloads: { activeTenants: ["US_NE"] },
       }
     : {
         ...allFeatureVariants,
