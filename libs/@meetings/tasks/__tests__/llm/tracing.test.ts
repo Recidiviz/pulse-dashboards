@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { GoogleGenAI } from "@google/genai";
+import type { GoogleGenerativeAI } from "@google/generative-ai";
+import type { GoogleAIFileManager } from "@google/generative-ai/server";
 import { RunTree } from "langsmith";
 import { wrapOpenAI } from "langsmith/wrappers";
 import {
@@ -44,12 +45,17 @@ vi.mock("langsmith/wrappers", async (importOriginal) => ({
 // property name, so langsmith mistakes it for a LangChain run config when it is
 // a traced function's first argument.
 const gemini = {
-  models: {
+  getGenerativeModel: vi.fn().mockReturnValue({
     generateContent: vi
       .fn()
       .mockRejectedValue(new Error("Gemini is offline in tests")),
-  },
-} as unknown as GoogleGenAI;
+  }),
+} as unknown as GoogleGenerativeAI;
+
+const fileManager = {
+  uploadFile: vi.fn(),
+  getFile: vi.fn(),
+} as unknown as GoogleAIFileManager;
 
 const evaluatorInputs: EvaluatorInputs = {
   audioBucket: "test-bucket",
@@ -86,7 +92,7 @@ describe("LangSmith tracing by state", () => {
 
   test("SpecialistCore.factory traces OpenAI calls for other states only", () => {
     vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
-    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+    vi.stubEnv("GOOGLE_API_KEY", "test-google-key");
     vi.stubEnv("LANGSMITH_API_KEY", "test-langsmith-key");
 
     SpecialistCore.factory("US_CO");
@@ -151,10 +157,13 @@ describe("LangSmith tracing by state", () => {
   });
 
   test("runAllEvaluators traces nothing at any depth when tracingEnabled is false", async () => {
-    await runAllEvaluators({ gemini, tracingEnabled: false }, evaluatorInputs);
+    await runAllEvaluators(
+      { gemini, fileManager, tracingEnabled: false },
+      evaluatorInputs,
+    );
     expect(postRun).not.toHaveBeenCalled();
 
-    await runAllEvaluators({ gemini }, evaluatorInputs);
+    await runAllEvaluators({ gemini, fileManager }, evaluatorInputs);
     expect(postRun).toHaveBeenCalled();
   });
 });

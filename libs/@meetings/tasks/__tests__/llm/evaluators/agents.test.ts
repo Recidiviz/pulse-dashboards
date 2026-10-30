@@ -51,6 +51,11 @@ function spyOnGenerate() {
   ) as unknown as GenerateSpy;
 }
 
+const mockFileManager = {
+  uploadFile: vi.fn(),
+  getFile: vi.fn(),
+} as never;
+
 const GOOD_TEXT_RESULT: TextEvaluatorOutput = {
   rationale: "Accurate and complete.",
   grade: "GOOD",
@@ -85,11 +90,15 @@ describe("Evaluator Agents", () => {
 
   describe("runTranscriptComparison", () => {
     test("should return SINGLE_PROVIDER when assemblyai transcript is missing", async () => {
-      const result = await runTranscriptComparison(mockGemini, {
-        audioBucket: "test-bucket",
-        audioPath: "meetings/final.m4a",
-        transcriptsByProvider: { deepgram: "Deepgram transcript only." },
-      });
+      const result = await runTranscriptComparison(
+        mockGemini,
+        mockFileManager,
+        {
+          audioBucket: "test-bucket",
+          audioPath: "meetings/final.m4a",
+          transcriptsByProvider: { deepgram: "Deepgram transcript only." },
+        },
+      );
 
       expect(result.winner).toBe("SINGLE_PROVIDER");
       expect(result.assemblyAiGrade).toBe("NONE");
@@ -97,26 +106,34 @@ describe("Evaluator Agents", () => {
     });
 
     test("should return SINGLE_PROVIDER when deepgram transcript is missing", async () => {
-      const result = await runTranscriptComparison(mockGemini, {
-        audioBucket: "test-bucket",
-        audioPath: "meetings/final.m4a",
-        transcriptsByProvider: { assemblyai: "AssemblyAI transcript only." },
-      });
+      const result = await runTranscriptComparison(
+        mockGemini,
+        mockFileManager,
+        {
+          audioBucket: "test-bucket",
+          audioPath: "meetings/final.m4a",
+          transcriptsByProvider: { assemblyai: "AssemblyAI transcript only." },
+        },
+      );
 
       expect(result.winner).toBe("SINGLE_PROVIDER");
     });
 
     test("should return SINGLE_PROVIDER when both transcripts are missing", async () => {
-      const result = await runTranscriptComparison(mockGemini, {
-        audioBucket: "test-bucket",
-        audioPath: "meetings/final.m4a",
-        transcriptsByProvider: {},
-      });
+      const result = await runTranscriptComparison(
+        mockGemini,
+        mockFileManager,
+        {
+          audioBucket: "test-bucket",
+          audioPath: "meetings/final.m4a",
+          transcriptsByProvider: {},
+        },
+      );
 
       expect(result.winner).toBe("SINGLE_PROVIDER");
     });
 
-    test("should call audioFilePart and generateContentWithZodSchema when both transcripts are present", async () => {
+    test("should call uploadAudioToGemini and generateContentWithZodSchema when both transcripts are present", async () => {
       const expectedComparison: TranscriptComparisonOutput = {
         rationale: "AssemblyAI was more accurate.",
         winner: "ASSEMBLYAI",
@@ -124,36 +141,35 @@ describe("Evaluator Agents", () => {
         deepgramGrade: "PARTIAL",
       };
 
-      const audioPart = {
-        fileData: {
-          fileUri: "gs://test-bucket/meetings/final.m4a",
-          mimeType: "audio/m4a",
-        },
-      };
-      vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue(audioPart);
-      const generateSpy = spyOnGenerate().mockResolvedValue(expectedComparison);
-
-      const result = await runTranscriptComparison(mockGemini, {
-        audioBucket: baseInputs.audioBucket,
-        audioPath: baseInputs.audioPath,
-        transcriptsByProvider: baseInputs.transcriptsByProvider,
+      vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
+        uri: "gs://gemini-files/audio-123",
+        mimeType: "audio/m4a",
       });
+      spyOnGenerate().mockResolvedValue(expectedComparison);
 
-      expect(geminiClient.audioFilePart).toHaveBeenCalledWith(
+      const result = await runTranscriptComparison(
+        mockGemini,
+        mockFileManager,
+        {
+          audioBucket: baseInputs.audioBucket,
+          audioPath: baseInputs.audioPath,
+          transcriptsByProvider: baseInputs.transcriptsByProvider,
+        },
+      );
+
+      expect(geminiClient.uploadAudioToGemini).toHaveBeenCalledWith(
+        mockFileManager,
         baseInputs.audioBucket,
         baseInputs.audioPath,
       );
-      const parts = generateSpy.mock.calls[0]?.[0].parts;
-      expect(Array.isArray(parts) && parts[0]).toEqual(audioPart);
+      expect(geminiClient.generateContentWithZodSchema).toHaveBeenCalled();
       expect(result).toEqual(expectedComparison);
     });
 
     test("should forward the timeout to generateContentWithZodSchema", async () => {
-      vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue({
-        fileData: {
-          fileUri: "gs://test-bucket/meetings/final.m4a",
-          mimeType: "audio/m4a",
-        },
+      vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
+        uri: "gs://gemini-files/audio-123",
+        mimeType: "audio/m4a",
       });
       const generateSpy = spyOnGenerate().mockResolvedValue({
         rationale: "ok",
@@ -164,6 +180,7 @@ describe("Evaluator Agents", () => {
 
       await runTranscriptComparison(
         mockGemini,
+        mockFileManager,
         {
           audioBucket: baseInputs.audioBucket,
           audioPath: baseInputs.audioPath,
@@ -178,8 +195,9 @@ describe("Evaluator Agents", () => {
     });
 
     test("should include both transcript texts in the user prompt parts", async () => {
-      vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue({
-        fileData: { fileUri: "gs://bucket/path.m4a", mimeType: "audio/mp4" },
+      vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
+        uri: "gs://files/audio",
+        mimeType: "audio/mp4",
       });
       const generateSpy = spyOnGenerate().mockResolvedValue({
         rationale: "ok",
@@ -188,7 +206,7 @@ describe("Evaluator Agents", () => {
         deepgramGrade: "GOOD",
       } satisfies TranscriptComparisonOutput);
 
-      await runTranscriptComparison(mockGemini, {
+      await runTranscriptComparison(mockGemini, mockFileManager, {
         audioBucket: "bucket",
         audioPath: "path.m4a",
         transcriptsByProvider: {

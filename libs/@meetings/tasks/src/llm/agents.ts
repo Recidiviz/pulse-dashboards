@@ -24,7 +24,7 @@
  * - Auditor Agent (Gemini-2.5-Flash): Finds verbatim citations for verification
  */
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import dedent from "dedent";
 import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
@@ -36,10 +36,7 @@ import type {
   MeetingTypeConfigEntry,
 } from "~@meetings/config/types";
 import type { Person } from "~@meetings/prisma/types";
-import {
-  createVertexGeminiClient,
-  generateContentWithZodSchema,
-} from "~@meetings/tasks/llm/clients/gemini";
+import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
 import { PROMPTS } from "~@meetings/tasks/llm/prompts";
 import {
@@ -135,7 +132,7 @@ function buildDraftingOutputSchema(
 
 export class SpecialistCore {
   private openai: OpenAI;
-  private gemini: GoogleGenAI;
+  private gemini: GoogleGenerativeAI;
   private tracingEnabled: boolean;
 
   /**
@@ -145,10 +142,11 @@ export class SpecialistCore {
    */
   static factory(stateCode: string): SpecialistCore {
     const openaiKey = process.env["OPENAI_API_KEY"];
+    const geminiKey = process.env["GOOGLE_API_KEY"];
 
-    if (!openaiKey) {
+    if (!openaiKey || !geminiKey) {
       throw new Error(
-        "Missing API key. Set the OPENAI_API_KEY environment variable.",
+        "Missing API keys. Set OPENAI_API_KEY and GOOGLE_API_KEY environment variables.",
       );
     }
 
@@ -173,7 +171,7 @@ export class SpecialistCore {
 
     return new SpecialistCore({
       openai: langsmithEnabled ? wrapOpenAI(baseOpenAI) : baseOpenAI,
-      gemini: createVertexGeminiClient(),
+      gemini: new GoogleGenerativeAI(geminiKey),
       tracingEnabled: langsmithEnabled,
     });
   }
@@ -184,7 +182,7 @@ export class SpecialistCore {
     tracingEnabled = true,
   }: {
     openai: OpenAI;
-    gemini: GoogleGenAI;
+    gemini: GoogleGenerativeAI;
     /** Whether the Gemini calls are traced in LangSmith. Defaults to true. */
     tracingEnabled?: boolean;
   }) {

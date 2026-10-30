@@ -15,15 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { z } from "zod";
 
 import type { ActionItem } from "~@meetings/tasks/llm/schemas";
 
-// Bump this string whenever any evaluator prompt changes.
+// Bump this string whenever any evaluator prompt or the evaluator model changes.
 // The script uses this to find pipeline runs that have not yet been evaluated
 // at the current version.
-export const EVALUATOR_VERSION = "5";
+export const EVALUATOR_VERSION = "6";
 
 export const TranscriptComparisonOutputSchema = z.object({
   rationale: z.string(),
@@ -86,7 +87,8 @@ export interface EvaluatorInputs {
 }
 
 export interface EvaluatorClients {
-  gemini: GoogleGenAI;
+  gemini: GoogleGenerativeAI;
+  fileManager: GoogleAIFileManager;
   /** Request timeout in milliseconds passed to each generateContentWithZodSchema call. */
   timeout?: number;
   /** Whether the evaluators are traced in LangSmith. Defaults to true. */

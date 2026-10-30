@@ -36,11 +36,7 @@
       ],
       "options": {
         "command": "HOST=0.0.0.0 vite-node --watch src/main.ts",
-        "cwd": "{projectRoot}",
-        "env": {
-          "GOOGLE_CLOUD_PROJECT": "recidiviz-meetings-staging",
-          "GOOGLE_CLOUD_LOCATION": "us"
-        }
+        "cwd": "{projectRoot}"
       }
     },
     "create-base-package-json": {
@@ -277,8 +273,7 @@
           "ASSEMBLYAI_API_KEY": "$ASSEMBLYAI_API_KEY",
           "DEEPGRAM_API_KEY": "$DEEPGRAM_API_KEY",
           "OPENAI_API_KEY": "$OPENAI_API_KEY",
-          "GOOGLE_CLOUD_PROJECT": "recidiviz-dashboard-staging",
-          "GOOGLE_CLOUD_LOCATION": "us",
+          "GOOGLE_API_KEY": "$GOOGLE_API_KEY",
           "RECIDIVIZ_DATA_API_URL": "$RECIDIVIZ_DATA_API_URL",
           "GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE": "$GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE",
           "LABEL_STUDIO_URL": "$LABEL_STUDIO_URL",
@@ -366,18 +361,8 @@
         "cwd": "{projectRoot}"
       },
       "configurations": {
-        "staging": {
-          "env": {
-            "GOOGLE_CLOUD_PROJECT": "recidiviz-dashboard-staging",
-            "GOOGLE_CLOUD_LOCATION": "us"
-          }
-        },
-        "production": {
-          "env": {
-            "GOOGLE_CLOUD_PROJECT": "recidiviz-dashboard-production",
-            "GOOGLE_CLOUD_LOCATION": "us"
-          }
-        }
+        "staging": {},
+        "production": {}
       }
     },
     "requires-sops-env:meetings-oncall": {

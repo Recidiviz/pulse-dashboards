@@ -125,25 +125,25 @@ describe("SpecialistCore", () => {
 
     test("should throw error when OpenAI API key is missing", () => {
       vi.stubEnv("OPENAI_API_KEY", "");
-      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+      vi.stubEnv("GOOGLE_API_KEY", "test-google-key");
 
       expect(() => SpecialistCore.factory("US_NE")).toThrow(
-        "Missing API key. Set the OPENAI_API_KEY environment variable.",
+        "Missing API keys. Set OPENAI_API_KEY and GOOGLE_API_KEY environment variables.",
       );
     });
 
-    test("should throw error when GOOGLE_CLOUD_PROJECT is missing", () => {
+    test("should throw error when Google API key is missing", () => {
       vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
-      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
+      vi.stubEnv("GOOGLE_API_KEY", "");
 
       expect(() => SpecialistCore.factory("US_NE")).toThrow(
-        "Missing GOOGLE_CLOUD_PROJECT environment variable",
+        "Missing API keys. Set OPENAI_API_KEY and GOOGLE_API_KEY environment variables.",
       );
     });
 
-    test("should create instance when the OpenAI key and GCP project are set", () => {
+    test("should create instance when API keys are present", () => {
       vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
-      vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+      vi.stubEnv("GOOGLE_API_KEY", "test-google-key");
 
       const instance = SpecialistCore.factory("US_NE");
 
@@ -919,8 +919,14 @@ describe("SpecialistCore", () => {
         ],
       };
 
-      vi.mocked(mockGemini.models.generateContent).mockResolvedValue({
-        text: JSON.stringify(mockVerification),
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        response: {
+          text: () => JSON.stringify(mockVerification),
+        },
+      });
+
+      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
+        generateContent: mockGenerateContent,
       } as never);
 
       const result = await core.runVerification(
@@ -948,7 +954,7 @@ describe("SpecialistCore", () => {
       );
 
       expect(result).toEqual(emptyExtraction);
-      expect(mockGemini.models.generateContent).not.toHaveBeenCalled();
+      expect(mockGemini.getGenerativeModel).not.toHaveBeenCalled();
     });
 
     test("should return unverified facts on error", async () => {
@@ -965,9 +971,13 @@ describe("SpecialistCore", () => {
         entities: [],
       };
 
-      vi.mocked(mockGemini.models.generateContent).mockRejectedValue(
-        new Error("API error"),
-      );
+      const mockGenerateContent = vi
+        .fn()
+        .mockRejectedValue(new Error("API error"));
+
+      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
+        generateContent: mockGenerateContent,
+      } as never);
 
       const result = await core.runVerification(
         mockTranscript,
@@ -993,16 +1003,23 @@ describe("SpecialistCore", () => {
         entities: [],
       };
 
-      vi.mocked(mockGemini.models.generateContent).mockResolvedValue({
-        text: JSON.stringify({ verifications: [] }),
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        response: {
+          text: () =>
+            JSON.stringify({
+              verifications: [],
+            }),
+        },
+      });
+
+      vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
+        generateContent: mockGenerateContent,
       } as never);
 
       await core.runVerification(mockTranscript, mockExtraction, mockClient);
 
-      expect(mockGemini.models.generateContent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          contents: expect.stringContaining("ID: ACT_0"),
-        }),
+      expect(mockGenerateContent).toHaveBeenCalledWith(
+        expect.stringContaining("ID: ACT_0"),
       );
     });
   });

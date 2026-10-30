@@ -37,8 +37,11 @@ vi.mock("langsmith/traceable", () => ({
   traceable: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
+const mockFileManager = { uploadFile: vi.fn(), getFile: vi.fn() } as never;
+
 const mockClients: EvaluatorClients = {
   gemini: mockGemini,
+  fileManager: mockFileManager,
   timeout: 1000,
 };
 
@@ -221,8 +224,8 @@ describe("runAllEvaluators", () => {
 
     await runAllEvaluators(clientsWithTimeout, baseInputs);
 
-    // Third argument to runTranscriptComparison is the timeout
-    expect(transcriptSpy.mock.calls[0]?.[2]).toBe(99000);
+    // Fourth argument to runTranscriptComparison is the timeout
+    expect(transcriptSpy.mock.calls[0]?.[3]).toBe(99000);
     // Third argument to runCaseNote is the timeout
     expect(caseNoteSpy.mock.calls[0]?.[2]).toBe(99000);
   });
@@ -245,6 +248,7 @@ describe("runAllEvaluators", () => {
 
     expect(transcriptSpy).toHaveBeenCalledWith(
       mockGemini,
+      mockFileManager,
       {
         audioBucket: baseInputs.audioBucket,
         audioPath: baseInputs.audioPath,
@@ -264,25 +268,26 @@ describe("createEvaluatorClients", () => {
     vi.unstubAllEnvs();
   });
 
-  test("should throw when GOOGLE_CLOUD_PROJECT is not set", () => {
-    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "");
+  test("should throw when GOOGLE_API_KEY is not set", () => {
+    vi.stubEnv("GOOGLE_API_KEY", "");
 
     expect(() => createEvaluatorClients("US_NE")).toThrow(
-      "Missing GOOGLE_CLOUD_PROJECT environment variable",
+      "Missing GOOGLE_API_KEY environment variable",
     );
   });
 
-  test("should return clients when GOOGLE_CLOUD_PROJECT is set", () => {
-    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+  test("should return clients when GOOGLE_API_KEY is set", () => {
+    vi.stubEnv("GOOGLE_API_KEY", "test-key");
 
     const clients = createEvaluatorClients("US_NE");
 
     expect(clients.gemini).toBeDefined();
+    expect(clients.fileManager).toBeDefined();
     expect(clients.timeout).toBe(1800000);
   });
 
   test("should turn off tracing for US_CO only", () => {
-    vi.stubEnv("GOOGLE_CLOUD_PROJECT", "test-project");
+    vi.stubEnv("GOOGLE_API_KEY", "test-key");
 
     expect(createEvaluatorClients("US_CO").tracingEnabled).toBe(false);
     expect(createEvaluatorClients("US_NE").tracingEnabled).toBe(true);

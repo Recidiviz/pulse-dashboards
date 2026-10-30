@@ -15,38 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenAI, Part } from "@google/genai";
+import { GoogleGenerativeAI, Part, Schema } from "@google/generative-ai";
+import { FileState, GoogleAIFileManager } from "@google/generative-ai/server";
 import { Storage } from "@google-cloud/storage";
 import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-// Vertex serves Gemini 3.x only from the "us" and "global" multi-regions, not
-// from regional endpoints such as us-central1.
-const DEFAULT_VERTEX_LOCATION = "us";
-
-/**
- * Returns a Gemini client that routes through Vertex AI in GCP
- */
-export function createVertexGeminiClient(): GoogleGenAI {
-  const project = process.env["GOOGLE_CLOUD_PROJECT"];
-  if (!project) {
-    throw new Error("Missing GOOGLE_CLOUD_PROJECT environment variable");
-  }
-
-  return new GoogleGenAI({
-    vertexai: true,
-    project,
-    location: process.env["GOOGLE_CLOUD_LOCATION"] ?? DEFAULT_VERTEX_LOCATION,
-  });
-}
-
 /**
  * Recursively removes fields that Gemini's API doesn't support
  */
-function stripUnsupportedFields(
-  obj: Record<string, unknown>,
-): Record<string, unknown> {
+function stripUnsupportedFields(obj: Record<string, unknown>): Schema {
   const cleaned: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
@@ -77,7 +56,7 @@ function stripUnsupportedFields(
     }
   }
 
-  return cleaned;
+  return cleaned as unknown as Schema;
 }
 
 /**
@@ -93,13 +72,13 @@ export function zodToGeminiResponseSchema(schema: ZodSchema) {
 }
 
 export type ZodGenerateContentOptions<T extends ZodSchema> = {
-  client: GoogleGenAI;
+  client: GoogleGenerativeAI;
   systemInstruction: string;
   /** Plain string or pre-built content parts (e.g. for multimodal input with audio). */
   parts: Part[] | string;
   schema: T;
   modelName?: string;
-  /** Request timeout in milliseconds. Defaults to the Gemini SDK default. */
+  /** Request timeout in milliseconds. Defaults to the Gemini SDK default (~10 minutes). */
   timeout?: number;
   /** Set to false to skip the LangSmith trace for this call. Defaults to true. */
   tracingEnabled?: boolean;
@@ -114,26 +93,28 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   systemInstruction,
   parts,
   schema,
-  modelName = "gemini-3.8-flash",
+  modelName = "gemini-2.5-flash",
   timeout,
 }: ZodGenerateContentOptions<T>): Promise<T["_output"]> => {
-  const response = await client.models.generateContent({
-    model: modelName,
-    contents: typeof parts === "string" ? parts : [{ role: "user", parts }],
-    config: {
+  const model = client.getGenerativeModel(
+    {
+      model: modelName,
       systemInstruction,
-      // Use a lower temperature for a more deterministic output
-      temperature: 0,
-      responseMimeType: "application/json",
-      responseJsonSchema: zodToGeminiResponseSchema(schema),
-      ...(timeout !== undefined ? { httpOptions: { timeout } } : {}),
+      generationConfig: {
+        // Use a lower temperature for a more deterministic output
+        temperature: 0,
+        responseMimeType: "application/json",
+        responseSchema: zodToGeminiResponseSchema(schema),
+      },
     },
-  });
+    timeout !== undefined ? { timeout } : undefined,
+  );
 
-  const content = response.text;
-  if (content === undefined) {
-    throw new Error("Gemini returned a response with no text");
-  }
+  const contents =
+    typeof parts === "string" ? parts : { contents: [{ role: "user", parts }] };
+
+  const result = await model.generateContent(contents);
+  const content = result.response.text();
 
   return schema.parse(JSON.parse(content));
 };
@@ -151,30 +132,47 @@ export const generateContentWithZodSchema = <T extends ZodSchema>(
     : generateContentWithZodSchemaTraced(options);
 
 /**
- * Returns a content part that points Gemini at meeting audio in Cloud Storage.
- * Vertex AI reads the gs:// object itself, so the bucket must be in the same
- * project as the Vertex request.
+ * Upload audio from GCS to the Gemini Files API and return the file URI.
  */
-export async function audioFilePart(
+export async function uploadAudioToGemini(
+  fileManager: GoogleAIFileManager,
   bucketName: string,
   filePath: string,
-): Promise<Part> {
+): Promise<{ uri: string; mimeType: string }> {
   const expectedAudioBucket = process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
   if (bucketName !== expectedAudioBucket) {
     throw new Error(
-      `Requested audio from bucket ${bucketName}, expected ${expectedAudioBucket}`,
+      `Requested upload from bucket ${bucketName}, expected ${expectedAudioBucket}`,
+    );
+  }
+  const storage = new Storage();
+  const gcsFile = storage.bucket(bucketName).file(filePath);
+
+  const [[audioBuffer], [metadata]] = await Promise.all([
+    gcsFile.download(),
+    gcsFile.getMetadata(),
+  ]);
+
+  const mimeType = metadata.contentType ?? "audio/mpeg";
+
+  const uploadResponse = await fileManager.uploadFile(audioBuffer, {
+    mimeType,
+    displayName: "meeting-audio",
+  });
+
+  let geminiFile = uploadResponse.file;
+  // Poll for processing completed
+  while (geminiFile.state === FileState.PROCESSING) {
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // eslint-disable-next-line no-await-in-loop
+    geminiFile = await fileManager.getFile(geminiFile.name);
+  }
+  if (geminiFile.state === FileState.FAILED) {
+    throw new Error(
+      `Gemini file upload failed: ${JSON.stringify(geminiFile.error)}`,
     );
   }
 
-  const [metadata] = await new Storage()
-    .bucket(bucketName)
-    .file(filePath)
-    .getMetadata();
-
-  return {
-    fileData: {
-      fileUri: `gs://${bucketName}/${filePath}`,
-      mimeType: metadata.contentType ?? "audio/mpeg",
-    },
-  };
+  return { uri: geminiFile.uri, mimeType };
 }

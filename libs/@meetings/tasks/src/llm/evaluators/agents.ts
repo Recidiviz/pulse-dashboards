@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenAI, Part } from "@google/genai";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
+import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { traceable } from "langsmith/traceable";
 
 import {
-  audioFilePart,
   generateContentWithZodSchema,
+  uploadAudioToGemini,
 } from "~@meetings/tasks/llm/clients/gemini";
 import { EVALUATOR_PROMPTS } from "~@meetings/tasks/llm/evaluators/prompts";
 import {
@@ -32,7 +33,8 @@ import {
 } from "~@meetings/tasks/llm/evaluators/schemas";
 
 async function runTranscriptComparisonInternal(
-  gemini: GoogleGenAI,
+  gemini: GoogleGenerativeAI,
+  fileManager: GoogleAIFileManager,
   inputs: Pick<
     EvaluatorInputs,
     "audioBucket" | "audioPath" | "transcriptsByProvider" | "meetingContext"
@@ -62,8 +64,14 @@ async function runTranscriptComparisonInternal(
     };
   }
 
+  const { uri: audioUri, mimeType: audioMimeType } = await uploadAudioToGemini(
+    fileManager,
+    inputs.audioBucket,
+    inputs.audioPath,
+  );
+
   const parts: Part[] = [
-    await audioFilePart(inputs.audioBucket, inputs.audioPath),
+    { fileData: { mimeType: audioMimeType, fileUri: audioUri } },
     {
       text: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.USER({
         assemblyAiTranscript,
@@ -84,7 +92,7 @@ async function runTranscriptComparisonInternal(
 }
 
 async function runCaseNoteInternal(
-  gemini: GoogleGenAI,
+  gemini: GoogleGenerativeAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "caseNote" | "meetingContext"
@@ -107,7 +115,7 @@ async function runCaseNoteInternal(
 }
 
 async function runActionItemsInternal(
-  gemini: GoogleGenAI,
+  gemini: GoogleGenerativeAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "actionItems" | "meetingContext"
@@ -130,7 +138,7 @@ async function runActionItemsInternal(
 }
 
 async function runOverallInternal(
-  gemini: GoogleGenAI,
+  gemini: GoogleGenerativeAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "caseNote" | "actionItems" | "meetingContext"
@@ -178,16 +186,23 @@ export const runOverall = traceable(runOverallInternal, {
 
 type Evaluator<
   Internal extends (
-    gemini: GoogleGenAI,
+    gemini: GoogleGenerativeAI,
     inputs: never,
     timeout?: number,
     tracingEnabled?: boolean,
   ) => unknown,
 > = (
-  gemini: GoogleGenAI,
+  gemini: GoogleGenerativeAI,
   inputs: Parameters<Internal>[1],
   timeout?: number,
 ) => ReturnType<Internal>;
+
+type TranscriptComparisonEvaluator = (
+  gemini: GoogleGenerativeAI,
+  fileManager: GoogleAIFileManager,
+  inputs: Parameters<typeof runTranscriptComparisonInternal>[2],
+  timeout?: number,
+) => ReturnType<typeof runTranscriptComparisonInternal>;
 
 /**
  * The evaluators that runAllEvaluators runs. Both tracedEvaluators and
@@ -195,7 +210,7 @@ type Evaluator<
  * both.
  */
 export type Evaluators = {
-  runTranscriptComparison: Evaluator<typeof runTranscriptComparisonInternal>;
+  runTranscriptComparison: TranscriptComparisonEvaluator;
   runCaseNote: Evaluator<typeof runCaseNoteInternal>;
   runActionItems: Evaluator<typeof runActionItemsInternal>;
   runOverall: Evaluator<typeof runOverallInternal>;
@@ -216,8 +231,14 @@ export const tracedEvaluators: Evaluators = {
  * isTracingEnabledForState is false.
  */
 export const untracedEvaluators: Evaluators = {
-  runTranscriptComparison: (gemini, inputs, timeout) =>
-    runTranscriptComparisonInternal(gemini, inputs, timeout, false),
+  runTranscriptComparison: (gemini, fileManager, inputs, timeout) =>
+    runTranscriptComparisonInternal(
+      gemini,
+      fileManager,
+      inputs,
+      timeout,
+      false,
+    ),
   runCaseNote: (gemini, inputs, timeout) =>
     runCaseNoteInternal(gemini, inputs, timeout, false),
   runActionItems: (gemini, inputs, timeout) =>
