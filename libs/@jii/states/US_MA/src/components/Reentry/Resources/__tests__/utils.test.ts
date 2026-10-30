@@ -89,6 +89,7 @@ describe("getLengthOfStayChip", () => {
     [{ programLengthMonths: { min: 0, max: 3 } }, "Up to 3 months"],
     [{ programLengthMonths: { min: 6, max: 999 } }, "6+ months"],
     [{ programLengthMonths: { min: 0, max: 999 } }, "No time limit"],
+    [{ programLengthMonths: { min: 999, max: 999 } }, "No time limit"],
     [{}, "No program length info listed"],
   ])("%j → %s", (attributes, expected) => {
     expect(getLengthOfStayChip({ category: "Housing", ...attributes }, t)).toBe(

@@ -90,7 +90,7 @@ export function formatLengthOfStay(
   if (!programLengthMonths) return undefined;
   const { min, max } = programLengthMonths;
   if (max === NO_TIME_LIMIT_MONTHS) {
-    return min > 0
+    return min > 0 && min !== NO_TIME_LIMIT_MONTHS
       ? t(($) => $.reentry.resources.housing.lengthOfStay.atLeast, { min })
       : t(($) => $.reentry.resources.housing.lengthOfStay.noTimeLimit);
   }
