@@ -82,9 +82,11 @@ export type OpportunityAlertCounts = {
   pendingOverdue: number;
 };
 
+type TypesenseHit = { document: Record<string, unknown> };
+
 type TypesenseResult = {
   found?: number;
-  hits?: Array<{ document: Record<string, unknown> }>;
+  hits?: TypesenseHit[];
   /** Present only on a grouped search. `found` then counts GROUPS, not docs. */
   grouped_hits?: Array<{
     group_key: unknown[];
@@ -105,6 +107,15 @@ const SYSTEMS: OpportunitySystem[] = ["SUPERVISION", "INCARCERATION"];
  * server error, so warn well before it.
  */
 const SEARCH_COUNT_WARN_THRESHOLD = 40;
+
+/** Typesense rejects a `multi_search` carrying more than this. */
+const MULTI_SEARCH_MAX = 50;
+
+/**
+ * Acted-on pages one caseload may need. 250 each, so this allows 5,000 records
+ * carrying an officer action for a single selection.
+ */
+const MAX_ACTED_ON_PAGES = 20;
 
 /**
  * The count in a range facet's `stale` bucket. The name is an agreement with
@@ -337,8 +348,14 @@ export class OpportunitySearchManager implements Hydratable {
       if (rejected)
         throw new Error(`Typesense rejected a search: ${rejected.error}`);
 
+      const completedResults = await this.completeActedOnSetResults(
+        plan,
+        results,
+      );
+      if (!isCurrent()) return;
+
       const { counts, totals, unreconstructable, alerts, records } =
-        this.collect(plan, results);
+        this.collect(plan, completedResults);
       runInAction(() => {
         this.countsByType = counts;
         this.totalsByType = totals;
@@ -427,6 +444,78 @@ export class OpportunitySearchManager implements Hydratable {
         opportunityType as OpportunityType
       ]?.hydrateIneligibleRecordsInOpportunityManager,
     );
+  }
+
+  /**
+   * The results, with every acted-on set carrying all of its pages.
+   */
+  private async completeActedOnSetResults(
+    plan: PlannedOpportunitySearch[],
+    results: TypesenseResult[],
+  ): Promise<TypesenseResult[]> {
+    const followUps: {
+      index: number;
+      descriptor: PlannedOpportunitySearch["descriptor"];
+    }[] = [];
+
+    plan.forEach((search, i) => {
+      if (search.kind !== "actedOn") return;
+      const result = results[i];
+      if (!result) return;
+
+      const pages = Math.ceil((result.found ?? 0) / ACTED_ON_PAGE_SIZE);
+      if (pages > MAX_ACTED_ON_PAGES) {
+        throw new Error(
+          `The acted-on set needs ${pages} pages, over the ${MAX_ACTED_ON_PAGES}-page ceiling: ` +
+            `${result.found} found, ${ACTED_ON_PAGE_SIZE} per page.`,
+        );
+      }
+      for (let page = 2; page <= pages; page++) {
+        followUps.push({
+          index: i,
+          descriptor: { ...search.descriptor, page },
+        });
+      }
+    });
+
+    if (followUps.length === 0) return results;
+
+    if (followUps.length > MULTI_SEARCH_MAX) {
+      throw new Error(
+        `The acted-on follow-up needs ${followUps.length} searches, over the ` +
+          `${MULTI_SEARCH_MAX} a multi_search accepts.`,
+      );
+    }
+
+    const response = await this.typesenseClient.multiSearch({
+      searches: followUps.map((f) => f.descriptor),
+    });
+    const pageResults = response.results as unknown as TypesenseResult[];
+
+    const extraHits = new Map<number, TypesenseHit[]>();
+    followUps.forEach((followUp, j) => {
+      const pageResult = pageResults[j];
+      if (!pageResult) return;
+      if (pageResult.error) {
+        throw new Error(
+          `Typesense rejected an acted-on page: ${pageResult.error}`,
+        );
+      }
+      extraHits.set(followUp.index, [
+        ...(extraHits.get(followUp.index) ?? []),
+        ...(pageResult.hits ?? []),
+      ]);
+    });
+
+    return results.map((result, index) => {
+      const extra = extraHits.get(index);
+      if (!extra) return result;
+      const byId = new Map<unknown, TypesenseHit>();
+      for (const hit of [...(result.hits ?? []), ...extra]) {
+        byId.set(hit.document["id"], hit);
+      }
+      return { ...result, hits: [...byId.values()] };
+    });
   }
 
   /** Pairs each result with the search that asked for it, then subtracts. */

@@ -276,6 +276,103 @@ describe("search", () => {
     expect(errors).toHaveBeenCalled();
   });
 
+  test("pages past the 250 cap rather than throwing", async () => {
+    // Typesense caps `per_page` at 250 and offers no cursor, so a caseload
+    // with more acted-on records asks for the rest by page number. This is
+    // the prod shape that broke NE: 254 found against a 250-record page.
+    const root = configuredRootStore();
+    const manager = new OpportunitySearchManager(censusStore(root));
+
+    const denied = (n: number) =>
+      goodTimeHit({
+        id: `us_ne_RES${String(n).padStart(3, "0")}_usNeGoodTimeRestoration`,
+        opportunityUpdates: { denial: { reasons: ["TEST"] } },
+      });
+    const firstPage = Array.from({ length: 250 }, (_, i) => denied(i));
+    const secondPage = Array.from({ length: 4 }, (_, i) => denied(250 + i));
+
+    multiSearch
+      .mockResolvedValueOnce({
+        results: [
+          { found: 0, hits: [] },
+          censusResult([{ document: goodTimeHit(), count: 300 }]),
+          actedOnResult(firstPage, 254),
+        ],
+      })
+      .mockResolvedValueOnce({ results: [actedOnResult(secondPage, 254)] });
+
+    await manager.search();
+
+    expect(manager.lastError).toBeUndefined();
+    // One follow-up round trip, asking for page 2 only.
+    expect(multiSearch).toHaveBeenCalledTimes(2);
+    expect(multiSearch.mock.calls[1]?.[0].searches).toHaveLength(1);
+    expect(multiSearch.mock.calls[1]?.[0].searches[0]).toMatchObject({
+      page: 2,
+    });
+    // All 254 subtracted, not the 250 that fit on one page.
+    expect(manager.countsByType["usNeGoodTimeRestoration"]).toMatchObject({
+      "Eligible Now": 46,
+    });
+  });
+
+  test("counts a record returned on two pages once", async () => {
+    // Paging an index a sync write can touch mid-read may repeat a record.
+    // Subtracting it twice reads as a tab one too low, or deletes the card.
+    const root = configuredRootStore();
+    const manager = new OpportunitySearchManager(censusStore(root));
+
+    const denied = (n: number) =>
+      goodTimeHit({
+        id: `us_ne_RES${String(n).padStart(3, "0")}_usNeGoodTimeRestoration`,
+        opportunityUpdates: { denial: { reasons: ["TEST"] } },
+      });
+    const firstPage = Array.from({ length: 250 }, (_, i) => denied(i));
+    // Page 2 repeats the last record of page 1, then adds four more.
+    const secondPage = [
+      denied(249),
+      ...Array.from({ length: 4 }, (_, i) => denied(250 + i)),
+    ];
+
+    multiSearch
+      .mockResolvedValueOnce({
+        results: [
+          { found: 0, hits: [] },
+          censusResult([{ document: goodTimeHit(), count: 300 }]),
+          actedOnResult(firstPage, 254),
+        ],
+      })
+      .mockResolvedValueOnce({ results: [actedOnResult(secondPage, 254)] });
+
+    await manager.search();
+
+    expect(manager.lastError).toBeUndefined();
+    expect(manager.countsByType["usNeGoodTimeRestoration"]).toMatchObject({
+      "Eligible Now": 46,
+    });
+  });
+
+  test("refuses an acted-on set past the page ceiling", async () => {
+    // 20 pages of 250. Past that the selection is not a caseload anyone
+    // works, and a hundred round trips is the worse failure.
+    const root = configuredRootStore();
+    const manager = new OpportunitySearchManager(censusStore(root));
+    multiSearch.mockResolvedValue({
+      results: [
+        { found: 0, hits: [] },
+        censusResult([{ document: goodTimeHit(), count: 9000 }]),
+        actedOnResult([], 6000),
+      ],
+    });
+
+    await manager.search();
+
+    expect(manager.lastError).toMatch(/page ceiling/);
+    expect(manager.countsByType).toEqual({});
+    // Refused before issuing any follow-up.
+    expect(multiSearch).toHaveBeenCalledTimes(1);
+  });
+
   test("throws rather than subtract an under-fetched acted-on set", async () => {
     // Every record the ACTED ON shape did not return stays in the untouched
     // left, silently.
