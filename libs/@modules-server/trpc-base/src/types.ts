@@ -18,7 +18,7 @@
 import { AnyTRPCRootTypes, TRPCBuiltRouter } from "@trpc/server";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-export type StateCode = "US_TN" | "Recidiviz";
+export type StateCode = "US_CO" | "US_TN" | "Recidiviz";
 
 export type Auth0User = {
   [`https://dashboard.recidiviz.org/app_metadata`]: {

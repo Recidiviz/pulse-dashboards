@@ -1,0 +1,19 @@
+{
+  "name": "@modules/Calendar/router",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@modules/Calendar/router/src",
+  "projectType": "library",
+  "tags": ["domain:calendar", "scope:server"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

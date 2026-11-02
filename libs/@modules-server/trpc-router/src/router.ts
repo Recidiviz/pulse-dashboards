@@ -17,6 +17,7 @@
 
 import { TRPCRouterRecord } from "@trpc/server";
 
+import { manifest as calendarManifest } from "~@modules/Calendar/router";
 import { manifest as userSettingsManifest } from "~@modules/UserSettings/router";
 import { manifest as usTnReclassificationManifest } from "~@modules/UsTnReclassification/router";
 import {
@@ -45,3 +46,4 @@ export type AppRouter = typeof appRouter;
 export type UsTnReclassModuleRouter =
   typeof usTnReclassificationManifest.router;
 export type UserSettingsRouter = typeof userSettingsManifest.router;
+export type CalendarRouter = typeof calendarManifest.router;

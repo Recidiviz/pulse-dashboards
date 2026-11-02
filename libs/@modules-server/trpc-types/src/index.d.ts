@@ -19,6 +19,7 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 export type {
   AppRouter,
+  CalendarRouter,
   UserSettingsRouter,
   UsTnReclassModuleRouter,
 } from "~@modules-server/trpc-router";

@@ -18,6 +18,7 @@
 export {
   type AppRouter,
   appRouter,
+  type CalendarRouter,
   type UserSettingsRouter,
   type UsTnReclassModuleRouter,
 } from "./router";

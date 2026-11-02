@@ -70,4 +70,14 @@ describe("server", () => {
 
     expect(response.statusCode).toBe(401);
   });
+
+  // An unmounted path returns 404, so a 401 shows the router is mounted.
+  it("should mount the Calendar module behind auth", async () => {
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/Calendar.stub",
+    });
+
+    expect(response.statusCode).toBe(401);
+  });
 });

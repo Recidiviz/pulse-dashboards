@@ -18,11 +18,13 @@
 import { TRPCRouterRecord } from "@trpc/server";
 import { clone } from "lodash-es";
 
+import { manifest as calendarManifest } from "~@modules/Calendar/router";
 import { manifest as userSettingsManifest } from "~@modules/UserSettings/router";
 import { manifest as usTnReclassificationManifest } from "~@modules/UsTnReclassification/router";
 import { ModuleBackendManifest } from "~@modules-server/trpc-base";
 
 export const MANIFEST_REGISTRY = [
+  calendarManifest,
   userSettingsManifest,
   usTnReclassificationManifest,
 ] satisfies ModuleBackendManifest[];
