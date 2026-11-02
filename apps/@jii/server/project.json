@@ -161,6 +161,7 @@
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": [
+          "{projectRoot}/src/startupMarker.ts",
           "{projectRoot}/src/sentry/index.ts",
           "{projectRoot}/src/jobs/usNcRNAWriteback.ts"
         ],

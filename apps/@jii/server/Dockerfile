@@ -36,6 +36,7 @@ USER node
 EXPOSE ${PORT}
 
 # Make sure to:
-# 1. Use the extensionless package so directory imports can be resolved
-# 2. import the sentry module before the main.js file in order for packages to be instrumented
-CMD ["dumb-init", "node", "--import=extensionless/register", "--import", "./sentry/index.js", "main.js"]
+# 1. Import the startup marker first so it logs before any dependency loads
+# 2. Use the extensionless package so directory imports can be resolved
+# 3. import the sentry module before the main.js file in order for packages to be instrumented
+CMD ["dumb-init", "node", "--import", "./startupMarker.js", "--import=extensionless/register", "--import", "./sentry/index.js", "main.js"]

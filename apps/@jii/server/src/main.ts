@@ -22,3 +22,15 @@ import { buildServer } from "./server";
 const server = buildServer();
 
 await startServer(server, { defaultPort: 4210 });
+
+// CPU spent since process start, compared against wall time, shows whether startup
+// is busy computing (user), busy in the kernel (system), or waiting
+const { user, system } = process.cpuUsage();
+server.log.info(
+  {
+    userCpuSeconds: user / 1e6,
+    systemCpuSeconds: system / 1e6,
+    uptimeSeconds: process.uptime(),
+  },
+  "startup cpu usage",
+);

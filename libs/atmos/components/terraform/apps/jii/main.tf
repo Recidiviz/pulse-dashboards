@@ -169,6 +169,12 @@ module "server" {
   ]
 
   members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
+
+  # Don't scale to zero; cold starts can be too slow for Auth0 actions and cause timeouts.
+  # This mostly affects staging, prod virtually never scales down to zero anyway
+  service_scaling = {
+    min_instance_count = 1
+  }
 }
 
 # Configure a job that will migrate the database schema
