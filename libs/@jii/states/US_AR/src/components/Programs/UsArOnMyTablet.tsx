@@ -15,11 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
 import { FC } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+import styled from "styled-components";
 
-import { HomepageSectionHeading } from "~@jii/common-ui";
+import { BackLink, HomepageSectionHeading } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
+import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 
 import { isPaaResident } from "../../isPaaResident";
@@ -28,9 +33,14 @@ import { IneligibleCard } from "./IneligibleCard";
 import { PolicyExplainerCard } from "./PolicyExplainerCard";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./ProgramsNavBar/ProgramsNavBar.styles";
 
+const Header = styled.header`
+  margin-top: ${rem(spacing.lg)};
+`;
+
 export const UsArOnMyTablet: FC = () => {
   const metadata = useResidentMetadata("US_AR");
   const { t } = useUsArTranslations();
+  const pathParams = useTypedParams(State.Resident);
 
   return (
     <>
@@ -38,9 +48,14 @@ export const UsArOnMyTablet: FC = () => {
         lastUpdatedDate={metadata.edovoLastRefreshedAt}
         stickyOffset={PROGRAMS_NAV_BAR_HEIGHT}
       />
-      <HomepageSectionHeading>
-        {t(($) => $.programs.onMyTablet.title)}
-      </HomepageSectionHeading>
+      <Header>
+        <BackLink to={State.Resident.buildPath(pathParams)}>
+          {t(($) => $.programs.backLink)}
+        </BackLink>
+        <HomepageSectionHeading>
+          {t(($) => $.programs.onMyTablet.title)}
+        </HomepageSectionHeading>
+      </Header>
       {isPaaResident(metadata) ? (
         <>
           <EdovoProgressCard />
