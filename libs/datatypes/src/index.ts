@@ -271,6 +271,7 @@ export * from "./places/System/SystemId/schema";
 // =============================================================================
 
 export * from "./parole/fixture";
+export * from "./parole/reportSchema";
 export * from "./parole/schema";
 
 // =============================================================================
