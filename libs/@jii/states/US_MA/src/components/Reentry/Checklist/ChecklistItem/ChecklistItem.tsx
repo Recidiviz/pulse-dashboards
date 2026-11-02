@@ -17,13 +17,14 @@
 
 import { ReactNode, useId } from "react";
 
-import { Checkbox } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import {
   BadgeSlot,
+  CHECKBOX_SIZE,
   Content,
   ErrorMessage,
+  ItemCheckbox,
   Label,
   Row,
   Wrapper,
@@ -56,9 +57,9 @@ export const ChecklistItem = ({
   return (
     <Wrapper $hasError={!!error}>
       <Row>
-        <Checkbox
+        <ItemCheckbox
           id={checkboxId}
-          $size={24}
+          $size={CHECKBOX_SIZE}
           $accentColor={palette.pine2}
           checked={checked}
           onChange={(event) => onCheckedChange(event.target.checked)}

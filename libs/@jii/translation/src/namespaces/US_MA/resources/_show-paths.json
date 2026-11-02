@@ -169,17 +169,17 @@
     }
   },
   "reentry": {
-    "homepageCta": {
-      "sectionHeader": "[US_MA]reentry.homepageCta.sectionHeader",
-      "heading": "[US_MA]reentry.homepageCta.heading",
-      "description": "[US_MA]reentry.homepageCta.description",
-      "link": "[US_MA]reentry.homepageCta.link"
-    },
     "navBar": {
       "sectionLabel": "[US_MA]reentry.navBar.sectionLabel",
       "overview": "[US_MA]reentry.navBar.overview",
       "checklist": "[US_MA]reentry.navBar.checklist",
       "resourceExplorer": "[US_MA]reentry.navBar.resourceExplorer"
+    },
+    "homepageCta": {
+      "sectionHeader": "[US_MA]reentry.homepageCta.sectionHeader",
+      "heading": "[US_MA]reentry.homepageCta.heading",
+      "description": "[US_MA]reentry.homepageCta.description",
+      "link": "[US_MA]reentry.homepageCta.link"
     },
     "overview": {
       "pageTitle": "[US_MA]reentry.overview.pageTitle",
@@ -235,16 +235,15 @@
         "bannerDescription": "[US_MA]reentry.overview.video.bannerDescription",
         "learnMoreDescription": "[US_MA]reentry.overview.video.learnMoreDescription",
         "dismissBanner": "[US_MA]reentry.overview.video.dismissBanner",
-        "modalTitle": "[US_MA]reentry.overview.video.modalTitle",
-        "modalClose": "[US_MA]reentry.overview.video.modalClose",
-        "modalFooter": "[US_MA]reentry.overview.video.modalFooter"
+        "modalTitle": "[US_MA]reentry.overview.video.modalTitle"
       }
     },
     "questionnaire": {
       "header": {
         "title": "[US_MA]reentry.questionnaire.header.title",
         "close": "[US_MA]reentry.questionnaire.header.close",
-        "saveAndExit": "[US_MA]reentry.questionnaire.header.saveAndExit"
+        "saveAndExit": "[US_MA]reentry.questionnaire.header.saveAndExit",
+        "finishLater": "[US_MA]reentry.questionnaire.header.finishLater"
       },
       "intro": {
         "heading": "[US_MA]reentry.questionnaire.intro.heading",
@@ -471,13 +470,6 @@
       },
       "progress": "[US_MA]reentry.checklist.progress",
       "personalizedBadge": "[US_MA]reentry.checklist.personalizedBadge",
-      "personalizationReasons": {
-        "heading": "[US_MA]reentry.checklist.personalizationReasons.heading",
-        "close": "[US_MA]reentry.checklist.personalizationReasons.close",
-        "question": "[US_MA]reentry.checklist.personalizationReasons.question",
-        "yourAnswer": "[US_MA]reentry.checklist.personalizationReasons.yourAnswer",
-        "changeAnswer": "[US_MA]reentry.checklist.personalizationReasons.changeAnswer"
-      },
       "itemSaveError": "[US_MA]reentry.checklist.itemSaveError",
       "sections": {
         "ANYTIME": {
@@ -697,6 +689,13 @@
         "ASKED_ABOUT_SOBER_HOUSE_FUNDING": {
           "label": "[US_MA]reentry.checklist.itemCopy.ASKED_ABOUT_SOBER_HOUSE_FUNDING.label"
         }
+      },
+      "personalizationReasons": {
+        "heading": "[US_MA]reentry.checklist.personalizationReasons.heading",
+        "close": "[US_MA]reentry.checklist.personalizationReasons.close",
+        "question": "[US_MA]reentry.checklist.personalizationReasons.question",
+        "yourAnswer": "[US_MA]reentry.checklist.personalizationReasons.yourAnswer",
+        "changeAnswer": "[US_MA]reentry.checklist.personalizationReasons.changeAnswer"
       }
     },
     "resources": {

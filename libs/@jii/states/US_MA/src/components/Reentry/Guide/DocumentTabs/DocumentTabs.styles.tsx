@@ -53,7 +53,6 @@ export const DocumentTab = styled(Tab)`
     background-color: ${palette.pine3};
     border-color: ${palette.pine4};
     color: ${palette.white};
-    font-weight: 700;
     position: relative;
     z-index: 1;
   }

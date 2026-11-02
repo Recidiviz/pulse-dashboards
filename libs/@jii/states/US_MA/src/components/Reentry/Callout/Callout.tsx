@@ -73,7 +73,7 @@ export const Callout = ({
 }: CalloutProps) => (
   <Wrapper $tone={tone} $variant={variant} $bordered={bordered} role={role}>
     {icon && <IconSlot $variant={variant}>{icon}</IconSlot>}
-    <Content>
+    <Content $variant={variant}>
       {heading && <Heading>{heading}</Heading>}
       {description && (
         <Description $variant={variant}>{description}</Description>

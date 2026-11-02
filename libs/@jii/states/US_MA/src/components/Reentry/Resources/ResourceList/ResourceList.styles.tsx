@@ -18,13 +18,9 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { PageContainer } from "~@jii/common-ui";
 import { palette, spacing, typography } from "~design-system";
 
-// UsMaReentryLayout is a flex column, where PageContainer's auto margins would
-// otherwise shrink the page to its content and widen it when a section opens.
-export const Wrapper = styled(PageContainer)`
-  width: 100%;
+export const Wrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;

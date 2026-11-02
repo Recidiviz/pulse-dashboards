@@ -15,14 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
 import styled from "styled-components";
-
-import { spacing } from "~design-system";
 
 import { GuideCopy } from "../Guide.styles";
 
 export const CalloutBody = styled(GuideCopy)`
   display: block;
-  margin-top: ${rem(spacing.md)};
+  margin: 0;
 `;

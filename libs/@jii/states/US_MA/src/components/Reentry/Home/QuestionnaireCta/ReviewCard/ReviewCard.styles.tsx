@@ -15,39 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import styled from "styled-components";
 
 import { Card, palette, spacing, typography } from "~design-system";
 
 export const Wrapper = styled(Card)`
   align-items: center;
-  border-radius: ${rem(12)};
+  border-color: ${palette.slate20};
   gap: ${rem(spacing.md)};
-  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
+  padding: ${rem(spacing.md)};
+`;
 
-  svg {
-    color: ${palette.slate60};
-    flex: 0 0 auto;
-  }
+export const IconCircle = styled.span`
+  height: ${rem(32)};
+  width: ${rem(32)};
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+  background: ${rgba(palette.signal.highlight, 0.1)};
+  border-radius: 50%;
+  color: ${palette.pine2};
 `;
 
 export const Content = styled.div`
   flex: 1 1 auto;
-  padding-right: ${rem(spacing.lg)};
 `;
 
 export const Heading = styled.p`
   ${typography.Sans14}
 
-  color: ${palette.pine1};
-  font-weight: 600;
+  color: ${palette.pine2};
+  font-weight: 700;
+  line-height: ${rem(20)};
   margin: 0;
 `;
 
 export const Description = styled.p`
   ${typography.Sans14}
 
-  color: ${palette.slate85};
+  color: ${palette.pine2};
+  font-weight: 400;
+  line-height: ${rem(20)};
   margin: 0;
 `;

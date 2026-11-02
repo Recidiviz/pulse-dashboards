@@ -18,7 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { palette, spacing, typography } from "~design-system";
+import { palette, spacing } from "~design-system";
 
 export const Wrapper = styled.aside`
   align-items: center;
@@ -38,14 +38,4 @@ export const Content = styled.div`
   flex: 1;
   flex-direction: column;
   gap: ${rem(spacing.xs)};
-`;
-
-export const Label = styled.p`
-  ${typography.Sans14}
-
-  color: ${palette.slate80};
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  margin: 0;
-  text-transform: uppercase;
 `;

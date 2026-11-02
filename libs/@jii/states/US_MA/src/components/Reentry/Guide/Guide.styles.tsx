@@ -18,10 +18,10 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { CopyWrapper, PageContainer } from "~@jii/common-ui";
+import { CopyWrapper } from "~@jii/common-ui";
 import { spacing } from "~design-system";
 
-export const Wrapper = styled(PageContainer)`
+export const Wrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;

@@ -48,7 +48,7 @@ export type UseQuestionnaireFlowParams = {
 };
 
 export type QuestionnaireHeaderAction = {
-  kind: "close" | "saveAndExit";
+  kind: "close" | "saveAndExit" | "finishLater";
   onClick: () => void;
 };
 
@@ -99,4 +99,6 @@ export type QuestionPosition = {
   upcomingQuestion: QuestionnaireQuestion | undefined;
   isLastQuestionBeforeReview: boolean;
   sectionIndex: number;
+  questionIndexInSection: number;
+  questionsInSection: number;
 };

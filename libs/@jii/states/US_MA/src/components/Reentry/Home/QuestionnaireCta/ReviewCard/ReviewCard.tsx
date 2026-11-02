@@ -24,7 +24,13 @@ import { useUsMaTranslations } from "~@jii/translation";
 
 import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
-import { Content, Description, Heading, Wrapper } from "./ReviewCard.styles";
+import {
+  Content,
+  Description,
+  Heading,
+  IconCircle,
+  Wrapper,
+} from "./ReviewCard.styles";
 
 export const ReviewCard = () => {
   const { t } = useUsMaTranslations();
@@ -42,7 +48,9 @@ export const ReviewCard = () => {
 
   return (
     <Wrapper>
-      <User size={20} />
+      <IconCircle>
+        <User size={16} absoluteStrokeWidth />
+      </IconCircle>
       <Content>
         <Heading>{reviewProfile.heading}</Heading>
         <Description>{reviewProfile.description}</Description>

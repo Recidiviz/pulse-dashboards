@@ -17,9 +17,9 @@
 
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { EyebrowLabel } from "../../Shared.styles";
 import { GuideCopy } from "../Guide.styles";
 import {
-  DetailLabel,
   StepDetail,
   StepHeader,
   StepHeading,
@@ -55,13 +55,15 @@ export const StepList = ({ steps }: StepListProps) => {
           ) : (
             <>
               <StepDetail>
-                <DetailLabel>{t(($) => $.reentry.guide.whenLabel)}</DetailLabel>
+                <EyebrowLabel>
+                  {t(($) => $.reentry.guide.whenLabel)}
+                </EyebrowLabel>
                 <GuideCopy>{step.when}</GuideCopy>
               </StepDetail>
               <StepDetail>
-                <DetailLabel>
+                <EyebrowLabel>
                   {t(($) => $.reentry.guide.whatToDoLabel)}
-                </DetailLabel>
+                </EyebrowLabel>
                 <GuideCopy>{step.whatToDo}</GuideCopy>
               </StepDetail>
             </>

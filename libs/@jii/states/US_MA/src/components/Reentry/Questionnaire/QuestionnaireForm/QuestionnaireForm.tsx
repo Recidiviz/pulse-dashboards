@@ -27,6 +27,7 @@ import {
 } from "~design-system";
 
 import { Callout } from "../../Callout/Callout";
+import { EyebrowLabel } from "../../Shared.styles";
 import { QuestionnaireFooter } from "../QuestionnaireFooter/QuestionnaireFooter";
 import { scrollToBottom } from "../scrollToBottom";
 import {
@@ -42,7 +43,6 @@ import {
   SaveHint,
   SelectionHint,
   WhyWeAsk,
-  WhyWeAskLabel,
   WhyWeAskText,
   Wrapper,
 } from "./QuestionnaireForm.styles";
@@ -115,9 +115,9 @@ export const QuestionnaireForm = ({
       <Heading>{question.heading}</Heading>
       {question.whyWeAsk && (
         <WhyWeAsk>
-          <WhyWeAskLabel>
+          <EyebrowLabel>
             {t(($) => $.reentry.questionnaire.form.whyWeAskLabel)}
-          </WhyWeAskLabel>
+          </EyebrowLabel>
           <WhyWeAskText>{question.whyWeAsk}</WhyWeAskText>
         </WhyWeAsk>
       )}

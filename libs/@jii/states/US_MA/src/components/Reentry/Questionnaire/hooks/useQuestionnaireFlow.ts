@@ -132,6 +132,11 @@ export function useQuestionnaireFlow({
     onClick: () => exit("close"),
   };
 
+  const finishLaterAction: QuestionnaireHeaderAction = {
+    kind: "finishLater",
+    onClick: () => exit("close"),
+  };
+
   const goToQuestion = (questionId: string) => {
     setIsSectionListOpen(false);
     setStep({ kind: "question", questionId });
@@ -219,6 +224,8 @@ export function useQuestionnaireFlow({
         upcomingQuestion,
         isLastQuestionBeforeReview,
         sectionIndex,
+        questionIndexInSection,
+        questionsInSection,
       } = getQuestionPosition({
         visibleQuestions,
         questionId: step.questionId,
@@ -343,6 +350,8 @@ export function useQuestionnaireFlow({
         headerAction: isProfileCompleted ? null : saveAndExitAction,
         sectionProgress: {
           currentSectionIndex: sectionIndex,
+          questionIndexInSection,
+          questionsInSection,
           isOpen: isSectionListOpen,
           onToggle: () => setIsSectionListOpen(!isSectionListOpen),
         },
@@ -389,7 +398,7 @@ export function useQuestionnaireFlow({
       }
       return {
         kind: "review",
-        headerAction: closeAction,
+        headerAction: finishLaterAction,
         props: {
           entries,
           onBack: backFromReview,

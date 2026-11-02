@@ -17,8 +17,9 @@
 
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { EyebrowLabel } from "../../Shared.styles";
 import { GuideCopy } from "../Guide.styles";
-import { Content, Icon, Label, Wrapper } from "./TipCallout.styles";
+import { Content, Icon, Wrapper } from "./TipCallout.styles";
 
 type TipCalloutProps = {
   iconSrc: string;
@@ -32,7 +33,7 @@ export const TipCallout = ({ iconSrc, children }: TipCalloutProps) => {
     <Wrapper>
       <Icon src={iconSrc} alt="" />
       <Content>
-        <Label>{t(($) => $.reentry.guide.tipLabel)}</Label>
+        <EyebrowLabel>{t(($) => $.reentry.guide.tipLabel)}</EyebrowLabel>
         <GuideCopy>{children}</GuideCopy>
       </Content>
     </Wrapper>

@@ -18,7 +18,10 @@
 import { rem } from "polished";
 import styled, { css } from "styled-components";
 
+import { Checkbox } from "~@jii/common-ui";
 import { palette, spacing, typography } from "~design-system";
+
+export const CHECKBOX_SIZE = 24;
 
 export const Wrapper = styled.div<{ $hasError: boolean }>`
   position: relative;
@@ -61,12 +64,17 @@ export const ErrorMessage = styled.p`
   margin: 0;
 `;
 
+export const ItemCheckbox = styled(Checkbox)`
+  margin: 0;
+`;
+
 export const Label = styled.label`
   ${typography.Sans16}
 
   color: ${palette.pine2};
   cursor: pointer;
   font-weight: 500;
+  line-height: ${rem(CHECKBOX_SIZE)};
 
   /* Stretches the label over the whole row so all of it is clickable. */
   &::after {

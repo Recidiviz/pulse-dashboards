@@ -69,6 +69,7 @@ export const ReentryQuestionnaire = () => {
   const headerActionLabels = {
     close: t(($) => $.reentry.questionnaire.header.close),
     saveAndExit: t(($) => $.reentry.questionnaire.header.saveAndExit),
+    finishLater: t(($) => $.reentry.questionnaire.header.finishLater),
   };
 
   const renderScreen = () => {

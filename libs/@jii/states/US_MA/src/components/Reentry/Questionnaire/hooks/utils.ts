@@ -33,6 +33,9 @@ export function getQuestionPosition({
     (question) => question.id === questionId,
   );
   const question = visibleQuestions[index];
+  const sectionQuestions = visibleQuestions.filter(
+    ({ sectionDomain }) => sectionDomain === question.sectionDomain,
+  );
   const earlierQuestions = visibleQuestions.slice(0, index);
   const laterQuestions = visibleQuestions.slice(index + 1);
 
@@ -57,5 +60,7 @@ export function getQuestionPosition({
     sectionIndex: sections.findIndex(
       (section) => section.domain === question.sectionDomain,
     ),
+    questionIndexInSection: sectionQuestions.indexOf(question),
+    questionsInSection: sectionQuestions.length,
   };
 }

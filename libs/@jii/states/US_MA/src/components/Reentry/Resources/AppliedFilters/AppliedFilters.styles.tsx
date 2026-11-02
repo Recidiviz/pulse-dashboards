@@ -22,9 +22,9 @@ import { Button, palette, spacing, typography } from "~design-system";
 
 export const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: ${rem(spacing.md)};
+  flex-wrap: wrap;
+  align-items: center;
+  gap: ${rem(spacing.md)} ${rem(spacing.sm)};
 `;
 
 export const ChipRow = styled.div`
@@ -41,7 +41,7 @@ export const ExpandToggle = styled.button`
   align-items: center;
   min-height: ${rem(24)};
   padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-  border-radius: 50%;
+  border-radius: ${rem(999)};
   border: 1px solid ${palette.pine4};
   background: ${palette.white};
   color: ${palette.pine4};

@@ -746,12 +746,21 @@ describe("header action", () => {
     expect(result.current.headerAction?.kind).toBe("close");
   });
 
-  test("before submitting, questions offer Save and exit, then review offers Close", () => {
+  test("before submitting, questions offer Save and exit, then review offers Finish later", () => {
     const { result } = render("IN_PROGRESS", { needsCare: "NO" });
     expect(result.current.headerAction?.kind).toBe("saveAndExit");
     answerAndNext(result, ["YES"]);
     expect(result.current.kind).toBe("review");
-    expect(result.current.headerAction?.kind).toBe("close");
+    expect(result.current.headerAction?.kind).toBe("finishLater");
+  });
+
+  test("Finish later exits without saving", () => {
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    answerAndNext(result, ["YES"]);
+    save.mockClear();
+    act(() => result.current.headerAction?.onClick());
+    expect(save).not.toHaveBeenCalled();
+    expect(onExit).toHaveBeenCalled();
   });
 
   test("editing a completed profile hides it, then review offers Close", () => {
@@ -920,7 +929,7 @@ describe("analytics", () => {
     );
   });
 
-  test("Close sends questionnaire_exited with the screen", () => {
+  test("Finish later sends questionnaire_exited with the screen", () => {
     const { result } = render("IN_PROGRESS", allAnswered);
     act(() => result.current.headerAction?.onClick());
     expect(trackEvent).toHaveBeenCalledWith(

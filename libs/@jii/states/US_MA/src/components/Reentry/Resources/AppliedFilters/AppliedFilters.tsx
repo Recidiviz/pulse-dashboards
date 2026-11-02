@@ -46,8 +46,9 @@ type AppliedFiltersProps = {
 };
 
 /**
- * The Filters button with a row of removable chips for the applied filters
- * below it. Past MAX_VISIBLE_CHIPS, the rest collapse behind a "+N more" toggle.
+ * The Filters button with a row of removable chips for the applied filters.
+ * The chips sit beside the button while they fit on one line, and wrap below it
+ * otherwise. Past MAX_VISIBLE_CHIPS, the rest collapse behind a "+N more" toggle.
  */
 export const AppliedFilters = ({
   groups,

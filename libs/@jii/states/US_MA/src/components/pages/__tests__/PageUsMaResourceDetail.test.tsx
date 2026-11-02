@@ -193,7 +193,7 @@ test("shows the address and contact rows", async () => {
   renderPage();
 
   expect(
-    await screen.findByRole("heading", { name: "Address and contact details" }),
+    await screen.findByRole("heading", { name: "Address details" }),
   ).toBeInTheDocument();
   expect(
     screen.getByText("119 Example St, Hyannis, MA 02601"),

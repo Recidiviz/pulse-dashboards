@@ -76,7 +76,22 @@ describe("getQuestionPosition", () => {
       upcomingQuestion: benefits,
       isLastQuestionBeforeReview: false,
       sectionIndex: 0,
+      questionIndexInSection: 0,
+      questionsInSection: 1,
     });
+  });
+
+  test("a follow-up's position counts only the visible questions in its section", () => {
+    const position = getQuestionPosition({
+      visibleQuestions: [needsCare, careDetails, benefits],
+      questionId: "careDetails",
+      answers: { needsCare: ["YES"] },
+      sections,
+      editSession: null,
+    });
+    expect(position.sectionIndex).toBe(0);
+    expect(position.questionIndexInSection).toBe(1);
+    expect(position.questionsInSection).toBe(2);
   });
 
   test("the last visible question leads to Review", () => {

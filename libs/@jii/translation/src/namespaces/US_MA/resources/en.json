@@ -169,17 +169,17 @@
     }
   },
   "reentry": {
-    "homepageCta": {
-      "sectionHeader": "Reentry",
-      "heading": "Plan for life after release",
-      "description": "Take ownership of your reentry plan. Build a reentry profile, track your progress with a personal reentry checklist, and explore housing resources.",
-      "link": "Get started"
-    },
     "navBar": {
       "sectionLabel": "Reentry",
       "overview": "Overview",
       "checklist": "Checklist",
       "resourceExplorer": "Resource Explorer"
+    },
+    "homepageCta": {
+      "sectionHeader": "Reentry",
+      "heading": "Plan for life after release",
+      "description": "Take ownership of your reentry plan. Build a reentry profile, track your progress with a personal reentry checklist, and explore housing resources.",
+      "link": "Get started"
     },
     "overview": {
       "pageTitle": "Reentry Overview",
@@ -235,16 +235,15 @@
         "bannerDescription": "Watch a two-minute video tour of this Reentry section.",
         "learnMoreDescription": "Watch a two-minute video tour of the new Reentry section.",
         "dismissBanner": "Dismiss",
-        "modalTitle": "All about Reentry (2 minutes)",
-        "modalClose": "Close",
-        "modalFooter": "You can watch this again any time from the bottom of the Overview page."
+        "modalTitle": "All about Reentry (2 minutes)"
       }
     },
     "questionnaire": {
       "header": {
         "title": "Reentry Profile Questionnaire",
         "close": "Close",
-        "saveAndExit": "Save and exit"
+        "saveAndExit": "Save and exit",
+        "finishLater": "Finish later"
       },
       "intro": {
         "heading": "Build your Reentry profile",
@@ -252,9 +251,9 @@
         "answerEachQuestion": "Answer each question to the best of your ability",
         "saveProgress": "You can save your progress at any time using the \"Save and exit\" button. Your answers are also saved as you progress through the form.",
         "resumeWhereLeftOff": "Pick up where you left off when you return",
-        "questionCount": "There are {{min}} to {{max}} questions and it takes about 10 minutes.",
+        "questionCount": "There are {{min}} to {{max}} questions and it takes about 10 minutes",
         "afterHeading": "What happens after I finish answering?",
-        "afterDescription": "Your answers set up your checklist. Your reentry specialist will not get a message when you finish. If you want to talk about your answers, tell them.",
+        "afterDescription": "Your answers personalize your checklist. Your reentry specialist will not get a message when you finish. If you want to talk about your answers, tell them.",
         "cta": "Start answering"
       },
       "sectionProgress": {
@@ -471,13 +470,6 @@
       },
       "progress": "{{done}} of {{total}} done",
       "personalizedBadge": "Based on your profile",
-      "personalizationReasons": {
-        "heading": "This task is based on answers in your Reentry profile:",
-        "close": "Close",
-        "question": "Question",
-        "yourAnswer": "Your answer:",
-        "changeAnswer": "Change answer"
-      },
       "itemSaveError": "Something went wrong. Tap the option again to retry.",
       "sections": {
         "ANYTIME": {
@@ -697,6 +689,13 @@
         "ASKED_ABOUT_SOBER_HOUSE_FUNDING": {
           "label": "I have asked my Reentry Specialist whether MASH funding or another source can pay for my first month in a sober house."
         }
+      },
+      "personalizationReasons": {
+        "heading": "This task is based on answers in your Reentry profile:",
+        "close": "Close",
+        "question": "Question",
+        "yourAnswer": "Your answer:",
+        "changeAnswer": "Change answer"
       }
     },
     "resources": {
@@ -735,7 +734,7 @@
           "disclaimer": "Organization details change often. Always confirm with a Reentry Specialist."
         },
         "contact": {
-          "heading": "Address and contact details",
+          "heading": "Address details",
           "notAvailable": "n/a",
           "labels": {
             "address": "Address",

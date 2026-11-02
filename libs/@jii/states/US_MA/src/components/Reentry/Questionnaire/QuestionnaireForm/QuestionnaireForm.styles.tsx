@@ -43,14 +43,6 @@ export const WhyWeAsk = styled.div`
   padding: ${rem(spacing.md)};
 `;
 
-export const WhyWeAskLabel = styled.p`
-  ${typography.Sans14}
-
-  color: ${palette.slate80};
-  margin: 0;
-  text-transform: uppercase;
-`;
-
 export const WhyWeAskText = styled.p`
   ${typography.Sans16}
 

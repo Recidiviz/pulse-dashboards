@@ -20,14 +20,14 @@ import { useId } from "react";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
+import { getSectionedProgressPercent } from "../../ProgressBar/helpers";
+import { ProgressBar } from "../../ProgressBar/ProgressBar";
 import { QuestionnaireSectionDisplay } from "../types";
 import { SectionListItem } from "./SectionListItem";
 import {
   ChevronButton,
   HeaderRow,
   Inner,
-  ProgressFill,
-  ProgressTrack,
   SectionCount,
   SectionLabel,
   SectionListPanel,
@@ -38,6 +38,8 @@ import { SectionVariant } from "./types";
 export type SectionProgressProps = {
   sections: QuestionnaireSectionDisplay[];
   currentSectionIndex: number;
+  questionIndexInSection: number;
+  questionsInSection: number;
   isOpen: boolean;
   onToggle: () => void;
 };
@@ -54,6 +56,8 @@ function getSectionVariant(
 export const SectionProgress = ({
   sections,
   currentSectionIndex,
+  questionIndexInSection,
+  questionsInSection,
   isOpen,
   onToggle,
 }: SectionProgressProps) => {
@@ -62,7 +66,12 @@ export const SectionProgress = ({
 
   const currentSection = sections[currentSectionIndex];
   const currentSectionNumber = currentSectionIndex + 1;
-  const percent = Math.round((currentSectionNumber / sections.length) * 100);
+  const percent = getSectionedProgressPercent({
+    sectionIndex: currentSectionIndex,
+    sectionCount: sections.length,
+    stepIndex: questionIndexInSection,
+    stepCount: questionsInSection,
+  });
 
   const sectionNumberText = t(
     ($) => $.reentry.questionnaire.sectionProgress.sectionNumber,
@@ -107,9 +116,7 @@ export const SectionProgress = ({
           </SectionCount>
         </HeaderRow>
 
-        <ProgressTrack>
-          <ProgressFill $percent={percent} />
-        </ProgressTrack>
+        <ProgressBar percent={percent} />
 
         {isOpen && (
           <SectionListPanel id={panelId}>

@@ -101,11 +101,11 @@ export const IconSlot = styled.div<{ $variant: CalloutVariant }>`
   flex-shrink: 0;
 `;
 
-export const Content = styled.div`
+export const Content = styled.div<{ $variant: CalloutVariant }>`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${rem(spacing.xs)};
+  gap: ${({ $variant }) => rem($variant === "card" ? spacing.md : spacing.xs)};
 `;
 
 export const Heading = styled.p`

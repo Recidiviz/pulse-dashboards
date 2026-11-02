@@ -77,22 +77,6 @@ export const ChevronButton = styled.button`
   padding: 0;
 `;
 
-export const ProgressTrack = styled.div`
-  height: ${rem(8)};
-  width: 100%;
-  background: ${palette.slate10};
-  border-radius: ${rem(8)};
-  overflow: hidden;
-`;
-
-export const ProgressFill = styled.div<{ $percent: number }>`
-  height: 100%;
-  width: ${({ $percent }) => $percent}%;
-  background: ${palette.signal.highlight};
-  border-radius: ${rem(8)};
-  transition: width 0.2s ease-in-out;
-`;
-
 export const SectionListPanel = styled.ol`
   display: flex;
   flex-direction: column;
