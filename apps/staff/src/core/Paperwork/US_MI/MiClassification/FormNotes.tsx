@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
 import { ClassificationNote } from "~datatypes";
-import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import {
@@ -28,6 +27,7 @@ import {
   NoteField,
   NoteHeader,
   NoteMisconducts,
+  NotesList,
   NotesRow,
   ViewMoreQuestionNotes,
 } from "./Styles";
@@ -52,7 +52,7 @@ export const NoteRow = observer(function NoteRow({
   );
 });
 
-export const QuestionNotes = observer(function QuestionNotes({
+export const QuestionNotes = function QuestionNotes({
   note,
   noteInfo,
 }: {
@@ -90,13 +90,7 @@ export const QuestionNotes = observer(function QuestionNotes({
   return (
     <div>
       <NoteHeader>{noteInfo?.header}</NoteHeader>
-      <div
-        style={{
-          borderLeft: `2px solid ${palette.slate20}`,
-          marginLeft: "5px",
-          padding: "2px",
-        }}
-      >
+      <NotesList>
         {note.kind === "vfo" && (
           <NoteRow
             event={`VFO: ${note.data.vfoLevelDetail}`}
@@ -120,6 +114,7 @@ export const QuestionNotes = observer(function QuestionNotes({
             .map((listItem, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <NotesRow key={`adseg-note-${index}`}>
+                <NoteField>Placement</NoteField>
                 <NoteMisconducts>
                   {`${formatClassificationNote(listItem.adSegStartDate)} – ${
                     formatClassificationNote(listItem.adSegEndDateExclusive) ??
@@ -176,7 +171,7 @@ export const QuestionNotes = observer(function QuestionNotes({
               date={program.completionDate}
             />
           ))}
-      </div>
+      </NotesList>
 
       {listLength > 4 && (
         <ViewMoreQuestionNotes
@@ -190,4 +185,4 @@ export const QuestionNotes = observer(function QuestionNotes({
       )}
     </div>
   );
-});
+};

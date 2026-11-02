@@ -553,6 +553,10 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
     return calculateRemaining(this.formData, InitialKeySelections);
   }
 
+  revertForm() {
+    this.revert();
+  }
+
   get proceedToPreview() {
     return overridesCompleted(this.formData, OverrideSelections);
   }

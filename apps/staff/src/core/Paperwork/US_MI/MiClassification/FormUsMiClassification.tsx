@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React, { useEffect, useState } from "react";
 
-import { Button, palette } from "~design-system";
+import { Button } from "~design-system";
 import { pluralizeWord } from "~utils";
 
 import { UsMiInitialClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
@@ -29,18 +28,25 @@ import { ClassificationQuestion } from "./MultipleChoiceQuestion";
 import { UsMiClassificationOverrides } from "./Screens/OverrideScreen";
 import {
   ClassificationForm,
+  CurrentLevelLabel,
+  CurrentLevelValue,
+  FlexColumn,
   FormFooter,
   FormTitle,
+  FullWidthHr,
   LeftFooter,
   LevelBadge,
   RemainingFields,
+  SaveStatus,
   ScoreSection,
   ScoreSupportingText,
   ScoringNote,
   SectionHeading,
+  SectionTitle,
   StatusBadge,
   StickyHeader,
   SubHeading,
+  TotalScore,
   VerticalHr,
 } from "./Styles";
 
@@ -100,40 +106,35 @@ export const FormUsMiClassification = observer(
           </div>
           <StatusBadge $headerVisible={headerVisible}>
             <LevelBadge $headerVisible={headerVisible}>
-              <div style={{ fontSize: rem(12) }}>CURRENT LEVEL</div>
-              <div
-                style={{
-                  fontWeight: 700,
-                  color: palette.text.primary,
-                  padding: "0px 5px",
-                }}
-              >
-                {displayCustodyLevel}
-              </div>
+              <CurrentLevelLabel>CURRENT LEVEL</CurrentLevelLabel>
+              <CurrentLevelValue>{displayCustodyLevel}</CurrentLevelValue>
             </LevelBadge>
             <VerticalHr />
-            <div style={{ flexGrow: "5", fontSize: `${rem(12)}` }}>
-              All Changes Saved
-            </div>
+            <SaveStatus>
+              {form.formIsReverting ? "Reverting..." : "All Changes Saved"}
+            </SaveStatus>
+            {stage === "FORM" && (
+              <Button
+                type="button"
+                kind="secondary"
+                onClick={() => {
+                  form.revert();
+                }}
+              >
+                Revert Edits
+              </Button>
+            )}
           </StatusBadge>
         </StickyHeader>
 
         {stage === "FORM" && (
-          <ClassificationForm
-            ref={formRef}
-            style={{
-              borderLeft: `1px solid ${palette.slate20}`,
-              marginTop: "90px",
-            }}
-          >
+          <ClassificationForm ref={formRef}>
             {questionList?.map((section, sectionIndex) => {
               const { subscores } = derivedData;
               return (
                 <div key={section.title}>
                   <SectionHeading>
-                    <div style={{ fontWeight: "600", color: "black" }}>
-                      {section.title}
-                    </div>
+                    <SectionTitle>{section.title}</SectionTitle>
                     <div>Subtotal: {subscores && subscores[sectionIndex]}</div>
                   </SectionHeading>
                   {section.questions.map((question) => {
@@ -150,7 +151,7 @@ export const FormUsMiClassification = observer(
                 </div>
               );
             })}
-            <hr style={{ width: "100%" }} />
+            <FullWidthHr />
             <FormFooter>
               <LeftFooter>
                 <ScoreSection>
@@ -158,27 +159,28 @@ export const FormUsMiClassification = observer(
                     {remainingFields ? `SUBTOTAL SO FAR` : `TOTAL SCORE`}
                   </ScoreSupportingText>
                   <div>
-                    <span style={{ fontSize: rem(24), color: "black" }}>
+                    <TotalScore>
                       {derivedData.totalScore.toFixed(1)}{" "}
-                    </span>
+                    </TotalScore>
                     <ScoreSupportingText>pts</ScoreSupportingText>
                   </div>
                 </ScoreSection>
                 {remainingFields ? (
-                  <div style={{ display: "flex", flexDirection: "column" }}>
+                  <FlexColumn>
                     <RemainingFields $remaining={!!remainingFields}>
                       {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
                     </RemainingFields>
                     <ScoringNote>
                       The score and recommended level appear after you calculate
                     </ScoringNote>
-                  </div>
+                  </FlexColumn>
                 ) : (
                   <RemainingFields $remaining={!!remainingFields}>
                     All required fields complete
                   </RemainingFields>
                 )}
               </LeftFooter>
+
               <Button
                 type="button"
                 kind="primary"

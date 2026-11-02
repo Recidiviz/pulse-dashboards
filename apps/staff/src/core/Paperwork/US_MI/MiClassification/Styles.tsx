@@ -24,7 +24,18 @@ import { palette } from "~design-system";
 export const ClassificationForm = styled(Form)`
   padding: 40px;
   margin-left: 1px;
+  margin-top: 90px;
+  border-left: 1px solid ${palette.slate20};
   background-color: ${palette.marble3};
+`;
+
+export const FlexColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const FullWidthHr = styled.hr`
+  width: 100%;
 `;
 
 export const FormTitle = styled.div`
@@ -110,6 +121,22 @@ export const LevelBadge = styled.div<{
     flex-direction: row;
     align-items: center;
     `}
+`;
+
+export const CurrentLevelLabel = styled.div`
+  font-size: ${rem(12)};
+`;
+
+export const CurrentLevelValue = styled.div`
+  font-weight: 700;
+  color: ${palette.text.primary};
+  padding: 0px 5px;
+`;
+
+export const SaveStatus = styled.div`
+  flex-grow: 5;
+  font-size: ${rem(12)};
+  margin: 0px 5px;
 `;
 
 export const VerticalHr = styled.hr`
@@ -205,6 +232,16 @@ export const SectionHeading = styled.div`
   justify-content: space-between;
 `;
 
+export const SectionTitle = styled.div`
+  font-weight: 600;
+  color: black;
+`;
+
+export const TotalScore = styled.span`
+  font-size: ${rem(24)};
+  color: black;
+`;
+
 /*
  * Styling Below for the individual questions
  */
@@ -228,6 +265,55 @@ export const QuestionHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+export const RequiredAsterisk = styled.span`
+  color: ${palette.signal.error};
+`;
+
+export const QuestionHeaderRight = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+export const QuestionScore = styled.div`
+  font-weight: 600;
+  color: black;
+`;
+
+export const QuestionOptions = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;
+
+export const QuestionNotesSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+`;
+
+export const OptionScore = styled.span`
+  color: ${palette.slate50};
+`;
+
+export const NumberQuestionContainer = styled.div`
+  width: 100%;
+`;
+
+export const NumberQuestionError = styled.div`
+  color: rgb(138, 100, 32);
+`;
+
+export const NumberCalculation = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+export const NumberScore = styled.div`
+  margin-left: 30px;
 `;
 
 export const QuestionDescription = styled.div`
@@ -277,6 +363,12 @@ export const NotesBox = styled.div`
   border-left: 2px solid ${palette.slate20};
   margin-left: 5px;
   padding-left: 5px;
+`;
+
+export const NotesList = styled.div`
+  border-left: 2px solid ${palette.slate20};
+  margin-left: 5px;
+  padding: 2px;
 `;
 
 export const NotesRow = styled.div`

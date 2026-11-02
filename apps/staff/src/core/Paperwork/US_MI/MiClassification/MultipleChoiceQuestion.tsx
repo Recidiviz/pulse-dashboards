@@ -16,27 +16,34 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 
 import { AssessmentOption, UsMiAssessmentQuestionSpec } from "~datatypes";
-import { palette } from "~design-system";
 import * as Styled from "~sentencing-client/components/CaseDetails/CaseDetails.styles";
 
-import {
-  capToBounds,
-  UsMiInitialClassificationForm,
-} from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import { UsMiInitialClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { UsMiReviewClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { QuestionNotes } from "./FormNotes";
 import {
+  FlexColumn,
   FormInput,
+  NumberCalculation,
+  NumberQuestionContainer,
+  NumberQuestionError,
+  NumberScore,
+  OptionScore,
   PlacementsSection,
   QuestionBox,
   QuestionDescription,
   QuestionHeader,
+  QuestionHeaderRight,
+  QuestionNotesSection,
+  QuestionOptions,
+  QuestionScore,
   QuestionStatusBadge,
   QuestionTitle,
+  RequiredAsterisk,
   StyledQuestionButton,
 } from "./Styles";
 
@@ -49,97 +56,78 @@ function boundsMessage(bounds: number) {
   return `Counted as ${bounds} (max ${bounds})`;
 }
 
-export const NumberMultiplierQuestion = observer(
-  function NumberMultiplierQuestion({
-    question,
-    inputNumber,
-    onChange,
-    score,
-    showError,
-  }: {
-    question: MiNumberQuestionSpec;
-    inputNumber: number | string | null;
-    score: number | string;
-    onChange: ChangeEventHandler<HTMLInputElement>;
-    showError: string | null | undefined;
-  }) {
-    const maxBound = question.bounds > 0 && question.bounds;
-    return (
-      <div style={{ width: "100%" }}>
-        {maxBound && <span>Max: {maxBound}</span>}
-        <PlacementsSection>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div>{question.countDescriptor}</div>
-            {showError && (
-              <div
-                style={{
-                  color: "rgb(138, 100, 32)",
-                }}
-              >
-                {showError}
-              </div>
-            )}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignItems: "center",
-            }}
-          >
-            <FormInput
-              value={inputNumber ?? ""}
-              onChange={onChange}
-              type="text"
-            />
-            <div>x {question.multiplier}</div>
-            <div style={{ marginLeft: "30px" }}>= {score}</div>
-          </div>
-        </PlacementsSection>
-      </div>
-    );
-  },
-);
-
-export const SingleSelectionQuestion = observer(
-  function SingleSelectionQuestion({
-    index,
-    selection,
-    value,
-    onChangeSingle,
-  }: {
-    index: number;
-    selection: number;
-    value: AssessmentOption;
-    onChangeSingle: (index: number) => void;
-  }) {
-    return (
-      <StyledQuestionButton>
-        <Styled.RecommendationOption
-          selected={index === selection}
-          isDisabled={false}
-          onClick={() => onChangeSingle(index)}
-        >
-          <Styled.InputSelection
-            type="radio"
-            disabled={false}
-            checked={index === selection}
-            readOnly
+export const NumberMultiplierQuestion = function NumberMultiplierQuestion({
+  question,
+  inputNumber,
+  onChange,
+  score,
+  showError,
+}: {
+  question: MiNumberQuestionSpec;
+  inputNumber: number | string | null;
+  score: number | string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  showError: string | null | undefined;
+}) {
+  const maxBound = question.bounds > 0 && question.bounds;
+  return (
+    <NumberQuestionContainer>
+      {maxBound && <span>Max: {maxBound}</span>}
+      <PlacementsSection>
+        <FlexColumn>
+          <div>{question.countDescriptor}</div>
+          {showError && <NumberQuestionError>{showError}</NumberQuestionError>}
+        </FlexColumn>
+        <NumberCalculation>
+          <FormInput
+            value={inputNumber ?? ""}
+            onChange={onChange}
+            type="text"
           />
-          <Styled.RecommendationDetails>
-            <Styled.RecommendationOptionLabel smallFont={true}>
-              {value.text}
-              <span style={{ color: palette.slate50 }}>
-                {value.score > 0 ? `+${value.score}` : value.score}
-              </span>
-            </Styled.RecommendationOptionLabel>
-          </Styled.RecommendationDetails>
-        </Styled.RecommendationOption>
-      </StyledQuestionButton>
-    );
-  },
-);
+          <div>x {question.multiplier}</div>
+          <NumberScore>= {score}</NumberScore>
+        </NumberCalculation>
+      </PlacementsSection>
+    </NumberQuestionContainer>
+  );
+};
+
+export const SingleSelectionQuestion = function SingleSelectionQuestion({
+  index,
+  selection,
+  value,
+  onChangeSingle,
+}: {
+  index: number;
+  selection: number;
+  value: AssessmentOption;
+  onChangeSingle: (index: number) => void;
+}) {
+  return (
+    <StyledQuestionButton>
+      <Styled.RecommendationOption
+        selected={index === selection}
+        isDisabled={false}
+        onClick={() => onChangeSingle(index)}
+      >
+        <Styled.InputSelection
+          type="radio"
+          disabled={false}
+          checked={index === selection}
+          readOnly
+        />
+        <Styled.RecommendationDetails>
+          <Styled.RecommendationOptionLabel smallFont={true}>
+            {value.text}
+            <OptionScore>
+              {value.score > 0 ? `+${value.score}` : value.score}
+            </OptionScore>
+          </Styled.RecommendationOptionLabel>
+        </Styled.RecommendationDetails>
+      </Styled.RecommendationOption>
+    </StyledQuestionButton>
+  );
+};
 
 export const ClassificationQuestion = observer(function ClassificationQuestion({
   questionSection,
@@ -152,29 +140,22 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
 }) {
   const selectionKey = `s${questionSection}q${questionNumber}Selection`;
   const opportunityForm = useOpportunityFormContext();
+  const selection = opportunityForm.formData[selectionKey];
 
-  // Prefilled counts can exceed the question's max; scoring caps them, so
-  // tell the user the same way we do for typed input.
-  const [showError, setError] = useState<string | null>(() => {
-    const savedValue = opportunityForm.formData[selectionKey];
-    if (
-      question.type === "NUMBER" &&
-      typeof savedValue === "number" &&
-      capToBounds(question, savedValue) < savedValue
-    ) {
-      return boundsMessage(question.bounds);
-    }
-    return null;
-  });
+  const [showError, setError] = useState<string | null>(null);
+  const lastWrittenSelection = useRef(selection);
 
-  const [inputNumber, setInputNumber] = useState<string | number | null>(() => {
-    const savedValue = opportunityForm.formData[selectionKey];
-    return typeof savedValue === "number" ? savedValue : null;
-  });
-  const [required, setRequired] = useState<boolean>(() => {
-    const savedValue = opportunityForm.formData[selectionKey];
-    return savedValue === "" || savedValue === undefined;
-  });
+  // The error describes the value onChange last wrote. If the selection changes
+  // to anything else, such as when the form is reverted, the error is stale.
+  useEffect(() => {
+    if (selection !== lastWrittenSelection.current) setError(null);
+  }, [selection]);
+
+  const writeSelection = (value: number | "", error: string | null) => {
+    lastWrittenSelection.current = value;
+    setError(error);
+    opportunityForm.updateDraftData(selectionKey, value);
+  };
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (question.type !== "NUMBER") return;
@@ -182,35 +163,23 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
     const value = event.target.value.trim();
 
     if (value === "" || Number(value) < 0 || !/^\d+$/.test(value)) {
-      setError("Required. Enter a whole number of 0 or more");
-      setInputNumber(value);
       // this can't be deleteField() because that comes through as 0
       // which then doesn't work for the remaining field section
-      opportunityForm.updateDraftData(selectionKey, "");
-      setRequired(true);
+      writeSelection("", "Required. Enter a whole number of 0 or more");
       return;
     }
 
     const number = Number(value);
     if (bounds && number > bounds) {
-      setError(boundsMessage(bounds));
-      setInputNumber(number);
-      opportunityForm.updateDraftData(selectionKey, bounds);
-      setRequired(false);
+      writeSelection(bounds, boundsMessage(bounds));
       return;
     }
-    setError(null);
-    setInputNumber(number);
-    opportunityForm.updateDraftData(selectionKey, number);
-    setRequired(false);
+    writeSelection(number, null);
   };
 
   const onChangeSingle = (index: number) => {
-    setRequired(false);
     opportunityForm.updateDraftData(selectionKey, index);
   };
-
-  const selection = opportunityForm.formData[selectionKey];
 
   const { derivedData } = useOpportunityFormContext() as
     | UsMiInitialClassificationForm
@@ -230,42 +199,31 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
 
   const status = question.autofilled !== false && "AUTO-FILLED";
 
+  const required =
+    opportunityForm.formData[selectionKey] === "" ||
+    opportunityForm.formData[selectionKey] === undefined;
+
   return (
     <QuestionBox $required={required}>
       <QuestionHeader id="question-header">
         <QuestionTitle>
           {questionNumber}: {question.title}
-          {required && (
-            <span style={{ color: palette.signal.error }}>{` *`}</span>
-          )}
+          {required && <RequiredAsterisk>{` *`}</RequiredAsterisk>}
         </QuestionTitle>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
+        <QuestionHeaderRight>
           {status && (
             <QuestionStatusBadge $status={status}>{status}</QuestionStatusBadge>
           )}
 
-          <div
-            style={{
-              fontWeight: "600",
-              color: "black",
-            }}
-          >
+          <QuestionScore>
             {typeof score === "number" ? score : "-"}
-          </div>
-        </div>
+          </QuestionScore>
+        </QuestionHeaderRight>
       </QuestionHeader>
       <QuestionDescription>{question.description}</QuestionDescription>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div
-          id="questions"
-          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-        >
+      <FlexColumn>
+        <QuestionOptions id="questions">
           {question.type === "SINGLE" ? (
             question.options.map((value: AssessmentOption, index: number) => (
               <SingleSelectionQuestion
@@ -279,20 +237,17 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
           ) : (
             <NumberMultiplierQuestion
               question={question}
-              inputNumber={inputNumber}
+              inputNumber={selection}
               score={score || 0}
               onChange={onChange}
               showError={showError}
             />
           )}
-        </div>
-        <div
-          id="bottom-half"
-          style={{ display: "flex", flexDirection: "column", width: "80%" }}
-        >
+        </QuestionOptions>
+        <QuestionNotesSection id="bottom-half">
           <QuestionNotes noteInfo={question.note} note={note} />
-        </div>
-      </div>
+        </QuestionNotesSection>
+      </FlexColumn>
     </QuestionBox>
   );
 });

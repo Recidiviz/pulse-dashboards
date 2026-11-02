@@ -31,8 +31,8 @@ export const programCompletionsList = z.array(
 export const goodBehaviorPastFourMonthsNotes = z.object({
   latestAdSegPlacement: z
     .object({
-      adSegEndDateExclusive: dateStringSchema,
-      adSegStartDate: dateStringSchema,
+      adSegEndDateExclusive: dateStringSchema.nullable(),
+      adSegStartDate: dateStringSchema.nullable(),
     })
     .nullable(),
   latestIncidents: z.array(
