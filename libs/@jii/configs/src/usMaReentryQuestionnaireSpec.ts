@@ -41,7 +41,6 @@ export type StandardRadioOptionId = (typeof standardRadioOptionIds)[number];
 export const reentryQuestionnaireDomainIds = [
   "HOUSING",
   "WORK",
-  "HEALTH",
   "MONEY",
   "TRANSPORTATION",
   "EDUCATION_AND_PROGRAMS",
@@ -70,8 +69,6 @@ export type ReentryQuestionnaireQuestionConfig =
 export const reentryQuestionnaireQuestionIds = [
   "HOUSING",
   "WORK_PLANS",
-  "HEALTHCARE_NEEDED",
-  "HEALTHCARE_DETAILS",
   "SSI_SSDI_ELIGIBILITY",
   "SSI_SSDI_DETAILS",
   "TRANSPORTATION_PLAN",
@@ -113,29 +110,6 @@ export const reentryQuestionnaireConfig: Record<
       "ATTENDING_SCHOOL",
       ...unsureOrDeclinedOptionIds,
     ],
-  },
-  HEALTHCARE_NEEDED: {
-    domain: "HEALTH",
-    format: "RADIO",
-    options: standardRadioOptionIds,
-  },
-  HEALTHCARE_DETAILS: {
-    domain: "HEALTH",
-    format: "CHECKBOX",
-    options: [
-      "PRESCRIPTION_MEDICINE",
-      "ONGOING_CONDITION",
-      "MENTAL_HEALTH",
-      "SUBSTANCE_USE",
-      "MEDICATION_ASSISTED_TREATMENT",
-      "SOMETHING_ELSE",
-    ],
-    exclusiveOptions: [],
-    showIf: {
-      questionId: "HEALTHCARE_NEEDED",
-      operator: "equals",
-      value: "YES",
-    },
   },
   SSI_SSDI_ELIGIBILITY: {
     domain: "MONEY",

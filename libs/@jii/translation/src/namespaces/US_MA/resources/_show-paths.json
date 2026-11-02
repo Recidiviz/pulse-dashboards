@@ -315,7 +315,6 @@
       "domainCopy": {
         "HOUSING": "[US_MA]reentry.questionnaire.domainCopy.HOUSING",
         "WORK": "[US_MA]reentry.questionnaire.domainCopy.WORK",
-        "HEALTH": "[US_MA]reentry.questionnaire.domainCopy.HEALTH",
         "MONEY": "[US_MA]reentry.questionnaire.domainCopy.MONEY",
         "TRANSPORTATION": "[US_MA]reentry.questionnaire.domainCopy.TRANSPORTATION",
         "EDUCATION_AND_PROGRAMS": "[US_MA]reentry.questionnaire.domainCopy.EDUCATION_AND_PROGRAMS",
@@ -329,14 +328,6 @@
         "WORK_PLANS": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.WORK_PLANS.question",
           "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.WORK_PLANS.whyWeAsk"
-        },
-        "HEALTHCARE_NEEDED": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.question",
-          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.whyWeAsk"
-        },
-        "HEALTHCARE_DETAILS": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.question",
-          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.whyWeAsk"
         },
         "SSI_SSDI_ELIGIBILITY": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_ELIGIBILITY.question",
@@ -391,14 +382,6 @@
           "ATTENDING_SCHOOL": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.ATTENDING_SCHOOL",
           "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.UNSURE",
           "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.DECLINED_TO_ANSWER"
-        },
-        "HEALTHCARE_DETAILS": {
-          "PRESCRIPTION_MEDICINE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.PRESCRIPTION_MEDICINE",
-          "ONGOING_CONDITION": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.ONGOING_CONDITION",
-          "MENTAL_HEALTH": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MENTAL_HEALTH",
-          "SUBSTANCE_USE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.SUBSTANCE_USE",
-          "MEDICATION_ASSISTED_TREATMENT": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MEDICATION_ASSISTED_TREATMENT",
-          "SOMETHING_ELSE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.SOMETHING_ELSE"
         },
         "SSI_SSDI_DETAILS": {
           "SSI": "[US_MA]reentry.questionnaire.optionCopy.SSI_SSDI_DETAILS.SSI",
@@ -545,9 +528,6 @@
         "RESEARCHED_HOUSING_RESOURCES": {
           "label": "[US_MA]reentry.checklist.itemCopy.RESEARCHED_HOUSING_RESOURCES.label"
         },
-        "HAS_MEDICAL_FOLLOW_UP_PLAN": {
-          "label": "[US_MA]reentry.checklist.itemCopy.HAS_MEDICAL_FOLLOW_UP_PLAN.label"
-        },
         "CAR_READY_TO_DRIVE": {
           "label": "[US_MA]reentry.checklist.itemCopy.CAR_READY_TO_DRIVE.label"
         },
@@ -608,12 +588,6 @@
         "HAS_FIRST_DAY_PLAN": {
           "label": "[US_MA]reentry.checklist.itemCopy.HAS_FIRST_DAY_PLAN.label"
         },
-        "KNOWS_MENTAL_HEALTH_SUPPORT": {
-          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_MENTAL_HEALTH_SUPPORT.label"
-        },
-        "KNOWS_SUBSTANCE_USE_TREATMENT": {
-          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_SUBSTANCE_USE_TREATMENT.label"
-        },
         "DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST": {
           "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST.label"
         },
@@ -632,9 +606,6 @@
         "SEARCHED_FOR_JOBS": {
           "label": "[US_MA]reentry.checklist.itemCopy.SEARCHED_FOR_JOBS.label"
         },
-        "KNOWS_MAT_PROVIDER": {
-          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_MAT_PROVIDER.label"
-        },
         "RECEIVED_STATE_ID": {
           "label": "[US_MA]reentry.checklist.itemCopy.RECEIVED_STATE_ID.label"
         },
@@ -652,12 +623,6 @@
         },
         "CONFIRMED_JOB_START_DATE": {
           "label": "[US_MA]reentry.checklist.itemCopy.CONFIRMED_JOB_START_DATE.label"
-        },
-        "KNOWS_DOCTOR_OR_CLINIC": {
-          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_DOCTOR_OR_CLINIC.label"
-        },
-        "KNOWS_PHARMACY": {
-          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_PHARMACY.label"
         },
         "KNOWS_FIRST_WORK_DAY_REQUIREMENTS": {
           "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_FIRST_WORK_DAY_REQUIREMENTS.label"

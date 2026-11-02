@@ -24,6 +24,7 @@ import { Icon } from "~design-system";
 
 import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
+import { useReentryQuestionnaireDisplay } from "../../../../hooks/useReentryQuestionnaireDisplay";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../ctaConfigs";
 import { CompletedCard } from "./CompletedCard/CompletedCard";
 import {
@@ -37,12 +38,11 @@ import {
 } from "./QuestionnaireCta.styles";
 import { ReviewCard } from "./ReviewCard/ReviewCard";
 
-const PLACEHOLDER_SECTION_COUNT = 8;
-
 export const QuestionnaireCta = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
   const { status } = useReentryQuestionnaire();
+  const { sections } = useReentryQuestionnaireDisplay();
   const trackEvent = useReentryAnalytics();
 
   if (status === "COMPLETED") {
@@ -77,7 +77,7 @@ export const QuestionnaireCta = () => {
         <MetadataItem>
           <LayoutGrid size={16} />
           {t(($) => $.reentry.overview.questionnaireCta.sectionCount, {
-            count: PLACEHOLDER_SECTION_COUNT,
+            count: sections.length,
           })}
         </MetadataItem>
         <MetadataItem>

@@ -69,7 +69,7 @@ describe("getQuestionViewed", () => {
     const visibleQuestions = [
       question("HOUSING", "HOUSING"),
       question("WORK_PLANS", "WORK"),
-      question("HEALTHCARE_NEEDED", "HEALTH"),
+      question("SSI_SSDI_ELIGIBILITY", "MONEY"),
     ];
     expect(getQuestionViewed(visibleQuestions, "WORK_PLANS", false)).toEqual({
       questionId: "WORK_PLANS",

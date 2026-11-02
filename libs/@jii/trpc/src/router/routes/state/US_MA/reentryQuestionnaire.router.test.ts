@@ -62,6 +62,22 @@ describe("getReentryQuestionnaire", () => {
     ).resolves.toMatchObject({ id: testReentryQuestionnaireId });
   });
 
+  it("drops stored answers to questions the config no longer has", async () => {
+    await testPrismaClient.usMaReentryQuestionnaire.create({
+      data: {
+        id: testReentryQuestionnaireId,
+        pseudonymizedId: testPseudonymizedId,
+        answers: { HOUSING: "OWN_PLACE", REMOVED_QUESTION: "YES" },
+      },
+    });
+
+    await expect(
+      caller.usMa.getReentryQuestionnaire({
+        pseudonymizedId: testPseudonymizedId,
+      }),
+    ).resolves.toMatchObject({ answers: { HOUSING: "OWN_PLACE" } });
+  });
+
   it("returns the most recently updated reentry questionnaire", async () => {
     vi.setSystemTime(new Date("2020-01-01"));
 
@@ -144,7 +160,7 @@ describe("upsertReentryQuestionnaireAnswers", () => {
       data: {
         id: testReentryQuestionnaireId,
         pseudonymizedId: testPseudonymizedId,
-        answers: { HOUSING: "OWN_PLACE", HEALTHCARE_NEEDED: "YES" },
+        answers: { HOUSING: "OWN_PLACE", SSI_SSDI_ELIGIBILITY: "YES" },
       },
     });
 
@@ -169,10 +185,9 @@ describe("upsertReentryQuestionnaireAnswers", () => {
   });
 
   it("rejects answers for an unknown question id", async () => {
-    // a question id is never deleted/reused once shown to a resident (it's
-    // deprecated instead — see ReentryQuestionnaireQuestionConfig), so an
-    // unrecognized key here is a genuine bug, not a normal "retired question"
-    // case; the whole update should fail rather than silently drop it
+    // reads drop answers to removed questions, but writes come from the
+    // current client, so an unrecognized key here is a bug; the whole update
+    // should fail rather than silently drop it
     await testPrismaClient.usMaReentryQuestionnaire.create({
       data: {
         id: testReentryQuestionnaireId,

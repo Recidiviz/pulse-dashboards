@@ -414,7 +414,7 @@ describe("buildQuestionDisplay", () => {
       buildQuestionDisplay(
         "needsCare",
         {
-          domain: "HEALTH",
+          domain: "MONEY",
           format: "CHECKBOX",
           options: ["YES", "UNSURE"],
           exclusiveOptions: ["UNSURE"],
@@ -443,10 +443,10 @@ describe("buildQuestionnaireDisplay", () => {
   const display = buildQuestionnaireDisplay({
     questionIds: ["needsCare", "housing", "careDetails"],
     config: {
-      needsCare: { domain: "HEALTH", format: "RADIO", options: ["YES"] },
+      needsCare: { domain: "MONEY", format: "RADIO", options: ["YES"] },
       housing: { domain: "HOUSING", format: "RADIO", options: ["YES"] },
       careDetails: {
-        domain: "HEALTH",
+        domain: "MONEY",
         format: "CHECKBOX",
         options: ["MEDS"],
         exclusiveOptions: [],
@@ -459,7 +459,7 @@ describe("buildQuestionnaireDisplay", () => {
 
   test("builds one section per domain, in the order of its first question", () => {
     expect(display.sections).toEqual([
-      { domain: "HEALTH", label: "HEALTH label" },
+      { domain: "MONEY", label: "MONEY label" },
       { domain: "HOUSING", label: "HOUSING label" },
     ]);
   });
@@ -475,13 +475,13 @@ describe("buildQuestionnaireDisplay", () => {
       {
         id: "needsCare",
         heading: "needsCare heading",
-        sectionDomain: "HEALTH",
+        sectionDomain: "MONEY",
       },
       { id: "housing", heading: "housing heading", sectionDomain: "HOUSING" },
       {
         id: "careDetails",
         heading: "careDetails heading",
-        sectionDomain: "HEALTH",
+        sectionDomain: "MONEY",
       },
     ]);
   });

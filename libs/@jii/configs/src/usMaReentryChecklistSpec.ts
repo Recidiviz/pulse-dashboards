@@ -73,7 +73,6 @@ export const reentryChecklistItemIds = [
   "COMPLETED_REQUIRED_PROGRAMS",
   "HAS_POSITIVE_ROLE_MODELS",
   "RESEARCHED_HOUSING_RESOURCES",
-  "HAS_MEDICAL_FOLLOW_UP_PLAN",
   "CAR_READY_TO_DRIVE",
   "HAS_SUPPORT_CONTACT_LIST",
   "KNOWS_MASSHEALTH_APPLICATION_PROCESS",
@@ -94,23 +93,18 @@ export const reentryChecklistItemIds = [
   "HAS_RENT_PAYMENT_PLAN",
   "HAS_HOUSING_PROGRAM_RENT_PLAN",
   "HAS_FIRST_DAY_PLAN",
-  "KNOWS_MENTAL_HEALTH_SUPPORT",
-  "KNOWS_SUBSTANCE_USE_TREATMENT",
   "DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST",
   "APPLIED_FOR_SOCIAL_SECURITY_CARD",
   "ASKED_ABOUT_RELEASE_DAY_RIDE",
   "KNOWS_PUBLIC_TRANSIT_ROUTES",
   "HAS_BIKE_PLAN",
   "SEARCHED_FOR_JOBS",
-  "KNOWS_MAT_PROVIDER",
   "RECEIVED_STATE_ID",
   "HAS_FIRST_MONTH_BUDGET",
   "RECEIVED_SOCIAL_SECURITY_CARD",
   "MASSHEALTH_APPLICATION_FILED",
   "HAS_MASSHEALTH_COVERAGE",
   "CONFIRMED_JOB_START_DATE",
-  "KNOWS_DOCTOR_OR_CLINIC",
-  "KNOWS_PHARMACY",
   "KNOWS_FIRST_WORK_DAY_REQUIREMENTS",
   "FINALIZED_HOUSING",
   "CONFIRMED_RELEASE_DAY_PICKUP",
@@ -257,15 +251,6 @@ export const reentryChecklistConfig: Record<
           value: "UNSURE",
         },
       ],
-    },
-  },
-  HAS_MEDICAL_FOLLOW_UP_PLAN: {
-    section: "TWELVE_MONTHS",
-    domain: "HEALTH",
-    showIf: {
-      questionId: "HEALTHCARE_DETAILS",
-      operator: "equals",
-      value: "ONGOING_CONDITION",
     },
   },
   CAR_READY_TO_DRIVE: {
@@ -516,24 +501,6 @@ export const reentryChecklistConfig: Record<
     section: "THREE_MONTHS",
     domain: "COMMUNITY",
   },
-  KNOWS_MENTAL_HEALTH_SUPPORT: {
-    section: "THREE_MONTHS",
-    domain: "HEALTH",
-    showIf: {
-      questionId: "HEALTHCARE_DETAILS",
-      operator: "equals",
-      value: "MENTAL_HEALTH",
-    },
-  },
-  KNOWS_SUBSTANCE_USE_TREATMENT: {
-    section: "THREE_MONTHS",
-    domain: "HEALTH",
-    showIf: {
-      questionId: "HEALTHCARE_DETAILS",
-      operator: "equals",
-      value: "SUBSTANCE_USE",
-    },
-  },
   DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST: {
     section: "THREE_MONTHS",
     domain: "TRANSPORTATION",
@@ -583,15 +550,6 @@ export const reentryChecklistConfig: Record<
       value: "LOOKING_FOR_WORK",
     },
   },
-  KNOWS_MAT_PROVIDER: {
-    section: "THREE_MONTHS",
-    domain: "HEALTH",
-    showIf: {
-      questionId: "HEALTHCARE_DETAILS",
-      operator: "equals",
-      value: "MEDICATION_ASSISTED_TREATMENT",
-    },
-  },
   RECEIVED_STATE_ID: {
     section: "ONE_MONTH",
     domain: "DOCUMENTS",
@@ -619,52 +577,6 @@ export const reentryChecklistConfig: Record<
       questionId: "WORK_PLANS",
       operator: "equals",
       value: "HAS_JOB_LINED_UP",
-    },
-  },
-  KNOWS_DOCTOR_OR_CLINIC: {
-    section: "ONE_MONTH",
-    domain: "HEALTH",
-    showIf: {
-      any: [
-        {
-          questionId: "HEALTHCARE_DETAILS",
-          operator: "equals",
-          value: "PRESCRIPTION_MEDICINE",
-        },
-        {
-          questionId: "HEALTHCARE_DETAILS",
-          operator: "equals",
-          value: "ONGOING_CONDITION",
-        },
-        {
-          questionId: "HEALTHCARE_DETAILS",
-          operator: "equals",
-          value: "SUBSTANCE_USE",
-        },
-      ],
-    },
-  },
-  KNOWS_PHARMACY: {
-    section: "ONE_MONTH",
-    domain: "HEALTH",
-    showIf: {
-      any: [
-        {
-          questionId: "HEALTHCARE_DETAILS",
-          operator: "equals",
-          value: "PRESCRIPTION_MEDICINE",
-        },
-        {
-          questionId: "HEALTHCARE_DETAILS",
-          operator: "equals",
-          value: "ONGOING_CONDITION",
-        },
-        {
-          questionId: "HEALTHCARE_DETAILS",
-          operator: "equals",
-          value: "SUBSTANCE_USE",
-        },
-      ],
     },
   },
   KNOWS_FIRST_WORK_DAY_REQUIREMENTS: {

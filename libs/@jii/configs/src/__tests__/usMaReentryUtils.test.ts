@@ -20,7 +20,7 @@ import { conditionIsMet } from "../usMaReentryUtils";
 describe("conditionIsMet", () => {
   // No checklist item uses notEquals yet, so these test the condition directly
   const radioNotEqualsYes = {
-    questionId: "HEALTHCARE_NEEDED",
+    questionId: "BORN_IN_MASSACHUSETTS",
     operator: "notEquals",
     value: "YES",
   } as const;
@@ -31,14 +31,14 @@ describe("conditionIsMet", () => {
   } as const;
 
   it("is met when a RADIO answer differs from a notEquals value", () => {
-    expect(conditionIsMet(radioNotEqualsYes, { HEALTHCARE_NEEDED: "NO" })).toBe(
-      true,
-    );
+    expect(
+      conditionIsMet(radioNotEqualsYes, { BORN_IN_MASSACHUSETTS: "NO" }),
+    ).toBe(true);
   });
 
   it("is not met when a RADIO answer matches a notEquals value", () => {
     expect(
-      conditionIsMet(radioNotEqualsYes, { HEALTHCARE_NEEDED: "YES" }),
+      conditionIsMet(radioNotEqualsYes, { BORN_IN_MASSACHUSETTS: "YES" }),
     ).toBe(false);
   });
 
