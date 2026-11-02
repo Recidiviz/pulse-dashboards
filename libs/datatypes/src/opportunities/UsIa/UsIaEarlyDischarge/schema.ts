@@ -177,3 +177,6 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
 export type UsIaEarlyDischargeRecord = ParsedRecord<
   typeof usIaEarlyDischargeSchema
 >;
+
+export type UsIaEarlyDischargeCharge =
+  UsIaEarlyDischargeRecord["output"]["formInformation"]["charges"][number];

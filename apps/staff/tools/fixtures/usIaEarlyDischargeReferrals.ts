@@ -57,7 +57,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
         {
           causeNumber: "CN123",
           crimeCdOffenseType: "Felony",
-          jurisdiction: "Polk",
+          jurisdiction: "POLK",
           classificationTypeRawText: "Felony",
           counts: 1,
           description: "Sample offense",
@@ -69,7 +69,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
         {
           causeNumber: "FT987",
           crimeCdOffenseType: "Felony",
-          jurisdiction: "Monroe",
+          jurisdiction: "MONROE",
           classificationTypeRawText: "Felony",
           counts: 2,
           description: "Some other offense",
@@ -100,6 +100,12 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
           staffTitle: "Probation Officer",
           workUnit: "Case Management",
           officerExternalId: "OFFICER-001",
+        },
+        // The default offline user, so the form fills in the officer signature
+        {
+          staffTitle: "Probation Officer II",
+          workUnit: "Case Management",
+          officerExternalId: "agonzalez123",
         },
       ],
     },
@@ -153,7 +159,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
         {
           causeNumber: "CN456",
           crimeCdOffenseType: "Misdemeanor",
-          jurisdiction: "County Court",
+          jurisdiction: "SCOTT",
           classificationTypeRawText: "Misdemeanor",
           counts: 2,
           description: "Another sample offense",
@@ -253,7 +259,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
         {
           causeNumber: "CN789",
           crimeCdOffenseType: "Felony",
-          jurisdiction: "Municipal Court",
+          jurisdiction: "BLACK HAWK",
           classificationTypeRawText: "Felony",
           counts: 1,
           description: "Minor offense",
@@ -347,7 +353,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
         {
           causeNumber: "CN987",
           crimeCdOffenseType: "Misdemeanor",
-          jurisdiction: "District Court",
+          jurisdiction: "DALLAS",
           classificationTypeRawText: "Misdemeanor",
           counts: 1,
           description: "Example offense",
@@ -422,7 +428,7 @@ export const usIaEarlyDischargeReferralsFixture = fixtureWithIdKey<
         {
           causeNumber: "CN989",
           crimeCdOffenseType: "Misdemeanor",
-          jurisdiction: "District Court",
+          jurisdiction: "LINN",
           classificationTypeRawText: "Misdemeanor",
           counts: 1,
           description: "Example offense",

@@ -18,7 +18,11 @@
 import { DocumentData } from "@google-cloud/firestore";
 import { Timestamp } from "firebase/firestore";
 
-import { UsIaEarlyDischargeRecord, usIaEarlyDischargeSchema } from "~datatypes";
+import {
+  UsIaEarlyDischargeCharge,
+  UsIaEarlyDischargeRecord,
+  usIaEarlyDischargeSchema,
+} from "~datatypes";
 
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../../core/views";
@@ -510,5 +514,25 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       return "Temporary Snooze";
     }
     return super.denialViewPrompt;
+  }
+
+  /**
+   * Groups the client's charges by jurisdiction, keeping jurisdictions and charges
+   * in record order. For charges in POLK, MONROE, POLK, it returns:
+   *
+   *   POLK   -> [first charge, third charge]
+   *   MONROE -> [second charge]
+   */
+  get chargesByJurisdiction(): Map<string, UsIaEarlyDischargeCharge[]> {
+    const byJurisdiction = new Map<string, UsIaEarlyDischargeCharge[]>();
+    this.record.formInformation.charges.forEach((charge) => {
+      const charges = byJurisdiction.get(charge.jurisdiction);
+      if (charges) {
+        charges.push(charge);
+      } else {
+        byJurisdiction.set(charge.jurisdiction, [charge]);
+      }
+    });
+    return byJurisdiction;
   }
 }

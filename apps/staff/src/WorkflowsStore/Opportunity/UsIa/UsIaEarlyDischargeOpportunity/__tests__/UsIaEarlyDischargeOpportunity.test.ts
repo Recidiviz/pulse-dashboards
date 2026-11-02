@@ -454,3 +454,52 @@ describe("maxManualSnoozeDays", () => {
     expect(opportunity.maxManualSnoozeDays(["TEMPORARY REASON"])).toEqual(90);
   });
 });
+
+describe("chargesByJurisdiction", () => {
+  let client: Client;
+  let opportunity: UsIaEarlyDischargeOpportunity;
+
+  beforeEach(() => {
+    configure({ safeDescriptors: false });
+    rootStore = new RootStore();
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    vi.spyOn(
+      rootStore.workflowsStore,
+      "opportunityTypes",
+      "get",
+    ).mockReturnValue(["usIaEarlyDischarge"]);
+    client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    configure({ safeDescriptors: true });
+  });
+
+  test("Charges are properly mapped to jurisdiction", () => {
+    const baseCharge =
+      usIaEarlyDischargeRecordFixture.formInformation.charges![0];
+    const record = {
+      ...usIaEarlyDischargeRecordFixture,
+      formInformation: {
+        ...usIaEarlyDischargeRecordFixture.formInformation,
+        charges: [
+          { ...baseCharge, jurisdiction: "POLK", chargeExternalId: "C1" },
+          { ...baseCharge, jurisdiction: "MONROE", chargeExternalId: "C2" },
+          { ...baseCharge, jurisdiction: "POLK", chargeExternalId: "C3" },
+        ],
+      },
+    };
+    opportunity = new UsIaEarlyDischargeOpportunity(client, record);
+
+    const result = opportunity.chargesByJurisdiction;
+    expect([...result.keys()]).toEqual(["POLK", "MONROE"]);
+    expect(result.get("POLK")?.map((c) => c.chargeExternalId)).toEqual([
+      "C1",
+      "C3",
+    ]);
+    expect(result.get("MONROE")?.map((c) => c.chargeExternalId)).toEqual([
+      "C2",
+    ]);
+  });
+});

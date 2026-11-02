@@ -44,6 +44,7 @@ import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityP
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
 import { FormUsIaEarlyDischargeProbation } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeProbation";
+import { FormUsIaEarlyDischargeV2 } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeV2";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormUsMiClassification } from "../Paperwork/US_MI/MiClassification/FormUsMiClassification";
 import { FormUsMiSCCReviewV2 } from "../Paperwork/US_MI/SCCReviewV2/FormUsMiSCCReviewV2";
@@ -131,6 +132,7 @@ const FormComponents = {
   FormUsPaAdminSupervision,
   FormUsIaEarlyDischargeParole,
   FormUsIaEarlyDischargeProbation,
+  FormUsIaEarlyDischargeV2,
   FormUsMiSCCReviewV2,
   WorkflowsUsAzReleaseToTransitionProgramForm,
   WorkflowsFormUsTnSuspensionOfDirectSupervision,

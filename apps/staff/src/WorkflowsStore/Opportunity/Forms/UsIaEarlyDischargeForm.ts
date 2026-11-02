@@ -101,7 +101,16 @@ export type UsIaEarlyDischargeDraftData = {
   hasOtherProbationDischargeOrder: boolean;
   otherProbationDischargeOrderDetails: string;
 } & PenaltyRecords &
-  ChargeRecords;
+  ChargeRecords &
+  Record<NarrativeKey, string>;
+
+// One narrative per jurisdiction, such as "narrative-BLACK HAWK", because each
+// jurisdiction becomes its own ICON discharge order.
+export type NarrativeKey = `narrative-${string}`;
+
+export function narrativeKey(jurisdiction: string): NarrativeKey {
+  return `narrative-${jurisdiction}`;
+}
 
 export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
   const {
@@ -204,6 +213,9 @@ export class UsIaEarlyDischargeForm extends FormBase<
   UsIaEarlyDischargeOpportunity
 > {
   get formContents(): OpportunityFormComponentName {
+    if (this.rootStore.userStore.activeFeatureVariants.usIaEarlyDischargeV2) {
+      return "FormUsIaEarlyDischargeV2";
+    }
     if (this.person.supervisionType === "PAROLE") {
       return "FormUsIaEarlyDischargeParole";
     }

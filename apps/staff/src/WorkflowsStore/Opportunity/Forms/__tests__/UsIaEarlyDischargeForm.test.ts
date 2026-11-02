@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { isDemoMode, isTestEnv } from "~client-env-utils";
 
 import { RootStore } from "../../../../RootStore";
+import { ActiveFeatureVariantRecord } from "../../../../RootStore/types";
 import UserStore from "../../../../RootStore/UserStore";
 import { Client } from "../../../Client";
 import { UsIaEarlyDischargeOpportunity } from "../../UsIa/UsIaEarlyDischargeOpportunity";
@@ -40,6 +41,7 @@ let rootStore: RootStore;
 function createTestUnit(
   externalId = "NOT-AN-OFFICER",
   options: {
+    featureVariants?: ActiveFeatureVariantRecord;
     userFullName?: string;
     userFullNameFromAdminPanel?: string;
   } = {},
@@ -47,7 +49,9 @@ function createTestUnit(
   rootStore = new RootStore();
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   rootStore.userStore = {
-    activeFeatureVariants: { usIaEarlyDischargeForms: {} },
+    activeFeatureVariants: options.featureVariants ?? {
+      usIaEarlyDischargeForms: {},
+    },
     userAppMetadata: { externalId },
     userFullName: options.userFullName,
     userFullNameFromAdminPanel: options.userFullNameFromAdminPanel ?? "",
@@ -163,5 +167,18 @@ describe("prefilledDataTransformer", () => {
       createTestUnit("NOT-AN-OFFICER", { userFullName: "Some User" });
       expect(form.prefilledDataTransformer().officerFullName).toBeUndefined();
     });
+  });
+});
+
+describe("formContents", () => {
+  test.each([
+    [
+      { usIaEarlyDischargeForms: {}, usIaEarlyDischargeV2: {} },
+      "FormUsIaEarlyDischargeV2",
+    ],
+    [{ usIaEarlyDischargeForms: {} }, "FormUsIaEarlyDischargeProbation"],
+  ])("with variants %o, returns %s", (featureVariants, expected) => {
+    createTestUnit(undefined, { featureVariants });
+    expect(form.formContents).toBe(expected);
   });
 });

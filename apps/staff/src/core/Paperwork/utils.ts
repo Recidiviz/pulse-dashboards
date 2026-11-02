@@ -124,7 +124,12 @@ type ReactiveInputReturnValue<
     | HTMLInputElement
     | HTMLTextAreaElement
     | HTMLSelectElement = HTMLInputElement,
-> = [ReactiveInputValue, (event: React.ChangeEvent<E>) => void];
+> = [
+  ReactiveInputValue,
+  (event: React.ChangeEvent<E>) => void,
+  // For components whose onChange hands back the value instead of an event
+  (value: ReactiveInputValue) => void,
+];
 
 function useReactiveInput<
   E extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
@@ -149,6 +154,14 @@ function useReactiveInput<
     }, inputUpdateDelayMs),
   );
 
+  const onValueChange = (inputValue: ReactiveInputValue) => {
+    setValue(inputValue);
+
+    if (updateFirestoreRef.current) {
+      updateFirestoreRef.current(inputValue ?? null);
+    }
+  };
+
   const onChange = (event: React.ChangeEvent<E>) => {
     let inputValue: ReactiveInputValue;
     if (inputType === "number") {
@@ -156,11 +169,7 @@ function useReactiveInput<
     } else {
       inputValue = event.target.value;
     }
-    setValue(inputValue);
-
-    if (updateFirestoreRef.current) {
-      updateFirestoreRef.current(inputValue ?? null);
-    }
+    onValueChange(inputValue);
   };
 
   useEffect(() => {
@@ -185,7 +194,7 @@ function useReactiveInput<
     );
   });
 
-  return [value, onChange];
+  return [value, onChange, onValueChange];
 }
 
 export { useReactiveInput };
