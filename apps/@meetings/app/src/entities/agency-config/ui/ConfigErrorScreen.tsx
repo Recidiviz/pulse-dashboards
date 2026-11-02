@@ -16,11 +16,9 @@
 // =============================================================================
 
 import React from "react";
-import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
-import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { ErrorState } from "~@meetings/app/shared/ui/ErrorState";
 
 interface ConfigErrorScreenProps {
   onRetry: () => void;
@@ -29,21 +27,10 @@ interface ConfigErrorScreenProps {
 const ConfigErrorScreen: React.FC<ConfigErrorScreenProps> = ({ onRetry }) => {
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
-      <View className="flex-1 items-center justify-center px-6">
-        <View className="w-full max-w-md rounded-lg bg-white p-8 shadow-sm">
-          <Typography className="mb-4 text-center font-libre-baskerville text-3xl font-bold text-gray-900">
-            Something went wrong
-          </Typography>
-          <Typography
-            variant="body-m-regular"
-            className="mb-6 text-center !text-gray-600"
-          >
-            We couldn't load your agency data. Please check your connection and
-            try again.
-          </Typography>
-          <PrimaryButton onPress={onRetry} label="Try Again" />
-        </View>
-      </View>
+      <ErrorState
+        message="We couldn't load your agency data. Please check your connection and try again."
+        onRetry={onRetry}
+      />
     </SafeAreaView>
   );
 };

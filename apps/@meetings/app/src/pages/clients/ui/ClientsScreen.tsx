@@ -32,6 +32,7 @@ import {
   useIsMobileWidth,
   useSetDocumentTitle,
 } from "~@meetings/app/shared/lib/platform";
+import { ErrorState } from "~@meetings/app/shared/ui/ErrorState";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import { Header } from "~@meetings/app/widgets/header";
 import {
@@ -67,6 +68,8 @@ export function ClientsScreen() {
     setOtherCaseloadPage(1);
   }, [search, otherCaseloadSort]);
 
+  const utils = trpc.useUtils();
+
   // Drives screen-level loading / empty states. PersonsTable / PersonsMobileList
   // run their own paginated queries for the actual rows.
   const {
@@ -86,11 +89,25 @@ export function ClientsScreen() {
     }
   }, [recordingState, refetch]);
 
-  if (isLoading) {
+  const hasFailed = !!error && !countData;
+
+  if (isLoading || (hasFailed && isFetching)) {
     return <Loading message="Loading clients..." />;
   }
 
-  if (error) throw error;
+  if (hasFailed) {
+    return (
+      <SafeAreaView className="flex-1">
+        <View className="flex-1" style={{ marginTop: -insets.top }}>
+          <Header />
+          <ErrorState
+            message="We couldn't load clients. Please check your connection and try again."
+            onRetry={() => utils.v1.client.list.invalidate()}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const total = countData?.total ?? 0;
 

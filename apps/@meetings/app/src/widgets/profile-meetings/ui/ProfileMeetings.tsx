@@ -54,6 +54,7 @@ import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
 import { BlockLink } from "~@meetings/app/shared/ui/BlockLink";
+import { ErrorState } from "~@meetings/app/shared/ui/ErrorState";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import MeetingsHeaderContent from "./MeetingsHeaderContent";
@@ -75,6 +76,7 @@ type Props = {
   personType: PersonType;
   rawMeetings?: ClientMeetings | ResidentMeetings;
   isLoading: boolean;
+  isFetching: boolean;
   error: unknown;
   refetch: () => void;
   header: ReactNode;
@@ -85,6 +87,7 @@ export const ProfileMeetings = ({
   personType,
   rawMeetings,
   isLoading,
+  isFetching,
   error,
   refetch,
   header,
@@ -290,7 +293,9 @@ export const ProfileMeetings = ({
     return matchesSearch;
   });
 
-  if (isLoading) {
+  const hasFailed = !!error && !rawMeetings;
+
+  if (isLoading || (hasFailed && isFetching)) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <Typography className="text-base text-gray-700">
@@ -300,7 +305,19 @@ export const ProfileMeetings = ({
     );
   }
 
-  if (error) throw error;
+  if (hasFailed) {
+    return (
+      <SafeAreaView className="flex-1">
+        <View className="flex-1" style={{ marginTop: -insets.top }}>
+          {header}
+          <ErrorState
+            message="We couldn't load meetings. Please check your connection and try again."
+            onRetry={refetch}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1">

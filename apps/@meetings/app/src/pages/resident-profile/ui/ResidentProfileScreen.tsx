@@ -52,6 +52,7 @@ function ResidentProfileContent({ person }: { person: Person }) {
   const {
     data: rawMeetings,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useMeetings({ personId: person.personId, personType: "resident" });
@@ -62,6 +63,7 @@ function ResidentProfileContent({ person }: { person: Person }) {
       personType="resident"
       rawMeetings={rawMeetings}
       isLoading={isLoading}
+      isFetching={isFetching}
       error={error}
       refetch={refetch}
       header={

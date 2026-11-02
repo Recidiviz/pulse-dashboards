@@ -151,6 +151,7 @@ function renderComponent() {
       person={mockPerson}
       personType="client"
       isLoading={false}
+      isFetching={false}
       error={null}
       refetch={jest.fn()}
       header={null}

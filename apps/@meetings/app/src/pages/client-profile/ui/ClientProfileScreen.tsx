@@ -52,6 +52,7 @@ function ClientProfileContent({ person }: { person: Person }) {
   const {
     data: rawMeetings,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useMeetings({ personId: person.personId, personType: "client" });
@@ -62,6 +63,7 @@ function ClientProfileContent({ person }: { person: Person }) {
       personType="client"
       rawMeetings={rawMeetings}
       isLoading={isLoading}
+      isFetching={isFetching}
       error={error}
       refetch={refetch}
       header={
