@@ -23,6 +23,7 @@ import { LastUpdatedBanner } from "~@jii/layout";
 import { useUsArTranslations } from "~@jii/translation";
 
 import { isPaaResident } from "../../isPaaResident";
+import { EdovoProgressCard } from "./EdovoProgressCard/EdovoProgressCard";
 import { IneligibleCard } from "./IneligibleCard";
 import { PolicyExplainerCard } from "./PolicyExplainerCard";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./ProgramsNavBar/ProgramsNavBar.styles";
@@ -40,7 +41,14 @@ export const UsArOnMyTablet: FC = () => {
       <HomepageSectionHeading>
         {t(($) => $.programs.onMyTablet.title)}
       </HomepageSectionHeading>
-      {isPaaResident(metadata) ? <PolicyExplainerCard /> : <IneligibleCard />}
+      {isPaaResident(metadata) ? (
+        <>
+          <EdovoProgressCard />
+          <PolicyExplainerCard />
+        </>
+      ) : (
+        <IneligibleCard />
+      )}
     </>
   );
 };

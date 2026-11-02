@@ -92,6 +92,15 @@
       "ineligible": {
         "heading": "Courses on your tablet are open to you",
         "body": "You may have heard that Edovo courses now count toward release. This currently only applies to people sentenced under the Protect Arkansas Act, which does not include your sentence. Edovo courses are still open to you and can help you build new skills. Ask Records if you have any questions about your release date."
+      },
+      "progressBar": {
+        "hoursCompleted": "**{{hours}}** of 16 course hours completed",
+        "totalHoursCompleted": "**{{hours}}** of 16 total course hours completed",
+        "carriedIn_one": "{{count}} hour carried in",
+        "carriedIn_other": "{{count}} hours carried in",
+        "hoursToGo_one": "hour to go",
+        "hoursToGo_other": "hours to go",
+        "scale": "16 hrs = 1 program unit"
       }
     }
   },

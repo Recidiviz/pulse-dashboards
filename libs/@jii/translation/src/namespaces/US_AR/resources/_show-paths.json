@@ -92,6 +92,15 @@
       "ineligible": {
         "heading": "[US_AR]programs.onMyTablet.ineligible.heading",
         "body": "[US_AR]programs.onMyTablet.ineligible.body"
+      },
+      "progressBar": {
+        "hoursCompleted": "[US_AR]programs.onMyTablet.progressBar.hoursCompleted",
+        "totalHoursCompleted": "[US_AR]programs.onMyTablet.progressBar.totalHoursCompleted",
+        "carriedIn_one": "[US_AR]programs.onMyTablet.progressBar.carriedIn_one",
+        "carriedIn_other": "[US_AR]programs.onMyTablet.progressBar.carriedIn_other",
+        "hoursToGo_one": "[US_AR]programs.onMyTablet.progressBar.hoursToGo_one",
+        "hoursToGo_other": "[US_AR]programs.onMyTablet.progressBar.hoursToGo_other",
+        "scale": "[US_AR]programs.onMyTablet.progressBar.scale"
       }
     }
   },

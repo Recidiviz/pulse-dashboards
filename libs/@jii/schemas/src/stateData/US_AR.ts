@@ -28,11 +28,12 @@ export const usArStateDataSchema = usArResidentCommonSchema.extend({
   hasApprovedCasePlan: nullishAsUndefined(z.boolean()),
   maxCpus: nullishAsUndefined(z.number()),
   isEligibleForCpus: nullishAsUndefined(z.boolean()),
-  edovoHoursThisMonth: nullishAsUndefined(z.number()),
-  edovoCarryInHours: nullishAsUndefined(z.number()),
-  edovoHoursToNextCpu: nullishAsUndefined(z.number()),
-  edovoIsCreditingMonth: nullishAsUndefined(z.boolean()),
+  edovoHoursThisMonth: z.number(),
+  edovoCarryInHours: z.number(),
+  edovoHoursToNextCpu: z.number(),
+  edovoIsCreditingMonth: z.boolean(),
   edovoLastRefreshedAt: nullishAsUndefined(dateStringSchema),
+  edovoDataBuiltAt: nullishAsUndefined(dateStringSchema),
   lastUpdatedDate: dateStringSchema,
 });
 export type UsArResidentJiiData = z.output<typeof usArStateDataSchema>;
