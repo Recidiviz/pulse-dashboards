@@ -214,7 +214,8 @@ export type FeatureVariant =
   | "HCRPPIIEmail"
 
   // PAROLE BOARD
-  | "usCoParolePublicCalendar";
+  | "usCoParolePublicCalendar"
+  | "usIdParoleBoardReports";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -355,6 +356,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   useRecordForIneligibleOpps: {},
   useStableExternalId: {},
   usCoParolePublicCalendar: {},
+  usIdParoleBoardReports: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -451,6 +453,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         // built, because it replaces the live early discharge page. Opt in per
         // user via the admin panel to work on it.
         usIaEarlyDischargeV2: undefined,
+        // Off for Recidiviz users while the US_ID PHI report is built, because
+        // it turns the read-only Parole Board case profile into an editor. Opt
+        // in per user via the admin panel to work on it.
+        usIdParoleBoardReports: undefined,
         outcomesModule: {
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
