@@ -101,7 +101,7 @@ describe("one person in DB without prior messages", () => {
       
       Standard messaging rates may apply.
 
-      Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
+      Si prefiere recibir estos mensajes en español, responda con el numero 2 en cualquier momento.
       
       Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
     `);
@@ -229,7 +229,7 @@ describe("one person in DB without prior messages", () => {
       
       Standard messaging rates may apply.
 
-      Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
+      Si prefiere recibir estos mensajes en español, responda con el numero 2 en cualquier momento.
       
       Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
     `);
@@ -404,7 +404,7 @@ describe("one person in DB with welcome text in progress", () => {
 
       Need to reschedule or have questions? Contact Officer John Doe at 9879879879.
 
-      Si prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.
+      Si prefiere recibir estos mensajes en español, responda con el numero 2 en cualquier momento.
 
       Reply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number."
     `);

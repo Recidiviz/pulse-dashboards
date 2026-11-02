@@ -335,7 +335,7 @@ describe("sendLanguageConfirmation", () => {
 
   test("sends English confirmation message with correct body", () => {
     const expectedEnglishMessage =
-      "All future messages will be in English.\n\nSi prefiere recibir estos mensajes en español, responda con el número 2 en cualquier momento.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.";
+      "All future messages will be in English.\n\nSi prefiere recibir estos mensajes en español, responda con el numero 2 en cualquier momento.\n\nReply STOP to stop receiving these messages at any time. We're unable to respond to messages sent to this number.";
 
     sendLanguageConfirmation("US_TX", "5551234567", "en", i18nInstance);
 
