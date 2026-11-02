@@ -1,0 +1,225 @@
+// =============================================================================
+// Calendar (Spec D v2). Each state that uses the Calendar module has its own
+// database (CALENDAR__<STATE>, D37), so no model has a stateCode column. Every
+// model and enum starts with "Calendar".
+//
+// The migration adds CHECK constraints that Prisma can't express (see
+// migrations/*_calendar_models/migration.sql). A calendar's settings and its
+// entry types' behaviour are its state's code, not columns (D36), so the rules
+// that depend on them are checked in code on every write.
+// =============================================================================
+
+enum CalendarMonthStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum CalendarEntrySource {
+  /// Created by the draft generator from a CalendarEntryPattern.
+  PATTERN
+  /// Added by an editor.
+  MANUAL
+}
+
+enum CalendarMonthStatusEventType {
+  CREATED
+  PUBLISHED
+  UNPUBLISHED
+}
+
+/// One calendar, such as the Parole Board's public hearing calendar. Holds only its identity; its timezone, week start, week numbering, holidays, editor route and allowed weekdays are its state's code (D36).
+model Calendar {
+  id   String @id @default(cuid())
+  /// Stable code, e.g. "PAROLE_BOARD_PUBLIC". Never changes after insert.
+  code String @unique
+  name String
+
+  createdAt      DateTime @default(now())
+  createdByEmail String
+  updatedAt      DateTime @updatedAt
+  updatedByEmail String
+
+  resourceTypes CalendarResourceType[]
+  resources     CalendarResource[]
+  kinds         CalendarEntryKind[]
+  patterns      CalendarEntryPattern[]
+  months        CalendarMonth[]
+  entries       CalendarEntry[]
+}
+
+/// A group of resources, e.g. FACILITY or COMMUNITY.
+model CalendarResourceType {
+  id         String   @id @default(cuid())
+  calendarId String
+  calendar   Calendar @relation(fields: [calendarId], references: [id])
+  code       String
+  label      String
+  sortOrder  Int
+
+  resources CalendarResource[]
+
+  @@unique([calendarId, code])
+  /// Target of the calendar-scoped foreign keys, so a resource can't use another calendar's type.
+  @@unique([calendarId, id])
+}
+
+/// Where or for what an entry happens, e.g. a hearing location. Later tools hang rooms and capacity off this row.
+model CalendarResource {
+  id         String               @id @default(cuid())
+  calendarId String
+  calendar   Calendar             @relation(fields: [calendarId], references: [id])
+  typeId     String
+  type       CalendarResourceType @relation(fields: [calendarId, typeId], references: [calendarId, id])
+  /// e.g. "FCF" or "ICC/FED". Never changes after insert; entries copy it into slotKey.
+  code       String
+  /// Text shown on the admin and public calendars, e.g. "FCF" or "Ft. Collins".
+  label      String
+  /// Long internal name, e.g. "FREMONT". Never published.
+  name       String?
+  sortOrder  Int
+  /// Resources are never deleted. Inactive ones get no new drafts or additions.
+  isActive   Boolean              @default(true)
+
+  createdAt      DateTime @default(now())
+  createdByEmail String
+  updatedAt      DateTime @updatedAt
+  updatedByEmail String
+
+  patterns CalendarEntryPattern[]
+  entries  CalendarEntry[]
+
+  @@unique([calendarId, code])
+  /// Target of the calendar-scoped foreign keys from patterns and entries.
+  @@unique([calendarId, id])
+  @@index([calendarId, isActive, sortOrder])
+}
+
+/// A kind of entry, e.g. HEARING, FULL_BOARD or BUSINESS_MEETING. The row exists for the calendar-scoped foreign keys; its behaviour (needs a resource, cancellable, deletable, public, counts in totals) is its state's entry-type list in code (D36).
+model CalendarEntryKind {
+  id         String   @id @default(cuid())
+  calendarId String
+  calendar   Calendar @relation(fields: [calendarId], references: [id])
+  /// e.g. "HEARING". Never changes after insert; entries copy it into slotKey.
+  code       String
+  /// Text shown for entries without a resource, e.g. "Full Board".
+  label      String
+  /// Order within a day, before resource sortOrder.
+  sortOrder  Int
+
+  patterns CalendarEntryPattern[]
+  entries  CalendarEntry[]
+
+  @@unique([calendarId, code])
+  /// Target of the calendar-scoped foreign keys from patterns and entries.
+  @@unique([calendarId, id])
+}
+
+/// The default days for one resource (e.g. FCF hearings) or one resource-less kind (e.g. Full Board). Append-only: an edit inserts the next version.
+model CalendarEntryPattern {
+  id         String            @id @default(cuid())
+  calendarId String
+  calendar   Calendar          @relation(fields: [calendarId], references: [id])
+  kindId     String
+  kind       CalendarEntryKind @relation(fields: [calendarId, kindId], references: [calendarId, id])
+  /// Set when the kind requires a resource, null otherwise.
+  resourceId String?
+  resource   CalendarResource? @relation(fields: [calendarId, resourceId], references: [calendarId, id], onDelete: Restrict)
+  /// The slotKey that generated entries get, e.g. "HEARING:FCF" or "FULL_BOARD". Versions are numbered per slotKey.
+  slotKey    String
+  /// 1 for the first pattern of a slot, then +1 per edit. A new month copies the highest version at the time it's created.
+  version    Int
+  /// Read and write it only through patternRulesSchema in ~@modules/Calendar/rules.
+  rules      Json
+  /// "HH:mm", calendar-local. Stored for later tools, never published.
+  startTime  String?
+  endTime    String?
+
+  createdAt      DateTime @default(now())
+  createdByEmail String
+
+  @@unique([calendarId, slotKey, version])
+}
+
+/// One month of one calendar.
+model CalendarMonth {
+  id         String              @id @default(cuid())
+  calendarId String
+  calendar   Calendar            @relation(fields: [calendarId], references: [id])
+  year       Int
+  /// 1 to 12
+  month      Int
+  status     CalendarMonthStatus @default(DRAFT)
+  /// Goes up by 1 on every entry write and every status change. Publish sends the revision the user reviewed (D6).
+  revision   Int                 @default(1)
+
+  createdAt      DateTime @default(now())
+  createdByEmail String
+  updatedAt      DateTime @updatedAt
+  updatedByEmail String
+
+  entries      CalendarEntry[]
+  statusEvents CalendarMonthStatusEvent[]
+
+  @@unique([calendarId, year, month])
+  /// Target of the calendar-scoped foreign key from entries.
+  @@unique([calendarId, id])
+}
+
+/// One session on one date. The Hearing Scheduler and PB Calendar attach resident hearings, rooms and member assignments to this row.
+model CalendarEntry {
+  id         String            @id @default(cuid())
+  /// The month's calendar, copied here so the foreign keys below can require the month, kind and resource to share it.
+  calendarId String
+  calendar   Calendar          @relation(fields: [calendarId], references: [id])
+  monthId    String
+  month      CalendarMonth     @relation(fields: [calendarId, monthId], references: [calendarId, id])
+  date       DateTime          @db.Date
+  kindId     String
+  kind       CalendarEntryKind @relation(fields: [calendarId, kindId], references: [calendarId, id])
+
+  /// Set when the kind requires a resource, null otherwise (checked in ~@modules/Calendar/rules).
+  resourceId String?
+  resource   CalendarResource? @relation(fields: [calendarId, resourceId], references: [calendarId, id], onDelete: Restrict)
+
+  /// "<kind code>:<resource code>" when there is a resource, otherwise the kind code. The unique key below uses it (D19).
+  slotKey String
+
+  /// "HH:mm", calendar-local, copied from the pattern. Stored, not published.
+  startTime String?
+  endTime   String?
+  source    CalendarEntrySource
+
+  /// Only cancellable kinds can be cancelled (checked in ~@modules/Calendar/rules).
+  cancelledAt      DateTime?
+  cancelledByEmail String?
+
+  /// Goes up by 1 on every update. Move, delete and cancel send it (D6).
+  version Int @default(1)
+
+  createdAt      DateTime @default(now())
+  createdByEmail String
+  updatedAt      DateTime @updatedAt
+  updatedByEmail String
+
+  @@unique([monthId, date, slotKey])
+  @@index([resourceId, date])
+}
+
+/// Every status change of a month. It is the publish and unpublish audit trail: who changed the status, when, and at which revision. Append-only.
+model CalendarMonthStatusEvent {
+  id         String                       @id @default(cuid())
+  monthId    String
+  month      CalendarMonth                @relation(fields: [monthId], references: [id])
+  type       CalendarMonthStatusEventType
+  /// Null for CREATED.
+  fromStatus CalendarMonthStatus?
+  toStatus   CalendarMonthStatus
+  /// The month's revision after the change.
+  revision   Int
+
+  createdAt  DateTime @default(now())
+  /// Who made the change. During impersonation this is the Recidiviz user's email (D3).
+  actorEmail String
+
+  @@index([monthId, createdAt])
+}

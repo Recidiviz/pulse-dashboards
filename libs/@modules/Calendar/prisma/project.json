@@ -121,6 +121,9 @@
         "test": {}
       },
       "defaultConfiguration": "dev"
+    },
+    "test": {
+      "dependsOn": ["prisma-generate"]
     }
   }
 }

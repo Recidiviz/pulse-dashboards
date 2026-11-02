@@ -6,8 +6,3 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
-model Calendar {
-  id   String @id @default(cuid())
-  name String
-}
