@@ -53,7 +53,7 @@ const HeaderFields: React.FC = () => (
 
     <Label>
       Date:
-      <FormInput name="date" />
+      <FormInput name="date" isDate />
     </Label>
     <Label>
       Level of Care:

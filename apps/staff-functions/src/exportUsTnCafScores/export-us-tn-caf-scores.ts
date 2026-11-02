@@ -17,7 +17,7 @@
 
 import { Connector, IpAddressTypes } from "@google-cloud/cloud-sql-connector";
 import { Firestore } from "@google-cloud/firestore";
-import { isValid, startOfDay, subHours } from "date-fns";
+import { startOfDay, subHours } from "date-fns";
 import { firestore } from "firebase-admin";
 import { defineJsonSecret } from "firebase-functions/params";
 import { onSchedule } from "firebase-functions/v2/scheduler";
@@ -28,6 +28,7 @@ import {
   deriveRcafFormData,
   deriveRcafFormDataV2,
   OpportunityType,
+  parseUsTnFormDate,
   prefillDcafFormData,
   prefillRcafFormData,
   prefillRcafFormDataV2,
@@ -78,14 +79,6 @@ function removeNewlines(input: string | undefined): string | undefined {
   return input?.replaceAll("\n", "; ");
 }
 
-function validateDate(input: string | undefined): string | undefined {
-  if (input === undefined) return undefined;
-
-  if (!isValid(new Date(input))) return undefined;
-
-  return input;
-}
-
 // This record defines a map from fields in the combined draft record to output
 // fields with minimal transformation or need to map dependencies.
 const COLUMN_MAPPING: Record<
@@ -116,7 +109,8 @@ const COLUMN_MAPPING: Record<
   TrusteeApprovedOrDenied: (doc) => doc["trusteeCustodyApproved"],
   TrusteeDenialReasons: (doc) => doc["trusteeDenialReasons"],
   ChiefCounselorFinalizingForm: (doc) => doc["finalizingCounselor"],
-  DateOfFinalApprovalAndEntry: (doc) => validateDate(doc["finalApprovalDate"]),
+  DateOfFinalApprovalAndEntry: (doc) =>
+    parseUsTnFormDate(doc["finalApprovalDate"]),
 
   Question1_notes: (doc) =>
     removeNewlines(doc["q1aNotes"] + "; " + doc["q1bNotes"]),
@@ -136,13 +130,13 @@ const COLUMN_MAPPING: Record<
 
   Warden_TrusteeSignaturesAcquired: (doc) => doc["trusteeWardenSignature"],
   Warden_TrusteeSignaturesAcquiredDate: (doc) =>
-    validateDate(doc["trusteeWardenSignatureDate"]),
+    parseUsTnFormDate(doc["trusteeWardenSignatureDate"]),
   ContractMonitor_TrusteeSignaturesAcquired: (doc) => doc["trusteeCMSignature"],
   ContractMonitor_TrusteeSignaturesAcquiredDate: (doc) =>
-    validateDate(doc["trusteeCMSignatureDate"]),
+    parseUsTnFormDate(doc["trusteeCMSignatureDate"]),
   AC_TrusteeSignaturesAcquired: (doc) => doc["trusteeACSignature"],
   AC_TrusteeSignaturesAcquiredDate: (doc) =>
-    validateDate(doc["trusteeACSignatureDate"]),
+    parseUsTnFormDate(doc["trusteeACSignatureDate"]),
 };
 
 function processRecord(
@@ -514,7 +508,9 @@ async function runTransfer() {
   });
 
   const pool = new Pool({
-    stream: clientOpts.stream(),
+    // A factory gives each client its own socket, so one failed query can't close it for all
+    // @ts-expect-error pg accepts a stream factory, but @types/pg 8.6 only allows a Duplex
+    stream: clientOpts.stream,
     user,
     password,
     database: "postgres",

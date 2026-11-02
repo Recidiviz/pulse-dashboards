@@ -169,7 +169,7 @@ const CoverSheet: React.FC = () => {
               )}
             </Label>
             <Label>
-              CAF Date: <FormInput name="date" />
+              CAF Date: <FormInput name="date" isDate />
             </Label>
           </Row>
           <Row>
@@ -341,7 +341,8 @@ const CoverSheet: React.FC = () => {
                 label="No"
               />
               <Label>
-                Date Updated: <FormInput name="emergencyContactUpdatedDate" />
+                Date Updated:{" "}
+                <FormInput name="emergencyContactUpdatedDate" isDate />
               </Label>
             </Item>
           </Row>
@@ -428,7 +429,7 @@ function HeaderSection({ oppType }: { oppType: OpportunityType }) {
       <FormInput name="finalizingCounselor" />
       <br />
       Date of Final Approval by Chief Counselor:{" "}
-      <FormInput name="finalApprovalDate" />
+      <FormInput name="finalApprovalDate" isDate />
       {showTrusteeSection && (
         <>
           <br />

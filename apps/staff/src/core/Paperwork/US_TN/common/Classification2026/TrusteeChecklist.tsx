@@ -279,7 +279,7 @@ function SignatureRow({
         </li>
         <li>
           Date Received{" "}
-          <FormInput name={dateName} placeholder="Approval date" />
+          <FormInput name={dateName} placeholder="Approval date" isDate />
         </li>
       </ul>
     </li>

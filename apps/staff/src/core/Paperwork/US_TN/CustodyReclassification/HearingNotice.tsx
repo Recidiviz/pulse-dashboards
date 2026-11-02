@@ -88,7 +88,9 @@ const HearingNotice = ({
           <Row grouped>CAF Date: {formData.date}</Row>
           <Row>
             This is to inform you that your classification hearing will be held
-            on <FormInput name="hearingDate" placeholder="hearing date" /> at{" "}
+            on{" "}
+            <FormInput name="hearingDate" placeholder="hearing date" isDate />{" "}
+            at{" "}
             <FormInput name="hearingLocation" placeholder="hearing location" />.
           </Row>
           <Row>
