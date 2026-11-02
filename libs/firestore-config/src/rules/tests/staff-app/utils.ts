@@ -117,6 +117,75 @@ export function getDemoOnlyCOParoleBoardUser(testEnv: RulesTestEnvironment) {
   });
 }
 
+/** A US_ID staff user whose token lacks the Parole Board access claim. */
+export function getIDUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("user@us_id.gov", {
+    app: "staff",
+    stateCode: "US_ID",
+    impersonator: false,
+    recidivizAllowedStates: [],
+  });
+}
+
+/**
+ * A US_ID commissioner, whose token carries the Parole Board access claim but
+ * not the claim to edit PHI reports.
+ */
+export function getIDCommissioner(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("commissioner@us_id.gov", {
+    app: "staff",
+    stateCode: "US_ID",
+    impersonator: false,
+    recidivizAllowedStates: [],
+    hasParoleBoardAccess: true,
+  });
+}
+
+/**
+ * A US_ID Pre-Hearing Investigator, whose token carries both the Parole Board
+ * access claim and the claim to edit PHI reports.
+ *
+ * @param environment - The deploy environment an impersonator is in. Leave it
+ *   unset for a PHI who is not being impersonated.
+ */
+export function getIDPhi(
+  testEnv: RulesTestEnvironment,
+  environment?: "staging" | "production",
+) {
+  return testEnv.authenticatedContext("phi@us_id.gov", {
+    app: "staff",
+    stateCode: "US_ID",
+    impersonator: environment !== undefined,
+    recidivizAllowedStates: [],
+    hasParoleBoardAccess: true,
+    canEditParoleBoardReports: true,
+    ...(environment && { environment }),
+  });
+}
+
+/** A demo-only US_ID Pre-Hearing Investigator. */
+export function getDemoOnlyIDPhi(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("phi@us_id.gov", {
+    app: "staff",
+    stateCode: "US_ID",
+    impersonator: false,
+    recidivizAllowedStates: [],
+    forceWorkflowsDemoData: true,
+    hasParoleBoardAccess: true,
+    canEditParoleBoardReports: true,
+  });
+}
+
+/** A Recidiviz user allowed into US_ID. */
+export function getIDRecidivizUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("admin", {
+    app: "staff",
+    stateCode: "RECIDIVIZ",
+    impersonator: false,
+    recidivizAllowedStates: ["US_ID"],
+  });
+}
+
 /** A Recidiviz user allowed into CO but not US_ID, the other Parole Board state. */
 export function getCORecidivizUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("admin", {

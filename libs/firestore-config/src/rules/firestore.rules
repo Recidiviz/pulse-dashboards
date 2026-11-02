@@ -46,10 +46,11 @@ service cloud.firestore {
     return !collectionName.matches(".*Updates.*");
   }
 
-  // Parole Board client profiles have their own match blocks below, gated on
-  // Parole Board access; the general read rule must not also grant them.
-  function isParoleBoardClientProfileCollection(collectionName) {
-    return collectionName.matches("^(DEMO_)?paroleBoardClientProfiles$");
+  // Parole Board client profiles and PHI reports have their own match blocks
+  // below, gated on Parole Board access; the general read rule must not also
+  // grant them.
+  function isParoleBoardCollection(collectionName) {
+    return collectionName.matches("^(DEMO_)?paroleBoard(ClientProfiles|Reports)$");
   }
 
   function isDemoCollection(collectionName) {
@@ -218,6 +219,82 @@ service cloud.firestore {
       );
   }
 
+  // Expects the staff-server Firebase token endpoint to set this claim from the
+  // user's Auth0 route permission for editing PHI reports, which only
+  // Pre-Hearing Investigators (PHIs) hold. A token without the claim is denied.
+  function canEditParoleBoardReports() {
+    return request.auth.token.get("canEditParoleBoardReports", false) == true;
+  }
+
+  // PHI reports live under paroleBoardReports/{recordId}, where recordId is the
+  // resident's residents doc id (us_xx_...). PHIs read and write them in their
+  // own state. Commissioners, who have Parole Board access but not the edit
+  // claim, read a report only once it is submitted, and never the parent doc,
+  // which shows whether a report is in progress. Recidiviz users read every
+  // report in their allowed states but write none.
+  function isPhiFor(recordId) {
+    return canEditParoleBoardReports() && stateCodeMatchesPrefix(recordId);
+  }
+
+  function recidivizUserCanReadParoleBoardReports(collection, recordId) {
+    return isRecidiviz() &&
+      (isDemoCollection(collection) || stateCodeIncludedInRecidivizAllowedStates(recordId));
+  }
+
+  function allowParoleBoardReportsParentRead(collection, recordId) {
+    return appIsStaff() && isDemoCollectionIfDemoOnlyAccount(collection) &&
+      (recidivizUserCanReadParoleBoardReports(collection, recordId) || isPhiFor(recordId));
+  }
+
+  // allowPersonUpdates blocks impersonators in production.
+  function allowParoleBoardReportsWrite(collection, recordId) {
+    return appIsStaff() && isDemoCollectionIfDemoOnlyAccount(collection) &&
+      isPhiFor(recordId) && allowPersonUpdates(recordId);
+  }
+
+  function isParoleBoardReportInProgress(report) {
+    return report != null && report.data.get("status", null) == "IN_PROGRESS";
+  }
+
+  function isParoleBoardReportSubmitted(report) {
+    return report != null && report.data.get("status", null) in ["SUBMITTED", "ARCHIVED"];
+  }
+
+  // report is the report doc a read targets, or the report a snapshot belongs
+  // to. A commissioner's query must filter on status for this to allow it.
+  function allowParoleBoardReportRead(collection, recordId, report) {
+    return allowParoleBoardReportsParentRead(collection, recordId) ||
+      (
+        appIsStaff() && isDemoCollectionIfDemoOnlyAccount(collection) &&
+        hasParoleBoardAccess() && stateCodeMatchesPrefix(recordId) &&
+        isParoleBoardReportSubmitted(report)
+      );
+  }
+
+  // A report starts in progress, and a client can only edit it or submit it.
+  // Submitting must create the report's snapshot/manifest doc in the same
+  // batch, so a submitted report always has a snapshot. No client sets
+  // ARCHIVED.
+  function allowParoleBoardReportCreate(collection, recordId) {
+    return allowParoleBoardReportsWrite(collection, recordId) &&
+      request.resource.data.get("status", null) == "IN_PROGRESS";
+  }
+
+  function allowParoleBoardReportUpdate(collection, recordId, manifestPath) {
+    let newStatus = request.resource.data.get("status", null);
+    return allowParoleBoardReportsWrite(collection, recordId) &&
+      isParoleBoardReportInProgress(resource) &&
+      (newStatus == "IN_PROGRESS" || (newStatus == "SUBMITTED" && existsAfter(manifestPath)));
+  }
+
+  // A snapshot is written only in the batch that submits its report, so the
+  // report is in progress before the batch and submitted after it.
+  function allowParoleBoardReportSnapshotCreate(collection, recordId, reportPath) {
+    return allowParoleBoardReportsWrite(collection, recordId) &&
+      isParoleBoardReportInProgress(get(reportPath)) &&
+      getAfter(reportPath).data.get("status", null) == "SUBMITTED";
+  }
+
   function docIdMatchesUserId(documentId) {
     return documentId == path(userDocIdRegexFromToken());
   }
@@ -264,7 +341,7 @@ service cloud.firestore {
       // firestore will allow an operation if ANY rules match it,
       // so we specifically filter out update collections here
       allow read: if notAnUpdateCollection(collection) &&
-        !isParoleBoardClientProfileCollection(collection) &&
+        !isParoleBoardCollection(collection) &&
         (
           allowStaffGeneralRead(collection) || 
           (!isDemoCollection(collection) && allowJiiLiveRead(collection, document)) ||
@@ -278,6 +355,46 @@ service cloud.firestore {
 
     match /DEMO_paroleBoardClientProfiles/{document} {
       allow read: if allowStaffParoleBoardClientProfileRead("DEMO_paroleBoardClientProfiles");
+    }
+
+    // No rule allows deleting a report or its parent doc, and a snapshot can
+    // only be created.
+    match /paroleBoardReports/{recordId} {
+      allow read: if allowParoleBoardReportsParentRead("paroleBoardReports", recordId);
+      allow create, update: if allowParoleBoardReportsWrite("paroleBoardReports", recordId);
+
+      match /reports/{reportId} {
+        allow read: if allowParoleBoardReportRead("paroleBoardReports", recordId, resource);
+        allow create: if allowParoleBoardReportCreate("paroleBoardReports", recordId);
+        allow update: if allowParoleBoardReportUpdate("paroleBoardReports", recordId,
+          /databases/$(database)/documents/paroleBoardReports/$(recordId)/reports/$(reportId)/snapshot/manifest);
+
+        match /snapshot/{sectionKey} {
+          allow read: if allowParoleBoardReportRead("paroleBoardReports", recordId,
+            get(/databases/$(database)/documents/paroleBoardReports/$(recordId)/reports/$(reportId)));
+          allow create: if allowParoleBoardReportSnapshotCreate("paroleBoardReports", recordId,
+            /databases/$(database)/documents/paroleBoardReports/$(recordId)/reports/$(reportId));
+        }
+      }
+    }
+
+    match /DEMO_paroleBoardReports/{recordId} {
+      allow read: if allowParoleBoardReportsParentRead("DEMO_paroleBoardReports", recordId);
+      allow create, update: if allowParoleBoardReportsWrite("DEMO_paroleBoardReports", recordId);
+
+      match /reports/{reportId} {
+        allow read: if allowParoleBoardReportRead("DEMO_paroleBoardReports", recordId, resource);
+        allow create: if allowParoleBoardReportCreate("DEMO_paroleBoardReports", recordId);
+        allow update: if allowParoleBoardReportUpdate("DEMO_paroleBoardReports", recordId,
+          /databases/$(database)/documents/DEMO_paroleBoardReports/$(recordId)/reports/$(reportId)/snapshot/manifest);
+
+        match /snapshot/{sectionKey} {
+          allow read: if allowParoleBoardReportRead("DEMO_paroleBoardReports", recordId,
+            get(/databases/$(database)/documents/DEMO_paroleBoardReports/$(recordId)/reports/$(reportId)));
+          allow create: if allowParoleBoardReportSnapshotCreate("DEMO_paroleBoardReports", recordId,
+            /databases/$(database)/documents/DEMO_paroleBoardReports/$(recordId)/reports/$(reportId));
+        }
+      }
     }
 
     match /userUpdates/{path=**}/{document} {

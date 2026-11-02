@@ -22,6 +22,7 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   clients: "clients",
   residents: "residents",
   paroleBoardClientProfiles: "paroleBoardClientProfiles",
+  paroleBoardReports: "paroleBoardReports",
   clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",
