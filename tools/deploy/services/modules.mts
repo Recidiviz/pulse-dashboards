@@ -23,7 +23,7 @@ import { ServiceDefinition } from "../types.mts";
 export const modulesBackend: ServiceDefinition = {
   displayName: "Modules Backend Services",
   environments: ["staging"],
-  defaultChecked: [],
+  defaultChecked: ["staging"],
   pamProjects: (env) => [dashboardProject(env)],
   requiredImages: () => ["@modules/server"],
   async deploy(plan) {
