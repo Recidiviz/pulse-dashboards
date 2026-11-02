@@ -72,6 +72,7 @@ export class OpportunityPersonListPresenter
   readonly isSupervisorHomepage: boolean;
   readonly displayTabGroups: OpportunityTabGroup[];
   readonly showZeroGrantsPill: boolean;
+  private readonly showPreviouslyReviewedOpportunities: boolean;
   private _activeTabGroup: OpportunityTabGroup;
   private userSelectedTab?: OpportunityTab;
   private userOrderedTabs?: OpportunityTab[];
@@ -117,6 +118,9 @@ export class OpportunityPersonListPresenter
     );
 
     this.updatesSubscription = this.workflowsStore.userUpdatesSubscription;
+
+    this.showPreviouslyReviewedOpportunities =
+      !!featureVariants.showPreviouslyReviewedOpportunities;
 
     this.showZeroGrantsPill = !!(
       featureVariants.zeroGrantsFlag &&
@@ -425,15 +429,30 @@ export class OpportunityPersonListPresenter
   }
 
   private get unorderedTabs(): OpportunityTab[] {
+    const oppsByTab = this.oppsFromOpportunitiesByTab;
+    if (!oppsByTab) return [];
     // Only display tabs in the active tab group that correspond to relevant
-    // opportunities
-    const tabs = this.oppsFromOpportunitiesByTab
-      ? (intersection(
-          this.config.tabGroups[this.activeTabGroup],
-          Object.keys(this.oppsFromOpportunitiesByTab),
-        ) as OpportunityTab[])
-      : [];
-    return tabs;
+    // opportunities, plus any review tabs configured to show when empty
+    const alwaysShowTabs = this.alwaysShowReviewTabs;
+    return (this.config.tabGroups[this.activeTabGroup] ?? []).filter(
+      (tab) => alwaysShowTabs.includes(tab) || tab in oppsByTab,
+    );
+  }
+
+  private get alwaysShowReviewTabs(): OpportunityTab[] {
+    if (
+      !this.config.showEmptySupervisorReviewStatuses ||
+      this.activeTabGroup !== "REVIEW STATUS"
+    ) {
+      return [];
+    }
+    return compact([
+      this.config.insightsSupervisorReviewTabTitle,
+      this.config.awaitingRevisionsTabTitle,
+      // Past reviews are only hydrated behind this feature variant
+      this.showPreviouslyReviewedOpportunities &&
+        this.config.historicalReviewTabTitle,
+    ]);
   }
 
   get shouldShowAllTabs() {

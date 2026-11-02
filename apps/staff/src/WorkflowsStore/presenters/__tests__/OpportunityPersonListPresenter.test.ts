@@ -90,6 +90,7 @@ function getPresenter({
   tenantStore: customTenantStore = tenantStore,
   opportunityType = mockOpportunity.type,
   opportunitiesFilterStore = mockFilterStore,
+  featureVariants = FEATURE_VARIANTS,
   initialTab,
 }: {
   config?: OpportunityConfiguration;
@@ -100,6 +101,7 @@ function getPresenter({
   tenantStore?: TenantStore;
   opportunityType?: typeof mockOpportunity.type;
   opportunitiesFilterStore?: OpportunitiesFilterStore;
+  featureVariants?: FeatureVariantRecord;
   initialTab?: string;
 }): OpportunityPersonListPresenter {
   return new OpportunityPersonListPresenter(
@@ -109,7 +111,7 @@ function getPresenter({
     opportunitiesFilterStore,
     workflowsStore,
     config,
-    FEATURE_VARIANTS,
+    featureVariants,
     opportunityType,
     supervisionPresenter,
     { initialTab },
@@ -464,6 +466,105 @@ describe("in insights/with supervisor opportunity presenter, REVIEW STATUS tab g
   test("defaults to the supervisor review tab in ELIGIBILITY STATUS", () => {
     presenter.activeTabGroup = "ELIGIBILITY STATUS";
     expect(presenter.activeTab).toEqual("Submitted for Review");
+  });
+});
+
+describe("in insights/with supervisor opportunity presenter, empty REVIEW STATUS tabs", () => {
+  const reviewTabGroups = {
+    "ELIGIBILITY STATUS": ["Eligible Now", "Submitted for Review"],
+    "REVIEW STATUS": ["Awaiting Review", "Awaiting Revisions", "Past Reviews"],
+  } as Partial<OpportunityTabGroups>;
+
+  function getReviewPresenter(
+    showEmptySupervisorReviewStatuses: boolean,
+    {
+      pastReviewTabTitle = "Past Reviews",
+      featureVariants = FEATURE_VARIANTS,
+    }: {
+      pastReviewTabTitle?: OpportunityTab;
+      featureVariants?: FeatureVariantRecord;
+    } = {},
+  ) {
+    const reviewConfig: OpportunityConfiguration = {
+      ...mockOpportunity.config,
+      supervisorReviewTabTitle: "Submitted for Review",
+      insightsSupervisorReviewTabTitle: "Awaiting Review",
+      awaitingRevisionsTabTitle: "Awaiting Revisions",
+      historicalReviewTabTitle: "Past Reviews",
+      showEmptySupervisorReviewStatuses,
+      tabGroups: reviewTabGroups,
+    };
+    const supervisionPresenter = {
+      opportunitiesByType: {
+        [mockOpportunity.type]: [
+          {
+            ...mockOpportunity,
+            config: reviewConfig,
+            tabTitle: (tabGroup?: OpportunityTabGroup) =>
+              tabGroup === "REVIEW STATUS"
+                ? pastReviewTabTitle
+                : "Eligible Now",
+          },
+        ],
+      },
+      supervisorInfo: { pseudonymizedId: "testsupervisor1" },
+      defaultTabGroup: "REVIEW STATUS",
+    } as any as SupervisionSupervisorOpportunityPresenter;
+    return getPresenter({
+      config: reviewConfig,
+      supervisionPresenter,
+      featureVariants,
+    });
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("hides empty review tabs by default", () => {
+    presenter = getReviewPresenter(false);
+    expect(presenter.displayTabs).toEqual(["Past Reviews"]);
+  });
+
+  test("shows empty awaiting review and revisions tabs when configured", () => {
+    presenter = getReviewPresenter(true);
+    expect(presenter.displayTabs).toEqual([
+      "Awaiting Review",
+      "Awaiting Revisions",
+      "Past Reviews",
+    ]);
+    expect(presenter.tabBadges).toEqual({
+      "Awaiting Review": 0,
+      "Awaiting Revisions": 0,
+      "Past Reviews": 1,
+    });
+  });
+
+  test("hides an empty past reviews tab without the past reviews feature variant", () => {
+    presenter = getReviewPresenter(true, {
+      pastReviewTabTitle: "Awaiting Review",
+    });
+    expect(presenter.displayTabs).toEqual([
+      "Awaiting Review",
+      "Awaiting Revisions",
+    ]);
+  });
+
+  test("shows an empty past reviews tab with the past reviews feature variant", () => {
+    presenter = getReviewPresenter(true, {
+      pastReviewTabTitle: "Awaiting Review",
+      featureVariants: { showPreviouslyReviewedOpportunities: {} },
+    });
+    expect(presenter.displayTabs).toEqual([
+      "Awaiting Review",
+      "Awaiting Revisions",
+      "Past Reviews",
+    ]);
+    expect(presenter.tabBadges).toEqual({
+      "Awaiting Review": 1,
+      "Awaiting Revisions": 0,
+      "Past Reviews": 0,
+    });
   });
 });
 
