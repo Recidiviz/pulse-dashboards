@@ -22,9 +22,9 @@ export type StateCode = "US_TN" | "Recidiviz";
 
 export type Auth0User = {
   [`https://dashboard.recidiviz.org/app_metadata`]: {
-    stateCode: "recidiviz" | StateCode;
-    allowedStates?: string[];
+    stateCode: StateCode | Lowercase<StateCode>;
     featureVariants?: Record<string, unknown>;
+    routes?: Record<string, boolean>;
   };
   "https://dashboard.recidiviz.org/email_address": string | undefined;
 };
@@ -36,6 +36,9 @@ export type AuthUser = {
   email: string;
   isRecidivizUser: boolean;
   featureVariants: FeatureVariantRecord;
+  stateCode: Uppercase<StateCode>;
+  // Which staff routes the user can access
+  routes: Record<string, boolean>;
 };
 
 export type Context = {
