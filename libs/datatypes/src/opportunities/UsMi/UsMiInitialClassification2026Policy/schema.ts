@@ -98,4 +98,11 @@ export type UsMiInitialClassification2026DraftData =
     s3q9Selection: number;
     s3q10Selection: number;
     s3q11Selection: number;
+
+    // override reasons
+
+    override1_1Selection: number;
+    override1_2Selection: number;
+    override2_1Selection: number;
+    override2_2Selection: number;
   };

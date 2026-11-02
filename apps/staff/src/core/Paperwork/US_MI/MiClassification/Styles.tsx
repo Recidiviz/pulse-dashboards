@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import { Form } from "react-bootstrap";
 import styled from "styled-components";
 
@@ -148,14 +148,18 @@ export const QuestionStatusBadge = styled.div<{ $status: string }>`
   width: fit-content;
   text-wrap: nowrap;
   height: fit-content;
-  ${({ $status }) =>
-    $status === "AUTO-FILLED"
-      ? `color: ${palette.pine3};
-    background-color: rgba(0, 196, 157, 0.16);
-    `
-      : `
-    color: rgb(138, 100, 32);
-    background-color: rgba(224, 168, 82, 0.22) `}
+  ${({ $status }) => {
+    if ($status === "AUTO-FILLED") {
+      return `color: ${palette.pine3};
+    background-color: rgba(0, 196, 157, 0.16);`;
+    }
+    if ($status === "REQUIRED") {
+      return `color: ${palette.signal.important};
+    background-color: ${rgba(palette.signal.important, 0.16)};`;
+    }
+    return `color: rgb(138, 100, 32);
+    background-color: rgba(224, 168, 82, 0.22);`;
+  }}
 `;
 
 export const QuestionTextArea = styled.textarea`

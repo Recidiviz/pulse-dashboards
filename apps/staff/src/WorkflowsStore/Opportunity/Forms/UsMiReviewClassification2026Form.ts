@@ -30,6 +30,8 @@ import { FormBase } from "./FormBase";
 import {
   calculateRemaining,
   MAX_TOTAL_SCORE,
+  overridesCompleted,
+  OverrideSelections,
 } from "./UsMiInitialClassification2026Form";
 import {
   classificationNote,
@@ -269,6 +271,11 @@ export function deriveMiClassification(
     s3q14Selection,
     s3q15Selection,
     s3q16Selection,
+
+    override1_1Selection,
+    override1_2Selection,
+    override2_1Selection,
+    override2_2Selection,
   } = formData;
 
   // section 1
@@ -406,7 +413,7 @@ export function deriveMiClassification(
     formData.programCompleteHighNotes?.highProgramCompletionsList,
   );
 
-  const totalScore = s1SubScore + s2SubScore + s3SubScore;
+  const totalScore = Number((s1SubScore + s2SubScore + s3SubScore).toFixed(2));
 
   return {
     // section 1
@@ -446,6 +453,12 @@ export function deriveMiClassification(
     s2q13Notes,
     s3q14Notes,
     s3q15Notes,
+
+    // overrides
+    override1_1Selection,
+    override1_2Selection,
+    override2_1Selection,
+    override2_2Selection,
   };
 }
 
@@ -507,8 +520,20 @@ export class UsMiReviewClassificationForm extends FormBase<UsMiReviewClassificat
     }
   }
 
+  get subsections() {
+    const list: string[] = [];
+    miMaleReviewClassificationQuestions.forEach((section) => {
+      list.push(section.title);
+    });
+    return list;
+  }
+
   get derivedData() {
     const { person } = this;
     return deriveMiClassification(this.formData, (person as Resident).gender);
+  }
+
+  get proceedToPreview() {
+    return overridesCompleted(this.formData, OverrideSelections);
   }
 }

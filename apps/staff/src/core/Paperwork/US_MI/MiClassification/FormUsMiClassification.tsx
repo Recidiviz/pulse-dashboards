@@ -26,6 +26,7 @@ import { UsMiInitialClassificationForm } from "../../../../WorkflowsStore/Opport
 import { UsMiReviewClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { ClassificationQuestion } from "./MultipleChoiceQuestion";
+import { UsMiClassificationOverrides } from "./Screens/OverrideScreen";
 import {
   ClassificationForm,
   FormFooter,
@@ -43,6 +44,8 @@ import {
   VerticalHr,
 } from "./Styles";
 
+export type FormStages = "FORM" | "OVERRIDE" | "PREVIEW";
+
 export const FormUsMiClassification = observer(
   function FormUsMiClassification() {
     const formRef = React.useRef<HTMLDivElement>(null);
@@ -57,6 +60,8 @@ export const FormUsMiClassification = observer(
       formTitle,
       remainingFields,
     } = form;
+
+    const [stage, setStage] = useState<FormStages>("FORM");
 
     const [headerVisible, isHeaderVisible] = useState(true);
 
@@ -76,6 +81,11 @@ export const FormUsMiClassification = observer(
         window.removeEventListener("scroll", handleScroll);
       };
     }, []);
+
+    const changePage = (direction: FormStages) => {
+      setStage(direction);
+      window.scrollTo(0, 0);
+    };
 
     let questionNumber = 0;
     return (
@@ -108,71 +118,81 @@ export const FormUsMiClassification = observer(
           </StatusBadge>
         </StickyHeader>
 
-        <ClassificationForm
-          ref={formRef}
-          style={{
-            borderLeft: `1px solid ${palette.slate20}`,
-            marginTop: "90px",
-          }}
-        >
-          {questionList?.map((section, sectionIndex) => {
-            const { subscores } = derivedData;
-            return (
-              <div key={section.title}>
-                <SectionHeading>
-                  <div style={{ fontWeight: "600", color: "black" }}>
-                    {section.title}
+        {stage === "FORM" && (
+          <ClassificationForm
+            ref={formRef}
+            style={{
+              borderLeft: `1px solid ${palette.slate20}`,
+              marginTop: "90px",
+            }}
+          >
+            {questionList?.map((section, sectionIndex) => {
+              const { subscores } = derivedData;
+              return (
+                <div key={section.title}>
+                  <SectionHeading>
+                    <div style={{ fontWeight: "600", color: "black" }}>
+                      {section.title}
+                    </div>
+                    <div>Subtotal: {subscores && subscores[sectionIndex]}</div>
+                  </SectionHeading>
+                  {section.questions.map((question) => {
+                    questionNumber += 1;
+                    return (
+                      <ClassificationQuestion
+                        key={question.title}
+                        questionSection={sectionIndex + 1}
+                        question={question}
+                        questionNumber={questionNumber}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
+            <hr style={{ width: "100%" }} />
+            <FormFooter>
+              <LeftFooter>
+                <ScoreSection>
+                  <ScoreSupportingText>
+                    {remainingFields ? `SUBTOTAL SO FAR` : `TOTAL SCORE`}
+                  </ScoreSupportingText>
+                  <div>
+                    <span style={{ fontSize: rem(24), color: "black" }}>
+                      {derivedData.totalScore.toFixed(1)}{" "}
+                    </span>
+                    <ScoreSupportingText>pts</ScoreSupportingText>
                   </div>
-                  <div>Subtotal: {subscores && subscores[sectionIndex]}</div>
-                </SectionHeading>
-                {section.questions.map((question) => {
-                  questionNumber += 1;
-                  return (
-                    <ClassificationQuestion
-                      key={question.title}
-                      questionSection={sectionIndex + 1}
-                      question={question}
-                      questionNumber={questionNumber}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
-          <hr style={{ width: "100%" }} />
-          <FormFooter>
-            <LeftFooter>
-              <ScoreSection>
-                <ScoreSupportingText>
-                  {remainingFields ? `SUBTOTAL SO FAR` : `TOTAL SCORE`}
-                </ScoreSupportingText>
-                <div>
-                  <span style={{ fontSize: rem(24), color: "black" }}>
-                    {derivedData.totalScore.toFixed(1)}{" "}
-                  </span>
-                  <ScoreSupportingText>pts</ScoreSupportingText>
-                </div>
-              </ScoreSection>
-              {remainingFields ? (
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                </ScoreSection>
+                {remainingFields ? (
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <RemainingFields $remaining={!!remainingFields}>
+                      {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
+                    </RemainingFields>
+                    <ScoringNote>
+                      The score and recommended level appear after you calculate
+                    </ScoringNote>
+                  </div>
+                ) : (
                   <RemainingFields $remaining={!!remainingFields}>
-                    {`${remainingFields} required ${pluralizeWord({ term: "field", count: remainingFields })} remaining`}
+                    All required fields complete
                   </RemainingFields>
-                  <ScoringNote>
-                    The score and recommended level appear after you calculate
-                  </ScoringNote>
-                </div>
-              ) : (
-                <RemainingFields $remaining={!!remainingFields}>
-                  All required fields complete
-                </RemainingFields>
-              )}
-            </LeftFooter>
-            <Button type="button" kind="primary" disabled={remainingFields > 0}>
-              Calculate Classification
-            </Button>
-          </FormFooter>
-        </ClassificationForm>
+                )}
+              </LeftFooter>
+              <Button
+                type="button"
+                kind="primary"
+                disabled={remainingFields > 0}
+                onClick={() => changePage("OVERRIDE")}
+              >
+                Calculate Classification
+              </Button>
+            </FormFooter>
+          </ClassificationForm>
+        )}
+        {stage === "OVERRIDE" && (
+          <UsMiClassificationOverrides onChangeNavigation={changePage} />
+        )}
       </>
     );
   },

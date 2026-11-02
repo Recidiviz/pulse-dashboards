@@ -32,6 +32,75 @@ import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { Resident } from "../../Resident";
 import { FormBase } from "./FormBase";
 
+export const DepartureReasons = [
+  "No override",
+  "Nature of recent misconduct(s) warrants increased security level.",
+  "Behavior indicates that prisoner is not suitable for Level I at this time.",
+  "Overall criminal history warrants security level increase.",
+  "Overall institutional history warrants security level increase.",
+  "Delay further security level reduction to monitor adjustment.",
+  "Prisoner can be managed in reduced security level.",
+  "Parole allows for security level reduction per policy.",
+  "Escape history warrants higher security level.",
+  "Assaultive behavior warrants higher security level.",
+  "History of protection requests warrants higher security level.",
+  "Investigation warrants increased security level.",
+  "Former occupation warrants higher security level.",
+  "Other with CFA approval.",
+];
+
+export const WaiverReason = [
+  "No override",
+  "Access to medical treatment",
+  "Access to programming",
+  "Lack of bedspace",
+  "Facilitate a writ",
+  "Investigation",
+];
+
+export const LevelBreakdowns = [
+  { title: "Level I", range: "0-7.1" },
+  { title: "Level II", range: "7.2-19.2" },
+  { title: "Level IV", range: "19.3-49.2" },
+  { title: "Level V", range: "49.3-60" },
+];
+
+export const SecurityLevel = LevelBreakdowns.map((level) => level.title);
+
+export type OverrideType = {
+  title: string;
+  description: string;
+  reasonsTitle: string;
+  reasons: string[];
+  levelTitle: string;
+  levelSubText: string;
+  levels: string[];
+};
+
+export const overrideQuestions: OverrideType[] = [
+  {
+    title: "Departure override based on resident's behavior",
+    description:
+      "Changes the resident's level based on their own behavior, history, or circumstances.",
+    reasonsTitle: "Departure reason",
+    reasons: DepartureReasons,
+    levelTitle: "True security level",
+    levelSubText:
+      "The level the resident should be classified at after a departure.",
+    levels: SecurityLevel,
+  },
+  {
+    title: "Waiver override for facility operations",
+    description:
+      "Changes the resident's level for reasons unrelated to behavior, like facility, medical, or procedural needs.",
+    reasonsTitle: "Waiver reason",
+    reasons: WaiverReason,
+    levelTitle: "Actual placement level",
+    levelSubText:
+      "Where this resident is actually housed, which can differ from their true security level for reasons unrelated to their behavior (space, medical, programming, etc.).",
+    levels: SecurityLevel,
+  },
+];
 export function getQuestionAgeOptionSelection(
   question: UsMiAssessmentQuestionSpec,
   note: number | undefined,
@@ -208,6 +277,11 @@ export function getSingleScore(
   return getSingleSectionQuestionScore(question, selection);
 }
 
+export const OverrideSelections = {
+  override1_1Selection: "override1_2Selection",
+  override2_1Selection: "override2_2Selection",
+};
+
 const InitialKeySelections = [
   "s1q1Selection",
   "s1q2Selection",
@@ -221,6 +295,23 @@ const InitialKeySelections = [
   "s3q10Selection",
   "s3q11Selection",
 ] as const;
+
+export function overridesCompleted(
+  formData: Partial<UsMiInitialClassification2026DraftData>,
+  overrideSelections: { [key: string]: string },
+) {
+  let allowed = true;
+
+  for (const [key, value] of Object.entries(overrideSelections)) {
+    const first = formData[key];
+    const second = formData[value];
+    if (first !== undefined && first !== "") {
+      if (second === undefined || second === "" || second === 0)
+        allowed = false;
+    }
+  }
+  return allowed;
+}
 
 export function calculateRemaining(
   formData: Partial<UsMiInitialClassification2026DraftData>,
@@ -253,6 +344,12 @@ export function deriveMiClassification(
     s3q9Selection,
     s3q10Selection,
     s3q11Selection,
+
+    // overrides
+    override1_1Selection,
+    override1_2Selection,
+    override2_1Selection,
+    override2_2Selection,
   } = formData;
 
   // section 1
@@ -347,7 +444,7 @@ export function deriveMiClassification(
     formData.currentOtherIncNotes,
   );
 
-  const totalScore = s1SubScore + s2SubScore + s3SubScore;
+  const totalScore = Number((s1SubScore + s2SubScore + s3SubScore).toFixed(2));
 
   return {
     // section 1
@@ -376,6 +473,12 @@ export function deriveMiClassification(
     s3q9Notes,
     s3q10Notes,
     s3q11Notes,
+
+    // overrides
+    override1_1Selection,
+    override1_2Selection,
+    override2_1Selection,
+    override2_2Selection,
   };
 }
 
@@ -414,6 +517,14 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
     return "Initial Classification";
   }
 
+  get subsections() {
+    const list: string[] = [];
+    miMaleInitialClassificationQuestions.forEach((section) => {
+      list.push(section.title);
+    });
+    return list;
+  }
+
   prefilledDataTransformer() {
     const {
       opportunity: {
@@ -440,5 +551,9 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
 
   get remainingFields() {
     return calculateRemaining(this.formData, InitialKeySelections);
+  }
+
+  get proceedToPreview() {
+    return overridesCompleted(this.formData, OverrideSelections);
   }
 }
