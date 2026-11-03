@@ -91,8 +91,6 @@ export interface OpportunityConfiguration {
   supportsIneligible: boolean;
   showIneligibleFormButtons: boolean;
   hideIneligibleStatusPillOnProfile?: boolean;
-  hideStatusPillMarker?: boolean;
-  hideOpportunityRecord?: boolean;
   hydrateIneligibleRecordsInOpportunityManager: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;

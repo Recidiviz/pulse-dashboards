@@ -61,16 +61,12 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
     const isClientProfile = useMatch(WORKFLOWS_PATHS.clientProfile);
     const isResidentProfile = useMatch(WORKFLOWS_PATHS.residentProfile);
     const isFullProfilePage = isClientProfile || isResidentProfile;
-    const hideIneligibleStatusPillOnProfile =
-      isFullProfilePage &&
-      !opportunity.config.hideIneligibleStatusPillOnProfile;
 
     const showStatusPill =
-      (hideIneligibleStatusPillOnProfile ||
-        opportunity.isSubmitted ||
-        !opportunity.isIneligible) &&
-      !opportunity.config.hideStatusPillMarker;
-
+      (isFullProfilePage &&
+        !opportunity.config.hideIneligibleStatusPillOnProfile) ||
+      opportunity.isSubmitted ||
+      !opportunity.isIneligible;
     return (
       <TitleText>
         <OpportunityLabelWithPill>
