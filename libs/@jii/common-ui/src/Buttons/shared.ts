@@ -49,7 +49,7 @@ export const jiiButtonStyles = css<{ kind?: ButtonKind }>`
         border: 1px solid ${palette.signal.links};
 
         &:hover,
-        &:focus {
+        &:focus-visible {
         background-color: ${palette.pine4};
         color: ${palette.white};
         }
