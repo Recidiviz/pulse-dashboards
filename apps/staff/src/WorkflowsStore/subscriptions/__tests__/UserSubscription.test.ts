@@ -124,6 +124,7 @@ test("inject record for Recidiviz users", () => {
         "hasCaseload": false,
         "pseudonymizedId": "test@example.com",
         "recordType": "supervisionStaff",
+        "stableStaffExternalId": "RECIDIVIZ",
         "staffExternalId": "RECIDIVIZ",
         "stateCode": "US_XX",
         "surname": "Halliwell",
@@ -141,6 +142,7 @@ test("inject record for Recidiviz users", () => {
         "hasCaseload": false,
         "pseudonymizedId": "test@example.com",
         "recordType": "supervisionStaff",
+        "stableStaffExternalId": "RECIDIVIZ",
         "staffExternalId": "RECIDIVIZ",
         "stateCode": "US_XX",
         "surname": "Halliwell",
@@ -166,6 +168,7 @@ test("inject record in offline mode", () => {
         "hasCaseload": false,
         "pseudonymizedId": "p100",
         "recordType": "supervisionStaff",
+        "stableStaffExternalId": "us_xx_test@example.com",
         "staffExternalId": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "Halliwell",
@@ -183,12 +186,25 @@ test("inject record in offline mode", () => {
         "hasCaseload": false,
         "pseudonymizedId": "p100",
         "recordType": "supervisionStaff",
+        "stableStaffExternalId": "us_xx_test@example.com",
         "staffExternalId": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "Halliwell",
       },
     ]
   `);
+});
+
+test("does not add a stable ID to injected incarceration staff records", () => {
+  isOfflineModeMock.mockReturnValue(true);
+  routePermissionMock.mockImplementation(
+    (route) => route === "workflowsFacilities",
+  );
+  vi.spyOn(sub, "dataSource", "get").mockReturnValue(vi.fn() as any);
+
+  sub.subscribe();
+
+  expect(sub.data[0]).not.toHaveProperty("stableStaffExternalId");
 });
 
 test("supplement record for staff user without caseload", () => {

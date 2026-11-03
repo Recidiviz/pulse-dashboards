@@ -53,6 +53,18 @@ function mockOverrideSnapshot(record: StaffRecord) {
   } as unknown as QuerySnapshot;
 }
 
+/**
+ * Returns the record with stableStaffExternalId set to its staffExternalId when
+ * it is a supervision staff record. Injected records have no stable ID of their
+ * own, and with useStableExternalId on, actions that record the user's stable ID
+ * (such as US_TX ARS/ERS form edits and forwards) fail without one.
+ */
+function withStableStaffExternalId(record: StaffRecord): StaffRecord {
+  return record.recordType === "supervisionStaff"
+    ? { ...record, stableStaffExternalId: record.staffExternalId }
+    : record;
+}
+
 export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   private rootStore: RootStore;
 
@@ -221,7 +233,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         pseudonymizedId: user?.email ?? "",
       };
     }
-    return injectedUserData;
+    return injectedUserData && withStableStaffExternalId(injectedUserData);
   }
 
   subscribe(): void {
