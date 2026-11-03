@@ -583,7 +583,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
           select: MEETING_NOTIFICATION_SELECT,
         });
 
-        let completedMeeting;
         try {
           await prisma.meeting.update({
             where: {
@@ -608,7 +607,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           // unconditionally lets us backfill existing meetings if a state is
           // enabled later.
 
-          completedMeeting = await prisma.meeting.update({
+          await prisma.meeting.update({
             where: {
               id: meetingId,
             },
@@ -640,7 +639,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
                 },
               },
             },
-            select: MEETING_NOTIFICATION_SELECT,
           });
         } catch (e) {
           // Set error status at the current stage
@@ -675,8 +673,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         // Post-completion side effects — these run after the meeting is already
         // marked COMPLETED, so failures here must not revert the status.
+        // Uses the pre-run snapshot so a prior pipeline run id marks this as a reprocess.
         postMeetingCompletedNotification(
-          buildMeetingNotificationParams(completedMeeting, {
+          buildMeetingNotificationParams(existingMeeting, {
             meetingId,
             stateCode,
           }),

@@ -29,6 +29,7 @@ import {
   PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
+  RecordingSource,
   StateCode,
 } from "~@meetings/prisma/client";
 import { ValidationError } from "~@meetings/tasks";
@@ -70,6 +71,7 @@ export async function createMeetingForPerson({
   meetingId,
   meetingType,
   meetingTypeCategory,
+  recordingSource,
   stateCode,
 }: {
   prisma: PrismaClient;
@@ -81,6 +83,7 @@ export async function createMeetingForPerson({
   meetingId: string;
   meetingType?: string | null;
   meetingTypeCategory?: string | null;
+  recordingSource?: RecordingSource;
   stateCode: StateCode;
 }) {
   if (
@@ -117,6 +120,7 @@ export async function createMeetingForPerson({
       id: meetingId,
       meetingType,
       meetingTypeCategory,
+      recordingSource,
       [personType]: {
         connect: {
           personId,

@@ -50,6 +50,7 @@ export function useProcessOfflineEvent() {
             meetingType: event.meetingType ?? undefined,
             meetingTypeCategory: event.meetingTypeCategory,
             startTime: event.startTime,
+            recordingSource: event.recordingSource,
           });
           break;
         }

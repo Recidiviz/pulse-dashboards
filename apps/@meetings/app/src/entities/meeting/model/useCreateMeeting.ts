@@ -22,7 +22,7 @@ import { Alert } from "react-native";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 
-import { useMeetingActions } from "./useMeetingActions";
+import { RecordingSource, useMeetingActions } from "./useMeetingActions";
 import { MeetingEventType } from "./useMeetingEventQueue";
 import { useOfflineEventFactory } from "./useOfflineEventFactory";
 
@@ -31,6 +31,7 @@ type Params = {
   meetingType: string | null;
   meetingTypeCategory?: string | null;
   personType?: PersonType | null;
+  recordingSource?: RecordingSource;
   onSuccess: (meetingId: string) => Promise<void>;
 };
 
@@ -39,6 +40,7 @@ export function useCreateMeeting({
   meetingType,
   meetingTypeCategory,
   personType,
+  recordingSource,
   onSuccess,
 }: Params) {
   const { isOnline } = useIsOnline();
@@ -66,6 +68,7 @@ export function useCreateMeeting({
           personId: person.personId,
           personType,
           startTime,
+          recordingSource,
         });
 
         return meetingId;
@@ -78,6 +81,7 @@ export function useCreateMeeting({
         meetingType: meetingType ?? undefined,
         meetingTypeCategory,
         startTime,
+        recordingSource,
       });
 
       return meetingId;

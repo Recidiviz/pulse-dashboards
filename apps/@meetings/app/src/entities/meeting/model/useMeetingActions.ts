@@ -22,6 +22,10 @@ import type { AppRouter } from "~@meetings/trpc-types";
 
 type RouterInputs = inferRouterInputs<AppRouter>;
 
+export type RecordingSource = NonNullable<
+  RouterInputs["v1"]["client"]["createMeeting"]["recordingSource"]
+>;
+
 export type CreateMeetingParams = {
   personId: bigint;
   personType: PersonType;
@@ -29,6 +33,7 @@ export type CreateMeetingParams = {
   meetingType?: string;
   meetingTypeCategory?: string | null;
   startTime: Date;
+  recordingSource?: RecordingSource;
 };
 
 export type EndMeetingParams = RouterInputs["v1"]["meeting"]["endMeeting"] & {
@@ -59,6 +64,8 @@ export function useMeetingActions() {
     meetingType,
     meetingTypeCategory,
     startTime,
+    // Only the upload flow passes a source; events queued by older builds lack one.
+    recordingSource = "LIVE",
   }: CreateMeetingParams) => {
     // date-fns can't read the device zone; Hermes supports this Intl call on iOS and Android.
     // eslint-disable-next-line no-restricted-globals
@@ -71,6 +78,7 @@ export function useMeetingActions() {
         meetingId,
         meetingType,
         meetingTypeCategory,
+        recordingSource,
       });
     } else {
       await utils.client.v1.resident.createMeeting.mutate({
@@ -80,6 +88,7 @@ export function useMeetingActions() {
         meetingId,
         meetingType,
         meetingTypeCategory,
+        recordingSource,
       });
     }
 

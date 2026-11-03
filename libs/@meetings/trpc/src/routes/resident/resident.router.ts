@@ -93,6 +93,7 @@ export const residentRouter = router({
           meetingId,
           meetingType,
           meetingTypeCategory,
+          recordingSource,
         },
         ctx: { prisma, user, stateCode },
       }) => {
@@ -105,6 +106,7 @@ export const residentRouter = router({
           meetingId,
           meetingType,
           meetingTypeCategory,
+          recordingSource,
           personType: "resident",
           stateCode,
         });

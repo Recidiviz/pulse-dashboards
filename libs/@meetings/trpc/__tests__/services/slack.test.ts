@@ -97,6 +97,20 @@ describe("buildMeetingCompletedMessage", () => {
     );
   });
 
+  test("with source and reprocess, appends both lines", () => {
+    env.DEPLOY_ENV = "production";
+
+    expect(
+      buildMeetingCompletedMessage({
+        ...baseParams,
+        recordingSource: "UPLOADED",
+        isReprocess: true,
+      }),
+    ).toEqual(
+      `${baseMessage("unknown")}\n• Source: uploaded\n• Reprocessed: yes`,
+    );
+  });
+
   test("with person info but unmapped DEPLOY_ENV, omits the link", () => {
     env.DEPLOY_ENV = "dev";
 
@@ -178,6 +192,14 @@ describe("buildMeetingFailureMessage", () => {
         "• Additional info: Transcript too short: 12 words (minimum 50)",
       ].join("\n"),
     );
+  });
+
+  test("with source, appends the source line", () => {
+    env.DEPLOY_ENV = "production";
+
+    expect(
+      buildMeetingFailureMessage({ ...baseParams, recordingSource: "LIVE" }),
+    ).toEqual(`${buildMeetingFailureMessage(baseParams)}\n• Source: live`);
   });
 
   test("with empty additional info, omits the context line", () => {

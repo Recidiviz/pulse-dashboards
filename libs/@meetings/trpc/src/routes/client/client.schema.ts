@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { OutputVoteValue } from "~@meetings/prisma/client";
+import { OutputVoteValue, RecordingSource } from "~@meetings/prisma/client";
 import { timeZoneSchema } from "~@meetings/trpc/routes/meeting/meeting.schema";
 
 export const createMeetingInputSchema = z.object({
@@ -27,6 +27,8 @@ export const createMeetingInputSchema = z.object({
   meetingId: z.string().cuid2(),
   meetingType: z.string().optional(),
   meetingTypeCategory: z.string().nullable().optional(),
+  // Optional so older app versions can still create meetings
+  recordingSource: z.nativeEnum(RecordingSource).optional(),
 });
 
 export const getMeetingsInputSchema = z.object({

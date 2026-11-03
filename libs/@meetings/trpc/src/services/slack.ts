@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "~@meetings/prisma/client/enums";
+import { RecordingSource, StateCode } from "~@meetings/prisma/client/enums";
 import env from "~@meetings/trpc/env";
 
 const SLACK_WEBHOOK_URL = process.env["SLACK_WEBHOOK_URL"];
@@ -29,6 +29,8 @@ export const MEETING_NOTIFICATION_SELECT = {
   resident: { select: { pseudonymizedId: true } },
   clientId: true,
   residentId: true,
+  recordingSource: true,
+  notetakingPipelineRunId: true,
 } as const;
 
 export function buildMeetingNotificationParams(
@@ -38,6 +40,8 @@ export function buildMeetingNotificationParams(
     resident: { pseudonymizedId: string } | null;
     clientId: bigint | null;
     residentId: bigint | null;
+    recordingSource: RecordingSource | null;
+    notetakingPipelineRunId: string | null;
   },
   { meetingId, stateCode }: { meetingId: string; stateCode: StateCode },
 ) {
@@ -58,6 +62,10 @@ export function buildMeetingNotificationParams(
     meetingId,
     personType,
     personId: (meeting.clientId ?? meeting.residentId)?.toString(),
+    recordingSource: meeting.recordingSource,
+    // Callers load the meeting before the current notetaking run saves its own
+    // id, so a non-null value means an earlier run already finished.
+    isReprocess: meeting.notetakingPipelineRunId != null,
   };
 }
 
@@ -130,7 +138,19 @@ type MeetingSlackParams = {
   personId?: string;
   errorStep?: "stitching" | "transcription" | "notetaking";
   additionalInfo?: string;
+  recordingSource?: RecordingSource | null;
+  isReprocess?: boolean;
 };
+
+function buildSourceLines({
+  recordingSource,
+  isReprocess,
+}: Pick<MeetingSlackParams, "recordingSource" | "isReprocess">): string[] {
+  const lines: string[] = [];
+  if (recordingSource) lines.push(`• Source: ${recordingSource.toLowerCase()}`);
+  if (isReprocess) lines.push("• Reprocessed: yes");
+  return lines;
+}
 
 export function buildMeetingCompletedMessage({
   staffEmail,
@@ -139,6 +159,7 @@ export function buildMeetingCompletedMessage({
   meetingId,
   personType,
   personId,
+  ...sourceParams
 }: MeetingSlackParams): string {
   const lines = [
     "Meeting completed",
@@ -147,6 +168,7 @@ export function buildMeetingCompletedMessage({
     `• Client/Resident Pseudonymized ID: ${personPseudoId}`,
     `• Person Type: ${personType ?? "unknown"}`,
     `• Meeting ID: ${meetingId}`,
+    ...buildSourceLines(sourceParams),
   ];
 
   if (personType && personId) {
@@ -171,6 +193,7 @@ export function buildMeetingFailureMessage({
   personId,
   errorStep,
   additionalInfo,
+  ...sourceParams
 }: MeetingSlackParams): string {
   const lines = [
     `:warning: Meeting processing error`,
@@ -180,6 +203,7 @@ export function buildMeetingFailureMessage({
     `• Client/Resident Pseudonymized ID: ${personPseudoId}`,
     `• Person Type: ${personType ?? "unknown"}`,
     `• Meeting ID: ${meetingId}`,
+    ...buildSourceLines(sourceParams),
   ];
 
   if (additionalInfo) lines.push(`• Additional info: ${additionalInfo}`);

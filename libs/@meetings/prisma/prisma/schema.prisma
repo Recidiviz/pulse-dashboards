@@ -192,6 +192,11 @@ enum PostMeetingProcessingStatus {
   COMPLETED
 }
 
+enum RecordingSource {
+  LIVE
+  UPLOADED
+}
+
 model Meeting {
   id String @id @default(cuid())
 
@@ -204,6 +209,9 @@ model Meeting {
   recordingsFolderPath  String
   finalRecordingGCSPath String?
   durationMs            Int?
+
+  // Null for meetings created by app versions that predate this field.
+  recordingSource RecordingSource?
 
   postMeetingProcessingStatus PostMeetingProcessingStatus @default(NOT_STARTED)
 

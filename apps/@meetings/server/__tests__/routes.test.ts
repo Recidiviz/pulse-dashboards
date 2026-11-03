@@ -1678,6 +1678,7 @@ describe("tasks", () => {
         output: {
           caseNote: "Test case note",
           actionItems: [],
+          pipelineRunId: "test-pipeline-run-id",
         },
         agencyConfig: {} as never,
         transcriptInput: {} as never,
@@ -1810,7 +1811,30 @@ describe("tasks", () => {
           meetingId: meeting.id,
           personType: "client",
           personId: fakeClient.personId.toString(),
+          recordingSource: null,
+          isReprocess: false,
         });
+      });
+
+      test("Should flag a reprocess when notetaking already ran", async () => {
+        const meeting = await testPrismaClient.meeting.create({
+          data: {
+            ...fakeMeeting,
+            id: "slack-reprocess-meeting",
+            notetakingPipelineRunId: "prior-run",
+          },
+        });
+
+        await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(slackSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ isReprocess: true }),
+        );
       });
 
       test("Should omit person link info when meeting has no client or resident", async () => {
@@ -1839,6 +1863,8 @@ describe("tasks", () => {
           meetingId: meeting.id,
           personType: undefined,
           personId: undefined,
+          recordingSource: null,
+          isReprocess: false,
         });
       });
     });

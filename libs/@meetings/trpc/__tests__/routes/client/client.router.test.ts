@@ -159,6 +159,22 @@ describe("client router", () => {
         );
       });
 
+      test("Persists recordingSource", async () => {
+        const meetingId = createId();
+
+        await testTRPCClient.v1.client.createMeeting.mutate({
+          clientId: fakeClients[0].personId,
+          startTime: faker.date.future(),
+          meetingId,
+          recordingSource: "UPLOADED",
+        });
+
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: meetingId },
+        });
+        expect(meeting.recordingSource).toBe("UPLOADED");
+      });
+
       test("Creates a meeting without meetingType", async () => {
         const startTime = faker.date.future();
         const meetingId = createId();

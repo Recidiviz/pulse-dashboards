@@ -24,6 +24,7 @@ import { persist } from "zustand/middleware";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 
 import { createEventQueueStorage } from "../lib/meetingEventQueueStorage";
+import type { RecordingSource } from "./useMeetingActions";
 
 export type OfflineEvent =
   | CreateMeetingEvent
@@ -55,6 +56,7 @@ export type CreateMeetingEvent = {
   meetingType: string | null;
   meetingTypeCategory?: string | null;
   startTime: Date;
+  recordingSource?: RecordingSource;
   type: MeetingEventType.Created;
 } & MeetingEventMetadata;
 
