@@ -57,12 +57,13 @@ configureMobx({
 
 initI18n();
 
-process.env = {
-  ...process.env,
+// assign rather than replace process.env, since Node only applies a TZ change
+// made on the original object
+Object.assign(process.env, {
   VITE_TEST_ENV: "true",
   VITE_METADATA_NAMESPACE: "test-metadata-namespace/",
   VITE_JII_API_URL: "http://jii-api",
-};
+});
 
 // mock analytics configuration
 // eslint-disable-next-line no-restricted-properties

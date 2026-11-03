@@ -23,10 +23,7 @@ import {
 } from "../../../core/utils/workflowsUtils";
 import { getOfficerFullName } from "../../../core/WorkflowsOfficerName/getOfficerFullName";
 import { OpportunityUpdateWithForm } from "../../../FirestoreStore";
-import {
-  formatWorkflowsDate,
-  formatWorkflowsDateString,
-} from "../../../utils/formatStrings";
+import { formatWorkflowsDate } from "../../../utils/formatStrings";
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityTab, OpportunityTabGroup } from "../types";
@@ -126,7 +123,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
 
   get grantDate(): string | undefined {
     if (!this.record.metadata.grantedAt) return undefined;
-    return formatWorkflowsDateString(this.record.metadata.grantedAt);
+    return formatWorkflowsDate(this.record.metadata.grantedAt);
   }
 
   get isInRevisionsRequested(): boolean {

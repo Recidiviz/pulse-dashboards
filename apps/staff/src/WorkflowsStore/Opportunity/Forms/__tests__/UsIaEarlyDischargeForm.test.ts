@@ -168,6 +168,18 @@ describe("prefilledDataTransformer", () => {
       expect(form.prefilledDataTransformer().officerFullName).toBeUndefined();
     });
   });
+
+  describe("charge dates", () => {
+    test("shows each charge's TDD on the same calendar day in a US time zone", () => {
+      // the test setup configures UTC by default, which would mask a date-only
+      // string being read as UTC midnight
+      vi.stubEnv("TZ", "America/Chicago");
+
+      const prefilled = form.prefilledDataTransformer();
+      expect(prefilled.tdd0).toBe("Jan 1, 2025");
+      expect(prefilled.tdd1).toBe("Mar 1, 2025");
+    });
+  });
 });
 
 describe("formContents", () => {

@@ -395,6 +395,33 @@ describe("formatStrings", () => {
     });
   });
 
+  describe("formatWorkflowsDateString", () => {
+    beforeEach(() => {
+      // the test setup configures UTC by default, which would mask a date-only
+      // string being read as UTC midnight
+      vi.stubEnv("TZ", "America/Chicago");
+    });
+
+    it("shows a date-only string on the same calendar day", () => {
+      expect(utils.formatWorkflowsDateString("2025-01-01")).toBe("Jan 1, 2025");
+    });
+
+    it("formats a full timestamp in the local time zone", () => {
+      expect(utils.formatWorkflowsDateString("2025-01-01T03:00:00Z")).toBe(
+        "Dec 31, 2024",
+      );
+    });
+
+    it("returns the fallback for a missing or unparseable value", () => {
+      expect(utils.formatWorkflowsDateString(undefined, "Not set")).toBe(
+        "Not set",
+      );
+      expect(utils.formatWorkflowsDateString("not a date", "Not set")).toBe(
+        "Not set",
+      );
+    });
+  });
+
   describe("formatYearsMonthsFromNow", () => {
     const TEST_DATE = new Date(2022, 2, 2);
 

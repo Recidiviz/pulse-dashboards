@@ -18,7 +18,11 @@
 import { isDemoMode } from "~client-env-utils";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { formatNameFirstLast, formatWorkflowsDate } from "../../../utils";
+import {
+  formatNameFirstLast,
+  formatWorkflowsDate,
+  formatWorkflowsDateString,
+} from "../../../utils";
 import { UsIaEarlyDischargeOpportunity } from "../UsIa";
 import { FormBase } from "./FormBase";
 import { resolveCurrentUserName } from "./utils";
@@ -283,8 +287,8 @@ export class UsIaEarlyDischargeForm extends FormBase<
       chargeData[`description${i}`] = description;
       chargeData[`classificationTypeRawText${i}`] = classificationTypeRawText;
       chargeData[`statute${i}`] = statute;
-      chargeData[`tdd${i}`] = tdd ? formatWorkflowsDate(new Date(tdd)) : "";
-      chargeData[`sdd${i}`] = sdd ? formatWorkflowsDate(new Date(sdd)) : "";
+      chargeData[`tdd${i}`] = formatWorkflowsDateString(tdd, "");
+      chargeData[`sdd${i}`] = formatWorkflowsDateString(sdd, "");
     }
 
     const caseNumbers = charges.map((charge) => charge.causeNumber).join(", ");

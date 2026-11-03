@@ -35,7 +35,7 @@ import startCase from "lodash/fp/startCase";
 import moment from "moment";
 import numeral from "numeral";
 
-import { FullName } from "~datatypes";
+import { dateStringSchemaWithoutTimeShift, FullName } from "~datatypes";
 import { formatDate } from "~utils";
 
 import { translate } from "./i18nSettings";
@@ -234,7 +234,10 @@ function formatWorkflowsDateString(
   fallback = "Unknown",
 ): string {
   if (!date) return fallback;
-  return formatWorkflowsDate(new Date(date));
+  // new Date() would read a date-only string as UTC midnight, which is the
+  // previous day in US time zones
+  const parsed = dateStringSchemaWithoutTimeShift.safeParse(date);
+  return parsed.success ? formatWorkflowsDate(parsed.data) : fallback;
 }
 
 function formatDurationFromDays(days: number): string {
