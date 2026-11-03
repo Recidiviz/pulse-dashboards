@@ -149,7 +149,7 @@ const MeetingRow = ({
         <>
           <TableCell>
             {isProcessing && (
-              <View className="h-full max-h-[64px] overflow-hidden rounded-xl bg-brand-light">
+              <View className="h-full max-h-[64px] justify-center overflow-hidden rounded-xl bg-brand-light">
                 <View className="flex flex-row items-center gap-4 px-3 py-2">
                   <ProcessingSvg />
                   <View className="flex-1">

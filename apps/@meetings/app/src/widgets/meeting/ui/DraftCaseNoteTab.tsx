@@ -45,6 +45,7 @@ type Props = {
   outputVote?: ReactNode;
   canEdit?: boolean;
   onEdit?: () => void;
+  isProcessing?: boolean;
 };
 
 const DraftCaseNoteTab = ({
@@ -53,6 +54,7 @@ const DraftCaseNoteTab = ({
   outputVote,
   canEdit = false,
   onEdit,
+  isProcessing = false,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
@@ -82,6 +84,7 @@ const DraftCaseNoteTab = ({
     },
   });
   const isNoteShown = !isPending && !isTyping;
+  const isEditable = canEdit && isNoteShown && !isProcessing;
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -141,7 +144,7 @@ const DraftCaseNoteTab = ({
             <Typography variant="heading-4">Draft case note</Typography>
             <AiGeneratedIndicator />
           </View>
-          {canEdit && isNoteShown && (
+          {isEditable && (
             <Typography variant="body-s-regular">
               Place your cursor where you want to start typing
             </Typography>
@@ -160,18 +163,17 @@ const DraftCaseNoteTab = ({
       <View className="flex-1">
         {!isPending && (
           <TextInput
-            variant={isNoteShown && canEdit ? "outlined" : "outlined-static"}
+            variant={isEditable ? "outlined" : "outlined-static"}
             style={{ minHeight: inputHeight }}
             className="overflow-hidden text-base leading-6 tracking-[-0.32px] text-primary outline-none"
             value={isTyping ? `${visibleText}|` : inputNotes}
-            // Not wired up while typing, so a half-typed note can't be saved
-            onChangeText={isTyping ? undefined : handleChange}
+            onChangeText={isEditable ? handleChange : undefined}
             onContentSizeChange={(e) =>
               setInputHeight(e.nativeEvent.contentSize.height)
             }
             textAlignVertical="top"
             scrollEnabled={false}
-            readOnly={!canEdit || isTyping}
+            readOnly={!isEditable}
             multiline
           />
         )}

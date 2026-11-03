@@ -24,6 +24,7 @@ import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
+  isMeetingProcessing,
   MeetingDetails,
 } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
@@ -44,6 +45,7 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useApprovalFooter } from "../lib/useApprovalFooter";
 import { usePrintMeetingDetails } from "../lib/usePrintMeetingDetails";
+import { useScrollTip } from "../model/useScrollTip";
 import { ActionItemsTab } from "./ActionItemsTab";
 import { ApprovalFooter } from "./ApprovalFooter";
 import AudioPlayer from "./AudioPlayer";
@@ -52,6 +54,7 @@ import MeetingTabs, { Tab } from "./MeetingTabs";
 import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
 import OutputVote from "./OutputVote";
 import { ScrollSection, scrollToSection } from "./ScrollSection";
+import { ScrollTip } from "./ScrollTip";
 import StaffFeedbackTab from "./StaffFeedbackTab";
 
 const FOOTER_HEIGHT = 64;
@@ -90,7 +93,16 @@ const MeetingDesktop = ({
   // State rather than a ref so the sections start observing once it mounts
   const [scrollView, setScrollView] = useState<ScrollView | null>(null);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
+  // Where the scrollable content starts, so the tip lines up with it
+  const [scrollTop, setScrollTop] = useState(0);
   const { track } = useAnalytics();
+  const isProcessing = isMeetingProcessing(
+    meetingDetails.postMeetingProcessingStatus,
+  );
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
+  const [scrollContentHeight, setScrollContentHeight] = useState(0);
+  const isScrollable = scrollContentHeight - scrollViewHeight > 1;
+  const scrollTip = useScrollTip({ enabled: !isProcessing && isScrollable });
   const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
   const isMeetingCreator =
     currentUserEmail?.toLowerCase() ===
@@ -151,7 +163,7 @@ const MeetingDesktop = ({
     <View className="flex-1 grow">
       {header}
       <View className="flex-1 grow flex-row border-t border-subtle">
-        <View className="w-36 shrink-0 pl-10 pt-12">
+        <View className="w-52 shrink-0 pl-6 pt-12">
           <BlockLink
             className="flex flex-row items-center gap-2"
             screen={
@@ -162,13 +174,30 @@ const MeetingDesktop = ({
             <ChevronLeftIcon className="size-3 stroke-tertiary stroke-[3px]" />
             <Typography variant="body-s-medium">Back</Typography>
           </BlockLink>
+          <FadeContainer
+            isVisible={scrollTip.isVisible}
+            duration={400}
+            style={{
+              position: "absolute",
+              left: 24,
+              top: scrollTop,
+              width: 150,
+            }}
+          >
+            <ScrollTip />
+          </FadeContainer>
         </View>
 
         <View className="flex-1 pt-8">
           {/* overflow-hidden makes this a scroll container, which is what lets
               it reserve the same gutter as the ScrollView below and stay
               aligned with it. */}
-          <View className="scrollbar-gutter-stable overflow-hidden pl-1 pr-14">
+          <View
+            className="scrollbar-gutter-stable overflow-hidden pl-1 pr-44"
+            onLayout={(e) =>
+              setScrollTop(e.nativeEvent.layout.y + e.nativeEvent.layout.height)
+            }
+          >
             <View className="flex-row items-center gap-3">
               <ImageBackground
                 source={BgAvatarImage}
@@ -258,8 +287,14 @@ const MeetingDesktop = ({
 
           <ScrollView
             ref={setScrollView}
+            onScroll={scrollTip.dismiss}
+            onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
+            onContentSizeChange={(_width, height) =>
+              setScrollContentHeight(height)
+            }
+            scrollEventThrottle={100}
             className="scrollbar-gutter-stable flex-1"
-            contentContainerClassName="grow pr-14 pb-10 pl-1"
+            contentContainerClassName="grow pr-44 pb-10 pl-1"
             contentContainerStyle={
               shouldShowFooter && { paddingBottom: 40 + FOOTER_HEIGHT }
             }
@@ -271,6 +306,8 @@ const MeetingDesktop = ({
                 onVisible={handleSectionVisible}
               >
                 <DraftCaseNoteTab
+                  key={isProcessing ? "processing" : "processed"}
+                  isProcessing={isProcessing}
                   meetingDetails={meetingDetails}
                   personId={person.personId.toString()}
                   canEdit={isMeetingCreator}
@@ -360,7 +397,7 @@ const MeetingDesktop = ({
           className="flex-row border-t border-subtle bg-primary"
           style={{ height: FOOTER_HEIGHT }}
         >
-          <View className="w-36 shrink-0" />
+          <View className="w-52 shrink-0" />
           <View className="flex-1 flex-row items-center justify-between py-3 pr-10">
             <ApprovalFooter
               activeTab={footerTab}
