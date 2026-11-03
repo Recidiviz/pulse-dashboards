@@ -103,6 +103,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -129,6 +130,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -155,6 +157,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -216,6 +219,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -242,6 +246,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -268,6 +273,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -331,6 +337,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -357,6 +364,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -384,6 +392,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -444,6 +453,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -470,6 +480,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -530,6 +541,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -556,6 +568,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -618,6 +631,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -644,6 +658,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -704,6 +719,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -730,6 +746,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: "different-offense-2",
               offense: {
                 create: {
                   stateCode: StateCode.US_ID,
@@ -795,6 +812,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -847,6 +865,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -901,6 +920,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: Gender.MALE,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -952,6 +972,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1003,6 +1024,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1056,6 +1078,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1112,6 +1135,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1166,6 +1190,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1220,6 +1245,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1274,6 +1300,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1329,6 +1356,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1383,6 +1411,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1437,6 +1466,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1493,6 +1523,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1545,6 +1576,7 @@ describe("insight router", () => {
             data: {
               stateCode: "US_ID",
               gender: fakeInsight.gender,
+              offenseName: fakeInsight.offense,
               offense: {
                 connect: {
                   stateCode: StateCode.US_ID,
@@ -1598,6 +1630,7 @@ describe("insight router", () => {
           data: {
             stateCode: "US_ID",
             gender: fakeInsight.gender,
+            offenseName: fakeInsight.offense,
             offense: {
               connect: {
                 stateCode: StateCode.US_ID,

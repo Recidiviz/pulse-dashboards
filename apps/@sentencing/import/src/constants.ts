@@ -34,7 +34,10 @@ import { transformAndLoadChargeData } from "~@sentencing/import/utils/charges";
 import { transformAndLoadClientHistoryData } from "~@sentencing/import/utils/clientHistory";
 import { transformAndLoadClientData } from "~@sentencing/import/utils/clients";
 import { transformAndLoadCountyAndDistrictData } from "~@sentencing/import/utils/countiesAndDistricts";
-import { transformAndLoadInsightData } from "~@sentencing/import/utils/insights";
+import {
+  transformAndLoadInsightData,
+  transformAndLoadSARInsightData,
+} from "~@sentencing/import/utils/insights";
 import { transformAndLoadOffenseData } from "~@sentencing/import/utils/offenses";
 import { transformAndLoadOpportunityData } from "~@sentencing/import/utils/opportunities";
 import { transformAndLoadSARData } from "~@sentencing/import/utils/sar";
@@ -122,7 +125,7 @@ export const SAR_FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   },
   [INSIGHTS_FILE_NAME]: {
     schema: insightImportSchema,
-    loaderFn: transformAndLoadInsightData,
+    loaderFn: transformAndLoadSARInsightData,
   },
   [TIME_SERVED_FILE_NAME]: {
     schema: timeServedImportSchema,

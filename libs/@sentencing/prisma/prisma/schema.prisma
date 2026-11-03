@@ -398,6 +398,10 @@ model Opportunity {
   @@unique([opportunityName, providerName, district])
 }
 
+// PSI's offense catalog (US_ID, US_ND): the case offense dropdown, mandatory
+// minimums, and violent and sex offense flags. SAR (US_MO) doesn't use this
+// table; it keeps offense names as strings on Charge and
+// SentencingAssessmentReport.
 model Offense {
   id                String             @id @default(cuid())
   stateCode         StateCode
@@ -505,8 +509,13 @@ model Insight {
   id                         String    @id @default(cuid())
   stateCode                  StateCode
   gender                     Gender
-  offense                    Offense   @relation(name: "InsightOffenses", fields: [offenseId], references: [id])
-  offenseId                  String
+  // The offense this cohort was sentenced for. A SAR's insight is the one whose
+  // offenseName equals its mostSevereOffenseName, which comes from Charge.offense.
+  // A PSI insight's offenseName equals its linked Offense.name.
+  offenseName                String
+  // Only PSI insights link to an Offense.
+  offense                    Offense?  @relation(name: "InsightOffenses", fields: [offenseId], references: [id])
+  offenseId                  String?
   assessmentScoreBucketStart Int
   assessmentScoreBucketEnd   Int
 
@@ -531,7 +540,7 @@ model Insight {
   avgPctServed           Float?
   timeServedNumRecords   Int?
 
-  @@unique([gender, offenseId, assessmentScoreBucketStart, assessmentScoreBucketEnd])
+  @@unique([gender, offenseName, assessmentScoreBucketStart, assessmentScoreBucketEnd])
 }
 
 model RecidivismSeries {
@@ -694,7 +703,7 @@ model SentencingAssessmentReport {
   institutionalStrategyRecommendation String?
   priorTreatmentHistorySummary  String?
 
-  // Matches Offense.name. Set by ingest when unambiguous, by user when tied. Same convention as Charge.offense.
+  // Matches Insight.offenseName. Set by ingest when unambiguous, by user when tied. Same convention as Charge.offense.
   mostSevereOffenseName String?
 
   // Relationships
@@ -766,6 +775,8 @@ model SARInsightSnapshotDisposition {
   @@unique([sarInsightSnapshotId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
 }
 
+// A charge on a SAR. SAR charges live here rather than in Offense because PSI
+// and SAR offense data have almost no fields in common.
 model Charge {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())

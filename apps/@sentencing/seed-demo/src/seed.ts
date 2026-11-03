@@ -322,6 +322,7 @@ async function main() {
   for (const offense of dbOffenses) {
     insights.push({
       offenseId: offense.id,
+      offenseName: offense.name,
       stateCode: StateCode.US_ID,
       gender: faker.helpers.enumValue(Gender),
       assessmentScoreBucketStart: 0,

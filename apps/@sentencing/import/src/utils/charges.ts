@@ -94,31 +94,10 @@ export async function transformAndLoadChargeData(
     return;
   }
 
-  // Collect all charge records so we can iterate over them multiple times (first to upsert Offense records, then to load Charges):
+  // Collect all charge records so we can iterate over them multiple times:
   const allCharges: z.infer<typeof chargeImportSchema>[] = [];
   for await (const chargeData of data) {
     allCharges.push(chargeData);
-  }
-
-  // SAR uses a separate Charge table (not the shared Offense table) because PSI and SAR
-  // have almost no field overlap. However, Insight records are keyed off Offense.name,
-  // so we upsert one Offense row per unique charge description here to make the
-  // Insight lookup work for SAR clients.
-  const uniqueOffenses = [
-    ...new Map(allCharges.map((c) => [c.description, c])).values(),
-  ];
-
-  // Process sequentially to avoid exhausting the Prisma connection pool
-  for (const chargeData of uniqueOffenses) {
-    // eslint-disable-next-line no-await-in-loop
-    await prismaClient.offense.upsert({
-      where: { name: chargeData.description },
-      create: {
-        stateCode: chargeData.state_code,
-        name: chargeData.description,
-      },
-      update: {},
-    });
   }
 
   // Batch-fetch all existing charges for the relevant SARs to avoid N+1 queries

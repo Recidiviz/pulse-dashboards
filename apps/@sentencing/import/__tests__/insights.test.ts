@@ -20,6 +20,7 @@ import { describe, expect, test } from "vitest";
 
 import { INSIGHTS_FILE_NAME } from "~@sentencing/import/constants";
 import { getImportHandler } from "~@sentencing/import/handler";
+import { insightImportSchema } from "~@sentencing/import/models";
 import {
   createFakeDispositionsForImport,
   createFakeRecidivismSeriesForImport,
@@ -30,10 +31,43 @@ import {
   TEST_STATE_CODE,
 } from "~@sentencing/import/test/setup/constants";
 import { fakeOffense } from "~@sentencing/import/test/setup/seed";
+import {
+  importFile,
+  ImportRowOverrides,
+} from "~@sentencing/import/test/setup/utils";
 import { Gender, StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 let importHandler: ReturnType<typeof getImportHandler>;
+
+/** Imports one US_MO insight for "mo-offense" through the SAR loaders. */
+async function importMOInsight(
+  overrides: ImportRowOverrides<typeof insightImportSchema> = {},
+) {
+  await importFile(
+    INSIGHTS_FILE_NAME,
+    [
+      {
+        state_code: StateCode.US_MO,
+        gender: Gender.MALE,
+        assessment_score_bucket_start: 1,
+        assessment_score_bucket_end: 1,
+        most_severe_description: "mo-offense",
+        recidivism_rollup: JSON.stringify({ state_code: StateCode.US_MO }),
+        recidivism_num_records: faker.number.int({ max: 100 }),
+        recidivism_series: createFakeRecidivismSeriesForImport([
+          { sentence_type: "Probation" },
+        ]),
+        disposition_num_records: 10,
+        dispositions: createFakeDispositionsForImport([
+          { sentence_type: "Probation" },
+        ]),
+        ...overrides,
+      },
+    ],
+    StateCode.US_MO,
+  );
+}
 
 describe("import insight data", () => {
   beforeAll(async () => {
@@ -170,38 +204,9 @@ describe("import insight data", () => {
   });
 
   test("should drop US_MO sentence distributions below the minimum sample size", async () => {
-    // The minimum sample size restriction currently only applies to US_MO, so
-    // seed a US_MO offense for the insight to link to.
-    const moOffense = await testPrismaClient.offense.create({
-      data: {
-        stateCode: StateCode.US_MO,
-        name: "mo-offense",
-      },
-    });
-
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
-      {
-        state_code: StateCode.US_MO,
-        gender: Gender.MALE,
-        assessment_score_bucket_start: faker.number.int({ max: 100 }),
-        assessment_score_bucket_end: faker.number.int({ max: 100 }),
-        most_severe_description: moOffense.name,
-        recidivism_rollup: JSON.stringify({
-          state_code: StateCode.US_MO,
-        }),
-        recidivism_num_records: faker.number.int({ max: 100 }),
-        recidivism_series: createFakeRecidivismSeriesForImport([
-          { sentence_type: "Probation" },
-        ]),
-        // Fewer than the minimum of 10 records — distributions should be dropped.
-        disposition_num_records: 9,
-        dispositions: createFakeDispositionsForImport([
-          { sentence_type: "Probation" },
-        ]),
-      },
-    ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+    // The minimum sample size restriction currently only applies to US_MO.
+    // Fewer than the minimum of 10 records — distributions should be dropped.
+    await importMOInsight({ disposition_num_records: 9 });
 
     const dbInsights = await testPrismaClient.insight.findMany({
       include: { dispositionData: true },
@@ -215,38 +220,9 @@ describe("import insight data", () => {
   });
 
   test("should keep US_MO sentence distributions at exactly the minimum sample size", async () => {
-    // The minimum sample size restriction currently only applies to US_MO, so
-    // seed a US_MO offense for the insight to link to.
-    const moOffense = await testPrismaClient.offense.create({
-      data: {
-        stateCode: StateCode.US_MO,
-        name: "mo-offense",
-      },
-    });
-
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
-      {
-        state_code: StateCode.US_MO,
-        gender: Gender.MALE,
-        assessment_score_bucket_start: faker.number.int({ max: 100 }),
-        assessment_score_bucket_end: faker.number.int({ max: 100 }),
-        most_severe_description: moOffense.name,
-        recidivism_rollup: JSON.stringify({
-          state_code: StateCode.US_MO,
-        }),
-        recidivism_num_records: faker.number.int({ max: 100 }),
-        recidivism_series: createFakeRecidivismSeriesForImport([
-          { sentence_type: "Probation" },
-        ]),
-        // Exactly the minimum of 10 records — distributions should be kept.
-        disposition_num_records: 10,
-        dispositions: createFakeDispositionsForImport([
-          { sentence_type: "Probation" },
-        ]),
-      },
-    ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+    // The minimum sample size restriction currently only applies to US_MO.
+    // Exactly the minimum of 10 records — distributions should be kept.
+    await importMOInsight({ disposition_num_records: 10 });
 
     const dbInsights = await testPrismaClient.insight.findMany({
       include: { dispositionData: true },
@@ -324,6 +300,21 @@ describe("import insight data", () => {
       where: { name: "nonexistent-offense" },
     });
     expect(offenses).toHaveLength(0);
+  });
+
+  test("should load SAR insights without linking them to an Offense", async () => {
+    await importMOInsight();
+
+    const dbInsights = await testPrismaClient.insight.findMany();
+    expect(dbInsights).toHaveLength(1);
+    expect(dbInsights[0]).toEqual(
+      expect.objectContaining({ offenseName: "mo-offense", offenseId: null }),
+    );
+    expect(
+      await testPrismaClient.offense.findUnique({
+        where: { name: "mo-offense" },
+      }),
+    ).toBeNull();
   });
 
   test("should handle data without sentence lengths", async () => {

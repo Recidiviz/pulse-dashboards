@@ -206,9 +206,10 @@ describe("SAR router", () => {
   describe("getSARInsight", () => {
     // fakeSARClient is MALE, and a LOW risk level is bucket 0, so this insight
     // matches fakeSAR once its offense is set. The seeded FEMALE insight
-    // doesn't match.
+    // doesn't match. Like the MO insights import, it isn't linked to an
+    // Offense, so it can only match on offenseName.
     const matchingInsight = {
-      ...fakeInsightPrismaInput,
+      ..._.omit(fakeInsightPrismaInput, "offense"),
       gender: Gender.MALE,
       assessmentScoreBucketStart: 0,
       assessmentScoreBucketEnd: 0,
@@ -246,7 +247,7 @@ describe("SAR router", () => {
     // Changes the live Insight so tests can tell it apart from a snapshot.
     function changeLiveInsight() {
       return testPrismaClient.insight.updateMany({
-        where: { gender: Gender.MALE, offense: { name: fakeOffense.name } },
+        where: { gender: Gender.MALE, offenseName: fakeOffense.name },
         data: { dispositionNumRecords: 99 },
       });
     }

@@ -71,6 +71,7 @@ describe("offense router", () => {
         data: {
           stateCode: "US_ID",
           gender: "MALE",
+          offenseName: "[PLACEHOLDER] Ben's Offense",
           offense: {
             connect: {
               stateCode: fakeOffense.stateCode,

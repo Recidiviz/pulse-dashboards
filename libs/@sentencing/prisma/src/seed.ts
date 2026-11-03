@@ -242,7 +242,7 @@ async function addSeedEmploymentHistory(
 
 async function addSARClientsAndReports(
   staff: Prisma.StaffCreateInput,
-  moOffenses: Offense[],
+  moOffenseNames: string[],
 ) {
   /* Add 5 SAR clients and reports with charges */
   const clients: { externalId: string }[] = [];
@@ -422,7 +422,7 @@ async function addSARClientsAndReports(
     // Add 1-3 charges per SAR with only imported fields: offense name, felony class, cause number, judge name, division, county, moCode
     const numCharges = faker.number.int({ min: 1, max: 3 });
     // To avoid duplicate offenses in a single SAR, shuffle and slice offenses
-    const shuffledOffenses = faker.helpers.shuffle(moOffenses);
+    const shuffledOffenseNames = faker.helpers.shuffle(moOffenseNames);
     for (let j = 0; j < numCharges; j++) {
       const classificationType = faker.helpers.enumValue(
         ChargeClassificationType,
@@ -436,7 +436,7 @@ async function addSARClientsAndReports(
             connect: { id: sar.id },
           },
           chargeExternalId: faker.string.uuid(),
-          offense: shuffledOffenses[j].name,
+          offense: shuffledOffenseNames[j],
           // Only imported fields - the rest will be filled in by users
           causeNum: `${faker.string.numeric(2)}-CR-${faker.string.numeric(5)}`,
           classificationType,
@@ -455,7 +455,7 @@ async function addSARClientsAndReports(
 
     await prisma.sentencingAssessmentReport.update({
       where: { id: sar.id },
-      data: { mostSevereOffenseName: shuffledOffenses[0].name },
+      data: { mostSevereOffenseName: shuffledOffenseNames[0] },
     });
 
     // Add 1-2 manually-entered employment records and 1 record imported from MOCIS
@@ -585,11 +585,10 @@ async function addOffenses() {
   ];
 
   const psiOffenses = await createOffenses(StateCode.US_ID, offenseNames);
-  // MO offense names must be globally unique (Offense.name @@unique)
-  const moOffenses = await createOffenses(
-    StateCode.US_MO,
-    offenseNames.map((n) => `${n} (MO)`),
-  );
+  // SAR insights match on offense name rather than an Offense row. Both states'
+  // insights share this database, and Insight is unique on offense name, so MO
+  // names must differ from the US_ID ones.
+  const moOffenseNames = offenseNames.map((n) => `${n} (MO)`);
 
   // Create Mandatory Minimums and PSI insights for each PSI offense
   for (const offense of psiOffenses) {
@@ -618,6 +617,7 @@ async function addOffenses() {
           stateCode: StateCode.US_ID,
           gender: Gender.MALE,
           offenseId: offense.id,
+          offenseName: offense.name,
           ...bucketData,
           dispositionNumRecords: 100,
           dispositionData: {
@@ -662,6 +662,7 @@ async function addOffenses() {
           stateCode: StateCode.US_ID,
           gender: Gender.FEMALE,
           offenseId: offense.id,
+          offenseName: offense.name,
           ...bucketData,
           dispositionNumRecords: 80,
           dispositionData: {
@@ -704,7 +705,7 @@ async function addOffenses() {
   }
 
   // Create MO (SAR) insights for each MO offense
-  for (const offense of moOffenses) {
+  for (const offenseName of moOffenseNames) {
     for (const bucket of [0, 1, 2, 3]) {
       const moBucketData = {
         assessmentScoreBucketStart: bucket,
@@ -717,7 +718,7 @@ async function addOffenses() {
         data: {
           stateCode: StateCode.US_MO,
           gender: Gender.MALE,
-          offenseId: offense.id,
+          offenseName,
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 100, max: 1000 }),
           dispositionData: {
@@ -741,7 +742,7 @@ async function addOffenses() {
         data: {
           stateCode: StateCode.US_MO,
           gender: Gender.FEMALE,
-          offenseId: offense.id,
+          offenseName,
           ...moBucketData,
           dispositionNumRecords: faker.number.int({ min: 50, max: 800 }),
           dispositionData: {
@@ -763,7 +764,7 @@ async function addOffenses() {
     }
   }
 
-  return { psiOffenses, moOffenses };
+  return { psiOffenses, moOffenseNames };
 }
 
 async function getManagementAPIToken(): Promise<string> {
@@ -890,13 +891,13 @@ async function main() {
   });
 
   console.log("Adding Offenses...");
-  const { psiOffenses, moOffenses } = await addOffenses();
+  const { psiOffenses, moOffenseNames } = await addOffenses();
 
   console.log("Adding PSI Clients and Cases...");
   await addPSIClientsAndCases(countyByName, staff, psiOffenses);
 
   console.log("Adding SAR Clients and Reports...");
-  await addSARClientsAndReports(staff, moOffenses);
+  await addSARClientsAndReports(staff, moOffenseNames);
 
   // TODO(#10194) Add recidivism data to power visualizations
 }

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { TIME_SERVED_FILE_NAME } from "~@sentencing/import/constants";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
@@ -23,8 +23,6 @@ import { importFile } from "~@sentencing/import/test/setup/utils";
 import { Gender, StateCode } from "~@sentencing/prisma/client";
 
 const OFFENSE_NAME = "ROBBERY 1ST DEGREE";
-
-let offenseId: string;
 
 /** A row for OFFENSE_NAME. Tests pass the fields they care about. */
 function createTimeServedImportRow(overrides: Record<string, unknown> = {}) {
@@ -47,36 +45,32 @@ async function importTimeServed(rows: Record<string, unknown>[]) {
   await importFile(TIME_SERVED_FILE_NAME, rows, StateCode.US_MO);
 }
 
+/** Creates a MALE OFFENSE_NAME insight in the HIGH (bucket 2) cohort. */
+function createInsight() {
+  return testPrismaClient.insight.create({
+    data: {
+      stateCode: StateCode.US_MO,
+      gender: Gender.MALE,
+      offenseName: OFFENSE_NAME,
+      assessmentScoreBucketStart: 2,
+      assessmentScoreBucketEnd: 2,
+      rollupStateCode: StateCode.US_MO,
+      rollupRecidivismNumRecords: 50,
+      dispositionNumRecords: 40,
+    },
+  });
+}
+
 function findInsights() {
   return testPrismaClient.insight.findMany({
-    where: { offenseId },
+    where: { offenseName: OFFENSE_NAME },
     orderBy: { assessmentScoreBucketStart: "asc" },
   });
 }
 
 describe("import time served data", () => {
-  beforeEach(async () => {
-    offenseId = (
-      await testPrismaClient.offense.create({
-        data: { stateCode: StateCode.US_MO, name: OFFENSE_NAME },
-      })
-    ).id;
-  });
-
   test("should add time served data to an existing insight without changing its other data", async () => {
-    const existingInsight = await testPrismaClient.insight.create({
-      data: {
-        stateCode: StateCode.US_MO,
-        gender: Gender.MALE,
-        offense: { connect: { id: offenseId } },
-        // HIGH maps to bucket 2.
-        assessmentScoreBucketStart: 2,
-        assessmentScoreBucketEnd: 2,
-        rollupStateCode: StateCode.US_MO,
-        rollupRecidivismNumRecords: 50,
-        dispositionNumRecords: 40,
-      },
-    });
+    const existingInsight = await createInsight();
 
     await importTimeServed([createTimeServedImportRow()]);
 
@@ -92,12 +86,13 @@ describe("import time served data", () => {
     ]);
   });
 
-  test("should create an insight with only time served data when none exists", async () => {
+  test("should create an insight with only time served data when the offense has no other insights", async () => {
     await importTimeServed([createTimeServedImportRow()]);
 
     expect(await findInsights()).toEqual([
       expect.objectContaining({
         gender: Gender.MALE,
+        offenseId: null,
         assessmentScoreBucketStart: 2,
         assessmentScoreBucketEnd: 2,
         rollupRecidivismNumRecords: 0,
@@ -153,20 +148,5 @@ describe("import time served data", () => {
         ({ assessmentScoreBucketStart }) => assessmentScoreBucketStart,
       ),
     ).toEqual([0]);
-  });
-
-  test("should skip rows with no matching offense", async () => {
-    await importTimeServed([
-      createTimeServedImportRow({ most_severe_description: "UNKNOWN OFFENSE" }),
-    ]);
-
-    expect(await testPrismaClient.insight.count({ where: { offenseId } })).toBe(
-      0,
-    );
-    expect(
-      await testPrismaClient.offense.findUnique({
-        where: { name: "UNKNOWN OFFENSE" },
-      }),
-    ).toBeNull();
   });
 });

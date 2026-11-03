@@ -83,29 +83,34 @@ function transformDispositions(
   })) satisfies Prisma.DispositionCreateManyInsightInput[];
 }
 
-export async function transformAndLoadInsightData(
+async function loadInsightData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof insightImportSchema>>,
+  { linkToOffense }: { linkToOffense: boolean },
 ) {
   const newInsights = [];
 
   // Load new insight data.
   // We do this in a for loop instead of Promise.all to avoid a prisma pool connection error.
   for await (const insightData of data) {
-    // Look up the offense by name — offenses are imported before insights,
-    // so they should already exist. If not, skip this insight with a warning.
-    const offense = await prismaClient.offense.findUnique({
-      where: {
-        stateCode: insightData.state_code,
-        name: insightData.most_severe_description,
-      },
-    });
+    let offenseId: string | undefined;
+    if (linkToOffense) {
+      // Look up the offense by name — offenses are imported before insights,
+      // so they should already exist. If not, skip this insight with a warning.
+      const offense = await prismaClient.offense.findUnique({
+        where: {
+          stateCode: insightData.state_code,
+          name: insightData.most_severe_description,
+        },
+      });
 
-    if (!offense) {
-      console.warn(
-        `Skipping insight: no matching offense found for "${insightData.most_severe_description}" (state: ${insightData.state_code})`,
-      );
-      continue;
+      if (!offense) {
+        console.warn(
+          `Skipping insight: no matching offense found for "${insightData.most_severe_description}" (state: ${insightData.state_code})`,
+        );
+        continue;
+      }
+      offenseId = offense.id;
     }
 
     // Only show sentence distributions for cohorts with a large enough sample.
@@ -122,10 +127,10 @@ export async function transformAndLoadInsightData(
     await prismaClient.insight
       .delete({
         where: {
-          gender_offenseId_assessmentScoreBucketStart_assessmentScoreBucketEnd:
+          gender_offenseName_assessmentScoreBucketStart_assessmentScoreBucketEnd:
             {
               gender: insightData.gender,
-              offenseId: offense.id,
+              offenseName: insightData.most_severe_description,
               assessmentScoreBucketStart:
                 insightData.assessment_score_bucket_start,
               assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
@@ -143,11 +148,8 @@ export async function transformAndLoadInsightData(
       data: {
         stateCode: insightData.state_code,
         gender: insightData.gender,
-        offense: {
-          connect: {
-            id: offense.id,
-          },
-        },
+        offenseName: insightData.most_severe_description,
+        offenseId,
         assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
         assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
         rollupStateCode: insightData.recidivism_rollup.state_code,
@@ -248,4 +250,23 @@ export async function transformAndLoadInsightData(
       },
     },
   });
+}
+
+/** Loads PSI insights, linking each to the Offense with the same name. */
+export async function transformAndLoadInsightData(
+  prismaClient: PrismaClient,
+  data: AsyncGenerator<z.infer<typeof insightImportSchema>>,
+) {
+  await loadInsightData(prismaClient, data, { linkToOffense: true });
+}
+
+/**
+ * Loads SAR insights. SAR doesn't import offenses, so these insights aren't
+ * linked to an Offense and are looked up by offense name instead.
+ */
+export async function transformAndLoadSARInsightData(
+  prismaClient: PrismaClient,
+  data: AsyncGenerator<z.infer<typeof insightImportSchema>>,
+) {
+  await loadInsightData(prismaClient, data, { linkToOffense: false });
 }

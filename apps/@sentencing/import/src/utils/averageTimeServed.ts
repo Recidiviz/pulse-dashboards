@@ -39,9 +39,6 @@ export async function transformAndLoadTimeServedData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof timeServedImportSchema>>,
 ) {
-  // Cache offense lookups to avoid redundant DB calls
-  const offenseIdCache = new Map<string, string | null>();
-
   for await (const row of data) {
     if (row.ci95 == null || row.ci95 > MAX_CI95) continue;
 
@@ -54,32 +51,17 @@ export async function transformAndLoadTimeServedData(
       continue;
     }
 
-    const cacheKey = `${row.state_code}|${row.most_severe_description}`;
-    if (!offenseIdCache.has(cacheKey)) {
-      const offense = await prismaClient.offense.findUnique({
-        where: { stateCode: row.state_code, name: row.most_severe_description },
-      });
-      if (!offense) {
-        console.warn(
-          `Skipping time served row: no matching offense found for "${row.most_severe_description}" (state: ${row.state_code})`,
-        );
-      }
-      offenseIdCache.set(cacheKey, offense?.id ?? null);
-    }
-
-    const offenseId = offenseIdCache.get(cacheKey);
-    if (!offenseId) continue;
-
     // Upsert the matching insight with time served data. If no insight exists
     // for this cohort yet, create a minimal one with the time served fields.
     await prismaClient.insight.upsert({
       where: {
-        gender_offenseId_assessmentScoreBucketStart_assessmentScoreBucketEnd: {
-          gender: row.sex,
-          offenseId,
-          assessmentScoreBucketStart: bucket,
-          assessmentScoreBucketEnd: bucket,
-        },
+        gender_offenseName_assessmentScoreBucketStart_assessmentScoreBucketEnd:
+          {
+            gender: row.sex,
+            offenseName: row.most_severe_description,
+            assessmentScoreBucketStart: bucket,
+            assessmentScoreBucketEnd: bucket,
+          },
       },
       update: {
         avgSentenceLengthYears: row.avg_sentence_length_yrs,
@@ -89,7 +71,7 @@ export async function transformAndLoadTimeServedData(
       create: {
         stateCode: row.state_code,
         gender: row.sex,
-        offense: { connect: { id: offenseId } },
+        offenseName: row.most_severe_description,
         assessmentScoreBucketStart: bucket,
         assessmentScoreBucketEnd: bucket,
         rollupStateCode: row.state_code,

@@ -23,7 +23,6 @@ import { chargeImportSchema } from "~@sentencing/import/models";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
 import {
   createSAR,
-  fakeOffense,
   SAR_EXTERNAL_ID,
 } from "~@sentencing/import/test/setup/seed";
 import {
@@ -336,24 +335,16 @@ describe("import charge data", () => {
     expect(await testPrismaClient.charge.count()).toBe(2);
   });
 
-  test("should create offenses for new charge descriptions without changing existing ones", async () => {
+  test("should not create offenses for charge descriptions", async () => {
     await importCharges([
-      createChargeImportRow({ description: fakeOffense.name }),
       createChargeImportRow({ description: "NEW OFFENSE" }),
     ]);
 
-    const offenses = await testPrismaClient.offense.findMany({
-      orderBy: { name: "asc" },
-    });
-    expect(offenses).toEqual([
-      expect.objectContaining({ name: "NEW OFFENSE", stateCode: "US_MO" }),
-      expect.objectContaining({
-        name: fakeOffense.name,
-        stateCode: fakeOffense.stateCode,
-        isViolentOffense: fakeOffense.isViolentOffense,
-        frequency: fakeOffense.frequency,
+    expect(
+      await testPrismaClient.offense.findUnique({
+        where: { name: "NEW OFFENSE" },
       }),
-    ]);
+    ).toBeNull();
   });
 
   test("should store a single judge as a list", async () => {

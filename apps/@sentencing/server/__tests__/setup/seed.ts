@@ -257,6 +257,7 @@ export const fakeInsight = {
 
 export const fakeInsightPrismaInput = {
   ...fakeInsight,
+  offenseName: fakeInsight.offense,
   offense: {
     connect: {
       stateCode: fakeOffense.stateCode,

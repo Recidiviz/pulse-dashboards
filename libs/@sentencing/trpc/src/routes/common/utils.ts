@@ -295,6 +295,7 @@ async function getInsightsWithReverseLookup(
   // The offense name, gender, lsir scores, and disposition data should be set to be the same as the original insight, only the recidivism series + the combined offense category should change
   if (newInsight) {
     newInsight.offense = originalInsight.offense;
+    newInsight.offenseName = originalInsight.offenseName;
     newInsight.gender = originalInsight.gender;
     newInsight.assessmentScoreBucketStart =
       originalInsight.assessmentScoreBucketStart;
@@ -354,8 +355,8 @@ export async function getInsight(
       "rollupRecidivismSeries",
       "rollupRecidivismNumRecords",
     ]),
-    offense: insightToReturn.offense.name,
-    offenseCategory: insightToReturn.offense.category,
+    offense: insightToReturn.offenseName,
+    offenseCategory: insightToReturn.offense?.category ?? null,
     rollupOffenseName: insightToReturn.rollupOffenseName,
     rollupOffenseDescription: formatRollupOffenseDescription(insightToReturn),
   };
@@ -384,14 +385,11 @@ export async function getSARInsight(
     where: {
       assessmentScoreBucketStart: assessmentScoreBucket,
       assessmentScoreBucketEnd: assessmentScoreBucket,
-      offense: {
-        name: offenseName,
-      },
+      offenseName,
       gender: gender,
     },
     // SAR insights don't use the rollup recidivism data, so it isn't loaded.
     include: {
-      offense: { select: { name: true } },
       dispositionData: { omit: { id: true, insightId: true } },
     },
   });
@@ -415,6 +413,6 @@ export async function getSARInsight(
       "timeServedNumRecords",
     ]),
     assessmentRiskLevel,
-    offense: insight.offense.name,
+    offense: insight.offenseName,
   };
 }
