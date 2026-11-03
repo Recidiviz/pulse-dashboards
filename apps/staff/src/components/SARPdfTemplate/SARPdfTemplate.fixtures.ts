@@ -288,7 +288,6 @@ export const mockSARInsight: SARInsight = {
   avgPctServed: 65.3,
   timeServedNumRecords: 148,
   offense: "UNLAWFUL POSSESSION OF A FIREARM",
-  offenseCategory: null,
 };
 
 /**

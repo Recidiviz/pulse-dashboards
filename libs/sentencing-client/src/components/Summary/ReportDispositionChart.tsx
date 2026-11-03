@@ -140,17 +140,12 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
   insight,
   sortedDispositionData,
 }) => {
-  const {
-    gender,
-    assessmentRiskLevel,
-    offense,
-    offenseCategory,
-    dispositionNumRecords,
-  } = insight;
+  const { gender, assessmentRiskLevel, offense, dispositionNumRecords } =
+    insight;
 
   const genderChip = GenderToDisplayName[gender] ?? gender;
   const riskChip = getRiskChipLabel(assessmentRiskLevel);
-  const offenseChip = (offenseCategory ?? offense).toUpperCase();
+  const offenseChip = offense.toUpperCase();
 
   const percentageByLabel = Object.fromEntries(
     sortedDispositionData.map((dp) => [
@@ -197,7 +192,6 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
               gender={gender}
               riskLevel={assessmentRiskLevel}
               offense={offense}
-              offenseCategory={offenseCategory}
             />
             , using MODOC data from 2020-present.
           </Styled.DispositionLeftPanelText>

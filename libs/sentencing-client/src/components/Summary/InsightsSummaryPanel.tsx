@@ -160,7 +160,6 @@ export const InsightsSummaryPanel: React.FC<{
                     gender={insightData.gender}
                     riskLevel={insightData.assessmentRiskLevel}
                     offense={insightData.offense}
-                    offenseCategory={insightData.offenseCategory}
                   />{" "}
                   before being granted parole, using MODOC data from 2017 to
                   present.

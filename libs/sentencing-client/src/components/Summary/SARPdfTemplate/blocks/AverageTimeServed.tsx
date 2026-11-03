@@ -50,7 +50,6 @@ export const AverageTimeServed: React.FC<{
     gender: insight.gender,
     riskLevel: insight.assessmentRiskLevel,
     offense: insight.offense,
-    offenseCategory: insight.offenseCategory,
   };
   return (
     <View

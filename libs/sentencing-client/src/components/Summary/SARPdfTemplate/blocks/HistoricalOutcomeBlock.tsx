@@ -70,7 +70,7 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
   const tags = [
     GenderToDisplayName[insight.gender],
     getRiskChipLabel(insight.assessmentRiskLevel),
-    insight.offenseCategory ?? formatOffenseLabel(insight.offense),
+    formatOffenseLabel(insight.offense),
   ].filter(Boolean) as string[];
 
   const items = sentenceDistributionRows(insight).map((row) => ({
@@ -133,7 +133,6 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
             gender: insight.gender,
             riskLevel: insight.assessmentRiskLevel,
             offense: insight.offense,
-            offenseCategory: insight.offenseCategory,
           },
         }}
       />

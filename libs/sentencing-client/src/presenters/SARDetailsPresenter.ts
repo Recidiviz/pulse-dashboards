@@ -264,13 +264,11 @@ export class SARDetailsPresenter implements Hydratable {
 
   get emptyStateDescriptionContext(): InsightDescriptionContext | null {
     if (this.insight) {
-      const { gender, assessmentRiskLevel, offense, offenseCategory } =
-        this.insight;
+      const { gender, assessmentRiskLevel, offense } = this.insight;
       return {
         gender,
         riskLevel: assessmentRiskLevel,
         offense,
-        offenseCategory,
       };
     }
     // Fallback: build context from sarData when no matching insight exists.
@@ -282,7 +280,6 @@ export class SARDetailsPresenter implements Hydratable {
       gender,
       riskLevel: sarData?.assessmentRiskLevel ?? null,
       offense,
-      offenseCategory: null,
     };
   }
 

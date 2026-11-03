@@ -40,19 +40,21 @@ export type InsightDescriptionContext = {
   gender: NonNullable<SARInsight>["gender"];
   riskLevel: RiskLevelKey | null;
   offense: NonNullable<SARInsight>["offense"];
-  offenseCategory: NonNullable<SARInsight>["offenseCategory"];
 };
+
+/** Returns offense as it reads before "convictions", e.g. "Theft" for "Theft offenses". */
+export function getOffenseDescriptor(offense: string) {
+  return formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
+}
 
 /** Renders the bold inline subject segment shared by the full and empty chart states. */
 export function InsightSubjectSpans({
   gender,
   riskLevel,
   offense,
-  offenseCategory,
 }: InsightDescriptionContext) {
   const genderString = getDescriptionGender(gender);
-  const offenseDescriptor =
-    offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
+  const offenseDescriptor = getOffenseDescriptor(offense);
 
   // Omit the risk level clause when there's no risk level (e.g. no ORAS assessment).
   if (riskLevel == null) {

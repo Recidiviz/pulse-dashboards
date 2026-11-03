@@ -28,13 +28,8 @@ interface SARDispositionChartExplanationProps {
 export function SARDispositionChartExplanation({
   insight,
 }: SARDispositionChartExplanationProps) {
-  const {
-    gender,
-    assessmentRiskLevel,
-    offense,
-    offenseCategory,
-    dispositionNumRecords,
-  } = insight;
+  const { gender, assessmentRiskLevel, offense, dispositionNumRecords } =
+    insight;
 
   return (
     <Styled.TextContainer>
@@ -47,7 +42,6 @@ export function SARDispositionChartExplanation({
           gender={gender}
           riskLevel={assessmentRiskLevel}
           offense={offense}
-          offenseCategory={offenseCategory}
         />
         , using MODOC data from 2020-present.
       </Styled.TextWrapper>

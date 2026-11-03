@@ -36,9 +36,9 @@ export function getRiskChipLabel(riskLevel: RiskLevelKey): string {
 export function getSARDispositionChartSubtitle(
   insight: NonNullable<SARInsight>,
 ): string {
-  const { gender, assessmentRiskLevel, offense, offenseCategory } = insight;
+  const { gender, assessmentRiskLevel, offense } = insight;
   const genderString = getSubtitleGender(gender);
   const riskString = `${RISK_LEVELS[assessmentRiskLevel]} risk score`;
-  const offenseString = offenseCategory ?? formatOffenseLabel(offense);
+  const offenseString = formatOffenseLabel(offense);
   return [genderString, riskString, offenseString].filter(Boolean).join(", ");
 }

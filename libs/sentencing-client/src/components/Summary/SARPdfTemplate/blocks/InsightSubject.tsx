@@ -18,10 +18,12 @@
 import { Text } from "@react-pdf/renderer";
 import React from "react";
 
-import { formatOffenseLabel } from "../../../../utils/utils";
 import { getDescriptionGender } from "../../../CaseDetails/components/charts/common/utils";
 import { getRiskLevelDescription } from "../../../CaseDetails/components/charts/DispositionChart/sarUtils";
-import type { InsightDescriptionContext } from "../../insightsUtils";
+import {
+  getOffenseDescriptor,
+  type InsightDescriptionContext,
+} from "../../insightsUtils";
 import { font } from "../tokens";
 
 /**
@@ -35,10 +37,9 @@ import { font } from "../tokens";
  */
 export const InsightSubject: React.FC<{
   context: InsightDescriptionContext;
-}> = ({ context: { gender, riskLevel, offense, offenseCategory } }) => {
+}> = ({ context: { gender, riskLevel, offense } }) => {
   const genderString = getDescriptionGender(gender).trim();
-  const offenseDescriptor =
-    offenseCategory ?? formatOffenseLabel(offense).replace(/\s*offenses$/i, "");
+  const offenseDescriptor = getOffenseDescriptor(offense);
 
   if (riskLevel == null) {
     return (

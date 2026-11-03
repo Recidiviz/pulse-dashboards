@@ -391,7 +391,7 @@ export async function getSARInsight(
     },
     // SAR insights don't use the rollup recidivism data, so it isn't loaded.
     include: {
-      offense: { select: { name: true, category: true } },
+      offense: { select: { name: true } },
       dispositionData: { omit: { id: true, insightId: true } },
     },
   });
@@ -416,6 +416,5 @@ export async function getSARInsight(
     ]),
     assessmentRiskLevel,
     offense: insight.offense.name,
-    offenseCategory: insight.offense.category,
   };
 }

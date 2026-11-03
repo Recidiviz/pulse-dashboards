@@ -132,7 +132,6 @@ export const InsightFixture: Insight = {
 export const SARInsightFixture: NonNullable<SARInsight> = {
   gender: "MALE",
   offense: "Theft",
-  offenseCategory: "Property",
   assessmentRiskLevel: "MODERATE",
   dispositionNumRecords: 847,
   dispositionData: [

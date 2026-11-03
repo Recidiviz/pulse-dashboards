@@ -737,7 +737,6 @@ model SARInsightSnapshot {
   gender              Gender?
   assessmentRiskLevel DomainRiskLevel?
   offenseName         String?
-  offenseCategory     String?
 
   // Disposition Data
   dispositionNumRecords Int?
