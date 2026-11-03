@@ -23,6 +23,7 @@ type MonthProgress = Pick<
   UsArResidentJiiData,
   | "edovoCarryInHours"
   | "edovoHoursThisMonth"
+  | "edovoTotalHours"
   | "edovoHoursToNextCpu"
   | "edovoIsCreditingMonth"
 >;
@@ -37,6 +38,7 @@ const arkansasMonth = (date: Date) =>
 const DEFAULT_VALUES: MonthProgress = {
   edovoCarryInHours: 0,
   edovoHoursThisMonth: 0,
+  edovoTotalHours: 0,
   edovoHoursToNextCpu: HOURS_PER_UNIT,
   edovoIsCreditingMonth: false,
 };
@@ -63,7 +65,12 @@ export class EdovoProgressCardPresenter {
 
   // The percent of the progress bar taken up by hours from this month.
   get currentMonthWidth() {
-    const { edovoCarryInHours, edovoHoursThisMonth } = this.progress;
+    const { edovoCarryInHours, edovoHoursThisMonth, edovoIsCreditingMonth } =
+      this.progress;
+    // The backend floors each field to one decimal, so a credited month can sum
+    // to just under 16. Fill the rest of the bar so it ends at the checkmark if a
+    // cpu was earned that month
+    if (edovoIsCreditingMonth) return 100 - this.carryInWidth;
     // Carry-in can reach 15 hours, so carry-in plus this month can pass 16.
     // The bar always shows all of the carry-in and gives this month only the space left.
     const currentMonthHours = Math.min(
@@ -74,13 +81,6 @@ export class EdovoProgressCardPresenter {
   }
   get carryInWidth() {
     return (this.progress.edovoCarryInHours / HOURS_PER_UNIT) * 100;
-  }
-
-  get totalHours() {
-    const { edovoCarryInHours, edovoHoursThisMonth } = this.progress;
-    // Adding decimals can leave float noise. Here we ensure that after adding we round
-    // to one decimal place
-    return Math.round((edovoCarryInHours + edovoHoursThisMonth) * 10) / 10;
   }
 
   get hasCarryInHours() {

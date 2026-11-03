@@ -28,8 +28,9 @@ function createPresenter(overrides: Partial<RawUsArResidentJiiData> = {}) {
     ...usArResidentJiiDataFixtures[0],
     edovoCarryInHours: 3,
     edovoHoursThisMonth: 6.5,
+    edovoTotalHours: 9.5,
     edovoHoursToNextCpu: 6.5,
-    edovoIsCreditingMonth: true,
+    edovoIsCreditingMonth: false,
     edovoDataBuiltAt: "2026-10-15T08:00:00Z",
     ...overrides,
   });
@@ -50,8 +51,9 @@ describe("progress bar", () => {
     expect(presenter.progress).toMatchObject({
       edovoCarryInHours: 3,
       edovoHoursThisMonth: 6.5,
+      edovoTotalHours: 9.5,
       edovoHoursToNextCpu: 6.5,
-      edovoIsCreditingMonth: true,
+      edovoIsCreditingMonth: false,
     });
   });
 
@@ -62,6 +64,7 @@ describe("progress bar", () => {
     expect(presenter.progress).toMatchObject({
       edovoCarryInHours: 0,
       edovoHoursThisMonth: 0,
+      edovoTotalHours: 0,
       edovoHoursToNextCpu: 16,
       edovoIsCreditingMonth: false,
     });
@@ -82,14 +85,6 @@ describe("progress bar", () => {
     });
     expect(presenter.isDataCurrent).toBe(true);
   });
-
-  it("rounds the total to one decimal place", () => {
-    const presenter = createPresenter({
-      edovoCarryInHours: 1.1,
-      edovoHoursThisMonth: 2.2,
-    });
-    expect(presenter.totalHours).toBe(3.3);
-  });
 });
 
 describe("bar widths", () => {
@@ -106,5 +101,16 @@ describe("bar widths", () => {
     });
     expect(presenter.carryInWidth).toBe(93.75);
     expect(presenter.currentMonthWidth).toBe(6.25);
+  });
+
+  it("fills the bar in a credited month whose floored hours sum under 16", () => {
+    const presenter = createPresenter({
+      edovoCarryInHours: 7.9,
+      edovoHoursThisMonth: 8,
+      edovoTotalHours: 16,
+      edovoHoursToNextCpu: 0,
+      edovoIsCreditingMonth: true,
+    });
+    expect(presenter.currentMonthWidth).toBeCloseTo(50.625);
   });
 });

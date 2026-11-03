@@ -30,6 +30,7 @@ export const usArStateDataSchema = usArResidentCommonSchema.extend({
   isEligibleForCpus: nullishAsUndefined(z.boolean()),
   edovoHoursThisMonth: z.number(),
   edovoCarryInHours: z.number(),
+  edovoTotalHours: z.number(),
   edovoHoursToNextCpu: z.number(),
   edovoIsCreditingMonth: z.boolean(),
   edovoLastRefreshedAt: nullishAsUndefined(dateStringSchema),

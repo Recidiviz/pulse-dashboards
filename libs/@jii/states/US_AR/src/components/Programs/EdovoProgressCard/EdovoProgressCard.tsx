@@ -43,16 +43,15 @@ import { EdovoProgressCardPresenter } from "./EdovoProgressCardPresenter";
 const ManagedComponent: FC<{ presenter: EdovoProgressCardPresenter }> =
   observer(function EdovoProgressCard({ presenter }) {
     const { t } = useUsArTranslations();
-    const { edovoCarryInHours, edovoHoursToNextCpu, edovoIsCreditingMonth } =
-      presenter.progress;
-
     const {
-      currentMonthWidth,
-      carryInWidth,
-      totalHours,
-      hasCarryInHours,
-      completedKey,
-    } = presenter;
+      edovoCarryInHours,
+      edovoTotalHours,
+      edovoHoursToNextCpu,
+      edovoIsCreditingMonth,
+    } = presenter.progress;
+
+    const { currentMonthWidth, carryInWidth, hasCarryInHours, completedKey } =
+      presenter;
 
     return (
       <ProgressCard>
@@ -60,7 +59,7 @@ const ManagedComponent: FC<{ presenter: EdovoProgressCardPresenter }> =
           <div>
             <SlateCopy>
               {t(($) => $.programs.onMyTablet.progressBar[completedKey], {
-                hours: totalHours,
+                hours: edovoTotalHours,
               })}
             </SlateCopy>
             {hasCarryInHours && (
