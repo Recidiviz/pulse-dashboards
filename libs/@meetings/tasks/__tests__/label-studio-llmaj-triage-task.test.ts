@@ -305,6 +305,75 @@ describe("buildLlmajTriageTask", () => {
       ),
     ).toBeNull();
   });
+
+  test("returns null when no section is BAD or PARTIAL and the min grade is PARTIAL", () => {
+    expect(
+      buildLlmajTriageTask(
+        makeMeeting(),
+        makeEvaluationRun(),
+        "US_NE",
+        makeGradedOutputs(),
+        "PARTIAL",
+      ),
+    ).toBeNull();
+  });
+
+  test("flags PARTIAL sections when the min grade is PARTIAL", () => {
+    const task = buildLlmajTriageTask(
+      makeMeeting(),
+      makeEvaluationRun({ actionItems: makeScore({ grade: "PARTIAL" }) }),
+      "US_NE",
+      makeGradedOutputs(),
+      "PARTIAL",
+    );
+
+    expect(task).toMatchObject({
+      review_reason: "LLMAJ_PARTIAL",
+      case_note_flagged: false,
+      action_items_flagged: true,
+      overall_flagged: false,
+      judge_action_items_grade: "PARTIAL",
+    });
+  });
+
+  test("flags both PARTIAL and BAD sections when the min grade is PARTIAL", () => {
+    const task = buildLlmajTriageTask(
+      makeMeeting(),
+      makeEvaluationRun({
+        caseNote: makeScore({ grade: "PARTIAL" }),
+        overall: makeScore({ grade: "BAD" }),
+      }),
+      "US_NE",
+      makeGradedOutputs(),
+      "PARTIAL",
+    );
+
+    expect(task).toMatchObject({
+      review_reason: "LLMAJ_BAD",
+      case_note_flagged: true,
+      action_items_flagged: false,
+      overall_flagged: true,
+    });
+  });
+
+  test("leaves PARTIAL sections unflagged when the min grade is BAD", () => {
+    const task = buildLlmajTriageTask(
+      makeMeeting(),
+      makeEvaluationRun({
+        caseNote: makeScore({ grade: "PARTIAL" }),
+        overall: makeScore({ grade: "BAD" }),
+      }),
+      "US_NE",
+      makeGradedOutputs(),
+      "BAD",
+    );
+
+    expect(task).toMatchObject({
+      review_reason: "LLMAJ_BAD",
+      case_note_flagged: false,
+      overall_flagged: true,
+    });
+  });
 });
 
 describe("exportLlmajTriageTask", () => {

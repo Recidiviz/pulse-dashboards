@@ -31,8 +31,8 @@ import { writeMeetingTaskFile } from "~@meetings/tasks/meeting-task-file";
 // Meetings project.
 //
 // Its counterpart is the LLMAJ triage task in label-studio-llmaj-triage.ts,
-// which asks a rater to check the judge's BAD grades instead and goes to its
-// own project.
+// which asks a rater to check the judge's BAD (and, in some cases, PARTIAL)
+// grades instead and goes to its own project.
 // =============================================================================
 
 /**

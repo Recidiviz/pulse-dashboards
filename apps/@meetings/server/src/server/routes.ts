@@ -849,7 +849,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         // Two label studio task export paths exist:
         // 1. Full review (label-studio-task.json): a random sample excluding
-        //    meetings that LLMAJ graded BAD, (see labelStudioReviewPercent, default
+        //    meetings sent to LLMAJ triage, (see labelStudioReviewPercent, default
         //    100%) to be graded from scratch, which is how the judge's miss rate
         //    is measured.
         //
@@ -857,9 +857,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
         //    PARTIAL-graded meetings are also forced in when
         //    labelStudioAlwaysReviewPartial is set.
         //
-        // 2. LLMAJ triage (llmaj-triage-task.json): every BAD-graded meeting.
+        // 2. LLMAJ triage (llmaj-triage-task.json): every BAD-graded meeting,
+        //    and every PARTIAL-graded one when llmajTriageMinGrade is PARTIAL.
         //
-        // Because BAD-graded meetings are excluded from full-review, a given meeting
+        // Because triaged meetings are excluded from full-review, a given meeting
         // can generate at most ONE labeling task.
 
         const agencyConfig = await getAgencyConfig(stateCode).catch((e) => {
@@ -889,8 +890,12 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         const forcedFullReview = alwaysReviewPartial && gradedPartial;
 
+        const triageMinGrade = agencyConfig?.llmajTriageMinGrade ?? "BAD";
+        const sendToTriage =
+          gradedBad || (triageMinGrade === "PARTIAL" && gradedPartial);
+
         // Path for full-review Label Studio task
-        if (!gradedBad && (sampledForReview || forcedFullReview)) {
+        if (!sendToTriage && (sampledForReview || forcedFullReview)) {
           exportLabelStudioTask(meeting, stateCode, gradedBad).catch((e) => {
             captureException(e);
             console.error("Failed to export Label Studio task to GCS", e);
@@ -898,7 +903,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
         }
 
         // Path for LLMAJ triage task
-        if (gradedBad) {
+        if (sendToTriage) {
           const gradedOutputs: LlmajGradedOutputs = {
             caseNote: draftingOutput.caseNote,
             actionItems: verificationOutput.actionItems.map(
@@ -910,6 +915,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
             evaluationRun,
             stateCode,
             gradedOutputs,
+            triageMinGrade,
           ).catch((e) => {
             captureException(e);
             console.error("Failed to export LLMAJ triage task to GCS", e);

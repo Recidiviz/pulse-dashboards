@@ -2650,6 +2650,7 @@ describe("tasks", () => {
             expect.anything(),
             "US_TN",
             expect.anything(),
+            "BAD",
           );
         } finally {
           randomSpy.mockRestore();
@@ -2679,6 +2680,7 @@ describe("tasks", () => {
             expect.anything(),
             "US_TN",
             expect.anything(),
+            "BAD",
           );
         } finally {
           randomSpy.mockRestore();
@@ -2731,6 +2733,7 @@ describe("tasks", () => {
               },
             ],
           },
+          "BAD",
         );
       });
 
@@ -2767,6 +2770,102 @@ describe("tasks", () => {
 
         expect(response.statusCode).toBe(200);
         expect(mockExportLlmajTriageTask).not.toHaveBeenCalled();
+      });
+
+      describe("when the state triages PARTIAL grades", () => {
+        // Serves the state's seeded agency config with llmajTriageMinGrade
+        // set to PARTIAL on the route's next fetch.
+        async function triagePartialFor(stateCode: string) {
+          const config = await configUtils.getAgencyConfig(stateCode);
+          if (!config) throw new Error(`No seeded config for ${stateCode}`);
+          mockGetAgencyConfig.mockResolvedValueOnce({
+            ...config,
+            llmajTriageMinGrade: "PARTIAL",
+          });
+        }
+
+        beforeEach(() => {
+          mockExportLabelStudioTask.mockClear();
+        });
+
+        test("Should export LLMAJ triage task instead of full review when sampled and a score is PARTIAL", async () => {
+          const meeting = await createMeetingWithSuccessfulPipelineRun(
+            "llmaj-triage-partial-min-sampled",
+          );
+          mockRunAllEvaluators.mockResolvedValueOnce(
+            PARTIAL_ACTION_ITEMS_EVALUATION,
+          );
+          await triagePartialFor("US_CO");
+
+          // US_CO's labelStudioReviewPercent is 10 — 0.05 lands inside that sample.
+          const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.05);
+
+          try {
+            const response = await testServer.inject({
+              method: "POST",
+              url: "/run-llmaj-evaluation",
+              headers: { authorization: `Bearer token` },
+              body: { stateCode: "US_CO", meetingId: meeting.id },
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(mockExportLlmajTriageTask).toHaveBeenCalledWith(
+              expect.objectContaining({ id: meeting.id }),
+              expect.anything(),
+              "US_CO",
+              expect.anything(),
+              "PARTIAL",
+            );
+            expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+          } finally {
+            randomSpy.mockRestore();
+          }
+        });
+
+        test("Should export only the LLMAJ triage task when labelStudioAlwaysReviewPartial also forces a full review", async () => {
+          const meeting = await createMeetingWithSuccessfulPipelineRun(
+            "llmaj-triage-partial-min-forced",
+          );
+          mockRunAllEvaluators.mockResolvedValueOnce(
+            PARTIAL_ACTION_ITEMS_EVALUATION,
+          );
+          // US_TN's labelStudioAlwaysReviewPartial is true.
+          await triagePartialFor("US_TN");
+
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_TN", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLlmajTriageTask).toHaveBeenCalledWith(
+            expect.objectContaining({ id: meeting.id }),
+            expect.anything(),
+            "US_TN",
+            expect.anything(),
+            "PARTIAL",
+          );
+          expect(mockExportLabelStudioTask).not.toHaveBeenCalled();
+        });
+
+        test("Should not export LLMAJ triage task when no scores are BAD or PARTIAL", async () => {
+          const meeting = await createMeetingWithSuccessfulPipelineRun(
+            "llmaj-triage-partial-min-good",
+          );
+          await triagePartialFor("US_CO");
+
+          const response = await testServer.inject({
+            method: "POST",
+            url: "/run-llmaj-evaluation",
+            headers: { authorization: `Bearer token` },
+            body: { stateCode: "US_CO", meetingId: meeting.id },
+          });
+
+          expect(response.statusCode).toBe(200);
+          expect(mockExportLlmajTriageTask).not.toHaveBeenCalled();
+        });
       });
 
       test("Should not export LLMAJ triage task for US_DEMO in production", async () => {
@@ -2816,6 +2915,7 @@ describe("tasks", () => {
             expect.anything(),
             "US_DEMO",
             expect.anything(),
+            "BAD",
           );
         } finally {
           env.DEPLOY_ENV = originalDeployEnv;

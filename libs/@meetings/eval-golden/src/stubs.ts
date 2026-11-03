@@ -88,5 +88,6 @@ export const EVAL_AGENCY: AgencyConfig = {
   ],
   additionalOutputs: [],
   labelStudioReviewPercent: 100,
+  llmajTriageMinGrade: "BAD",
   labelStudioAlwaysReviewPartial: true,
 };

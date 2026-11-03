@@ -52,7 +52,8 @@ const stateCode = z.custom<StateCode>(
 
 // =============================================================================
 // The contract for an LLMAJ triage task: a Label Studio task asking a QA rater
-// whether the LLM judge was right to grade a section of a meeting BAD. It is
+// whether the LLM judge was right to grade a section of a meeting BAD, or
+// PARTIAL in a state whose llmajTriageMinGrade is PARTIAL. It is
 // the counterpart to label-studio.ts, which builds the full-review task,
 // where a rater grades the whole meeting without seeing the judge's grades.
 // The two go to separate Label Studio projects.
@@ -141,7 +142,8 @@ export const LlmajTriageTaskSchema = z
     state_code: stateCode,
     /** The meeting's start date, YYYY-MM-DD. */
     recording_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    review_reason: z.literal("LLMAJ_BAD"),
+    /** LLMAJ_BAD when any flagged section is BAD, else LLMAJ_PARTIAL. */
+    review_reason: z.enum(["LLMAJ_BAD", "LLMAJ_PARTIAL"]),
     /** The NotetakingPipelineRun whose outputs the judge graded. */
     pipeline_run_id: z.string().min(1),
     /** The NotetakingEvaluationRun that holds the judge's full scores. */
@@ -191,23 +193,59 @@ export const LlmajTriageTaskSchema = z
     }),
   })
   .superRefine((task, ctx) => {
-    let anyFlagged = false;
-    for (const { prefix } of LLMAJ_TRIAGE_SECTIONS) {
-      const flagged = task[`${prefix}_flagged`];
-      anyFlagged ||= flagged;
-      if (flagged !== (task[`judge_${prefix}_grade`] === "BAD")) {
+    const grades = LLMAJ_TRIAGE_SECTIONS.map(({ prefix }) => ({
+      prefix,
+      flagged: task[`${prefix}_flagged`],
+      grade: task[`judge_${prefix}_grade`],
+    }));
+    for (const { prefix, flagged, grade } of grades) {
+      if (grade === "BAD" && !flagged) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [`${prefix}_flagged`],
-          message: "A section is flagged exactly when the judge graded it BAD",
+          message: "A section the judge graded BAD is always flagged",
+        });
+      }
+      if (flagged && grade !== "BAD" && grade !== "PARTIAL") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [`${prefix}_flagged`],
+          message: "Only a section the judge graded BAD or PARTIAL is flagged",
         });
       }
     }
-    if (!anyFlagged) {
+    // Flagging one PARTIAL section means the state triages PARTIAL, so every
+    // PARTIAL section is flagged.
+    if (grades.some(({ flagged, grade }) => flagged && grade === "PARTIAL")) {
+      for (const { prefix, flagged, grade } of grades) {
+        if (grade === "PARTIAL" && !flagged) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [`${prefix}_flagged`],
+            message:
+              "Either every section the judge graded PARTIAL is flagged or none is",
+          });
+        }
+      }
+    }
+
+    const flaggedGrades = grades.filter(({ flagged }) => flagged);
+    if (flaggedGrades.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["review_reason"],
-        message: "An LLMAJ triage task needs at least one BAD section",
+        message: "An LLMAJ triage task needs at least one flagged section",
+      });
+      return;
+    }
+    const expectedReason = flaggedGrades.some(({ grade }) => grade === "BAD")
+      ? "LLMAJ_BAD"
+      : "LLMAJ_PARTIAL";
+    if (task.review_reason !== expectedReason) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["review_reason"],
+        message: `A task whose worst flagged grade is ${expectedReason === "LLMAJ_BAD" ? "BAD" : "PARTIAL"} has review_reason ${expectedReason}`,
       });
     }
   });
@@ -218,7 +256,9 @@ export type LlmajTriageTask = z.infer<typeof LlmajTriageTaskSchema>;
  * The aliases of a section's grade choices, which is what Label Studio
  * exports. On a flagged section, BAD decodes to a CONFIRMED_BAD verdict, GOOD
  * or PARTIAL to NOT_BAD with that corrected grade, and OTHER (shown as "Can't
- * grade") to OTHER.
+ * grade") to OTHER. The decoding is the same whether the judge graded the
+ * section BAD or PARTIAL, so on a judge-PARTIAL section CONFIRMED_BAD means
+ * the judge undergraded it and NOT_BAD with PARTIAL means the judge was right.
  */
 export const LLMAJ_TRIAGE_GRADE = {
   BAD: "BAD",
@@ -229,10 +269,9 @@ export const LLMAJ_TRIAGE_GRADE = {
 
 /**
  * The aliases of a section's findings-accuracy choices: whether the judge's
- * findings about BAD mistakes are true to the transcript, asked before the
+ * findings on a flagged section are true to the transcript, asked before the
  * rater grades the section. It separates the judge getting the facts wrong
- * from a disagreement about whether true facts are BAD. The question is about
- * BAD-level findings only, so it has no answer for a section without any.
+ * from a disagreement about how serious true facts are.
  */
 export const LLMAJ_TRIAGE_FINDINGS_ACCURACY = {
   ALL_ACCURATE: "ALL_ACCURATE",

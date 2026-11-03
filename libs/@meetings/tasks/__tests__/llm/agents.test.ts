@@ -111,6 +111,7 @@ describe("SpecialistCore", () => {
     additionalOutputs: [],
     labels: {},
     labelStudioReviewPercent: 100,
+    llmajTriageMinGrade: "BAD",
     labelStudioAlwaysReviewPartial: true,
   };
 

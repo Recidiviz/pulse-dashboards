@@ -28,9 +28,14 @@ export { generateConfigKey } from "~@meetings/config/configKey";
 export { mergeWithBase } from "~@meetings/config/merge";
 export { newAgencyConfigYamlTemplate } from "~@meetings/config/newConfigTemplate";
 export { MEETINGS_STATE_CODES } from "~@meetings/config/stateCodes";
-export type { AgencyConfig, AgencyConfigFile } from "~@meetings/config/types";
+export type {
+  AgencyConfig,
+  AgencyConfigFile,
+  LlmajTriageMinGrade,
+} from "~@meetings/config/types";
 export {
   AgencyConfigFileSchema,
   AgencyConfigSchema,
   BaseConfigFileSchema,
+  LlmajTriageMinGradeSchema,
 } from "~@meetings/config/types";

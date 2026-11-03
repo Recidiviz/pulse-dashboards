@@ -46,6 +46,7 @@ const FAKE_AGENCY_CONFIG = {
   outputs: [],
   additionalOutputs: [],
   labelStudioReviewPercent: 100,
+  llmajTriageMinGrade: "BAD",
   labelStudioAlwaysReviewPartial: false,
 };
 

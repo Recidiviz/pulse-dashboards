@@ -8,8 +8,9 @@
   match LLMAJ_TRIAGE_RESULT_FIELDS, both in
   libs/@meetings/tasks/src/label-studio-llmaj-triage.ts;
   __tests__/label-studio-llmaj-triage-config.test.ts checks both. Every
-  section can be graded: raters must grade the ones the judge graded BAD and
-  may grade the others. The audio player plays only in a project whose GCS
+  section can be graded: raters must grade the flagged ones, which the judge
+  graded BAD (or PARTIAL, in a state whose llmajTriageMinGrade is PARTIAL),
+  and may grade the others. The audio player plays only in a project whose GCS
   storage connection can sign the task's gs:// URI; anywhere else it shows a
   load error.
 
@@ -20,7 +21,9 @@
   takes up a lot of room), and each section's HyperText badge uses it to put
   the judge's grade in a data-grade attribute, which the Style block colors.
   It is an attribute rather than a class because "Not available" has a
-  space. That grade matches no color rule and keeps the gray base style.
+  space. That grade matches no color rule and keeps the gray base style. The
+  "Review this section" badge works the same way with the section's
+  $prefix_flagged field, and the Style block hides it when that is false.
 
   The notes boxes hide the Add button: Label Studio saves text left in the box
   when the rater submits, and transcription="true" keeps it editable after.
@@ -43,6 +46,8 @@
     .jr-badge[data-grade="BAD"] { background: #fff1f0; color: #a8071a; border-color: #ffa39e; }
     .jr-badge[data-grade="PARTIAL"] { background: #fff7e6; color: #ad4e00; border-color: #ffd591; }
     .jr-badge[data-grade="GOOD"] { background: #f6ffed; color: #237804; border-color: #b7eb8f; }
+    .jr-flag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; background: #1d39c4; color: #fff; }
+    .jr-flag[data-flagged="false"] { display: none; }
     .jr-judge { background: #eef3fb; border-left: 4px solid #6f8fc7; border-radius: 6px; padding: 4px 14px 10px; margin-bottom: 12px; }
     .jr-output { border-left: 4px solid #d0d7e2; padding: 0 0 0 14px; margin-bottom: 12px; }
     .jr-review { border-top: 1px dashed #d0d7e2; padding-top: 4px; }
@@ -53,12 +58,12 @@
 
   <View className="jr-instructions">
     <Header value="How to review this meeting" style="font-size: 15px; font-weight: 600; margin: 12px 0 4px"/>
-    <Text name="instructions_intro" value="The LLM judge graded at least one section of this meeting BAD. Your job is to check the judge, not to grade the meeting from scratch. Each section shows what the judge said first, then the output it graded. The recording and transcript are on the right."/>
-    <Header value="For each section the judge graded BAD" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
-    <Text name="instructions_step_1" value="1. Check the judge's findings. Do the hallucinations and omissions that would make this section BAD really happen in the transcript? Focus on the findings that lead to the BAD rating. The smaller findings that aren't the cause of the BAD rating are optional to review; you can review them if something stands out to you that might actually rise to the level of BAD, in which case you can add notes in the free text box."/>
-    <Text name="instructions_step_2" value="2. Give your own grade, using the grade definitions below. You can agree with the judge's facts and still decide they don't rise to the level of BAD."/>
+    <Text name="instructions_intro" value="The LLM judge flagged at least one section of this meeting, marked &quot;Review this section&quot;. It flags sections it graded BAD, and in some cases sections it graded PARTIAL too. Your job is to check the judge, not to grade the meeting from scratch. Each section shows what the judge said first, then the output it graded. The recording and transcript are on the right."/>
+    <Header value="For each section marked &quot;Review this section&quot;" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
+    <Text name="instructions_step_1" value="1. Check the judge's findings. Do the hallucinations and omissions behind the judge's grade really happen in the transcript? Focus on the findings that lead to the judge's BAD or PARTIAL rating. The smaller findings that aren't the cause of that rating are optional to review; you can review them if something stands out to you that might actually rise to a worse grade, in which case you can add notes in the free text box."/>
+    <Text name="instructions_step_2" value="2. Give your own grade, using the grade definitions below. You can agree with the judge's facts and still decide they deserve a different grade, higher or lower than the judge's."/>
     <Text name="instructions_step_3" value="3. Write a short note on why, especially when you disagree with the judge. You can use this space to mention any other relevant notes, including smaller errors."/>
-    <Text name="instructions_other_sections" value="You don't need to review sections the judge graded PARTIAL or GOOD, but if you notice one that should be BAD, grade it."/>
+    <Text name="instructions_other_sections" value="You don't need to review sections that aren't marked for review, but if you notice one that should be BAD, grade it."/>
     <Header value="The recording" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
     <Text name="instructions_audio" value="You don't need to listen to the full recording. It's there in case you want to check something in the transcript."/>
     <Header value="Can't grade" style="font-size: 13px; font-weight: 600; margin: 10px 0 2px"/>
@@ -89,6 +94,7 @@
         <View className="jr-section-title">
           <Header value="Case note" size="5" style="margin: 0"/>
           <HyperText name="judge_case_note_grade_badge" value="&lt;span class='jr-badge' data-grade='$judge_case_note_grade'&gt;Judge: $judge_case_note_grade&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
+          <HyperText name="case_note_flag_badge" value="&lt;span class='jr-flag' data-flagged='$case_note_flagged'&gt;Review this section&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
         </View>
         <View className="jr-judge">
           <Header value="What the judge said" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
@@ -103,7 +109,7 @@
           <Text name="case_note_text" value="$case_note"/>
         </View>
         <View className="jr-review">
-          <Header value="Are the judge's findings about BAD mistakes accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Header value="Are the findings behind the judge's grade accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
           <Choices name="case_note_findings_accuracy" toName="judge_case_note_rationale_text" choice="single" showInline="true">
             <Choice value="All accurate" alias="ALL_ACCURATE"/>
             <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
@@ -124,6 +130,7 @@
         <View className="jr-section-title">
           <Header value="Action items" size="5" style="margin: 0"/>
           <HyperText name="judge_action_items_grade_badge" value="&lt;span class='jr-badge' data-grade='$judge_action_items_grade'&gt;Judge: $judge_action_items_grade&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
+          <HyperText name="action_items_flag_badge" value="&lt;span class='jr-flag' data-flagged='$action_items_flagged'&gt;Review this section&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
         </View>
         <View className="jr-judge">
           <Header value="What the judge said" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
@@ -138,7 +145,7 @@
           <Text name="action_items_text" value="$action_items"/>
         </View>
         <View className="jr-review">
-          <Header value="Are the judge's findings about BAD mistakes accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Header value="Are the findings behind the judge's grade accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
           <Choices name="action_items_findings_accuracy" toName="judge_action_items_rationale_text" choice="single" showInline="true">
             <Choice value="All accurate" alias="ALL_ACCURATE"/>
             <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
@@ -159,6 +166,7 @@
         <View className="jr-section-title">
           <Header value="Overall" size="5" style="margin: 0"/>
           <HyperText name="judge_overall_grade_badge" value="&lt;span class='jr-badge' data-grade='$judge_overall_grade'&gt;Judge: $judge_overall_grade&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
+          <HyperText name="overall_flag_badge" value="&lt;span class='jr-flag' data-flagged='$overall_flagged'&gt;Review this section&lt;/span&gt;" valueType="text" inline="true" saveTextResult="no"/>
         </View>
         <View className="jr-judge">
           <Header value="What the judge said" style="font-size: 12px; font-weight: 600; color: #555; margin: 8px 0 2px"/>
@@ -169,7 +177,7 @@
           <Text name="judge_overall_omissions_text" value="$judge_overall_omissions"/>
         </View>
         <View className="jr-review">
-          <Header value="Are the judge's findings about BAD mistakes accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
+          <Header value="Are the findings behind the judge's grade accurate?" style="font-size: 16px; font-weight: 600; color: #333; margin: 12px 0 4px"/>
           <Choices name="overall_findings_accuracy" toName="judge_overall_rationale_text" choice="single" showInline="true">
             <Choice value="All accurate" alias="ALL_ACCURATE"/>
             <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>

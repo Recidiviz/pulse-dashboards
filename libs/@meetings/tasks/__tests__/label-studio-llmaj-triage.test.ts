@@ -50,7 +50,7 @@ describe("LlmajTriageTaskSchema", () => {
     ]);
   });
 
-  test("rejects a task with no BAD section", () => {
+  test("rejects a task with no flagged section", () => {
     const result = LlmajTriageTaskSchema.safeParse({
       ...exampleTask,
       case_note_flagged: false,
@@ -60,6 +60,72 @@ describe("LlmajTriageTaskSchema", () => {
     });
     expect(result.error?.issues.map((i) => i.path)).toEqual([
       ["review_reason"],
+    ]);
+  });
+
+  test("rejects an unflagged BAD section", () => {
+    const result = LlmajTriageTaskSchema.safeParse({
+      ...exampleTask,
+      overall_flagged: false,
+    });
+    expect(result.error?.issues.map((i) => i.path)).toEqual([
+      ["overall_flagged"],
+    ]);
+  });
+
+  // A task from a state whose llmajTriageMinGrade is PARTIAL, where the judge
+  // graded only the action items PARTIAL.
+  const partialOnlyTask = {
+    ...exampleTask,
+    review_reason: "LLMAJ_PARTIAL",
+    case_note_flagged: false,
+    judge_case_note_grade: "GOOD",
+    action_items_flagged: true,
+    judge_action_items_grade: "PARTIAL",
+    overall_flagged: false,
+    judge_overall_grade: "GOOD",
+  };
+
+  test("accepts a flagged PARTIAL section with review_reason LLMAJ_PARTIAL", () => {
+    expect(
+      LlmajTriageTaskSchema.safeParse(partialOnlyTask).error,
+    ).toBeUndefined();
+  });
+
+  test("accepts flagged PARTIAL and BAD sections with review_reason LLMAJ_BAD", () => {
+    const result = LlmajTriageTaskSchema.safeParse({
+      ...exampleTask,
+      action_items_flagged: true,
+      judge_action_items_grade: "PARTIAL",
+    });
+    expect(result.error).toBeUndefined();
+  });
+
+  test("rejects a review_reason that disagrees with the worst flagged grade", () => {
+    const partialAsBad = LlmajTriageTaskSchema.safeParse({
+      ...partialOnlyTask,
+      review_reason: "LLMAJ_BAD",
+    });
+    expect(partialAsBad.error?.issues.map((i) => i.path)).toEqual([
+      ["review_reason"],
+    ]);
+
+    const badAsPartial = LlmajTriageTaskSchema.safeParse({
+      ...exampleTask,
+      review_reason: "LLMAJ_PARTIAL",
+    });
+    expect(badAsPartial.error?.issues.map((i) => i.path)).toEqual([
+      ["review_reason"],
+    ]);
+  });
+
+  test("rejects flagging some PARTIAL sections but not others", () => {
+    const result = LlmajTriageTaskSchema.safeParse({
+      ...partialOnlyTask,
+      judge_overall_grade: "PARTIAL",
+    });
+    expect(result.error?.issues.map((i) => i.path)).toEqual([
+      ["overall_flagged"],
     ]);
   });
 

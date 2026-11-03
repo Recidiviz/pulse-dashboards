@@ -107,6 +107,7 @@ describe("buildWriterUserVariables", () => {
     labels: {},
     additionalOutputs: [],
     labelStudioReviewPercent: 100,
+    llmajTriageMinGrade: "BAD",
     labelStudioAlwaysReviewPartial: true,
   };
 

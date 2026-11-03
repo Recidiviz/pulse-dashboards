@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { LlmajTriageMinGrade } from "~@meetings/config";
 import type {
   NotetakingEvaluationRun,
   StateCode,
@@ -63,10 +64,18 @@ function formatDuration(durationMs: number | null): string {
   return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
 }
 
+/** Returns whether a judge grade sends its section to triage. */
+function isFlaggedGrade(
+  grade: string | undefined,
+  minGrade: LlmajTriageMinGrade,
+): boolean {
+  return grade === "BAD" || (minGrade === "PARTIAL" && grade === "PARTIAL");
+}
+
 /**
  * Returns the LLMAJ triage task for a meeting the judge graded, or null when
- * the judge graded no section BAD and the meeting needs no triage.
- * label-studio-llmaj-triage.ts shows the shape of the task.
+ * the judge graded no section minGrade or worse and the meeting needs no
+ * triage. label-studio-llmaj-triage.ts shows the shape of the task.
  *
  * A judge dimension that failed has a null score; its grade and rationale
  * read NOT_AVAILABLE, its findings read NO_FINDINGS, and it is never flagged.
@@ -78,23 +87,27 @@ function formatDuration(durationMs: number | null): string {
  *   gradedOutputs: The case note and action items the judge graded, which the
  *     task shows in place of the meeting's current, possibly staff-edited,
  *     notes.
+ *   minGrade: The state's llmajTriageMinGrade. Sections the judge graded
+ *     this grade or worse are flagged.
  */
 export function buildLlmajTriageTask(
   meeting: LabelStudioMeeting,
   evaluationRun: NotetakingEvaluationRun,
   stateCode: StateCode,
   gradedOutputs: LlmajGradedOutputs,
+  minGrade: LlmajTriageMinGrade = "BAD",
 ): LlmajTriageTask | null {
   const scores = evaluationRun.scores as unknown as EvaluationScores;
   const sectionScores = LLMAJ_TRIAGE_SECTIONS.map(({ prefix, scoresKey }) => ({
     prefix,
     score: scores[scoresKey],
+    flagged: isFlaggedGrade(scores[scoresKey]?.grade, minGrade),
   }));
-  if (!sectionScores.some(({ score }) => score?.grade === "BAD")) return null;
+  if (!sectionScores.some(({ flagged }) => flagged)) return null;
 
   const judgeFields = Object.fromEntries(
-    sectionScores.flatMap(({ prefix, score }) => [
-      [`${prefix}_flagged`, score?.grade === "BAD"],
+    sectionScores.flatMap(({ prefix, score, flagged }) => [
+      [`${prefix}_flagged`, flagged],
       [`judge_${prefix}_grade`, score?.grade ?? NOT_AVAILABLE],
       [`judge_${prefix}_rationale`, score?.rationale || NOT_AVAILABLE],
       [
@@ -116,7 +129,9 @@ export function buildLlmajTriageTask(
     meeting_id: meeting.id,
     state_code: stateCode,
     recording_date: recordingDate,
-    review_reason: "LLMAJ_BAD",
+    review_reason: sectionScores.some(({ score }) => score?.grade === "BAD")
+      ? "LLMAJ_BAD"
+      : "LLMAJ_PARTIAL",
     pipeline_run_id: evaluationRun.pipelineRunId,
     evaluation_run_id: evaluationRun.id,
     evaluator_version: evaluationRun.evaluatorVersion,
@@ -150,7 +165,7 @@ export function buildLlmajTriageTask(
  * Builds a meeting's LLMAJ triage task and writes it to
  * {recordingsFolderPath}/{LLMAJ_TRIAGE_TASK_FILENAME} in the meeting's
  * recordings bucket, next to label-studio-task.json. Returns whether it wrote
- * a task; it writes nothing when the judge graded no section BAD.
+ * a task; it writes nothing when buildLlmajTriageTask returns null.
  *
  * Takes the same arguments as buildLlmajTriageTask, and in local mode writes
  * to local disk the way exportLabelStudioTask does.
@@ -160,12 +175,14 @@ export async function exportLlmajTriageTask(
   evaluationRun: NotetakingEvaluationRun,
   stateCode: StateCode,
   gradedOutputs: LlmajGradedOutputs,
+  minGrade: LlmajTriageMinGrade = "BAD",
 ): Promise<boolean> {
   const task = buildLlmajTriageTask(
     meeting,
     evaluationRun,
     stateCode,
     gradedOutputs,
+    minGrade,
   );
   if (task === null) return false;
 

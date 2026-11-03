@@ -114,6 +114,14 @@ export const LabelsSchema = z
   );
 
 /**
+ * The least severe LLMAJ section grade that sends a meeting to LLMAJ triage.
+ * Sections the judge graded this grade or worse are flagged for review, and a
+ * meeting with any flagged section gets a triage task instead of a full-review
+ * task.
+ */
+export const LlmajTriageMinGradeSchema = z.enum(["BAD", "PARTIAL"]);
+
+/**
  * Schema for a raw agency YAML file.
  *
  * Use plain fields (`glossary`, `keywords`, etc.) to fully replace the base.
@@ -152,6 +160,9 @@ export const AgencyConfigFileSchema = z
       .describe(
         "Percent of completed meetings randomly sampled for a Label Studio review task",
       ),
+    llmajTriageMinGrade: LlmajTriageMinGradeSchema.optional().describe(
+      "The least severe LLMAJ section grade that sends a meeting to LLMAJ triage instead of full review: BAD (the default) or PARTIAL",
+    ),
     // TODO(MM-674): Remove this field, it is no longer in use.
     labelStudioAlwaysReviewPartial: z
       .boolean()
@@ -257,6 +268,7 @@ export const AgencyConfigSchema = z.object({
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   labelStudioReviewPercent: z.number().min(0).max(100).default(100),
+  llmajTriageMinGrade: LlmajTriageMinGradeSchema.default("BAD"),
   labelStudioAlwaysReviewPartial: z.boolean().default(false),
   keywords: z.array(z.string()).default([]),
   meetingTypes: z.array(MeetingTypeSchema).default([]),
@@ -273,6 +285,7 @@ export const AgencyConfigSchema = z.object({
 export type AgencyConfigFile = z.infer<typeof AgencyConfigFileSchema>;
 export type AgencyConfig = z.infer<typeof AgencyConfigSchema>;
 export type OutputSpec = z.infer<typeof OutputSpecSchema>;
+export type LlmajTriageMinGrade = z.infer<typeof LlmajTriageMinGradeSchema>;
 export type MeetingTypeConfigEntry = z.infer<
   typeof MeetingTypeConfigEntrySchema
 >;
