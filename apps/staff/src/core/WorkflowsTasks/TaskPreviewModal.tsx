@@ -33,19 +33,16 @@ import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
 import { ClientDetailSidebarComponents } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
+import { Divider } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import AddedTasks from "./AddedTasks";
 import { PreviewTasks } from "./PreviewTasks";
 import { FilterHeaderRow, TaskSectionFilter } from "./TaskSectionFilter";
 
-export const TaskItemDivider = styled.hr`
+export const TaskItemDivider = styled(Divider)`
   border-top: 1px solid ${palette.slate10};
   margin: 0 -${rem(spacing.md)};
   min-width: 100%;
-
-  &:last-child {
-    display: none;
-  }
 `;
 
 const TaskItemHeader = styled(Sans12)`

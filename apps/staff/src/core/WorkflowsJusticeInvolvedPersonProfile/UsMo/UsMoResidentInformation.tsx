@@ -16,7 +16,6 @@
 // =============================================================================
 
 import React from "react";
-import styled from "styled-components";
 
 import UsMoAssessmentScores from "../OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
 import UsMoGangInvolvement from "../OpportunityDetailSidebarComponents/US_MO/UsMoGangInvolvement";
@@ -28,12 +27,6 @@ import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolit
 import { Divider } from "../styles";
 import { ResidentProfileProps } from "../types";
 
-const Wrapper = styled.div`
-  hr + hr {
-    display: none; // Suppress extra dividers when sections are conditionally hidden
-  }
-`;
-
 export function UsMoResidentInformation({
   resident,
 }: ResidentProfileProps): React.ReactElement<any> | null {
@@ -44,7 +37,7 @@ export function UsMoResidentInformation({
   }
 
   return (
-    <Wrapper>
+    <>
       <Divider />
       <UsMoResidentDates resident={resident} />
       <Divider />
@@ -59,6 +52,6 @@ export function UsMoResidentInformation({
       <UsMoProgramParticipation resident={resident} />
       <Divider />
       <UsMoSanctions sanctions={metadata.d1SanctionInfoPastYear} />
-    </Wrapper>
+    </>
   );
 }

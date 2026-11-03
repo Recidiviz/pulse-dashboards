@@ -125,9 +125,6 @@ const Wrapper = styled.div<{ $extraScrollBuffer?: boolean }>`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
   flex: 1; // expand as much as possible, which pushes the footer down
 
-  hr + hr {
-    display: none;
-  }
   max-height: calc(100% - ${FOOTER_HEIGHT}px);
   overflow-y: auto;
 

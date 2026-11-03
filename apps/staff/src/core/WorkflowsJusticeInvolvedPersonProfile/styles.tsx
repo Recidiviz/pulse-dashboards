@@ -153,6 +153,11 @@ export const Divider = styled.hr`
   &:last-child {
     display: none;
   }
+
+  // A section that renders nothing leaves its divider next to the one before it
+  & + & {
+    display: none;
+  }
 `;
 
 export const DetailsBox = styled.div`
