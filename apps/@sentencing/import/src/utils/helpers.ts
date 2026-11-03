@@ -46,6 +46,7 @@ export const MO_DISTRICT_ACRONYM_TO_NAME: Record<string, string> = {
   "12": "District 12 - Farmington Community Supervision Center",
   "13": "District 13 - Nixa",
   "13S": "District 13S - West Plains",
+  "14": "District 14 - Sikeston",
   "15": "District 15 - Hillsboro",
   "15S": "District 15S - Potosi",
   "16": "District 16 - Union",
