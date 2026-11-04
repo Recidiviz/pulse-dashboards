@@ -1,17 +1,19 @@
 # deploy/Dockerfile
 #
-# Pinned by digest to python:3.12-alpine3.22 (Alpine 3.22.4). The tag
-# python:3.12-alpine floats: the images currently deployed were built from
-# Alpine 3.22.1, while that tag resolves to Alpine 3.24.3 today. Rebuilding
-# against the floating tag would ship a two-release OS upgrade -- musl 1.2.5 ->
-# 1.2.6, and new major versions of ffmpeg and libpq, neither of which is version
-# -pinned in the apk add below -- to nine production Cloud Run jobs at once,
-# under the guise of a security patch.
+# Pinned by digest to python:3.12-alpine3.24 (Alpine 3.24.3) -- the same base
+# the reentry backend image runs. Keep the digest pin: it makes a rebuild
+# reproducible, and `apk upgrade` below still picks up Alpine security updates
+# within the release. Dependabot's docker ecosystem refreshes this digest
+# weekly, so the pin stays current without a hand-edit.
 #
-# Pinning keeps `apk upgrade` picking up Alpine 3.22 security updates, so this
-# image can be rebuilt for a CVE without also moving the OS. Bump the digest
-# deliberately, as its own change, with the jobs exercised afterwards.
-FROM python:3.12-alpine3.22@sha256:a190708a2dec1bd18b1decb539f8e8f5407abaa9bf39cacda583f7f8c11db322
+# This was briefly pinned to Alpine 3.22 to avoid shipping an OS upgrade under
+# the guise of a security patch. That pin had to move: 3.22 tops out at
+# brotli-libs 1.1.1-r0 and can never reach the 1.2.1-r0 that CVE-2026-111497
+# requires (Alpine fixed it in 3.24; 3.22 has no secfix entry for it at all).
+# The upgrade it guarded against -- musl 1.2.6, ffmpeg 8.1.3, libpq 18 -- is
+# already what the backend image runs in every environment against the same
+# Cloud SQL instances, so the jobs are not the first to take it.
+FROM python:3.12-alpine3.24@sha256:e6dae589c1c05976188fd3bd019afd091445fc533ed2ea29001beddc7368a9c8
 
 ENV PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \

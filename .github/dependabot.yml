@@ -46,3 +46,28 @@ updates:
       - "Type: Dependency Upgrade"
       - "dependencies"
       - "python:uv"
+
+  # Base images for the reentry backend. Both Dockerfiles pin their base by
+  # digest, which is reproducible but frozen: without this, the pin only moves
+  # when someone edits it by hand, and an OS CVE fix never reaches a rebuild.
+  # Dependabot refreshes the digest weekly so the pin stays current.
+  - package-ecosystem: "docker"
+    directories:
+      - "/apps/@reentry/backend/deploy"
+      - "/apps/@reentry/backend/deploy/jobs"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      reentry-docker-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "Type: Dependency Upgrade"
+      - "dependencies"
+      - "docker"
