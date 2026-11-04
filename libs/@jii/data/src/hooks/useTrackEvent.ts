@@ -16,28 +16,32 @@
 // =============================================================================
 
 import { useCallback } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { type TrackReentryEvent, useRootStore } from "~@jii/data";
-import { State } from "~@jii/paths";
+import type { JiiEvents } from "../apis/Segment/SegmentClient";
+import type { SegmentEventName } from "../apis/Segment/types";
+import { useRootStore } from "../components/StoreProvider/useRootStore";
+import { useSingleResidentContextOptional } from "../contexts/SingleResidentContext";
 
 /**
- * Returns a function that sends a Reentry Segment event for the resident in
- * the current route. Memoized, so effects that depend on it don't re-run
- * every render.
+ * Returns a function that sends a JII Segment event, adding the viewed
+ * resident's pseudo ID when there is one. Memoized, so effects that depend on
+ * it don't re-run every render.
  */
-export function useReentryAnalytics() {
+export function useTrackEvent() {
   const {
     userStore: { segmentClient },
   } = useRootStore();
-  const { personPseudoId } = useTypedParams(State.Resident);
+  const pseudoId = useSingleResidentContextOptional()?.resident.pseudonymizedId;
 
-  return useCallback<TrackReentryEvent>(
-    (name, properties) =>
-      segmentClient.trackReentryEvent(name, {
+  return useCallback(
+    <Name extends keyof JiiEvents & SegmentEventName>(
+      name: Name,
+      properties: JiiEvents[Name],
+    ) =>
+      segmentClient.track(name, {
         ...properties,
-        justiceInvolvedPersonPseudoId: personPseudoId,
+        justiceInvolvedPersonPseudoId: pseudoId,
       }),
-    [segmentClient, personPseudoId],
+    [segmentClient, pseudoId],
   );
 }

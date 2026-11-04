@@ -19,7 +19,7 @@ import { FC, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { useRootStore } from "~@jii/data";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Button } from "~design-system";
@@ -56,16 +56,16 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
   isOpen,
   onRequestClose,
 }) => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
+
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const shouldReturnFocusRef = useRef(true);
 
   const { category, ...residentParams } = useTypedParams(CategoryResults);
   const location = useLocation();
-  const {
-    userStore: { segmentClient },
-  } = useRootStore();
   const { trackSearchQueryAnonymously } = useAnonymousCreAnalytics();
   const { results, isQueryPending } = useResourceSearch(
     resources,
@@ -183,9 +183,7 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
                   primaryContact={resource.primaryContactValue}
                   chips={getResourceChips(resource, t)}
                   onClick={() => {
-                    segmentClient.trackCreResourceViewed({
-                      justiceInvolvedPersonPseudoId:
-                        residentParams.personPseudoId,
+                    trackEvent("frontend_cre_resource_viewed", {
                       resourceId: resource.organizationId,
                       resourceName: resource.name,
                       source: "search",

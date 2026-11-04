@@ -17,10 +17,10 @@
 
 import { SyntheticEvent, useRef } from "react";
 
+import { useTrackEvent } from "~@jii/data";
 import type { OnboardingVideoAssets } from "~@jii/onboarding-video";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import { getPositionSeconds, hasWatchedWholeVideo } from "../utils";
 import { VideoContainer, VideoModal } from "./ReentryVideoModal.styles";
 
@@ -36,7 +36,7 @@ export const ReentryVideoModal = ({
   onClose,
   video,
 }: ReentryVideoModalProps) => {
-  const trackEvent = useReentryAnalytics();
+  const trackEvent = useTrackEvent();
 
   const { t } = useUsMaTranslations();
   const title = t(($) => $.reentry.overview.video.modalTitle);

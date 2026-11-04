@@ -17,6 +17,8 @@
 
 import { useEffect, useState } from "react";
 
+import { useTrackEvent } from "~@jii/data";
+
 import {
   getExitScreen,
   getQuestionViewed,
@@ -55,8 +57,9 @@ export function useQuestionnaireFlow({
   save,
   onExit,
   onGoToChecklist,
-  trackEvent,
 }: UseQuestionnaireFlowParams): QuestionnaireScreen {
+  const trackEvent = useTrackEvent();
+
   const [answers, setAnswers] = useState(() =>
     fromStoredAnswers(allQuestions, storedAnswers),
   );

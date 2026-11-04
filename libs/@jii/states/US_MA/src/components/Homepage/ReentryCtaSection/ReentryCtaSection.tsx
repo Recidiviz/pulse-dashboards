@@ -18,19 +18,19 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { CallToActionCard, HomepageSectionHeading } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
+import { useSingleResidentContext, useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import backgroundSrc from "./reentryCtaBackground.png";
 import illustrationSrc from "./reentryCtaIllustration.svg";
 
 export const ReentryCtaSection = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const { residentFlags } = useSingleResidentContext();
   const routeParams = useTypedParams(State.Resident);
-  const trackEvent = useReentryAnalytics();
 
   if (!residentFlags.usMaReentry) return null;
 

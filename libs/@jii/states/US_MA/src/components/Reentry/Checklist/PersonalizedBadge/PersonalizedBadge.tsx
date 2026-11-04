@@ -19,11 +19,11 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Chip, GoLink } from "~@jii/common-ui";
 import type { ReentryChecklistItemId } from "~@jii/configs";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { PersonalizationReason } from "../../../../hooks/types";
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { Popover } from "../../Popover/Popover";
 import {
   Field,
@@ -48,9 +48,10 @@ export const PersonalizedBadge = ({
   itemId,
   reasons,
 }: PersonalizedBadgeProps) => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
-  const trackEvent = useReentryAnalytics();
 
   const reasonsCopy = t(($) => $.reentry.checklist.personalizationReasons, {
     returnObjects: true,

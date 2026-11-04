@@ -18,4 +18,6 @@
 /**
  * The properties of an event that sends none of its own, tracked with an empty {}.
  */
-export type NoProperties = Record<never, never>;
+export type NoProperties = Record<string, never>;
+
+export type SegmentEventName = `frontend_${string}`;

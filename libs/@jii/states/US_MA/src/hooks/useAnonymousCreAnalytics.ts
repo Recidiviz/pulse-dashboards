@@ -25,7 +25,7 @@ const ANONYMOUS_SESSION_STORAGE_KEY = "cre_anonymous_session_id";
 
 /**
  * A random id scoped to one browsing session, similar to `getOrCreateSearchSessionId`
- * in libs/@jii/states/US_NYC/src/hooks/useCreAnalytics.ts
+ * in libs/@jii/states/US_NYC/src/hooks/useAnonymousCreAnalytics.ts
  */
 function getOrCreateAnonymousSessionId(): string {
   try {

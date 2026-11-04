@@ -19,14 +19,16 @@ import { NavLink, useMatch } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import type { ReentryPage } from "~@jii/data";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { RESOURCE_CATEGORIES } from "../ctaConfigs";
 import { Links, Wrapper } from "./ReentryNavBar.styles";
 
 export const ReentryNavBar = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
 
@@ -36,7 +38,6 @@ export const ReentryNavBar = () => {
   );
   const guideMatch = useMatch(State.Resident.UsMaReentry.Guide.path);
   const isGuidePage = !!guideMatch;
-  const trackEvent = useReentryAnalytics();
 
   const getDeparturePage = (): ReentryPage => {
     if (isGuidePage) return "topic_page";

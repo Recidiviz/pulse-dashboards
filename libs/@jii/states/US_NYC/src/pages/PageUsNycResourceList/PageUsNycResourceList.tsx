@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { BottomSheet } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { ResourceExplorer, State } from "~@jii/paths";
 import { Button } from "~design-system";
 import { pluralize } from "~utils";
@@ -29,7 +30,6 @@ import { Chip } from "../../components/Chip/Chip";
 import { CollapsibleSection } from "../../components/CollapsibleSection/CollapsibleSection";
 import { EmptyFilterState } from "../../components/EmptyFilterState/EmptyFilterState";
 import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
-import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResourceFilters } from "../../hooks/useResourceFilters";
 import { useResources } from "../../hooks/useResources";
 import { buildCategoryLinks } from "../../hooks/utils";
@@ -75,12 +75,13 @@ const COPY = {
 };
 
 export function PageUsNycResourceList() {
-  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
+  const trackEvent = useTrackEvent();
 
-  const { trackSubcategorySelected, trackResourceViewed } = useCreAnalytics();
   const residentParams = useTypedParams(State.Resident);
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
   const location = useLocation();
+
+  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
 
   const landingPath = State.Resident.ResourceExplorer.buildPath(residentParams);
   useBackTarget(landingPath);
@@ -194,7 +195,11 @@ export function PageUsNycResourceList() {
                 stickyHeader
                 headerBorder
                 onToggle={(isOpen) =>
-                  trackSubcategorySelected(category, subcategory, isOpen)
+                  trackEvent("frontend_cre_subcategory_selected", {
+                    category,
+                    subcategory,
+                    isOpen,
+                  })
                 }
               >
                 <ResourceList>
@@ -207,11 +212,11 @@ export function PageUsNycResourceList() {
                       primaryContact={resource.primaryContactValue}
                       chips={resource.tags}
                       onClick={() =>
-                        trackResourceViewed(
-                          resource.organizationId,
-                          resource.name,
-                          "category_list",
-                        )
+                        trackEvent("frontend_cre_resource_viewed", {
+                          resourceId: resource.organizationId,
+                          resourceName: resource.name,
+                          source: "category_list",
+                        })
                       }
                     />
                   ))}

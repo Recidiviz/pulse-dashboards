@@ -20,7 +20,7 @@ import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { BottomSheet, usePageTitle } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
@@ -45,6 +45,8 @@ import {
 } from "./ResourceList.styles";
 
 export const ResourceList = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   usePageTitle(t(($) => $.reentry.resources.list.pageTitle));
 
@@ -54,14 +56,12 @@ export const ResourceList = () => {
     filterGroups,
     applyFilters,
   } = useResources();
-  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
-  const {
-    userStore: { segmentClient },
-  } = useRootStore();
   const { category, ...residentParams } = useTypedParams(
     State.Resident.UsMaReentry.Resources.CategoryResults,
   );
   const location = useLocation();
+
+  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
 
   const sections = groupResourcesBySubcategory(matchingResources, category);
   const resourceCount = new Set(
@@ -128,9 +128,7 @@ export const ResourceList = () => {
                   })}
                   headerBorder
                   onToggle={(isOpen) =>
-                    segmentClient.trackCreSubcategorySelected({
-                      justiceInvolvedPersonPseudoId:
-                        residentParams.personPseudoId,
+                    trackEvent("frontend_cre_subcategory_selected", {
                       category,
                       subcategory,
                       isOpen,
@@ -146,9 +144,7 @@ export const ResourceList = () => {
                         primaryContact={resource.primaryContactValue}
                         chips={getResourceChips(resource, t)}
                         onClick={() =>
-                          segmentClient.trackCreResourceViewed({
-                            justiceInvolvedPersonPseudoId:
-                              residentParams.personPseudoId,
+                          trackEvent("frontend_cre_resource_viewed", {
                             resourceId: resource.organizationId,
                             resourceName: resource.name,
                             source: "category_list",

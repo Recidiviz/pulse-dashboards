@@ -19,10 +19,10 @@ import { User } from "lucide-react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { GoLink } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
 import {
   Content,
@@ -33,10 +33,12 @@ import {
 } from "./ReviewCard.styles";
 
 export const ReviewCard = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+
   const { reviewProfile } = QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
-  const trackEvent = useReentryAnalytics();
 
   const trackClick = () => {
     trackEvent("frontend_reentry_home_cta_clicked", {

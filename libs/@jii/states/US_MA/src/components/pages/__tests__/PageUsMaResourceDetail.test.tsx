@@ -30,6 +30,7 @@ import { PageUsMaResourceDetail } from "../PageUsMaResourceDetail";
 vi.mock("~@jii/data", async (importOriginal) => ({
   ...(await importOriginal()),
   useRootStore: vi.fn(),
+  useTrackEvent: () => vi.fn(),
 }));
 
 const LIST_PATH = "/massachusetts/abc/reentry/resources/categories/housing";

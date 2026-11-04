@@ -18,10 +18,10 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { ButtonLink } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { Callout } from "../../Callout/Callout";
 
 /**
@@ -29,9 +29,10 @@ import { Callout } from "../../Callout/Callout";
  * profile if their plans have changed.
  */
 export const UpdateProfileCard = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
-  const trackEvent = useReentryAnalytics();
 
   const trackClick = () => {
     // The card only shows once the profile is completed.

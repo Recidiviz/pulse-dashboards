@@ -18,10 +18,13 @@
 import { useState } from "react";
 
 import { usePageTitle } from "~@jii/common-ui";
-import { firstNameLastName, useSingleResidentContext } from "~@jii/data";
+import {
+  firstNameLastName,
+  useSingleResidentContext,
+  useTrackEvent,
+} from "~@jii/data";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { SuspenseQueryBoundary } from "../SuspenseQueryBoundary";
 import { GuideCta } from "./GuideCta/GuideCta";
 import { Greeting, Wrapper } from "./Home.styles";
@@ -34,10 +37,12 @@ import { ReentryVideoModal } from "./ReentryVideo/ReentryVideoModal/ReentryVideo
 import { ResourceCategoryCta } from "./ResourceCategoryCta/ResourceCategoryCta";
 
 export const Home = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const { resident } = useSingleResidentContext();
+
   const [videoIsOpen, setVideoIsOpen] = useState(false);
-  const trackEvent = useReentryAnalytics();
 
   usePageTitle(t(($) => $.reentry.overview.pageTitle));
 

@@ -21,7 +21,7 @@ import {
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
 
-import { useRootStore } from "~@jii/data";
+import { useRootStore, useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 
 import {
@@ -36,9 +36,10 @@ import { SelectedFilters } from "../components/Reentry/Resources/filters/types";
 export const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export function useResources() {
+  const trackEvent = useTrackEvent();
+
   const {
     apiClient: { trpcQuerier },
-    userStore: { segmentClient },
   } = useRootStore();
   const { data } = useSuspenseQuery({
     ...trpcQuerier.resident.resources.getResources.queryOptions(),
@@ -46,7 +47,7 @@ export function useResources() {
   });
 
   const route = State.Resident.UsMaReentry.Resources.CategoryResults;
-  const { category, personPseudoId } = useTypedParams(route);
+  const { category } = useTypedParams(route);
   const [searchParams, setSearchParams] = useTypedSearchParams(route);
 
   const categoryResources = data.filter((resource) =>
@@ -66,13 +67,9 @@ export function useResources() {
     // Keeps search params that the filters don't use, such as tags.
     applyFilters: (filters: SelectedFilters) => {
       if (countSelectedOptions(filters) === 0) {
-        segmentClient.trackCreFilterCleared({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          category,
-        });
+        trackEvent("frontend_cre_filter_cleared", { category });
       } else {
-        segmentClient.trackCreFiltersUpdated({
-          justiceInvolvedPersonPseudoId: personPseudoId,
+        trackEvent("frontend_cre_filters_updated", {
           category,
           filters: toSearchParams(filters),
         });

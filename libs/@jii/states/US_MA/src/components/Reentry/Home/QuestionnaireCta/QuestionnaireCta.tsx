@@ -18,11 +18,11 @@
 import { LayoutGrid } from "lucide-react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
 import { useReentryQuestionnaireDisplay } from "../../../../hooks/useReentryQuestionnaireDisplay";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../ctaConfigs";
@@ -39,11 +39,12 @@ import {
 import { ReviewCard } from "./ReviewCard/ReviewCard";
 
 export const QuestionnaireCta = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
   const { status } = useReentryQuestionnaire();
   const { sections } = useReentryQuestionnaireDisplay();
-  const trackEvent = useReentryAnalytics();
 
   if (status === "COMPLETED") {
     return (

@@ -18,23 +18,21 @@
 import { act, renderHook } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { useTrackEvent } from "~@jii/data";
+
 import { ResourceSummary } from "../../types";
-import { useCreAnalytics } from "../useCreAnalytics";
 import { useResourceFilters } from "../useResourceFilters";
 import { makeResource } from "./testUtils";
 
-vi.mock("../useCreAnalytics", () => ({
-  useCreAnalytics: vi.fn(),
+vi.mock("~@jii/data", async (importOriginal) => ({
+  ...(await importOriginal()),
+  useTrackEvent: vi.fn(),
 }));
 
-const trackFiltersUpdated = vi.fn();
-const trackFilterCleared = vi.fn();
+const trackEvent = vi.fn();
 
 beforeEach(() => {
-  vi.mocked(useCreAnalytics).mockReturnValue({
-    trackFiltersUpdated,
-    trackFilterCleared,
-  } as unknown as ReturnType<typeof useCreAnalytics>);
+  vi.mocked(useTrackEvent).mockReturnValue(trackEvent);
 });
 
 const resources: ResourceSummary[] = [
@@ -261,7 +259,7 @@ describe("toggleSubcategory", () => {
     expect(result.current.selectedSubcategories).toEqual([]);
   });
 
-  test("tracks the resulting filter state via trackFiltersUpdated", async () => {
+  test("tracks the resulting filter state", async () => {
     const { result } = renderHook(() => useResourceFilters(resources), {
       wrapper: wrapper("?tags=spanish"),
     });
@@ -270,10 +268,13 @@ describe("toggleSubcategory", () => {
       result.current.toggleSubcategory("Emergency Shelter");
     });
 
-    expect(trackFiltersUpdated).toHaveBeenCalledExactlyOnceWith(
-      "Housing",
-      ["Emergency Shelter"],
-      ["spanish"],
+    expect(trackEvent).toHaveBeenCalledExactlyOnceWith(
+      "frontend_cre_filters_updated",
+      {
+        category: "Housing",
+        subcategories: ["Emergency Shelter"],
+        tags: ["spanish"],
+      },
     );
   });
 });
@@ -303,7 +304,7 @@ describe("toggleTag", () => {
     expect(result.current.selectedTags).toEqual([]);
   });
 
-  test("tracks the resulting filter state via trackFiltersUpdated", async () => {
+  test("tracks the resulting filter state", async () => {
     const { result } = renderHook(() => useResourceFilters(resources), {
       wrapper: wrapper("?subcategories=Emergency+Shelter"),
     });
@@ -312,10 +313,13 @@ describe("toggleTag", () => {
       result.current.toggleTag("spanish");
     });
 
-    expect(trackFiltersUpdated).toHaveBeenCalledExactlyOnceWith(
-      "Housing",
-      ["Emergency Shelter"],
-      ["spanish"],
+    expect(trackEvent).toHaveBeenCalledExactlyOnceWith(
+      "frontend_cre_filters_updated",
+      {
+        category: "Housing",
+        subcategories: ["Emergency Shelter"],
+        tags: ["spanish"],
+      },
     );
   });
 });
@@ -335,7 +339,7 @@ describe("clearFilters", () => {
     expect(result.current.hasActiveFilters).toBe(false);
   });
 
-  test("tracks the category via trackFilterCleared", async () => {
+  test("tracks the category as cleared", async () => {
     const { result } = renderHook(() => useResourceFilters(resources), {
       wrapper: wrapper("?subcategories=Emergency+Shelter&tags=spanish"),
     });
@@ -344,6 +348,9 @@ describe("clearFilters", () => {
       result.current.clearFilters();
     });
 
-    expect(trackFilterCleared).toHaveBeenCalledExactlyOnceWith("Housing");
+    expect(trackEvent).toHaveBeenCalledExactlyOnceWith(
+      "frontend_cre_filter_cleared",
+      { category: "Housing" },
+    );
   });
 });

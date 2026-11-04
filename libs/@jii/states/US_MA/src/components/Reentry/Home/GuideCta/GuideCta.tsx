@@ -17,10 +17,10 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { GUIDE_TOPICS } from "../../ctaConfigs";
 import { ReentryVideoLearnMoreRow } from "../ReentryVideo/ReentryVideoLearnMoreRow/ReentryVideoLearnMoreRow";
 import {
@@ -36,9 +36,10 @@ export type GuideCtaProps = {
 };
 
 export const GuideCta = ({ onOpenVideo }: GuideCtaProps) => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
-  const trackEvent = useReentryAnalytics();
 
   return (
     <div>

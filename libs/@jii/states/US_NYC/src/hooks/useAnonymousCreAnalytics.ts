@@ -17,11 +17,9 @@
 
 import { captureException } from "@sentry/react";
 import { useMemo, useState } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { v4 as uuidv4 } from "uuid";
 
 import { useRootStore } from "~@jii/data";
-import { State } from "~@jii/paths";
 
 const SEARCH_SESSION_STORAGE_KEY = "cre_search_session_id";
 
@@ -46,86 +44,22 @@ function getOrCreateSearchSessionId(): string {
   }
 }
 
-export function useCreAnalytics() {
-  const {
-    apiClient,
-    userStore: { segmentClient },
-  } = useRootStore();
-  const { personPseudoId } = useTypedParams(State.Resident);
+/**
+ * Logs CRE search queries through a server-side mutation, so they never carry
+ * the resident's identity.
+ */
+export function useAnonymousCreAnalytics() {
+  const { apiClient } = useRootStore();
   const [searchSessionId] = useState(getOrCreateSearchSessionId);
 
   return useMemo(
     () => ({
-      trackCategorySelected: (category: string) =>
-        segmentClient.trackCreCategorySelected({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          category,
-        }),
-
-      trackSubcategorySelected: (
-        category: string,
-        subcategory: string,
-        isOpen: boolean,
-      ) =>
-        segmentClient.trackCreSubcategorySelected({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          category,
-          subcategory,
-          isOpen,
-        }),
-
-      trackFiltersUpdated: (
-        category: string,
-        subcategories: string[],
-        tags: string[],
-      ) =>
-        segmentClient.trackCreFiltersUpdated({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          category,
-          subcategories,
-          tags,
-        }),
-
-      trackFilterCleared: (category: string) =>
-        segmentClient.trackCreFilterCleared({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          category,
-        }),
-
-      trackResourceViewed: (
-        resourceId: number,
-        resourceName: string,
-        source: Parameters<
-          typeof segmentClient.trackCreResourceViewed
-        >[0]["source"],
-      ) =>
-        segmentClient.trackCreResourceViewed({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          resourceId,
-          resourceName,
-          source,
-        }),
-
-      trackDescriptionToggled: (
-        resourceId: number,
-        resourceName: string,
-        isExpanded: boolean,
-      ) =>
-        segmentClient.trackCreDescriptionToggled({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          resourceId,
-          resourceName,
-          isExpanded,
-        }),
-
-      // Logged server-side instead of via Segment directly, so this event never
-      // carries the resident's identity
       trackSearchQueryAnonymously: (query: string, resultCount: number) => {
         apiClient.trpc.resident.resources.logSearchQueryAnonymously
           .mutate({ query, resultCount, searchSessionId })
           .catch((e) => captureException(e));
       },
     }),
-    [segmentClient, personPseudoId, apiClient, searchSessionId],
+    [apiClient, searchSessionId],
   );
 }

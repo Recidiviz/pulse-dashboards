@@ -18,10 +18,10 @@
 import { useEffect, useState } from "react";
 
 import type { ReentryChecklistSectionId } from "~@jii/configs";
+import { useTrackEvent } from "~@jii/data";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import type { ReentryChecklistItem } from "../../../../hooks/types";
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { useReentryChecklist } from "../../../../hooks/useReentryChecklist";
 import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
 import { useReentryQuestionnaireDisplay } from "../../../../hooks/useReentryQuestionnaireDisplay";
@@ -36,6 +36,8 @@ import { PersonalizedBadge } from "../PersonalizedBadge/PersonalizedBadge";
 import { UpdateProfileCard } from "../UpdateProfileCard/UpdateProfileCard";
 
 export const ChecklistContent = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
 
   const { status, answers } = useReentryQuestionnaire();
@@ -46,8 +48,6 @@ export const ChecklistContent = () => {
   const isProfileCompleted = status === "COMPLETED";
   const sections = toChecklistSections(items);
   const itemSaveError = t(($) => $.reentry.checklist.itemSaveError);
-
-  const trackEvent = useReentryAnalytics();
 
   // The checklist as it was when the page opened.
   const [initialSnapshot] = useState(() => ({

@@ -20,7 +20,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Suspense } from "react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import { useRootStore } from "~@jii/data";
+import { useRootStore, useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 
 import {
@@ -33,10 +33,10 @@ import { useResources } from "../useResources";
 vi.mock("~@jii/data", async (importOriginal) => ({
   ...(await importOriginal()),
   useRootStore: vi.fn(),
+  useTrackEvent: vi.fn(),
 }));
 
-const trackCreFiltersUpdated = vi.fn();
-const trackCreFilterCleared = vi.fn();
+const trackEvent = vi.fn();
 
 const QUERY_KEY = ["resources"];
 
@@ -85,8 +85,7 @@ let queryClient: QueryClient;
 beforeEach(() => {
   queryClient = new QueryClient({ defaultOptions: { queries: { retry: 0 } } });
   queryClient.setQueryData(QUERY_KEY, resources);
-  trackCreFiltersUpdated.mockReset();
-  trackCreFilterCleared.mockReset();
+  vi.mocked(useTrackEvent).mockReturnValue(trackEvent);
 
   vi.mocked(useRootStore).mockReturnValue({
     apiClient: {
@@ -102,9 +101,6 @@ beforeEach(() => {
           },
         },
       },
-    },
-    userStore: {
-      segmentClient: { trackCreFiltersUpdated, trackCreFilterCleared },
     },
   } as unknown as ReturnType<typeof useRootStore>);
 });
@@ -210,19 +206,20 @@ test("applyFilters tracks the category and selected option ids", () => {
 
   act(() => result.current.applyFilters(rentFilters("free")));
 
-  expect(trackCreFiltersUpdated).toHaveBeenCalledExactlyOnceWith({
-    justiceInvolvedPersonPseudoId: "abc",
-    category: "housing",
-    filters: {
-      subcategories: [],
-      counties: [],
-      gender: [],
-      lengthOfStay: [],
-      rent: ["free"],
-      accepts: [],
+  expect(trackEvent).toHaveBeenCalledExactlyOnceWith(
+    "frontend_cre_filters_updated",
+    {
+      category: "housing",
+      filters: {
+        subcategories: [],
+        counties: [],
+        gender: [],
+        lengthOfStay: [],
+        rent: ["free"],
+        accepts: [],
+      },
     },
-  });
-  expect(trackCreFilterCleared).not.toHaveBeenCalled();
+  );
 });
 
 test("applyFilters tracks an empty selection as cleared", () => {
@@ -230,9 +227,8 @@ test("applyFilters tracks an empty selection as cleared", () => {
 
   act(() => result.current.applyFilters(NO_SELECTION));
 
-  expect(trackCreFilterCleared).toHaveBeenCalledExactlyOnceWith({
-    justiceInvolvedPersonPseudoId: "abc",
-    category: "housing",
-  });
-  expect(trackCreFiltersUpdated).not.toHaveBeenCalled();
+  expect(trackEvent).toHaveBeenCalledExactlyOnceWith(
+    "frontend_cre_filter_cleared",
+    { category: "housing" },
+  );
 });

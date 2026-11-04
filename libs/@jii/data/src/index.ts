@@ -25,7 +25,6 @@ export type {
   QuestionnaireExitScreen,
   ReentryEvents,
   ReentryPage,
-  TrackReentryEvent,
 } from "./apis/Segment/reentryEvents";
 export * from "./apis/Segment/SegmentClient";
 export type {
@@ -52,6 +51,7 @@ export * from "./datastores/UiStore";
 export * from "./datastores/UserStore";
 export * from "./hooks/useResidentMetadata";
 export * from "./hooks/useStateCodeFromSlug";
+export * from "./hooks/useTrackEvent";
 export * from "./utils/date";
 export * from "./utils/edovo";
 export * from "./utils/iframe";

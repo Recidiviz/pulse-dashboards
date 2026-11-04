@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
-import { useResidentsContext } from "~@jii/data";
+import { useResidentsContext, useTrackEvent } from "~@jii/data";
 import {
   ABOUT_VIDEO_ILLUSTRATION_BACKGROUND,
   aboutVideoIllustration,
@@ -25,7 +25,6 @@ import {
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon, palette } from "~design-system";
 
-import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import {
   Banner,
   Description,
@@ -40,9 +39,10 @@ export type ReentryVideoBannerProps = {
 export const ReentryVideoBanner = observer(function ReentryVideoBanner({
   onOpenVideo,
 }: ReentryVideoBannerProps) {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const { userProperties, residentsStore } = useResidentsContext();
-  const trackEvent = useReentryAnalytics();
 
   if (userProperties?.hasSeenReentryOnboarding) return null;
 

@@ -18,17 +18,18 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { CallToActionCard } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { RESOURCE_CATEGORIES } from "../../ctaConfigs";
 import { CardsList, SectionLabel } from "./ResourceCategoryCta.styles";
 
 export const ResourceCategoryCta = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
-  const trackEvent = useReentryAnalytics();
 
   return (
     <div>

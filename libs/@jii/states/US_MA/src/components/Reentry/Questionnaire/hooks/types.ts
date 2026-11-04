@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { TrackReentryEvent } from "~@jii/data";
-
 import type { SaveAnswers } from "../../../../hooks/types";
 import type { ReentryQuestionnaireStatus } from "../../types";
 import type { QuestionnaireCancelModalProps } from "../QuestionnaireCancelModal/QuestionnaireCancelModal";
@@ -44,7 +42,6 @@ export type UseQuestionnaireFlowParams = {
   save: SaveAnswers;
   onExit: () => void;
   onGoToChecklist: () => void;
-  trackEvent: TrackReentryEvent;
 };
 
 export type QuestionnaireHeaderAction = {

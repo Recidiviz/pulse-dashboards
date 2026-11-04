@@ -20,16 +20,16 @@ import {
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
 
+import { useTrackEvent } from "~@jii/data";
 import { ResourceExplorer } from "~@jii/paths";
 
 import { ResourceSummary } from "../types";
-import { useCreAnalytics } from "./useCreAnalytics";
 import { groupResourcesBySubcategory, toggleFilterSelection } from "./utils";
 
 export function useResourceFilters(resources: ResourceSummary[]) {
-  const { trackFiltersUpdated, trackFilterCleared } = useCreAnalytics();
-  const { category } = useTypedParams(ResourceExplorer.CategoryResults);
+  const trackEvent = useTrackEvent();
 
+  const { category } = useTypedParams(ResourceExplorer.CategoryResults);
   const [
     { subcategories: selectedSubcategories, tags: selectedTags },
     setSearchParams,
@@ -97,7 +97,11 @@ export function useResourceFilters(resources: ResourceSummary[]) {
         subcategories: newSubcategories,
         tags,
       }));
-      trackFiltersUpdated(category, newSubcategories, selectedTags);
+      trackEvent("frontend_cre_filters_updated", {
+        category,
+        subcategories: newSubcategories,
+        tags: selectedTags,
+      });
     },
     toggleTag: (tag: string) => {
       const newTags = toggleFilterSelection(selectedTags, tag);
@@ -105,11 +109,15 @@ export function useResourceFilters(resources: ResourceSummary[]) {
         subcategories,
         tags: newTags,
       }));
-      trackFiltersUpdated(category, selectedSubcategories, newTags);
+      trackEvent("frontend_cre_filters_updated", {
+        category,
+        subcategories: selectedSubcategories,
+        tags: newTags,
+      });
     },
     clearFilters: () => {
       setSearchParams({ subcategories: [], tags: [] });
-      trackFilterCleared(category);
+      trackEvent("frontend_cre_filter_cleared", { category });
     },
   };
 }

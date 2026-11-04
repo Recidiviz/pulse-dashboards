@@ -18,11 +18,11 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { GoLink } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
-import { useReentryAnalytics } from "../../../../hooks/useReentryAnalytics";
 import { Callout } from "../../Callout/Callout";
 import { ReentryQuestionnaireStatus } from "../../types";
 
@@ -40,9 +40,10 @@ export const PersonalizationBanner = ({
   status,
   personalizedItemCount,
 }: PersonalizationBannerProps) => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
-  const trackEvent = useReentryAnalytics();
 
   if (status === "COMPLETED") {
     return (

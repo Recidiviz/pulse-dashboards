@@ -118,9 +118,30 @@ export type ReentryEvents = {
   };
   frontend_reentry_checklist_why_opened: { itemId: string };
   frontend_reentry_topic_scrolled_to_end: { topicId: string };
-};
 
-export type TrackReentryEvent = <Name extends keyof ReentryEvents>(
-  name: Name,
-  properties: ReentryEvents[Name],
-) => void;
+  // Community Resource Explorer (CRE).
+  // Search queries are logged server-side instead, so they never carry the resident's identity.
+  frontend_cre_category_selected: { category: string };
+  frontend_cre_subcategory_selected: {
+    category: string;
+    subcategory: string;
+    isOpen: boolean;
+  };
+  frontend_cre_filters_updated: { category: string } & (
+    | { subcategories: string[]; tags: string[] }
+    // Selected option ids per filter group, so states can add groups
+    // without changing this event. Used by every state but NYC.
+    | { filters: Record<string, string[]> }
+  );
+  frontend_cre_filter_cleared: { category: string };
+  frontend_cre_resource_viewed: {
+    resourceId: number;
+    resourceName: string;
+    source: "category_list" | "similar_resources" | "search";
+  };
+  frontend_cre_description_toggled: {
+    resourceId: number;
+    resourceName: string;
+    isExpanded: boolean;
+  };
+};

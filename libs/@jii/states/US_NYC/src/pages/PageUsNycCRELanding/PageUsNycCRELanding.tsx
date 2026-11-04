@@ -17,11 +17,11 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 
 import { Banner } from "../../components/Banner/Banner";
 import { CategoryTile } from "../../components/CategoryTile/CategoryTile";
-import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResources } from "../../hooks/useResources";
 import {
   EmptyState,
@@ -44,7 +44,8 @@ const COPY = {
 };
 
 export function PageUsNycCRELanding() {
-  const { trackCategorySelected } = useCreAnalytics();
+  const trackEvent = useTrackEvent();
+
   const { hasResources, helpCategories, demographicCategories } =
     useResources();
 
@@ -77,7 +78,11 @@ export function PageUsNycCRELanding() {
                     label={category.name}
                     count={category.resourceCount}
                     to={categoryPath(category.name)}
-                    onClick={() => trackCategorySelected(category.name)}
+                    onClick={() =>
+                      trackEvent("frontend_cre_category_selected", {
+                        category: category.name,
+                      })
+                    }
                   />
                 ))}
               </TileGrid>
@@ -94,7 +99,11 @@ export function PageUsNycCRELanding() {
                     label={category.name}
                     count={category.resourceCount}
                     to={categoryPath(category.name)}
-                    onClick={() => trackCategorySelected(category.name)}
+                    onClick={() =>
+                      trackEvent("frontend_cre_category_selected", {
+                        category: category.name,
+                      })
+                    }
                   />
                 ))}
               </TileGrid>

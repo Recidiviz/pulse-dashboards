@@ -17,7 +17,7 @@
 
 import { act, renderHook } from "@testing-library/react";
 
-import type { ReentryEvents } from "~@jii/data";
+import { type ReentryEvents, useTrackEvent } from "~@jii/data";
 
 import { SaveAnswers } from "../../../../../hooks/types";
 import { ReentryQuestionnaireStatus } from "../../../types";
@@ -27,6 +27,11 @@ import {
 } from "../../types";
 import { QuestionnaireScreen } from "../types";
 import { useQuestionnaireFlow } from "../useQuestionnaireFlow";
+
+vi.mock("~@jii/data", async (importOriginal) => ({
+  ...(await importOriginal()),
+  useTrackEvent: vi.fn(),
+}));
 
 const questions: QuestionnaireQuestion[] = [
   {
@@ -80,6 +85,7 @@ const callsOf = (eventName: keyof ReentryEvents) =>
 beforeEach(() => {
   // mockReset (in the vitest config) clears implementations before each test.
   save.mockImplementation((_input, options) => options?.onSuccess?.());
+  vi.mocked(useTrackEvent).mockReturnValue(trackEvent);
 });
 
 const render = (
@@ -97,7 +103,6 @@ const render = (
         save,
         onExit,
         onGoToChecklist,
-        trackEvent,
       }),
     { initialProps: { storedAnswers } },
   );

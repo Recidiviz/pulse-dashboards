@@ -19,11 +19,11 @@ import { ComponentType, useEffect, useRef } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { useScrollToHash } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations, UsMaTFunction } from "~@jii/translation";
 
-import { useReentryAnalytics } from "../../../hooks/useReentryAnalytics";
 import { GUIDE_TOPICS } from "../ctaConfigs";
 import { GuideTopicSlug } from "../types";
 import { PageEndMarker, Wrapper } from "./Guide.styles";
@@ -46,9 +46,10 @@ const GUIDE_PAGES: Record<
 };
 
 export const Guide = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const { topicSlug } = useTypedParams(State.Resident.UsMaReentry.Guide);
-  const trackEvent = useReentryAnalytics();
 
   useScrollToHash();
 

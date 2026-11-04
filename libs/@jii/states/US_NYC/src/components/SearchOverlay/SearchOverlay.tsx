@@ -18,10 +18,11 @@
 import { FC, useMemo, useRef, useState } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { Button } from "~design-system";
 
-import { useCreAnalytics } from "../../hooks/useCreAnalytics";
+import { useAnonymousCreAnalytics } from "../../hooks/useAnonymousCreAnalytics";
 import { useResourceSearch } from "../../hooks/useResourceSearch";
 import { buildCategoryGrid, buildCategoryLinks } from "../../hooks/utils";
 import { ResourceSummary } from "../../types";
@@ -75,13 +76,14 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
   isOpen,
   onRequestClose,
 }) => {
+  const trackEvent = useTrackEvent();
+
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const shouldReturnFocusRef = useRef(true);
 
   const residentParams = useTypedParams(State.Resident);
-  const { trackSearchQueryAnonymously, trackResourceViewed } =
-    useCreAnalytics();
+  const { trackSearchQueryAnonymously } = useAnonymousCreAnalytics();
 
   const { helpCategories, demographicCategories } = useMemo(
     () => buildCategoryGrid(resources),
@@ -179,11 +181,11 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
                   chips={resource.tags}
                   compact
                   onClick={() =>
-                    trackResourceViewed(
-                      resource.organizationId,
-                      resource.name,
-                      "search",
-                    )
+                    trackEvent("frontend_cre_resource_viewed", {
+                      resourceId: resource.organizationId,
+                      resourceName: resource.name,
+                      source: "search",
+                    })
                   }
                 />
               );

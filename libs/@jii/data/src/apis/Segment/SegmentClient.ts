@@ -28,7 +28,12 @@ import { isTestEnv } from "~client-env-utils";
 import { proxyHost } from "../../utils/proxy";
 import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
 import type { ReentryEvents } from "./reentryEvents";
+import type { SegmentEventName } from "./types";
 import { UsNeCheckInToolEvents } from "./usNeCheckInToolEvents";
+
+// Every event JII sends. Add a list here with & to make it trackable.
+// TODO(OBT-55751): Add the event lists for the per-event methods below as they move over
+export type JiiEvents = ReentryEvents;
 
 /**
  * Routes that exist only to move users through a login flow. Their URLs can contain
@@ -171,7 +176,7 @@ export class SegmentClient implements IntakeAnalytics {
   }
 
   track(
-    eventName: `frontend_${string}`,
+    eventName: SegmentEventName,
     properties?: Record<string, unknown>,
   ): void {
     const fullProperties = { ...this.defaultTrackingProperties, ...properties };
@@ -254,15 +259,6 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_aet_callout_clicked", metadata);
   }
 
-  /* Reentry events, defined in reentryEvents.ts */
-
-  trackReentryEvent<Name extends keyof ReentryEvents>(
-    name: Name,
-    properties: ReentryEvents[Name] & { justiceInvolvedPersonPseudoId: string },
-  ) {
-    this.track(name, properties);
-  }
-
   /* US_NE Check-In Tool events */
 
   trackNeCheckInToolEvent<Name extends keyof UsNeCheckInToolEvents>(
@@ -274,67 +270,6 @@ export class SegmentClient implements IntakeAnalytics {
   ) {
     this.track(name, properties);
   }
-
-  /* Community Resource Explorer (CRE) events */
-  // TODO(REE-211): Merge the CRE events into the reentry events above
-  trackCreCategorySelected(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    category: string;
-  }) {
-    this.track("frontend_cre_category_selected", metadata);
-  }
-
-  trackCreSubcategorySelected(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    category: string;
-    subcategory: string;
-    isOpen: boolean;
-  }) {
-    this.track("frontend_cre_subcategory_selected", metadata);
-  }
-
-  trackCreFiltersUpdated(
-    metadata: {
-      justiceInvolvedPersonPseudoId: string;
-      category: string;
-    } & (
-      | { subcategories: string[]; tags: string[] }
-      // Selected option ids per filter group, so states can add groups
-      // without changing this event. Used by every state but NYC.
-      | { filters: Record<string, string[]> }
-    ),
-  ) {
-    this.track("frontend_cre_filters_updated", metadata);
-  }
-
-  trackCreFilterCleared(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    category: string;
-  }) {
-    this.track("frontend_cre_filter_cleared", metadata);
-  }
-
-  trackCreResourceViewed(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    resourceId: number;
-    resourceName: string;
-    source: "category_list" | "similar_resources" | "search";
-  }) {
-    this.track("frontend_cre_resource_viewed", metadata);
-  }
-
-  trackCreDescriptionToggled(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    resourceId: number;
-    resourceName: string;
-    isExpanded: boolean;
-  }) {
-    this.track("frontend_cre_description_toggled", metadata);
-  }
-
-  // Search queries are logged server-side instead (via trackSearchQueryAnonymously), so this
-  // event never carries the resident's identity via Segment's identify()-driven userId. See
-  // useCreAnalytics.ts and the resident.resources.logSearchQueryAnonymously tRPC mutation.
 
   /* NC RNA form events */
 

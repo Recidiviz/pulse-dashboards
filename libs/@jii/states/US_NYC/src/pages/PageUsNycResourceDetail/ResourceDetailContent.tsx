@@ -17,6 +17,7 @@
 
 import { useNavigate } from "react-router-dom";
 
+import { useTrackEvent } from "~@jii/data";
 import { Button } from "~design-system";
 
 import { Chip } from "../../components/Chip/Chip";
@@ -24,7 +25,6 @@ import { ContactInformation } from "../../components/Contact/ContactInformation"
 import { DescriptionBlock } from "../../components/DescriptionBlock/DescriptionBlock";
 import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
 import { US_NYC_CONTENT } from "../../content";
-import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResource } from "../../hooks/useResource";
 import { useResources } from "../../hooks/useResources";
 import {
@@ -62,13 +62,13 @@ export function ResourceDetailContent({
   categoryResultsPath,
   similarResourcePath,
 }: ResourceDetailContentProps) {
+  const trackEvent = useTrackEvent();
   const navigate = useNavigate();
-  const { trackResourceViewed, trackDescriptionToggled } = useCreAnalytics();
 
   const { name, description, contactInformation, labels } =
     useResource(resourceId);
-
   const { getSimilarResources } = useResources();
+
   const similarResources = getSimilarResources(category, resourceId);
 
   return (
@@ -82,7 +82,11 @@ export function ResourceDetailContent({
         <DescriptionBlock
           markdown={description}
           onToggle={(isExpanded) =>
-            trackDescriptionToggled(resourceId, name, isExpanded)
+            trackEvent("frontend_cre_description_toggled", {
+              resourceId,
+              resourceName: name,
+              isExpanded,
+            })
           }
         />
       )}
@@ -120,11 +124,11 @@ export function ResourceDetailContent({
                 to={similarResourcePath(resource.organizationId)}
                 chips={resource.tags}
                 onClick={() =>
-                  trackResourceViewed(
-                    resource.organizationId,
-                    resource.name,
-                    "similar_resources",
-                  )
+                  trackEvent("frontend_cre_resource_viewed", {
+                    resourceId: resource.organizationId,
+                    resourceName: resource.name,
+                    source: "similar_resources",
+                  })
                 }
                 compact
               />

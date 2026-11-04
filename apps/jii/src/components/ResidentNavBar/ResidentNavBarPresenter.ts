@@ -18,7 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
-import { ResidentFlags, UserStore } from "~@jii/data";
+import { type ReentryEvents, ResidentFlags, UserStore } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
 import { I18nResources } from "~@jii/translation";
 
@@ -116,12 +116,15 @@ export class ResidentNavBarPresenter {
           navKey: "reentryLink",
           to: State.Resident.UsMaReentry.buildPath(this.routeParams),
           activeOnSubroutes: true,
+          // TODO(OBT-55751): Drop the satisfies once track() is typed against JiiEvents
           onClick: () =>
-            this.userStore.segmentClient.trackReentryEvent(
+            this.userStore.segmentClient.track(
               "frontend_reentry_entrypoint_clicked",
               {
                 justiceInvolvedPersonPseudoId: personPseudoId,
                 entryPoint: "global_nav",
+              } satisfies ReentryEvents["frontend_reentry_entrypoint_clicked"] & {
+                justiceInvolvedPersonPseudoId: string;
               },
             ),
         });

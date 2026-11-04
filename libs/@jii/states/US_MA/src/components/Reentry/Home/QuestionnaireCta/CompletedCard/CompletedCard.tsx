@@ -18,11 +18,11 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { IllustratedCard } from "~@jii/common-ui";
+import { useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { palette } from "~design-system";
 
-import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
 import { useReentryChecklist } from "../../../../../hooks/useReentryChecklist";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
 import {
@@ -34,14 +34,17 @@ import {
 import illustration from "./illustration.svg";
 
 export const CompletedCard = () => {
+  const trackEvent = useTrackEvent();
+
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
   const { personalizedItemCount } = useReentryChecklist();
+
   const { heading, recommendedTaskCount, cta } =
     QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
   const checklistPath =
     State.Resident.UsMaReentry.Checklist.buildPath(routeParams);
-  const trackEvent = useReentryAnalytics();
+
   const trackClick = () =>
     trackEvent("frontend_reentry_home_cta_clicked", { cta: "checklist" });
 
