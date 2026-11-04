@@ -49,6 +49,9 @@ export class Auth0AuthHandler implements AuthHandler {
         domain: config.domain,
         clientId: config.client_id,
         useFormData: false,
+        // This prevents Auth0 from setting cross-site cookies with transaction data.
+        // It defaults to false anyway, we are just pinning it for security reasons
+        useCookiesForTransactions: false,
         authorizationParams: {
           redirect_uri: `${window.location.origin}/after-login`,
           audience: config.audience,
