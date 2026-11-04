@@ -49,12 +49,12 @@ export class EdovoProgressCardPresenter {
   }
 
   // Whether the Edovo hours are for the current Arkansas month. The view picks the
-  // month from the day it builds (edovoDataBuiltAt), not from when the Edovo table
-  // was last copied over (edovoLastRefreshedAt). A missing build time counts as current.
+  // month from the day the Edovo table was last copied over (edovoLastRefreshedAt).
+  // A missing refresh time counts as current.
   get isDataCurrent() {
     return (
-      !this.metadata.edovoDataBuiltAt ||
-      arkansasMonth(this.metadata.edovoDataBuiltAt) ===
+      !this.metadata.edovoLastRefreshedAt ||
+      arkansasMonth(this.metadata.edovoLastRefreshedAt) ===
         arkansasMonth(new Date())
     );
   }

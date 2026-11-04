@@ -31,7 +31,7 @@ function createPresenter(overrides: Partial<RawUsArResidentJiiData> = {}) {
     edovoTotalHours: 9.5,
     edovoHoursToNextCpu: 6.5,
     edovoIsCreditingMonth: false,
-    edovoDataBuiltAt: "2026-10-15T08:00:00Z",
+    edovoLastRefreshedAt: "2026-10-15T08:00:00Z",
     ...overrides,
   });
   return new EdovoProgressCardPresenter(metadata);
@@ -46,7 +46,7 @@ afterEach(() => {
 });
 
 describe("progress bar", () => {
-  it("uses the backend's hours when they were built this month", () => {
+  it("uses the backend's hours when they were refreshed this month", () => {
     const presenter = createPresenter();
     expect(presenter.progress).toMatchObject({
       edovoCarryInHours: 3,
@@ -57,9 +57,9 @@ describe("progress bar", () => {
     });
   });
 
-  it("shows an empty month when the hours were built last month", () => {
+  it("shows an empty month when the hours were refreshed last month", () => {
     const presenter = createPresenter({
-      edovoDataBuiltAt: "2026-09-20T15:00:00Z",
+      edovoLastRefreshedAt: "2026-09-20T15:00:00Z",
     });
     expect(presenter.progress).toMatchObject({
       edovoCarryInHours: 0,
@@ -70,18 +70,18 @@ describe("progress bar", () => {
     });
   });
 
-  it("trusts the hours when the build time is missing", () => {
-    const presenter = createPresenter({ edovoDataBuiltAt: undefined });
+  it("trusts the hours when the refresh time is missing", () => {
+    const presenter = createPresenter({ edovoLastRefreshedAt: undefined });
     expect(presenter.progress).toMatchObject({
       edovoCarryInHours: 3,
       edovoHoursThisMonth: 6.5,
     });
   });
 
-  it("counts a 9pm October 31 build in Arkansas as October", () => {
+  it("counts a 9pm October 31 refresh in Arkansas as October", () => {
     // 9pm in Arkansas is already November 1 in UTC
     const presenter = createPresenter({
-      edovoDataBuiltAt: "2026-11-01T02:00:00Z",
+      edovoLastRefreshedAt: "2026-11-01T02:00:00Z",
     });
     expect(presenter.isDataCurrent).toBe(true);
   });

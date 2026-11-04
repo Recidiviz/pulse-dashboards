@@ -34,7 +34,6 @@ export const usArStateDataSchema = usArResidentCommonSchema.extend({
   edovoHoursToNextCpu: z.number(),
   edovoIsCreditingMonth: z.boolean(),
   edovoLastRefreshedAt: nullishAsUndefined(dateStringSchema),
-  edovoDataBuiltAt: nullishAsUndefined(dateStringSchema),
   lastUpdatedDate: dateStringSchema,
 });
 export type UsArResidentJiiData = z.output<typeof usArStateDataSchema>;

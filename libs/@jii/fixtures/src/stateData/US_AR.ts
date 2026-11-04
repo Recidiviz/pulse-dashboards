@@ -18,9 +18,8 @@
 import { RawUsArResidentJiiData } from "~@jii/schemas";
 import { usArResidentCommonDataFixtures } from "~datatypes";
 
-// The view gives every resident the same Edovo refresh and build times
+// The view gives every resident the same Edovo refresh time
 const edovoLastRefreshedAt = "2021-12-16T20:10:12Z";
-const edovoDataBuiltAt = "2021-12-16T21:05:40Z";
 
 export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
   {
@@ -37,7 +36,6 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 6.5,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
-    edovoDataBuiltAt,
   },
   {
     ...usArResidentCommonDataFixtures[1],
@@ -52,7 +50,6 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 16,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
-    edovoDataBuiltAt,
   },
   {
     ...usArResidentCommonDataFixtures[2],
@@ -70,7 +67,6 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 16,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
-    edovoDataBuiltAt,
   },
   {
     ...usArResidentCommonDataFixtures[3],
@@ -90,7 +86,6 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 0,
     edovoIsCreditingMonth: true,
     edovoLastRefreshedAt,
-    edovoDataBuiltAt,
   },
   {
     ...usArResidentCommonDataFixtures[4],
@@ -101,7 +96,6 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 16,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
-    edovoDataBuiltAt,
   },
   {
     ...usArResidentCommonDataFixtures[5],
@@ -117,6 +111,5 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 0,
     edovoIsCreditingMonth: true,
     edovoLastRefreshedAt,
-    edovoDataBuiltAt,
   },
 ];
