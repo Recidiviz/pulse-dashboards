@@ -23,6 +23,13 @@ if [[ $dbs ]]; then
   CLONE_OPERATION_ID="$(gcloud sql operations list --project recidiviz-dashboard-staging --instance "$db_name" --filter "TYPE=CLONE" --format="get(NAME)")"
   gcloud sql operations wait --project recidiviz-dashboard-staging --timeout=900 "$CLONE_OPERATION_ID" || true
 
+  # The clone script turns off the deletion protection the clone inherits from
+  # its source, but only once the clone finishes, so a clone that outlived the
+  # deploy run's wait is still protected.
+  if [[ "$(gcloud sql instances describe "$db_name" --project recidiviz-dashboard-staging --format="value(settings.deletionProtectionEnabled)")" == True ]]; then
+    gcloud sql instances patch "$db_name" --project recidiviz-dashboard-staging --no-deletion-protection -q
+  fi
+
   gcloud sql instances delete "$db_name" --project recidiviz-dashboard-staging -q
 fi
 

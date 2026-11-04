@@ -99,7 +99,7 @@ In order to run these tests:
 
 ## Previews
 
-Whenever you create a PR with changes to the sentencing server, a preview deployment will be created with a preview database, preview migrate job, and preview cloud run server using your PRs code. The preview `staff` app will also be initialized to point to the preview server, so you can test any changes end to end!
+When a PR that changes the sentencing server has the `preview:sentencing` label, a preview deployment will be created with a preview database, preview migrate job, and preview cloud run server using your PRs code. The preview `staff` app will also be initialized to point to the preview server, so you can test any changes end to end! Without the label, the preview `staff` app points to the staging server instead. Removing the label or closing the PR deletes the preview deployment.
 
 NOTE: The preview server is great for testing changes to the TRPC routes, but it does not currently have any functionality for testing data imports.
 

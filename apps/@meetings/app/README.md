@@ -219,6 +219,11 @@ eas update --channel staging --environment preview --message "..."
 PRs that affect the app publish an EAS Update to channel `pr-<number>` and comment
 a QR code on the PR.
 
+The update talks to the staging server unless the PR has the `preview:meetings`
+label. That label deploys a preview server for the PR, with its own copy of the
+staging database, and points the update and the web preview at it. Removing the
+label or closing the PR deletes the preview server.
+
 Scan the QR with your phone's camera; the link opens the **Recidiviz Staging**
 app (or open the `recidiviz-staging://pr-preview?channel=pr-<number>` link on
 the device directly). The app switches its update channel via a runtime header
