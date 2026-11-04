@@ -433,8 +433,15 @@ export function registerTaskRoutes(app: FastifyInstance) {
           where: {
             id: meetingId,
           },
-          select: MEETING_NOTIFICATION_SELECT,
+          select: { ...MEETING_NOTIFICATION_SELECT, transcriptDeletedAt: true },
         });
+
+        // Re-transcribing would restore text the transcript TTL removed.
+        if (existingMeeting.transcriptDeletedAt) {
+          return reply
+            .code(200)
+            .send("Transcript has been redacted; skipping transcription.");
+        }
 
         try {
           const meeting = await prisma.meeting.update({
@@ -476,29 +483,44 @@ export function registerTaskRoutes(app: FastifyInstance) {
           // meeting update) because prisma.transcription.upsert operates on the
           // Transcription model directly, so relation fields like `utterances`
           // must be passed as explicit relation operations.
-          await Promise.all(
-            transcriptions.map(({ utterances, ...transcription }) =>
-              prisma.transcription.upsert({
-                where: {
-                  provider_meetingId: {
-                    provider: transcription.provider,
-                    meetingId,
-                  },
-                },
-                create: {
-                  ...transcription,
-                  meetingId,
-                  utterances,
-                },
-                update: {
-                  ...transcription,
-                  utterances: {
-                    deleteMany: {}, // delete all utterances for this transcription (scoped by foreign key)
-                    createMany: utterances.createMany,
-                  },
-                },
-              }),
-            ),
+          await prisma.$transaction(
+            async (tx) => {
+              // The TTL cleanup job locks this row to redact, so recheck under
+              // the lock in case it ran while the provider was transcribing.
+              const [locked] = await tx.$queryRaw<
+                { transcriptDeletedAt: Date | null }[]
+              >`SELECT "transcriptDeletedAt" FROM "Meeting" WHERE "id" = ${meetingId} FOR SHARE`;
+              if (locked?.transcriptDeletedAt) {
+                throw new Error(
+                  "Transcript was redacted during transcription; discarding it",
+                );
+              }
+              await Promise.all(
+                transcriptions.map(({ utterances, ...transcription }) =>
+                  tx.transcription.upsert({
+                    where: {
+                      provider_meetingId: {
+                        provider: transcription.provider,
+                        meetingId,
+                      },
+                    },
+                    create: {
+                      ...transcription,
+                      meetingId,
+                      utterances,
+                    },
+                    update: {
+                      ...transcription,
+                      utterances: {
+                        deleteMany: {}, // delete all utterances for this transcription (scoped by foreign key)
+                        createMany: utterances.createMany,
+                      },
+                    },
+                  }),
+                ),
+              );
+            },
+            { timeout: 30_000 },
           );
 
           await prisma.meeting.update({
@@ -785,7 +807,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
         if (
           !meeting ||
           !meeting.finalRecordingGCSPath ||
-          meeting.transcriptions.length === 0
+          meeting.transcriptions.length === 0 ||
+          meeting.transcriptDeletedAt
         ) {
           return reply
             .code(200)
@@ -954,6 +977,14 @@ export function registerTaskRoutes(app: FastifyInstance) {
             id: meetingId,
           },
         });
+
+        // Every step ends in transcription or notetaking, which a redacted
+        // transcript can't support; queueing would strand the status.
+        if (meeting.transcriptDeletedAt) {
+          return reply
+            .code(200)
+            .send("Nothing to queue - transcript has been redacted.");
+        }
 
         if (gcsPath) {
           meeting = await prisma.meeting.update({

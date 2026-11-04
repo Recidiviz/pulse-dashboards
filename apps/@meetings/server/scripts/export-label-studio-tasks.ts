@@ -139,8 +139,8 @@ async function exportMeetingsForStateCode(
 
   for (const meeting of meetings) {
     try {
-      if (meeting.transcriptions.length === 0) {
-        console.warn(`    ⚠️  Skipping ${meeting.id} — no transcriptions`);
+      if (meeting.transcriptions.length === 0 || meeting.transcriptDeletedAt) {
+        console.warn(`    ⚠️  Skipping ${meeting.id} — no transcript`);
         skipped++;
         continue;
       }

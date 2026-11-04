@@ -537,6 +537,9 @@ export async function handleNotetakingProcessing(
   if (meeting.transcriptions.length === 0) {
     throw new Error("No transcriptions available for LLM processing");
   }
+  if (meeting.transcriptDeletedAt) {
+    throw new Error("Transcript has been redacted; cannot run LLM processing");
+  }
 
   // Use the best transcription (ordered by confidence)
   const bestTranscription = meeting.transcriptions[0];

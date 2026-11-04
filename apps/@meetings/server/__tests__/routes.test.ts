@@ -467,6 +467,57 @@ describe("tasks", () => {
       );
     });
 
+    test("Should skip without transcribing if the transcript has been redacted", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: { transcriptDeletedAt: new Date() },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: fakeMeeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("Transcript has been redacted");
+      expect(mockTranscribeAudioWithAssemblyAI).not.toHaveBeenCalled();
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+      expect(meeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+      );
+    });
+
+    test("Should discard the transcript if it was redacted while transcribing", async () => {
+      // Simulate the TTL cleanup job committing while the provider transcribes.
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(
+        vi.fn().mockImplementation(async () => {
+          await testPrismaClient.meeting.update({
+            where: { id: fakeMeeting.id },
+            data: { transcriptDeletedAt: new Date() },
+          });
+          return FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT;
+        }),
+      );
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: fakeMeeting.id },
+      });
+
+      expect(response.statusCode).toBe(500);
+      expect(
+        await testPrismaClient.transcription.count({
+          where: { meetingId: fakeMeeting.id },
+        }),
+      ).toBe(0);
+    });
+
     test("Should return 500 and set transcription error if both transcriptions fail", async () => {
       mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
         throw new Error("Assembly transcription failed");
@@ -1307,6 +1358,28 @@ describe("tasks", () => {
           ),
         }),
       );
+    });
+
+    test("Should not queue anything if the transcript has been redacted", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: { transcriptDeletedAt: new Date() },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/reprocess-meeting",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+          step: "notetaking",
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("transcript has been redacted");
+      expect(mockCloudTasksClient.createTask).not.toHaveBeenCalled();
     });
 
     describe("without step", () => {
@@ -2293,6 +2366,27 @@ describe("tasks", () => {
       expect(pipelineRun.evaluationRuns[0].evaluatorVersion).toBe(
         evaluators.EVALUATOR_VERSION,
       );
+    });
+
+    test("Should return 200 and skip if the transcript has been redacted", async () => {
+      const meeting =
+        await createMeetingWithSuccessfulPipelineRun("llmaj-redacted");
+      await testPrismaClient.meeting.update({
+        where: { id: meeting.id },
+        data: { transcriptDeletedAt: new Date() },
+      });
+      mockRunAllEvaluators.mockClear();
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/run-llmaj-evaluation",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("Missing audio or transcripts");
+      expect(mockRunAllEvaluators).not.toHaveBeenCalled();
     });
 
     test("Should return 200 and skip if meeting has no audio path", async () => {

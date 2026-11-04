@@ -145,7 +145,7 @@ export function buildLlmajTriageTask(
         : NOT_AVAILABLE,
     staff_notes: meeting.userNotepadNotes || NOT_AVAILABLE,
     transcript:
-      meeting.transcriptions.length > 0
+      meeting.transcriptions.length > 0 && !meeting.transcriptDeletedAt
         ? formatTranscripts(meeting.transcriptions).best || NOT_AVAILABLE
         : NOT_AVAILABLE,
     audio: meeting.finalRecordingGCSPath

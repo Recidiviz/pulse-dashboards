@@ -42,8 +42,12 @@ export function normalizeNameCasing(name: string): string {
 
 /** Format speaker-segmented utterances into the raw text fed to the LLM. */
 export function utterancesToRawText(
-  utterances: { speaker: string; text: string }[],
+  utterances: { speaker: string; text: string | null }[],
 ): string {
+  // Text is null once redacted at TTL; never pass on a speaker-only transcript.
+  if (utterances.some((u) => u.text === null)) {
+    throw new Error("Transcript has been redacted");
+  }
   return utterances.map((u) => `[${u.speaker}]: ${u.text}`).join("\n");
 }
 
@@ -54,7 +58,7 @@ export function utterancesToRawText(
 export function formatTranscripts(
   transcriptions: {
     provider: string;
-    utterances: { speaker: string; text: string; startTimeMs: number }[];
+    utterances: { speaker: string; text: string | null; startTimeMs: number }[];
   }[],
 ): {
   byProvider: Partial<Record<"assemblyai" | "deepgram", string>>;
@@ -71,7 +75,7 @@ export function formatTranscripts(
       .map((u) => {
         const seconds = Math.floor(u.startTimeMs / 1000);
         const start = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-        return `${start} [${u.speaker}]: ${u.text}`;
+        return `${start} [${u.speaker}]: ${u.text ?? ""}`;
       })
       .join("\n");
   }

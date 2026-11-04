@@ -361,30 +361,35 @@ const MeetingDesktop = ({
                   />
                 </ScrollSection>
               )}
-              {showTranscription && meetingDetails?.transcription && (
-                <ScrollSection
-                  tab={Tab.Transcript}
-                  scrollView={scrollView}
-                  onVisible={handleSectionVisible}
-                >
-                  <MeetingTranscriptionTab
-                    transcription={{
-                      ...meetingDetails.transcription,
-                      utterances: meetingDetails.transcription.utterances.map(
-                        (u) => ({
-                          ...u,
-                          confidence: u.confidence ?? 0,
-                          speaker: u.speaker ?? "Unknown",
-                        }),
-                      ),
-                    }}
-                    transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
-                    meetingStaffEmail={meetingDetails.staffEmail}
-                    jiiName={person.fullName}
-                    personType={personType}
-                  />
-                </ScrollSection>
-              )}
+              {showTranscription &&
+                (meetingDetails?.transcription ||
+                  meetingDetails?.transcriptDeletedAt) && (
+                  <ScrollSection
+                    tab={Tab.Transcript}
+                    scrollView={scrollView}
+                    onVisible={handleSectionVisible}
+                  >
+                    <MeetingTranscriptionTab
+                      transcription={
+                        meetingDetails.transcription && {
+                          ...meetingDetails.transcription,
+                          utterances:
+                            meetingDetails.transcription.utterances.map(
+                              (u) => ({
+                                ...u,
+                                confidence: u.confidence ?? 0,
+                                speaker: u.speaker ?? "Unknown",
+                              }),
+                            ),
+                        }
+                      }
+                      transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
+                      meetingStaffEmail={meetingDetails.staffEmail}
+                      jiiName={person.fullName}
+                      personType={personType}
+                    />
+                  </ScrollSection>
+                )}
             </View>
           </ScrollView>
         </View>

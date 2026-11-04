@@ -59,6 +59,30 @@ import {
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 
+// Redacted transcripts (text nulled at TTL) are never sent to clients.
+function clientTranscription(meeting: {
+  transcriptDeletedAt: Date | null;
+  transcriptions: {
+    confidence: number | null;
+    summary: string | null;
+    utterances: {
+      confidence: number;
+      text: string | null;
+      speaker: string;
+      startTimeMs: number;
+      endTimeMs: number;
+    }[];
+  }[];
+}) {
+  const t = meeting.transcriptDeletedAt ? null : meeting.transcriptions[0];
+  // Null text without the timestamp means a cleanup run is still retrying.
+  if (!t || t.utterances.some((u) => u.text === null)) return null;
+  return {
+    ...t,
+    utterances: t.utterances.map((u) => ({ ...u, text: u.text ?? "" })),
+  };
+}
+
 export const meetingRouter = router({
   getDetails: auth0Procedure
     .input(getDetailInputSchema)
@@ -301,7 +325,7 @@ export const meetingRouter = router({
               actionItems: getSectionApproval(NoteSection.ACTION_ITEMS),
             },
             transcription: includeTranscription
-              ? meeting.transcriptions[0] || null
+              ? clientTranscription(meeting)
               : undefined,
             validationErrorType: pipelineValidationErrorType,
             audioUrl,

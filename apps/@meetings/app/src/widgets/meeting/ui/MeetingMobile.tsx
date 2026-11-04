@@ -381,18 +381,21 @@ const MeetingMobile = ({
           )}
           {activeTab === Tab.Transcript &&
             showTranscription &&
-            meetingDetails?.transcription && (
+            (meetingDetails?.transcription ||
+              meetingDetails?.transcriptDeletedAt) && (
               <MeetingTranscriptionTab
-                transcription={{
-                  ...meetingDetails.transcription,
-                  utterances: meetingDetails.transcription.utterances.map(
-                    (u) => ({
-                      ...u,
-                      confidence: u.confidence ?? 0,
-                      speaker: u.speaker ?? "Unknown",
-                    }),
-                  ),
-                }}
+                transcription={
+                  meetingDetails.transcription && {
+                    ...meetingDetails.transcription,
+                    utterances: meetingDetails.transcription.utterances.map(
+                      (u) => ({
+                        ...u,
+                        confidence: u.confidence ?? 0,
+                        speaker: u.speaker ?? "Unknown",
+                      }),
+                    ),
+                  }
+                }
                 transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
                 meetingStaffEmail={meetingDetails.staffEmail}
                 jiiName={person.fullName}
@@ -513,7 +516,10 @@ const MeetingMobile = ({
           <MeetingTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            isTranscriptionUnavailable={!meetingDetails?.transcription}
+            isTranscriptionUnavailable={
+              !meetingDetails?.transcription &&
+              !meetingDetails?.transcriptDeletedAt
+            }
             showTranscription={showTranscription}
             showStaffFeedback={meetingDetails.staffFeedback != null}
             approvals={meetingDetails.approvals}

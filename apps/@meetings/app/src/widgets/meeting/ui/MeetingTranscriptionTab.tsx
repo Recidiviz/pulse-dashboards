@@ -41,7 +41,7 @@ type Props = {
       speaker: string;
       endTimeMs: number;
     }[];
-  };
+  } | null;
   transcriptDeleted?: boolean;
   meetingStaffEmail: string;
   jiiName: string;

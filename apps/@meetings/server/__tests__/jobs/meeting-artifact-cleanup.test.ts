@@ -23,6 +23,7 @@ import {
   cleanupMeetingData,
   cleanupStateData,
 } from "~@meetings/server/jobs/meeting-artifact-cleanup";
+import { redactTranscriptObject } from "~@meetings/server/jobs/transcript-redaction";
 import { testPrismaClient } from "~@meetings/server/test/setup";
 import { fakeClient, fakeStaff } from "~@meetings/server/test/setup/seed";
 import { NOT_AVAILABLE } from "~@meetings/tasks";
@@ -62,6 +63,34 @@ vi.mock("@google-cloud/storage", () => ({
 const AUDIO_TTL_DAYS = 30;
 const TRANSCRIPT_TTL_DAYS = 30;
 const STATE_CODE = "US_NE";
+
+// Synthetic provider payloads with the text-bearing fields each provider uses.
+const WORD = { start: 0, end: 500, confidence: 0.99, speaker: "A" };
+const FAKE_ASSEMBLYAI_TRANSCRIPT = {
+  confidence: 0.95,
+  audio_duration: 2,
+  text: "Hello there",
+  summary: "Two people greeted each other.",
+  words: [{ ...WORD, text: "Hello" }],
+  utterances: [{ ...WORD, text: "Hello", words: [{ ...WORD, text: "Hello" }] }],
+};
+const DG_WORD = { word: "hello", start: 0, end: 0.5, confidence: 0.99 };
+const FAKE_DEEPGRAM_TRANSCRIPT = {
+  metadata: { request_id: "req-1", duration: 1.5, channels: 1 },
+  results: {
+    channels: [
+      {
+        alternatives: [
+          { transcript: "Hello", confidence: 0.93, words: [DG_WORD] },
+        ],
+      },
+    ],
+    utterances: [
+      { ...DG_WORD, transcript: "Hello", speaker: 0, words: [DG_WORD] },
+    ],
+    summary: { result: "A summary quoting the conversation." },
+  },
+};
 
 function daysAgoMs(days: number) {
   return subDays(new Date(), days).getTime();
@@ -117,7 +146,7 @@ describe("cleanupStateData", () => {
       meetingsProcessed: 0,
       meetingsSkipped: 0,
       gcsFilesDeleted: 0,
-      transcriptionsDeleted: 0,
+      transcriptionsRedacted: 0,
       errors: [],
     });
     expect(mockListedFileDelete).not.toHaveBeenCalled();
@@ -163,7 +192,7 @@ describe("cleanupStateData", () => {
 
     expect(stats.meetingsProcessed).toBe(1);
     expect(stats.gcsFilesDeleted).toBe(0); // audio already cleaned, GCS not touched
-    expect(stats.transcriptionsDeleted).toBe(1);
+    expect(stats.transcriptionsRedacted).toBe(1);
     expect(mockListedFileDelete).not.toHaveBeenCalled();
   });
 
@@ -239,28 +268,40 @@ describe("cleanupStateData", () => {
     expect(stats.gcsFilesDeleted).toBe(3);
   });
 
-  test("deletes transcriptions and utterances from the database", async () => {
+  test("redacts transcript text in place instead of deleting rows", async () => {
     const meeting = await createExpiredMeeting(
       "expired-with-transcription",
       60,
     );
-    await testPrismaClient.transcription.create({
-      data: {
-        meetingId: meeting.id,
-        provider: TranscriptionProvider.ASSEMBLYAI,
-        transcriptObject: {} as PrismaJson.TranscriptType,
-        confidence: 0.95,
-        utterances: {
-          create: [
-            {
-              speaker: "A",
-              text: "Hello",
-              startTimeMs: 0,
-              endTimeMs: 1000,
-              confidence: 0.9,
-            },
-          ],
+    await testPrismaClient.transcription.createMany({
+      data: [
+        {
+          id: "t-assemblyai",
+          meetingId: meeting.id,
+          provider: TranscriptionProvider.ASSEMBLYAI,
+          transcriptObject:
+            FAKE_ASSEMBLYAI_TRANSCRIPT as unknown as PrismaJson.TranscriptType,
+          confidence: 0.95,
         },
+        {
+          id: "t-deepgram",
+          meetingId: meeting.id,
+          provider: TranscriptionProvider.DEEPGRAM,
+          transcriptObject:
+            FAKE_DEEPGRAM_TRANSCRIPT as unknown as PrismaJson.TranscriptType,
+          confidence: 0.91,
+          summary: "A summary quoting the conversation.",
+        },
+      ],
+    });
+    await testPrismaClient.utterance.create({
+      data: {
+        transcriptionId: "t-assemblyai",
+        speaker: "A",
+        text: "Hello",
+        startTimeMs: 0,
+        endTimeMs: 500,
+        confidence: 0.99,
       },
     });
 
@@ -271,12 +312,45 @@ describe("cleanupStateData", () => {
       false,
     );
 
-    expect(stats.transcriptionsDeleted).toBe(1);
+    expect(stats.transcriptionsRedacted).toBe(2);
 
-    const remaining = await testPrismaClient.transcription.findMany({
-      where: { meetingId: meeting.id },
+    const [assemblyAI, deepgram] =
+      await testPrismaClient.transcription.findMany({
+        where: { meetingId: meeting.id },
+        include: { utterances: true },
+        orderBy: { provider: "asc" },
+      });
+
+    expect(assemblyAI.utterances).toEqual([
+      expect.objectContaining({ speaker: "A", text: null, confidence: 0.99 }),
+    ]);
+    expect(assemblyAI.transcriptObject).toEqual({
+      redacted: true,
+      confidence: 0.95,
+      audio_duration: 2,
+      words: [WORD],
+      utterances: [{ ...WORD, words: [WORD] }],
     });
-    expect(remaining).toHaveLength(0);
+
+    const redactedDgWord = {
+      start: 0,
+      end: 0.5,
+      confidence: 0.99,
+      speaker: null,
+    };
+    expect(deepgram.summary).toBeNull();
+    expect(deepgram.transcriptObject).toEqual({
+      redacted: true,
+      metadata: { duration: 1.5, channels: 1 },
+      results: {
+        channels: [
+          { alternatives: [{ confidence: 0.93, words: [redactedDgWord] }] },
+        ],
+        utterances: [
+          { ...redactedDgWord, speaker: 0, words: [redactedDgWord] },
+        ],
+      },
+    });
   });
 
   test("scrubs transcript fields from Label Studio task JSON when cleaning transcripts", async () => {
@@ -420,7 +494,7 @@ describe("cleanupStateData", () => {
 
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(2);
-      expect(stats.transcriptionsDeleted).toBe(0);
+      expect(stats.transcriptionsRedacted).toBe(0);
 
       const updated = await testPrismaClient.meeting.findUniqueOrThrow({
         where: { id: "audio-ttl-only" },
@@ -451,7 +525,7 @@ describe("cleanupStateData", () => {
 
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(0);
-      expect(stats.transcriptionsDeleted).toBe(1);
+      expect(stats.transcriptionsRedacted).toBe(1);
       expect(mockListedFileDelete).not.toHaveBeenCalled();
 
       const updated = await testPrismaClient.meeting.findUniqueOrThrow({
@@ -483,7 +557,7 @@ describe("cleanupStateData", () => {
 
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(0);
-      expect(stats.transcriptionsDeleted).toBe(1);
+      expect(stats.transcriptionsRedacted).toBe(1);
       expect(mockListedFileDelete).not.toHaveBeenCalled();
 
       const updated = await testPrismaClient.meeting.findUniqueOrThrow({
@@ -516,7 +590,7 @@ describe("cleanupStateData", () => {
 
       expect(stats.meetingsProcessed).toBe(1);
       expect(stats.gcsFilesDeleted).toBe(2);
-      expect(stats.transcriptionsDeleted).toBe(0);
+      expect(stats.transcriptionsRedacted).toBe(0);
 
       const updated = await testPrismaClient.meeting.findUniqueOrThrow({
         where: { id: "null-transcript-ttl-meeting" },
@@ -540,7 +614,7 @@ describe("cleanupStateData", () => {
         meetingsProcessed: 0,
         meetingsSkipped: 0,
         gcsFilesDeleted: 0,
-        transcriptionsDeleted: 0,
+        transcriptionsRedacted: 0,
         errors: [],
       });
       expect(mockGetPrismaClientForStateCode).not.toHaveBeenCalled();
@@ -565,7 +639,7 @@ describe("cleanupStateData", () => {
       expect(mockFileDelete).not.toHaveBeenCalled();
     });
 
-    test("counts transcriptions but does not delete them from the database", async () => {
+    test("counts transcriptions but does not redact them in the database", async () => {
       const meeting = await createExpiredMeeting(
         "dry-run-with-transcription",
         60,
@@ -586,12 +660,13 @@ describe("cleanupStateData", () => {
         true,
       );
 
-      expect(stats.transcriptionsDeleted).toBe(1);
+      expect(stats.transcriptionsRedacted).toBe(1);
 
       const remaining = await testPrismaClient.transcription.findMany({
         where: { meetingId: meeting.id },
       });
       expect(remaining).toHaveLength(1);
+      expect(remaining[0].transcriptObject).toEqual({});
     });
   });
 
@@ -615,6 +690,78 @@ describe("cleanupStateData", () => {
       expect(stats.errors).toHaveLength(1);
       expect(stats.errors[0]).toContain("Meeting cleanup failed");
     });
+
+    test("redacts the DB but leaves transcriptDeletedAt unset when the Label Studio scrub fails", async () => {
+      const meeting = await createExpiredMeeting("scrub-fails", 60);
+      await testPrismaClient.transcription.create({
+        data: {
+          meetingId: meeting.id,
+          provider: TranscriptionProvider.ASSEMBLYAI,
+          transcriptObject:
+            FAKE_ASSEMBLYAI_TRANSCRIPT as unknown as PrismaJson.TranscriptType,
+          utterances: {
+            create: {
+              speaker: "A",
+              text: "Hello",
+              startTimeMs: 0,
+              endTimeMs: 500,
+              confidence: 0.99,
+            },
+          },
+        },
+      });
+      mockFileExists.mockResolvedValueOnce([true]);
+      mockFileDownload.mockRejectedValueOnce(new Error("GCS error"));
+
+      const stats = await cleanupStateData(
+        STATE_CODE,
+        null,
+        TRANSCRIPT_TTL_DAYS,
+        false,
+      );
+
+      expect(stats.meetingsSkipped).toBe(1);
+      const updated = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: meeting.id },
+        include: { transcriptions: { include: { utterances: true } } },
+      });
+      expect(updated.transcriptDeletedAt).toBeNull();
+      expect(updated.transcriptions[0].utterances[0].text).toBeNull();
+    });
+  });
+});
+
+describe("redactTranscriptObject", () => {
+  test("keeps only numbers and speaker labels from malformed payloads", () => {
+    expect(
+      redactTranscriptObject(TranscriptionProvider.ASSEMBLYAI, {
+        confidence: "Hello there",
+        words: {},
+        utterances: [
+          { start: 0, end: 1, confidence: { text: "Hi" }, speaker: ["A"] },
+        ],
+      }),
+    ).toEqual({
+      redacted: true,
+      confidence: null,
+      audio_duration: null,
+      words: [],
+      utterances: [
+        { start: 0, end: 1, confidence: null, speaker: null, words: [] },
+      ],
+    });
+    expect(
+      redactTranscriptObject(TranscriptionProvider.DEEPGRAM, {
+        results: { channels: [{}] },
+      }),
+    ).toEqual({
+      redacted: true,
+      metadata: { duration: 0, channels: 0 },
+      results: { channels: [{ alternatives: [] }], utterances: [] },
+    });
+    expect(
+      redactTranscriptObject(TranscriptionProvider.DEEPGRAM, null),
+    ).toMatchObject({ redacted: true });
   });
 });
 

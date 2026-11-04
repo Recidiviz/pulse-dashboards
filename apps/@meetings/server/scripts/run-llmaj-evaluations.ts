@@ -217,7 +217,8 @@ function buildEvaluatorInputs(
   verificationOutput: VerificationOutput,
 ): EvaluatorInputs | null {
   if (!meeting.finalRecordingGCSPath) return null;
-  if (meeting.transcriptions.length === 0) return null;
+  if (meeting.transcriptions.length === 0 || meeting.transcriptDeletedAt)
+    return null;
 
   const { timestampedByProvider: transcriptsByProvider, best: bestTranscript } =
     formatTranscripts(meeting.transcriptions);

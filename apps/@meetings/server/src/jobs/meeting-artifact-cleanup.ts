@@ -19,6 +19,7 @@ import { Storage } from "@google-cloud/storage";
 import { subDays } from "date-fns";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
+import { redactTranscriptObject } from "~@meetings/server/jobs/transcript-redaction";
 import {
   LABEL_STUDIO_TASK_FILENAME,
   LLMAJ_TRIAGE_TASK_FILENAME,
@@ -31,7 +32,7 @@ interface CleanupStats {
   meetingsProcessed: number;
   meetingsSkipped: number;
   gcsFilesDeleted: number;
-  transcriptionsDeleted: number;
+  transcriptionsRedacted: number;
   errors: string[];
 }
 
@@ -194,7 +195,7 @@ interface MeetingCleanupResult {
   meetingId: string;
   success: boolean;
   filesDeleted: number;
-  transcriptionsDeleted: number;
+  transcriptionsRedacted: number;
   error?: string;
 }
 
@@ -219,7 +220,7 @@ async function cleanupMeeting(
   dryRun: boolean,
 ): Promise<MeetingCleanupResult> {
   let filesDeleted = 0;
-  let transcriptionsDeleted = 0;
+  let transcriptionsRedacted = 0;
 
   const shouldCleanAudio =
     audioCutoffDate !== null &&
@@ -266,56 +267,83 @@ async function cleanupMeeting(
   }
 
   if (shouldCleanTranscript) {
-    const transcriptionCount = meeting.transcriptions.length;
-    if (transcriptionCount > 0) {
-      if (dryRun) {
-        logger.info(
-          `[DRY RUN] Would delete ${transcriptionCount} transcriptions for meeting ${meeting.id}`,
-        );
-      } else {
-        await prisma.utterance.deleteMany({
-          where: { transcription: { meetingId: meeting.id } },
-        });
-
-        await prisma.transcription.deleteMany({
-          where: { meetingId: meeting.id },
-        });
-
-        logger.info(
-          `Deleted ${transcriptionCount} transcriptions for meeting ${meeting.id}`,
-        );
-      }
-      transcriptionsDeleted = transcriptionCount;
+    // A failed GCS scrub must not block the DB redaction; it leaves
+    // transcriptDeletedAt unset so the next run retries the scrub.
+    let gcsError: unknown;
+    try {
+      await scrubTranscriptsFromLabelStudioTask(
+        storage,
+        meeting.recordingsGCSBucket,
+        meeting.recordingsFolderPath,
+        dryRun,
+      );
+      await scrubTranscriptFromLlmajTriageTask(
+        storage,
+        meeting.recordingsGCSBucket,
+        meeting.recordingsFolderPath,
+        dryRun,
+      );
+    } catch (e) {
+      gcsError = e;
     }
 
-    // Scrub transcript data from the Label Studio task JSON in GCS
-    await scrubTranscriptsFromLabelStudioTask(
-      storage,
-      meeting.recordingsGCSBucket,
-      meeting.recordingsFolderPath,
-      dryRun,
-    );
+    if (dryRun) {
+      transcriptionsRedacted = meeting.transcriptions.length;
+      logger.info(
+        `[DRY RUN] Would redact ${transcriptionsRedacted} transcriptions for meeting ${meeting.id}`,
+      );
+    } else {
+      // Keep timing/confidence/speaker for audio-quality features.
+      transcriptionsRedacted = await prisma.$transaction(
+        async (tx) => {
+          // Transcription writes take a share lock on the same row, so none
+          // can land between this read and the redaction.
+          await tx.$queryRaw`SELECT 1 FROM "Meeting" WHERE "id" = ${meeting.id} FOR UPDATE`;
+          const transcriptions = await tx.transcription.findMany({
+            where: { meetingId: meeting.id },
+            select: { id: true, provider: true, transcriptObject: true },
+          });
+          await Promise.all(
+            transcriptions.map((t) =>
+              tx.transcription.update({
+                where: { id: t.id },
+                data: {
+                  transcriptObject: redactTranscriptObject(
+                    t.provider,
+                    t.transcriptObject,
+                  ),
+                  summary: null,
+                },
+              }),
+            ),
+          );
+          await tx.utterance.updateMany({
+            where: { transcription: { meetingId: meeting.id } },
+            data: { text: null },
+          });
+          if (!gcsError) {
+            await tx.meeting.update({
+              where: { id: meeting.id },
+              data: { transcriptDeletedAt: new Date() },
+            });
+          }
+          return transcriptions.length;
+        },
+        { timeout: 30_000 },
+      );
 
-    // Scrub transcript data from the LLMAJ triage task JSON in GCS, if any
-    await scrubTranscriptFromLlmajTriageTask(
-      storage,
-      meeting.recordingsGCSBucket,
-      meeting.recordingsFolderPath,
-      dryRun,
-    );
-
-    if (!dryRun) {
-      await prisma.meeting.update({
-        where: { id: meeting.id },
-        data: { transcriptDeletedAt: new Date() },
-      });
+      logger.info(
+        `Redacted ${transcriptionsRedacted} transcriptions for meeting ${meeting.id}`,
+      );
     }
+
+    if (gcsError) throw gcsError;
   }
 
   logger.info(`Cleaned up meeting ${meeting.id}`, {
     endTime: meeting.endTime,
     filesDeleted,
-    transcriptionsDeleted,
+    transcriptionsRedacted,
     dryRun,
   });
 
@@ -323,7 +351,7 @@ async function cleanupMeeting(
     meetingId: meeting.id,
     success: true,
     filesDeleted,
-    transcriptionsDeleted,
+    transcriptionsRedacted,
   };
 }
 
@@ -337,7 +365,7 @@ export async function cleanupStateData(
     meetingsProcessed: 0,
     meetingsSkipped: 0,
     gcsFilesDeleted: 0,
-    transcriptionsDeleted: 0,
+    transcriptionsRedacted: 0,
     errors: [],
   };
 
@@ -375,14 +403,16 @@ export async function cleanupStateData(
       endTime: true,
       audioDeletedAt: true,
       transcriptDeletedAt: true,
-      transcriptions: {
-        select: { id: true },
-      },
+      transcriptions: { select: { id: true } },
     },
   });
 
-  const results = await Promise.allSettled(
-    expiredMeetings.map((meeting) =>
+  // One meeting at a time: each redaction loads a full provider transcript and
+  // holds a pooled connection, which a backlog could otherwise exhaust.
+  const results: PromiseSettledResult<MeetingCleanupResult>[] = [];
+  for (const meeting of expiredMeetings) {
+    // eslint-disable-next-line no-await-in-loop
+    const [result] = await Promise.allSettled([
       cleanupMeeting(
         meeting,
         storage,
@@ -391,15 +421,16 @@ export async function cleanupStateData(
         transcriptCutoffDate,
         dryRun,
       ),
-    ),
-  );
+    ]);
+    results.push(result);
+  }
 
   // Aggregate results into stats
   const stats: CleanupStats = {
     meetingsProcessed: 0,
     meetingsSkipped: 0,
     gcsFilesDeleted: 0,
-    transcriptionsDeleted: 0,
+    transcriptionsRedacted: 0,
     errors: [],
   };
 
@@ -407,7 +438,7 @@ export async function cleanupStateData(
     if (result.status === "fulfilled") {
       stats.meetingsProcessed += 1;
       stats.gcsFilesDeleted += result.value.filesDeleted;
-      stats.transcriptionsDeleted += result.value.transcriptionsDeleted;
+      stats.transcriptionsRedacted += result.value.transcriptionsRedacted;
     } else {
       stats.meetingsSkipped += 1;
       const errorMessage = `Meeting cleanup failed: ${result.reason}`;

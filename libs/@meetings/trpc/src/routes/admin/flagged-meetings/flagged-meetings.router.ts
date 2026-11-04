@@ -587,7 +587,7 @@ export const flaggedMeetingsRouter = router({
         transcript: bestTranscription
           ? bestTranscription.utterances.map((u) => ({
               speaker: u.speaker,
-              text: u.text,
+              text: u.text ?? "",
               startTimeMs: u.startTimeMs,
             }))
           : null,

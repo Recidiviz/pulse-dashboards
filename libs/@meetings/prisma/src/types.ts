@@ -22,8 +22,40 @@ import type { Client, Resident } from "~@meetings/prisma/client";
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace PrismaJson {
-    // Define a type for a user's profile information.
-    type TranscriptType = Transcript | SyncPrerecordedResponse;
+    // Text-free transcript kept after the transcript TTL (see
+    // ~@meetings/server/jobs/transcript-redaction).
+    type RedactedWord = {
+      start: number | null;
+      end: number | null;
+      confidence: number | null;
+      speaker: string | number | null;
+      speaker_confidence?: number;
+    };
+    type RedactedUtterance = RedactedWord & { words: RedactedWord[] };
+    type RedactedTranscript = { redacted: true } & (
+      | {
+          confidence: number | null;
+          audio_duration: number | null;
+          words: RedactedWord[];
+          utterances: RedactedUtterance[];
+        }
+      | {
+          metadata: { duration: number; channels: number };
+          results: {
+            channels: {
+              alternatives: {
+                confidence: number | null;
+                words: RedactedWord[];
+              }[];
+            }[];
+            utterances: RedactedUtterance[];
+          };
+        }
+    );
+    type TranscriptType =
+      | Transcript
+      | SyncPrerecordedResponse
+      | RedactedTranscript;
     type StaffFeedback = {
       whatYouDidWell: string[];
       growthOpportunities: string[];

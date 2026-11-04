@@ -191,6 +191,26 @@ describe("meeting router", () => {
       });
     });
 
+    test("Should return a null transcription once the transcript has been redacted at TTL", async () => {
+      const transcriptDeletedAt = new Date("2026-01-01T00:00:00.000Z");
+      // Mirror the artifact cleanup job: rows stay, text is nulled.
+      await testPrismaClient.utterance.updateMany({
+        where: { transcription: { meetingId: fakeActiveMeeting.id } },
+        data: { text: null },
+      });
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { transcriptDeletedAt },
+      });
+
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(result.transcriptDeletedAt).toEqual(transcriptDeletedAt);
+      expect(result.transcription).toBeNull();
+    });
+
     test("Should return meeting details if it exists without transcription", async () => {
       // Set showTranscriptions: false for US_NE via the agency config
       await testGlobalPrismaClient.agencyConfig.create({

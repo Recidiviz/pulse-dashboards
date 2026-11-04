@@ -301,7 +301,8 @@ model Transcription {
 model Utterance {
   id String @id @default(cuid())
 
-  text        String
+  // Null once redacted at the transcript TTL
+  text        String?
   speaker     String
   startTimeMs Int
   endTimeMs   Int
