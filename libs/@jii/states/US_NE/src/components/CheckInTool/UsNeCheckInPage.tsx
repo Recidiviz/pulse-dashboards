@@ -16,13 +16,14 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { checkInSections } from "~@jii/configs";
 import { State } from "~@jii/paths";
 
+import { useCheckInAnalytics } from "./hooks/useCheckInAnalytics";
 import { useCheckInData } from "./hooks/useCheckInData";
 import { useCheckInFlow } from "./hooks/useCheckInFlow";
 import { UsNeCheckInCompletion } from "./UsNeCheckInCompletion/UsNeCheckInCompletion";
@@ -45,11 +46,21 @@ const UsNeCheckInPageContent = () => {
   const { data, updateMutation } = useCheckInData();
   const saveIsPending = updateMutation.isPending;
   const screen = useCheckInFlow(data);
-
   const sectionId =
     screen.screenKind === "question" || screen.screenKind === "sectionIntro"
       ? screen.sectionId
       : undefined;
+  const questionId =
+    screen.screenKind === "question" ? screen.questionId : undefined;
+
+  const trackEvent = useCheckInAnalytics(data.id);
+  useEffect(() => {
+    trackEvent("frontend_ne_check_in_page_viewed", {
+      screenKind: screen.screenKind,
+      sectionId,
+      questionId,
+    });
+  }, [trackEvent, screen.screenKind, sectionId, questionId]);
 
   const showModal = screen.screenKind === "question";
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -58,10 +69,12 @@ const UsNeCheckInPageContent = () => {
   const navigate = useNavigate();
   const exit = () => {
     if (saveIsPending) return;
+    trackEvent("frontend_ne_check_in_exited", {});
     navigate(State.Resident.buildPath(routeParams));
   };
   const openModal = () => {
     if (saveIsPending) return;
+    trackEvent("frontend_ne_check_in_exit_modal_opened", {});
     setModalIsOpen(true);
   };
   const onCloseClick = showModal ? openModal : exit;
@@ -99,7 +112,10 @@ const UsNeCheckInPageContent = () => {
       {showModal && (
         <UsNeCheckInExitModal
           isOpen={modalIsOpen}
-          onStay={() => setModalIsOpen(false)}
+          onStay={() => {
+            trackEvent("frontend_ne_check_in_exit_modal_closed", {});
+            setModalIsOpen(false);
+          }}
           onLeave={exit}
         />
       )}

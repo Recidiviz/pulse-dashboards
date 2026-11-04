@@ -17,12 +17,9 @@
 
 import assertNever from "assert-never";
 
-import {
-  CheckInFormData,
-  CheckInScreen,
-  SectionIntroScreen,
-  WelcomeScreen,
-} from "../types";
+import { CheckInScreen, SectionIntroScreen, WelcomeScreen } from "~@jii/data";
+
+import { CheckInFormData } from "../types";
 import { useUsNeCheckInContext } from "../UsNeCheckInContext";
 
 /**

@@ -28,6 +28,14 @@ export type {
   TrackReentryEvent,
 } from "./apis/Segment/reentryEvents";
 export * from "./apis/Segment/SegmentClient";
+export type {
+  CheckInScreen,
+  QuestionInfo,
+  SectionIntroScreen,
+  TrackUsNeCheckInToolEvent,
+  WelcomeScreen,
+  WelcomeScreenKind,
+} from "./apis/Segment/usNeCheckInToolEvents";
 export * from "./apis/Sentry/initializeSentry";
 export * from "./components/StoreProvider/StoreContext";
 export * from "./components/StoreProvider/StoreProvider";

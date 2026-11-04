@@ -15,11 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  CheckInAnswer,
-  CheckInQuestionId,
-  CheckInSectionId,
-} from "~@jii/configs";
+import { CheckInAnswer, CheckInQuestionId } from "~@jii/configs";
 import {
   JiiResidentAppRouterInputs,
   JiiResidentAppRouterOutputs,
@@ -32,26 +28,6 @@ export type CheckInFormData = NonNullable<CheckInFormResult>;
 
 export type CheckInMutationInput =
   JiiResidentAppRouterInputs["state"]["usNe"]["updateCheckIn"];
-
-export type QuestionInfo = {
-  questionId: CheckInQuestionId;
-  sectionId: CheckInSectionId;
-};
-
-export type WelcomeScreenKind = "welcome" | "instructions";
-export type WelcomeScreen = { screenKind: WelcomeScreenKind };
-export type SectionIntroScreen = {
-  screenKind: "sectionIntro";
-  sectionId: CheckInSectionId;
-};
-export type QuestionScreen = { screenKind: "question" } & QuestionInfo;
-export type CompletionScreen = { screenKind: "completion" };
-
-export type CheckInScreen =
-  | WelcomeScreen
-  | SectionIntroScreen
-  | QuestionScreen
-  | CompletionScreen;
 
 export type QuestionScreenProps = {
   id: CheckInQuestionId;

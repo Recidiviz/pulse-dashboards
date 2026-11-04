@@ -71,7 +71,10 @@ const ManagedComponent = observer(function ManagedComponent({
   return (
     <>
       {shouldShowCheckInTodo && checkInFormData && (
-        <UsNeCheckInTodo assignedAt={checkInFormData.createdAt} />
+        <UsNeCheckInTodo
+          assignedAt={checkInFormData.createdAt}
+          checkInId={checkInFormData.id}
+        />
       )}
       {goodTimeRestorationStatus && (
         <TodoCard

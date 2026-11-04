@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { WelcomeScreenKind } from "~@jii/data";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "../hooks/useResidentGivenNames";
-import { WelcomeScreenKind } from "../types";
 import { useUsNeCheckInContext } from "../UsNeCheckInContext";
 import { UsNeCheckInFooter } from "../UsNeCheckInFooter/UsNeCheckInFooter";
 import {

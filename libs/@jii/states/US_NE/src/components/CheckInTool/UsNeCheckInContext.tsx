@@ -18,9 +18,12 @@
 import { createContext, ReactNode, useState } from "react";
 
 import { CheckInSectionId } from "~@jii/configs";
+import {
+  SectionIntroScreen,
+  WelcomeScreen,
+  WelcomeScreenKind,
+} from "~@jii/data";
 import { useRequiredContext } from "~utils";
-
-import { SectionIntroScreen, WelcomeScreen, WelcomeScreenKind } from "./types";
 
 export type SeenPage =
   | { screenKind: WelcomeScreenKind }

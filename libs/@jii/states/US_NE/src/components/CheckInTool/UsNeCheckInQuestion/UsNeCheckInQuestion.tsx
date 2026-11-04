@@ -24,11 +24,12 @@ import {
   checkInQuestionConfig,
   positionOfQuestion,
 } from "~@jii/configs";
+import { QuestionInfo } from "~@jii/data";
 import { useUsNeTranslations } from "~@jii/translation";
 import { JiiResidentAppRouter } from "~@jii/trpc-types";
 
+import { useCheckInAnalytics } from "../hooks/useCheckInAnalytics";
 import { CheckInFormData, CheckInMutationInput } from "../types";
-import { QuestionInfo } from "../types";
 import { UsNeCheckInCheckboxQuestion } from "./UsNeCheckInCheckboxQuestion";
 import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
 import { QuestionNumber } from "./UsNeCheckInQuestion.styles";
@@ -48,6 +49,7 @@ export const UsNeCheckInQuestion = ({
     CheckInMutationInput
   >;
 }) => {
+  const trackEvent = useCheckInAnalytics(data.id);
   const { t } = useUsNeTranslations();
   const config = checkInQuestionConfig[questionId];
   const position = positionOfQuestion(questionId, sectionId, data);
@@ -58,11 +60,21 @@ export const UsNeCheckInQuestion = ({
       [questionId]: answer,
     };
 
-    updateMutation.mutate({
-      id: data.id,
-      pseudonymizedId: data.pseudonymizedId,
-      answers: updatedAnswers,
-    });
+    updateMutation.mutate(
+      {
+        id: data.id,
+        pseudonymizedId: data.pseudonymizedId,
+        answers: updatedAnswers,
+      },
+      {
+        onSuccess: () => {
+          trackEvent("frontend_ne_check_in_question_answered", {
+            sectionId,
+            questionId,
+          });
+        },
+      },
+    );
   };
 
   let infoText = t(($) => $.checkIn.footer.nextInfo);

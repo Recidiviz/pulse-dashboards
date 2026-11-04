@@ -28,6 +28,7 @@ import { isTestEnv } from "~client-env-utils";
 import { proxyHost } from "../../utils/proxy";
 import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
 import type { ReentryEvents } from "./reentryEvents";
+import { UsNeCheckInToolEvents } from "./usNeCheckInToolEvents";
 
 /**
  * Routes that exist only to move users through a login flow. Their URLs can contain
@@ -258,6 +259,18 @@ export class SegmentClient implements IntakeAnalytics {
   trackReentryEvent<Name extends keyof ReentryEvents>(
     name: Name,
     properties: ReentryEvents[Name] & { justiceInvolvedPersonPseudoId: string },
+  ) {
+    this.track(name, properties);
+  }
+
+  /* US_NE Check-In Tool events */
+
+  trackNeCheckInToolEvent<Name extends keyof UsNeCheckInToolEvents>(
+    name: Name,
+    properties: UsNeCheckInToolEvents[Name] & {
+      justiceInvolvedPersonPseudoId: string;
+      checkInId: string;
+    },
   ) {
     this.track(name, properties);
   }

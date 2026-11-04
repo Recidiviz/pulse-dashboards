@@ -20,12 +20,16 @@ import React from "react";
 import { State } from "~@jii/paths";
 import { useUsNeTranslations } from "~@jii/translation";
 
+import { useCheckInAnalytics } from "../CheckInTool/hooks/useCheckInAnalytics";
 import { TodoCard } from "./TodoCard";
 
-export const UsNeCheckInTodo: React.FC<{ assignedAt: Date }> = ({
-  assignedAt,
-}) => {
+export const UsNeCheckInTodo: React.FC<{
+  assignedAt: Date;
+  checkInId: string;
+}> = ({ assignedAt, checkInId }) => {
   const { t } = useUsNeTranslations();
+  const trackEvent = useCheckInAnalytics(checkInId);
+
   return (
     <TodoCard
       title={t(($) => $.home.todos.checkInTool.title)}
@@ -34,6 +38,9 @@ export const UsNeCheckInTodo: React.FC<{ assignedAt: Date }> = ({
       })}
       linkText={t(($) => $.home.todos.checkInTool.linkText)}
       linkTarget={State.Resident.$.UsNeCheckInTool.buildRelativePath({})}
+      onClick={() => {
+        trackEvent("frontend_ne_check_in_opened", {});
+      }}
     />
   );
 };

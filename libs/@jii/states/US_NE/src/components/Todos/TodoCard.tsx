@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { MouseEventHandler } from "react";
 import styled from "styled-components";
 
 import { Card, GoLink, SlateCopy } from "~@jii/common-ui";
@@ -32,6 +33,7 @@ export type TodoCardProps = {
   body: string;
   linkText: string;
   linkTarget: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
 export const TodoCard = observer(function TodoCard({
@@ -39,12 +41,15 @@ export const TodoCard = observer(function TodoCard({
   body,
   linkText,
   linkTarget,
+  onClick,
 }: TodoCardProps) {
   return (
     <Card>
       <Headline>{title}</Headline>
       <SlateCopy options={{ forceBlock: true }}>{body}</SlateCopy>
-      <GoLink to={linkTarget}>{linkText}</GoLink>
+      <GoLink to={linkTarget} onClick={onClick}>
+        {linkText}
+      </GoLink>
     </Card>
   );
 });
