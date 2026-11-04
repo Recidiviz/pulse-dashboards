@@ -22,4 +22,5 @@ export * from "./stateData/US_MA";
 export * from "./stateData/US_NC";
 export * from "./stateData/US_ND";
 export * from "./stateData/US_NE";
+export * from "./stateData/US_NYC";
 export * from "./stateData/US_TN";

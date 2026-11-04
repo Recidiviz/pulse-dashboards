@@ -23,6 +23,7 @@ import {
   usNcResidentJiiDataFixtures,
   usNdResidentJiiDataFixtures,
   usNeResidentJiiDataFixtures,
+  usNycResidentJiiDataFixtures,
   usTnResidentJiiDataFixture,
 } from "~@jii/fixtures";
 import { usTnResidentCommon } from "~datatypes";
@@ -37,6 +38,7 @@ export const rawResidentStateDataFixtures = new Map<string, Array<unknown>>([
   ["US_NC", usNcResidentJiiDataFixtures],
   ["US_ND", usNdResidentJiiDataFixtures],
   ["US_NE", usNeResidentJiiDataFixtures],
+  ["US_NYC", usNycResidentJiiDataFixtures],
   // all records here share the same fixture
   ["US_TN", usTnResidentCommon.map(() => usTnResidentJiiDataFixture)],
 ]);
