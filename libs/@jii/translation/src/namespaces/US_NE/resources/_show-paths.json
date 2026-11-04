@@ -329,11 +329,39 @@
       "HOUSING_SUCCESS": {
         "question": "[US_NE]checkIn.questions.HOUSING_SUCCESS.question"
       },
+      "WHERE_WILL_YOU_LIVE_V1": {
+        "question": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE_V1.question",
+        "answers": {
+          "FAMILY_OR_FRIENDS_RENT": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE_V1.answers.FAMILY_OR_FRIENDS_RENT",
+          "FAMILY_OR_FRIENDS_OWN": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE_V1.answers.FAMILY_OR_FRIENDS_OWN",
+          "OWN_PLACE": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE_V1.answers.OWN_PLACE",
+          "TRANSITIONAL": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE_V1.answers.TRANSITIONAL",
+          "FIGURING_IT_OUT": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE_V1.answers.FIGURING_IT_OUT"
+        }
+      },
+      "HOUSING_BACKUP_PLAN_V1": {
+        "question": "[US_NE]checkIn.questions.HOUSING_BACKUP_PLAN_V1.question"
+      },
       "HOUSING_BACKUP_PLAN_DESCRIPTION": {
         "question": "[US_NE]checkIn.questions.HOUSING_BACKUP_PLAN_DESCRIPTION.question"
       },
       "HOUSING_STEP": {
         "question": "[US_NE]checkIn.questions.HOUSING_STEP.question"
+      },
+      "HOUSING_STEP_V1": {
+        "question": "[US_NE]checkIn.questions.HOUSING_STEP_V1.question",
+        "description": "[US_NE]checkIn.questions.HOUSING_STEP_V1.description"
+      },
+      "LEVEL_OF_EDUCATION": {
+        "question": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.question",
+        "answers": {
+          "SOME_HIGH_SCHOOL": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.answers.SOME_HIGH_SCHOOL",
+          "HIGH_SCHOOL_DEGREE": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.answers.HIGH_SCHOOL_DEGREE",
+          "GED": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.answers.GED",
+          "SOME_COLLEGE": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.answers.SOME_COLLEGE",
+          "COLLEGE_DEGREE": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.answers.COLLEGE_DEGREE",
+          "NONE_OF_ABOVE": "[US_NE]checkIn.questions.LEVEL_OF_EDUCATION.answers.NONE_OF_ABOVE"
+        }
       },
       "EDUCATION_PLANS": {
         "question": "[US_NE]checkIn.questions.EDUCATION_PLANS.question"
@@ -347,11 +375,24 @@
       "WORK_PLANS_DESCRIPTION": {
         "question": "[US_NE]checkIn.questions.WORK_PLANS_DESCRIPTION.question"
       },
+      "WORK_PLANS_V1": {
+        "question": "[US_NE]checkIn.questions.WORK_PLANS_V1.question"
+      },
+      "WORK_PLANS_DESCRIPTION_V1": {
+        "question": "[US_NE]checkIn.questions.WORK_PLANS_DESCRIPTION_V1.question"
+      },
+      "WORK_NO_PLANS_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.WORK_NO_PLANS_DESCRIPTION.question"
+      },
       "EDUCATION_WORK_SUCCESS": {
         "question": "[US_NE]checkIn.questions.EDUCATION_WORK_SUCCESS.question"
       },
       "EDUCATION_WORK_STEP": {
         "question": "[US_NE]checkIn.questions.EDUCATION_WORK_STEP.question"
+      },
+      "EDUCATION_WORK_STEP_V1": {
+        "question": "[US_NE]checkIn.questions.EDUCATION_WORK_STEP_V1.question",
+        "description": "[US_NE]checkIn.questions.EDUCATION_WORK_STEP_V1.description"
       },
       "TRANSPORTATION_PLAN": {
         "question": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.question",
@@ -362,11 +403,25 @@
           "FIGURING_IT_OUT": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.answers.FIGURING_IT_OUT"
         }
       },
+      "TRANSPORTATION_PLAN_V1": {
+        "question": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN_V1.question",
+        "answers": {
+          "PUBLIC_TRANSPORT": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN_V1.answers.PUBLIC_TRANSPORT",
+          "GET_A_RIDE": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN_V1.answers.GET_A_RIDE",
+          "OWN_CAR": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN_V1.answers.OWN_CAR",
+          "FIGURING_IT_OUT": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN_V1.answers.FIGURING_IT_OUT",
+          "BIKE_WALK": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN_V1.answers.BIKE_WALK"
+        }
+      },
       "CAR_INSURANCE_REGISTRATION": {
         "question": "[US_NE]checkIn.questions.CAR_INSURANCE_REGISTRATION.question"
       },
+      "CAR_INSURANCE_REGISTRATION_V1": {
+        "question": "[US_NE]checkIn.questions.CAR_INSURANCE_REGISTRATION_V1.question"
+      },
       "TRANSPORTATION_STEP": {
-        "question": "[US_NE]checkIn.questions.TRANSPORTATION_STEP.question"
+        "question": "[US_NE]checkIn.questions.TRANSPORTATION_STEP.question",
+        "description": "[US_NE]checkIn.questions.TRANSPORTATION_STEP.description"
       },
       "DO_FOR_FUN": {
         "question": "[US_NE]checkIn.questions.DO_FOR_FUN.question"
@@ -386,6 +441,10 @@
       "DEBTS": {
         "question": "[US_NE]checkIn.questions.DEBTS.question"
       },
+      "DEBTS_V1": {
+        "question": "[US_NE]checkIn.questions.DEBTS_V1.question",
+        "description": "[US_NE]checkIn.questions.DEBTS_V1.description"
+      },
       "SOCIAL_SECURITY": {
         "question": "[US_NE]checkIn.questions.SOCIAL_SECURITY.question"
       },
@@ -399,7 +458,8 @@
         "question": "[US_NE]checkIn.questions.FINANCES_SUCCESS.question"
       },
       "FINANCES_STEP": {
-        "question": "[US_NE]checkIn.questions.FINANCES_STEP.question"
+        "question": "[US_NE]checkIn.questions.FINANCES_STEP.question",
+        "description": "[US_NE]checkIn.questions.FINANCES_STEP.description"
       },
       "WELLNESS_SUPPORT": {
         "question": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.question",
@@ -424,6 +484,12 @@
       "MEDICAL_CONCERNS_DESCRIPTION": {
         "question": "[US_NE]checkIn.questions.MEDICAL_CONCERNS_DESCRIPTION.question"
       },
+      "MEDICAL_CONCERNS_V1": {
+        "question": "[US_NE]checkIn.questions.MEDICAL_CONCERNS_V1.question"
+      },
+      "MEDICAL_CONCERNS_DESCRIPTION_V1": {
+        "question": "[US_NE]checkIn.questions.MEDICAL_CONCERNS_DESCRIPTION_V1.question"
+      },
       "MEDICINE": {
         "question": "[US_NE]checkIn.questions.MEDICINE.question"
       },
@@ -437,7 +503,8 @@
         "question": "[US_NE]checkIn.questions.HEALTH_STEP.question"
       },
       "SUPPORT_SYSTEM": {
-        "question": "[US_NE]checkIn.questions.SUPPORT_SYSTEM.question"
+        "question": "[US_NE]checkIn.questions.SUPPORT_SYSTEM.question",
+        "description": "[US_NE]checkIn.questions.SUPPORT_SYSTEM.description"
       },
       "STRENGTH_1": {
         "question": "[US_NE]checkIn.questions.STRENGTH_1.question",

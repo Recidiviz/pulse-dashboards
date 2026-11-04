@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { checkInVersions } from "~@jii/configs";
+
 import { testPrismaClient } from "../../../../../test/prisma";
 import { caller } from "../../../../../test/US_NE/mockStaffProcedure";
 
@@ -22,14 +24,14 @@ const testPseudonymizedId = "test-resident-id";
 const testCheckInId = "test-check-in-id";
 const testAssigner = "test@example.com";
 
-it("creates an empty Check-In", async () => {
+it("creates an empty Check-In with most recent version", async () => {
   await caller.createCheckIn({
     pseudonymizedId: testPseudonymizedId,
     id: testCheckInId,
   });
 
   const checkInResult = await testPrismaClient.usNeCheckIn.findFirst({
-    select: { id: true, answers: true },
+    select: { id: true, answers: true, version: true },
     where: {
       pseudonymizedId: testPseudonymizedId,
     },
@@ -39,7 +41,10 @@ it("creates an empty Check-In", async () => {
   });
 
   expect(checkInResult?.id).toEqual(testCheckInId);
-  expect(checkInResult?.answers).toBeEmptyObject();
+  expect(checkInResult?.answers).toBeEmpty();
+  expect(checkInResult?.version).toEqual(
+    checkInVersions[checkInVersions.length - 1],
+  );
 });
 
 it("does nothing if Check-In with ID already exists", async () => {
@@ -49,6 +54,7 @@ it("does nothing if Check-In with ID already exists", async () => {
       id: testCheckInId,
       assignedBy: testAssigner,
       answers: {},
+      version: "v0",
     },
   });
 
@@ -71,6 +77,7 @@ it("doesn't affect the resident's other Check-Ins", async () => {
       pseudonymizedId: testPseudonymizedId,
       id: "some-other-id",
       assignedBy: testAssigner,
+      version: "v0",
       answers: {},
     },
   });

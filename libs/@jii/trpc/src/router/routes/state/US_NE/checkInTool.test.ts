@@ -51,6 +51,7 @@ describe("getCheckIn", () => {
         id: testCheckInId,
         pseudonymizedId: testPseudonymizedId,
         assignedBy: testEmail,
+        version: "v0",
         answers: {},
       },
     });
@@ -68,6 +69,7 @@ describe("getCheckIn", () => {
         id: "another-check-in-id",
         pseudonymizedId: testPseudonymizedId,
         assignedBy: testEmail,
+        version: "v0",
         answers: {},
       },
     });
@@ -79,6 +81,7 @@ describe("getCheckIn", () => {
         id: testCheckInId,
         pseudonymizedId: testPseudonymizedId,
         assignedBy: testEmail,
+        version: "v0",
         answers: {},
       },
     });
@@ -108,6 +111,7 @@ describe("updateCheckIn", () => {
         id: testCheckInId,
         pseudonymizedId: "another-different-pseudo-id",
         assignedBy: testEmail,
+        version: "v0",
         answers: {},
       },
     });
@@ -129,7 +133,11 @@ describe("updateCheckIn", () => {
         id: testCheckInId,
         pseudonymizedId: testPseudonymizedId,
         assignedBy: testEmail,
-        answers: { EDUCATION_PLANS: "bar", EDUCATION_PLANS_DESCRIPTION: "baz" },
+        version: "v1",
+        answers: {
+          EDUCATION_PLANS: "bar",
+          EDUCATION_PLANS_DESCRIPTION: "baz",
+        },
       },
     });
 
@@ -141,6 +149,9 @@ describe("updateCheckIn", () => {
 
     await expect(
       caller.usNe.getCheckIn({ pseudonymizedId: testPseudonymizedId }),
-    ).resolves.toMatchObject({ answers: { CELEBRATION: "foo" } });
+    ).resolves.toMatchObject({
+      version: "v1",
+      answers: { CELEBRATION: "foo" },
+    });
   });
 });

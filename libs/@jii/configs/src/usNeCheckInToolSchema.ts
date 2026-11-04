@@ -21,6 +21,7 @@ import {
   CheckInQuestionId,
   checkInQuestionIds,
   CheckInSectionId,
+  checkInVersions,
 } from "./usNeCheckInToolSpec";
 
 export const supportSystemContactSchema = z.object({
@@ -40,18 +41,25 @@ export type CheckInAnswer = z.output<typeof checkInAnswerSchema>;
 
 export function isNonemptyStringArray(
   ans: CheckInAnswer | undefined,
-): ans is string[] {
+): ans is [string, ...string[]] {
   return Boolean(
-    ans && Array.isArray(ans) && ans.length > 0 && typeof ans[0] === "string",
+    ans &&
+      Array.isArray(ans) &&
+      ans.length > 0 &&
+      ans.every((elem) => typeof elem === "string"),
   );
 }
 
-export const usNeCheckInSchema = z.record(
+export const usNeCheckInAnswerSchema = z.record(
   z.enum(checkInQuestionIds),
   checkInAnswerSchema,
 );
 
-export type UsNeCheckInAnswers = z.output<typeof usNeCheckInSchema>;
+export type UsNeCheckInResponse = {
+  version: (typeof checkInVersions)[number];
+  answers: UsNeCheckInAnswers;
+};
+export type UsNeCheckInAnswers = z.output<typeof usNeCheckInAnswerSchema>;
 
 export type CheckInQuestionInfo = {
   questionId: CheckInQuestionId;

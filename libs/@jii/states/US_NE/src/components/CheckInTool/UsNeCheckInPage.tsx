@@ -20,6 +20,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { checkInSections } from "~@jii/configs";
 import { State } from "~@jii/paths";
 
 import { useCheckInData } from "./hooks/useCheckInData";
@@ -89,7 +90,11 @@ const UsNeCheckInPageContent = () => {
   };
 
   return (
-    <UsNeCheckInLayout onCloseClick={onCloseClick} sectionId={sectionId}>
+    <UsNeCheckInLayout
+      onCloseClick={onCloseClick}
+      sectionId={sectionId}
+      allSections={checkInSections[data.version]}
+    >
       {renderContent()}
       {showModal && (
         <UsNeCheckInExitModal

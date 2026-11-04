@@ -15,10 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { mapValues } from "lodash";
+
 import {
   checkInQuestionConfig,
   CheckInSectionId,
-  checkInToolSpec,
+  CheckInSectionSpec,
+  checkInToolSpecs,
+  CheckInVersion,
 } from "~@jii/configs";
 
 import { SuccessPlannerSection } from "../model/successPlanner";
@@ -37,8 +41,10 @@ const NAV_LABELS: Record<CheckInSectionId, string> = {
   sectionEnd: "Wrap Up",
 };
 
-export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] =
-  checkInToolSpec.map(({ id, questions }) => {
+const toSuccessPlannerSection: (
+  spec: CheckInSectionSpec[],
+) => SuccessPlannerSection[] = (spec) =>
+  spec.map(({ id, questions }) => {
     return {
       id,
       navLabel: NAV_LABELS[id],
@@ -55,3 +61,8 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] =
       }),
     };
   });
+
+export const SUCCESS_PLANNER_SECTIONS: Record<
+  CheckInVersion,
+  SuccessPlannerSection[]
+> = mapValues(checkInToolSpecs, toSuccessPlannerSection);

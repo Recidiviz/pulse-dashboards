@@ -329,11 +329,39 @@
       "HOUSING_SUCCESS": {
         "question": "Si tu plan de vivienda tuviera éxito, ¿cómo se vería eso en tu día a día?"
       },
+      "WHERE_WILL_YOU_LIVE_V1": {
+        "question": "¿Dónde vas a vivir después de tu liberación?",
+        "answers": {
+          "FAMILY_OR_FRIENDS_RENT": "Me quedaré con familiares o amigos que alquilan su casa",
+          "FAMILY_OR_FRIENDS_OWN": "Me quedaré con familiares o amigos que son dueños de su casa",
+          "OWN_PLACE": "En mi propia casa (alquilada o en propiedad)",
+          "TRANSITIONAL": "Vivienda de transición",
+          "FIGURING_IT_OUT": "Todavía no lo tengo claro"
+        }
+      },
+      "HOUSING_BACKUP_PLAN_V1": {
+        "question": "Si esta vivienda no es aprobada o no funciona, ¿cuál es tu plan de respaldo?"
+      },
       "HOUSING_BACKUP_PLAN_DESCRIPTION": {
         "question": "¿Cuál es tu plan de respaldo para la vivienda?"
       },
       "HOUSING_STEP": {
         "question": "¿Qué pequeño paso podrías dar ahora mismo para apoyar tu plan de vivienda?"
+      },
+      "HOUSING_STEP_V1": {
+        "question": "¿Qué pequeña cosa podrías hacer **ahora mismo** para asegurarte de que te vaya bien en tu vivienda después de salir de prisión?",
+        "description": "Ejemplo: Como voy a una casa de transición, podría revisar las reglas y expectativas de la casa."
+      },
+      "LEVEL_OF_EDUCATION": {
+        "question": "¿Qué nivel de estudios has completado?",
+        "answers": {
+          "SOME_HIGH_SCHOOL": "Algo de preparatoria",
+          "HIGH_SCHOOL_DEGREE": "Preparatoria (high school)",
+          "GED": "GED",
+          "SOME_COLLEGE": "Algo de universidad",
+          "COLLEGE_DEGREE": "Titulo universitario",
+          "NONE_OF_ABOVE": "Ninguna de las anteriores"
+        }
       },
       "EDUCATION_PLANS": {
         "question": "¿Tienes planes de continuar tu educación después de regresar a casa?"
@@ -347,11 +375,24 @@
       "WORK_PLANS_DESCRIPTION": {
         "question": "¿Cuál es la organización y tu puesto?"
       },
+      "WORK_PLANS_V1": {
+        "question": "¿Sabes en qué vas a trabajar, {{name}}?"
+      },
+      "WORK_PLANS_DESCRIPTION_V1": {
+        "question": "¿Para quién trabajas y cuál es tu trabajo ahí?"
+      },
+      "WORK_NO_PLANS_DESCRIPTION": {
+        "question": "¿Cuáles son tus metas o planes tentativos de trabajo después de tu liberación?"
+      },
       "EDUCATION_WORK_SUCCESS": {
         "question": "Imagina que tus planes de estudio y trabajo sean exitosos. ¿Cómo se vería eso?"
       },
       "EDUCATION_WORK_STEP": {
         "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo y que te ayudaría con tus planes educativos o laborales?"
+      },
+      "EDUCATION_WORK_STEP_V1": {
+        "question": "¿Cuál es un pequeño paso que podrías dar **ahora mismo** y que te ayudaría con tus planes educativos o laborales?",
+        "description": "Ejemplo: Como me interesa seguir estudiando, podría averiguar dónde y qué noche se reúnen las clases que me interesan."
       },
       "TRANSPORTATION_PLAN": {
         "question": "¿Cómo te desplazarás al trabajo o a tus citas después de tu liberación?",
@@ -362,11 +403,25 @@
           "FIGURING_IT_OUT": "Aún no lo tengo claro"
         }
       },
+      "TRANSPORTATION_PLAN_V1": {
+        "question": "¿Cuál será tu principal medio de transporte después de tu liberación?",
+        "answers": {
+          "PUBLIC_TRANSPORT": "Tomaré el transporte público",
+          "GET_A_RIDE": "Me llevará un amigo o un familiar",
+          "OWN_CAR": "Tendré mi propio auto",
+          "FIGURING_IT_OUT": "Aún no lo tengo claro",
+          "BIKE_WALK": "Iré en bicicleta o caminando"
+        }
+      },
       "CAR_INSURANCE_REGISTRATION": {
         "question": "¿Está asegurado y registrado actualmente?"
       },
+      "CAR_INSURANCE_REGISTRATION_V1": {
+        "question": "¿Está asegurado y registrado actualmente?"
+      },
       "TRANSPORTATION_STEP": {
-        "question": "¿Qué pequeño paso podrías dar ahora mismo para que tu plan de transporte sea más sólido?"
+        "question": "¿Qué pequeño paso podrías dar **ahora mismo** para que tu plan de transporte sea más sólido?",
+        "description": "Ejemplo: Podría confirmar que mi familiar entiende mi horario de trabajo y cuándo voy a necesitar transporte."
       },
       "DO_FOR_FUN": {
         "question": "¿Qué te gusta hacer para divertirte, {{name}}?"
@@ -386,6 +441,10 @@
       "DEBTS": {
         "question": "¿Tienes otras deudas que tendrás que manejar después de tu liberación? Si es así, ¿cuáles son?"
       },
+      "DEBTS_V1": {
+        "question": "¿Tienes otras deudas que tendrás que manejar después de tu liberación? Si es así, ¿cuáles son?",
+        "description": "Ejemplo: deudas de tarjetas de crédito anteriores. Puedes poner «No lo sé» si no estás seguro."
+      },
       "SOCIAL_SECURITY": {
         "question": "¿Alguna vez has recibido dinero del Seguro Social, como SSI o SSDI?"
       },
@@ -399,7 +458,8 @@
         "question": "Si a tus finanzas les fuera bien, ¿qué cambiaría?"
       },
       "FINANCES_STEP": {
-        "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo para mejorar tu situación financiera?"
+        "question": "¿Cuál es un pequeño paso que podrías dar **ahora mismo** para mejorar tu situación financiera?",
+        "description": "Ejemplo: Podría leer un libro sobre finanzas personales o hacer un presupuesto."
       },
       "WELLNESS_SUPPORT": {
         "question": "¿Cuál de las siguientes opciones podría serte útil?",
@@ -424,6 +484,12 @@
       "MEDICAL_CONCERNS_DESCRIPTION": {
         "question": "Por favor, describe cualquier preocupación médica que tengas antes de regresar a casa."
       },
+      "MEDICAL_CONCERNS_V1": {
+        "question": "¿Tienes alguna preocupación de salud médica o mental?"
+      },
+      "MEDICAL_CONCERNS_DESCRIPTION_V1": {
+        "question": "Por favor, describe cualquier problema de salud médica o mental que tengas."
+      },
       "MEDICINE": {
         "question": "¿Estás tomando algún medicamento en este momento?"
       },
@@ -434,10 +500,11 @@
         "question": "¿Hay algo relacionado con tu salud en lo que quieras trabajar? Puede ser algo relacionado con tu cuerpo, tu salud mental o el consumo de drogas o alcohol."
       },
       "HEALTH_STEP": {
-        "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo para mejorar tu salud?"
+        "question": "¿Cuál es un pequeño paso que podrías dar **ahora mismo** para mejorar tu salud?"
       },
       "SUPPORT_SYSTEM": {
-        "question": "¿Quiénes son las cuatro personas que más te apoyan?"
+        "question": "¿Quiénes son las personas que más te apoyan?",
+        "description": "Puedes poner hasta 4."
       },
       "STRENGTH_1": {
         "question": "¿Cuál es una fortaleza que te ayudará después de tu liberación?",

@@ -21,20 +21,21 @@ import { View } from "react-native";
 import { getVisibleQuestions } from "~@jii/configs";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
-import { SuccessPlannerAnswers } from "../model/successPlanner";
+import { getSections } from "../lib/getSuccessPlannerProgress";
+import { SuccessPlanner } from "../model/successPlanner";
 import { SuccessPlannerQuestionItem } from "./SuccessPlannerQuestionItem";
 
 export function SuccessPlannerSections({
-  answers,
+  planner,
 }: {
-  answers: SuccessPlannerAnswers;
+  planner: SuccessPlanner;
 }) {
-  const visibleQuestions = getVisibleQuestions(answers);
+  const visibleQuestions = getVisibleQuestions(planner);
+  const sections = getSections(planner);
 
   return (
     <View className="gap-8">
-      {SUCCESS_PLANNER_SECTIONS.map((section, index) => (
+      {sections.map((section, index) => (
         <View
           key={section.id}
           className={clsx("gap-4", index > 0 && "border-t border-subtle pt-8")}
@@ -53,7 +54,7 @@ export function SuccessPlannerSections({
                 <SuccessPlannerQuestionItem
                   key={question.id}
                   question={question}
-                  answers={answers}
+                  answers={planner.answers}
                 />
               ))}
           </View>

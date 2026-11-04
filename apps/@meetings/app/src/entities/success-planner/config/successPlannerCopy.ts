@@ -32,8 +32,23 @@ export default {
         FIGURING_IT_OUT: "Still figuring it out",
       },
     },
+    WHERE_WILL_YOU_LIVE_V1: {
+      question: "Where will you live when you go home?",
+      answers: {
+        FAMILY_OR_FRIENDS_RENT: "Staying with family or friends who rent",
+        FAMILY_OR_FRIENDS_OWN:
+          "Staying with family or friends who own their home",
+        OWN_PLACE: "My own place (rented or owned)",
+        TRANSITIONAL: "Transitional housing",
+        FIGURING_IT_OUT: "Still figuring it out",
+      },
+    },
     HOUSING_BACKUP_PLAN: {
       question: "Do you have a backup plan if this falls through?",
+    },
+    HOUSING_BACKUP_PLAN_V1: {
+      question:
+        "If this housing isn't approved or doesn't work out, what's your backup plan?",
     },
     HOUSING_SUCCESS: {
       question:
@@ -46,6 +61,21 @@ export default {
       question:
         "What is one small step you could take right now to support your housing plan?",
     },
+    HOUSING_STEP_V1: {
+      question:
+        "What is one small thing you could do right now to make sure you'll be successful in your post-prison housing?",
+    },
+    LEVEL_OF_EDUCATION: {
+      question: "What level of education have you completed?",
+      answers: {
+        SOME_HIGH_SCHOOL: "Some high school",
+        HIGH_SCHOOL_DEGREE: "High school diploma",
+        GED: "GED",
+        SOME_COLLEGE: "Some college",
+        COLLEGE_DEGREE: "College degree",
+        NONE_OF_ABOVE: "None of the above",
+      },
+    },
     EDUCATION_PLANS: {
       question:
         "Do you have plans to further your education after you go home?",
@@ -55,11 +85,20 @@ export default {
         "What are your plans to further your education after you go home?",
     },
     WORK_PLANS: {
-      question:
-        "What are your plans for work, {{name}}? Do you already have a job?",
+      question: "What are your plans for work? Do you already have a job?",
+    },
+    WORK_PLANS_V1: {
+      question: "Do you know what you'll be doing for work?",
     },
     WORK_PLANS_DESCRIPTION: {
       question: "What’s the organization and role?",
+    },
+    WORK_PLANS_DESCRIPTION_V1: {
+      question: "Who do you work for, and what is your job there?",
+    },
+    WORK_NO_PLANS_DESCRIPTION: {
+      question:
+        "What are your goals or tentative plans for work after release?",
     },
     EDUCATION_WORK_SUCCESS: {
       question:
@@ -68,6 +107,10 @@ export default {
     EDUCATION_WORK_STEP: {
       question:
         "What is one small step you could take right now that would help your education or work plans?",
+    },
+    EDUCATION_WORK_STEP_V1: {
+      question:
+        "What is one small thing you could do right now that would help you be successful with your work and education when you go home?",
     },
     TRANSPORTATION_PLAN: {
       question:
@@ -79,15 +122,29 @@ export default {
         FIGURING_IT_OUT: "Still figuring it out",
       },
     },
+    TRANSPORTATION_PLAN_V1: {
+      question:
+        "What will be your primary mode of transportation after your release?",
+      answers: {
+        PUBLIC_TRANSPORT: "I'll take public transportation",
+        GET_A_RIDE: "I'll get a ride with a friend or family member",
+        OWN_CAR: "I'll have my own car",
+        FIGURING_IT_OUT: "Still figuring it out",
+        BIKE_WALK: "I'll bike or walk",
+      },
+    },
     CAR_INSURANCE_REGISTRATION: {
       question: "Is it insured and currently registered?",
+    },
+    CAR_INSURANCE_REGISTRATION_V1: {
+      question: "Is your car insured and currently registered?",
     },
     TRANSPORTATION_STEP: {
       question:
         "What is one small step you could take right now to make your transportation plan more solid?",
     },
     DO_FOR_FUN: {
-      question: "What do you like to do for fun, {{name}}?",
+      question: "What do you like to do for fun?",
     },
     STAY_AWAY_FROM: {
       question:
@@ -106,6 +163,10 @@ export default {
     DEBTS: {
       question:
         "Do you have other debts you’ll need to manage after release? If so, what are they?",
+    },
+    DEBTS_V1: {
+      question:
+        "Do you have other debts you'll need to manage after release? If so, what are they?",
     },
     SOCIAL_SECURITY: {
       question:
@@ -150,6 +211,13 @@ export default {
       question:
         "Please describe any medical concerns you have prior to going home.",
     },
+    MEDICAL_CONCERNS_V1: {
+      question: "Do you have any medical or mental health concerns?",
+    },
+    MEDICAL_CONCERNS_DESCRIPTION_V1: {
+      question:
+        "Please describe any medical or mental health challenges you are experiencing.",
+    },
     MEDICINE: {
       question: "Do you take any medicine right now?",
     },
@@ -181,8 +249,7 @@ export default {
         "What’s another skill you have that will help you when you go home?",
     },
     OBSTACLES: {
-      question:
-        "What could stop you from doing well with your release plans, {{name}}?",
+      question: "What could stop you from doing well with your release plans?",
     },
     CELEBRATION: {
       question: "What is one way you can celebrate when you do well?",

@@ -21,19 +21,20 @@ import {
   CheckInQuestionInfo,
   CheckInSectionId,
   CheckInStatus,
-  checkInToolSpec,
+  checkInToolSpecs,
   isNonemptyStringArray,
-  UsNeCheckInAnswers,
+  UsNeCheckInResponse,
 } from "~@jii/configs";
 
 /**
  * Return all the questions that should be shown to the resident, including
  * information about the question's section, based on the resident's answers.
  */
-export function getVisibleQuestions(
-  answers: UsNeCheckInAnswers,
-): CheckInQuestionInfo[] {
-  return checkInToolSpec.flatMap(({ id: sectionId, questions }) => {
+export function getVisibleQuestions({
+  version,
+  answers,
+}: UsNeCheckInResponse): CheckInQuestionInfo[] {
+  return checkInToolSpecs[version].flatMap(({ id: sectionId, questions }) => {
     return questions.flatMap((questionId) => {
       const questionInfo = [{ questionId, sectionId }];
 
@@ -73,9 +74,9 @@ export function getVisibleQuestions(
 export function positionOfQuestion(
   questionId: CheckInQuestionId,
   sectionId: CheckInSectionId,
-  answers: UsNeCheckInAnswers,
+  response: UsNeCheckInResponse,
 ): number {
-  const questionsInSection = getVisibleQuestions(answers).filter(
+  const questionsInSection = getVisibleQuestions(response).filter(
     (q) => q.sectionId === sectionId,
   );
   return questionsInSection.findIndex((q) => q.questionId === questionId) + 1;
@@ -85,8 +86,9 @@ export function positionOfQuestion(
  * Return the status and location of a resident within the Check-In Tool based on
  * the given answers.
  */
-export function checkInStatus(answers: UsNeCheckInAnswers): CheckInStatus {
-  const visibleQuestions = getVisibleQuestions(answers);
+export function checkInStatus(response: UsNeCheckInResponse): CheckInStatus {
+  const { answers } = response;
+  const visibleQuestions = getVisibleQuestions(response);
 
   const firstUnansweredIndex = answers
     ? visibleQuestions.findIndex(

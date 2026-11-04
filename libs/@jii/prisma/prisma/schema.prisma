@@ -147,6 +147,11 @@ model usNeReentryChecklistQuestion {
     @@id([pseudonymizedId, questionId])
 }
 
+enum UsNeCheckInVersion {
+    v0
+    v1
+}
+
 // An instance of a form created with the 120-Day Check-In Tool
 model UsNeCheckIn {
     // Internal identifier for this form
@@ -165,6 +170,8 @@ model UsNeCheckIn {
 
     // The resident's answers, parsed via Zod
     answers Json
+
+    version UsNeCheckInVersion
 }
 
 // US_MA (Massachussets)

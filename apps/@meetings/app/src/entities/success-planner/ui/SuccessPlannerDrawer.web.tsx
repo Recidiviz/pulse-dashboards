@@ -67,10 +67,10 @@ export function SuccessPlannerDrawer({ person, planner, onClose }: Props) {
     >
       <View className="flex-1 flex-row">
         <View className="w-[240px] border-r border-subtle p-6">
-          <SuccessPlannerSectionNav answers={planner.answers} />
+          <SuccessPlannerSectionNav planner={planner} />
         </View>
         <ScrollView className="flex-1" contentContainerClassName="px-8 py-6">
-          <SuccessPlannerSections answers={planner.answers} />
+          <SuccessPlannerSections planner={planner} />
         </ScrollView>
       </View>
     </Drawer>

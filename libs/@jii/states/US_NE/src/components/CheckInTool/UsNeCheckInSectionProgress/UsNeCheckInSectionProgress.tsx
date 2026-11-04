@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInSectionId, checkInSections } from "~@jii/configs";
+import { CheckInSectionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import {
@@ -30,14 +30,16 @@ import {
 
 type CheckInSectionProgressProps = {
   section: CheckInSectionId;
+  allSections: CheckInSectionId[];
 };
 
 export const UsNeCheckInSectionProgress = ({
   section,
+  allSections,
 }: CheckInSectionProgressProps) => {
   const { t } = useUsNeTranslations();
 
-  const sectionIndex = checkInSections.indexOf(section);
+  const sectionIndex = allSections.indexOf(section);
 
   if (sectionIndex === -1) {
     return null;
@@ -46,11 +48,9 @@ export const UsNeCheckInSectionProgress = ({
   const sectionLabel = t(($) => $.checkIn.sections[section].title);
 
   const sectionNumber = sectionIndex + 1;
-  const percent = Math.round(
-    (sectionNumber / (checkInSections.length + 1)) * 100,
-  );
+  const percent = Math.round((sectionNumber / (allSections.length + 1)) * 100);
 
-  const showNextSection = sectionIndex < checkInSections.length - 1;
+  const showNextSection = sectionIndex < allSections.length - 1;
 
   return (
     <Wrapper>
@@ -61,8 +61,7 @@ export const UsNeCheckInSectionProgress = ({
             <NextSection>
               <strong>{t(($) => $.checkIn.sectionHeader.next)}</strong>{" "}
               {t(
-                ($) =>
-                  $.checkIn.sections[checkInSections[sectionIndex + 1]].title,
+                ($) => $.checkIn.sections[allSections[sectionIndex + 1]].title,
               )}
             </NextSection>
           )}

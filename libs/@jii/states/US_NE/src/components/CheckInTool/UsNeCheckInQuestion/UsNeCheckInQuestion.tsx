@@ -50,7 +50,7 @@ export const UsNeCheckInQuestion = ({
 }) => {
   const { t } = useUsNeTranslations();
   const config = checkInQuestionConfig[questionId];
-  const position = positionOfQuestion(questionId, sectionId, data.answers);
+  const position = positionOfQuestion(questionId, sectionId, data);
 
   const saveAnswer = (answer: CheckInAnswer) => {
     const updatedAnswers = {

@@ -48,7 +48,7 @@ export const UsNeCheckInQuestionHeader: React.FC<
 
   return (
     <>
-      <QuestionText>{questionText}</QuestionText>
+      <QuestionText>{`## ${questionText}`}</QuestionText>
       {description !== undefined && (
         <QuestionDescription>{description}</QuestionDescription>
       )}

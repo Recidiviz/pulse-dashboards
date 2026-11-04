@@ -33,6 +33,7 @@ import {
 type CheckInLayoutProps = {
   onCloseClick: () => void;
   sectionId?: CheckInSectionId;
+  allSections: CheckInSectionId[];
   children: ReactNode;
 };
 
@@ -43,6 +44,7 @@ type CheckInLayoutProps = {
 export const UsNeCheckInLayout = ({
   onCloseClick,
   sectionId,
+  allSections,
   children,
 }: CheckInLayoutProps) => {
   const { t } = useUsNeTranslations();
@@ -60,7 +62,12 @@ export const UsNeCheckInLayout = ({
         </HeaderActionButton>
       </Header>
 
-      {sectionId && <UsNeCheckInSectionProgress section={sectionId} />}
+      {sectionId && (
+        <UsNeCheckInSectionProgress
+          section={sectionId}
+          allSections={allSections}
+        />
+      )}
 
       <Content>{children}</Content>
     </Wrapper>

@@ -42,6 +42,7 @@ export const createCheckIn = usNeStaffProcedure
           id,
           assignedBy: userId,
           answers: {},
+          version: "v1",
         },
       });
     },

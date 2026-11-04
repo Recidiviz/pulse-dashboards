@@ -25,6 +25,14 @@ import { ShowIfCondition } from "./showIf";
  * in the @jii/translation library.
  */
 
+// Different versions of check-in copy exist. When substantially rewording a question,
+// or adding/removing answers, create a new version, and update the version that
+// new check-ins are created with in the `createCheckIn` procedure.
+// v0 check-ins were live for the initial testing phase
+// v1 check-ins are the version launched to the full state in November 2026
+export const checkInVersions = ["v0", "v1"] as const;
+export type CheckInVersion = (typeof checkInVersions)[number];
+
 // The Check-In Tool form is a sequence of questions, each shown on its own page.
 // Questions are grouped into sections and must be answered consecutively.
 export type CheckInSectionId =
@@ -44,81 +52,163 @@ export type CheckInSectionSpec = {
   questions: CheckInQuestionId[];
 };
 
-export const checkInToolSpec: CheckInSectionSpec[] = [
-  {
-    id: "sectionHousing",
-    questions: [
-      "WHERE_WILL_YOU_LIVE",
-      "HOUSING_BACKUP_PLAN",
-      "HOUSING_BACKUP_PLAN_DESCRIPTION",
-      "HOUSING_SUCCESS",
-      "HOUSING_STEP",
-    ],
-  },
-  {
-    id: "sectionEducationWork",
-    questions: [
-      "EDUCATION_PLANS",
-      "EDUCATION_PLANS_DESCRIPTION",
-      "WORK_PLANS",
-      "WORK_PLANS_DESCRIPTION",
-      "EDUCATION_WORK_SUCCESS",
-      "EDUCATION_WORK_STEP",
-    ],
-  },
-  {
-    id: "sectionTransportation",
-    questions: [
-      "TRANSPORTATION_PLAN",
-      "CAR_INSURANCE_REGISTRATION",
-      "TRANSPORTATION_STEP",
-    ],
-  },
-  {
-    id: "sectionMoney",
-    questions: [
-      "FINES_AND_FEES",
-      "DEBTS",
-      "SOCIAL_SECURITY",
-      "CHILDREN",
-      "CHILDREN_DESCRIPTION",
-      "FINANCES_SUCCESS",
-      "FINANCES_STEP",
-    ],
-  },
-  {
-    id: "sectionHobbiesLeisure",
-    questions: ["DO_FOR_FUN", "STAY_AWAY_FROM", "STAY_AWAY_FROM_DESCRIPTION"],
-  },
-  {
-    id: "sectionWellness",
-    questions: ["WELLNESS_SUPPORT", "WELLNESS_SUPPORT_OTHER", "WELLNESS_STEP"],
-  },
-  {
-    id: "sectionHealth",
-    questions: [
-      "MEDICAL_CONCERNS",
-      "MEDICAL_CONCERNS_DESCRIPTION",
-      "MEDICINE",
-      "MEDICINE_DESCRIPTION",
-      "HEALTH_GOALS",
-      "HEALTH_STEP",
-    ],
-  },
-  {
-    id: "sectionSupportSystem",
-    questions: ["SUPPORT_SYSTEM"],
-  },
-  {
-    id: "sectionStrengthsSkills",
-    questions: ["STRENGTH_1", "STRENGTH_2", "SKILL_1", "SKILL_2"],
-  },
-  {
-    id: "sectionEnd",
-    questions: ["OBSTACLES", "CELEBRATION"],
-  },
-];
-export const checkInSections = checkInToolSpec.map(({ id }) => id);
+export const checkInToolSpecs: Record<CheckInVersion, CheckInSectionSpec[]> = {
+  v0: [
+    {
+      id: "sectionHousing",
+      questions: [
+        "WHERE_WILL_YOU_LIVE",
+        "HOUSING_BACKUP_PLAN",
+        "HOUSING_BACKUP_PLAN_DESCRIPTION",
+        "HOUSING_SUCCESS",
+        "HOUSING_STEP",
+      ],
+    },
+    {
+      id: "sectionEducationWork",
+      questions: [
+        "EDUCATION_PLANS",
+        "EDUCATION_PLANS_DESCRIPTION",
+        "WORK_PLANS",
+        "WORK_PLANS_DESCRIPTION",
+        "EDUCATION_WORK_SUCCESS",
+        "EDUCATION_WORK_STEP",
+      ],
+    },
+    {
+      id: "sectionTransportation",
+      questions: [
+        "TRANSPORTATION_PLAN",
+        "CAR_INSURANCE_REGISTRATION",
+        "TRANSPORTATION_STEP",
+      ],
+    },
+    {
+      id: "sectionMoney",
+      questions: [
+        "FINES_AND_FEES",
+        "DEBTS",
+        "SOCIAL_SECURITY",
+        "CHILDREN",
+        "CHILDREN_DESCRIPTION",
+        "FINANCES_SUCCESS",
+        "FINANCES_STEP",
+      ],
+    },
+    {
+      id: "sectionHobbiesLeisure",
+      questions: ["DO_FOR_FUN", "STAY_AWAY_FROM", "STAY_AWAY_FROM_DESCRIPTION"],
+    },
+    {
+      id: "sectionWellness",
+      questions: [
+        "WELLNESS_SUPPORT",
+        "WELLNESS_SUPPORT_OTHER",
+        "WELLNESS_STEP",
+      ],
+    },
+    {
+      id: "sectionHealth",
+      questions: [
+        "MEDICAL_CONCERNS",
+        "MEDICAL_CONCERNS_DESCRIPTION",
+        "MEDICINE",
+        "MEDICINE_DESCRIPTION",
+        "HEALTH_GOALS",
+        "HEALTH_STEP",
+      ],
+    },
+    {
+      id: "sectionSupportSystem",
+      questions: ["SUPPORT_SYSTEM"],
+    },
+    {
+      id: "sectionStrengthsSkills",
+      questions: ["STRENGTH_1", "STRENGTH_2", "SKILL_1", "SKILL_2"],
+    },
+    {
+      id: "sectionEnd",
+      questions: ["OBSTACLES", "CELEBRATION"],
+    },
+  ],
+  v1: [
+    {
+      id: "sectionHousing",
+      questions: [
+        "WHERE_WILL_YOU_LIVE_V1",
+        "HOUSING_BACKUP_PLAN_V1",
+        "HOUSING_STEP_V1",
+      ],
+    },
+    {
+      id: "sectionEducationWork",
+      questions: [
+        "LEVEL_OF_EDUCATION",
+        "EDUCATION_PLANS",
+        "EDUCATION_PLANS_DESCRIPTION",
+        "WORK_PLANS_V1",
+        "WORK_PLANS_DESCRIPTION_V1",
+        "WORK_NO_PLANS_DESCRIPTION",
+        "EDUCATION_WORK_STEP_V1",
+      ],
+    },
+    {
+      id: "sectionTransportation",
+      questions: [
+        "TRANSPORTATION_PLAN_V1",
+        "CAR_INSURANCE_REGISTRATION_V1",
+        "TRANSPORTATION_STEP",
+      ],
+    },
+    {
+      id: "sectionMoney",
+      questions: [
+        "FINES_AND_FEES",
+        "DEBTS_V1",
+        "SOCIAL_SECURITY",
+        "CHILDREN",
+        "CHILDREN_DESCRIPTION",
+        "FINANCES_STEP",
+      ],
+    },
+    {
+      id: "sectionHobbiesLeisure",
+      questions: ["DO_FOR_FUN", "STAY_AWAY_FROM", "STAY_AWAY_FROM_DESCRIPTION"],
+    },
+    {
+      id: "sectionWellness",
+      questions: ["WELLNESS_SUPPORT", "WELLNESS_SUPPORT_OTHER"],
+    },
+    {
+      id: "sectionHealth",
+      questions: [
+        "MEDICAL_CONCERNS_V1",
+        "MEDICAL_CONCERNS_DESCRIPTION_V1",
+        "MEDICINE",
+        "MEDICINE_DESCRIPTION",
+        "HEALTH_STEP",
+      ],
+    },
+    {
+      id: "sectionSupportSystem",
+      questions: ["SUPPORT_SYSTEM"],
+    },
+    {
+      id: "sectionStrengthsSkills",
+      questions: ["STRENGTH_1", "STRENGTH_2", "SKILL_1", "SKILL_2"],
+    },
+    {
+      id: "sectionEnd",
+      questions: ["OBSTACLES", "CELEBRATION"],
+    },
+  ],
+};
+export const checkInSections = Object.fromEntries<CheckInSectionId[]>(
+  checkInVersions.map((version) => [
+    version,
+    checkInToolSpecs[version].map(({ id }) => id),
+  ]),
+);
 export const checkInStandardRadioAnswers = ["YES", "NO"] as const;
 
 type SelectAnswerFormat = "RADIO" | "CHECKBOX";
@@ -142,24 +232,35 @@ export type CheckInQuestionConfig =
 
 export const checkInQuestionIds = [
   "WHERE_WILL_YOU_LIVE",
+  "WHERE_WILL_YOU_LIVE_V1",
   "HOUSING_BACKUP_PLAN",
+  "HOUSING_BACKUP_PLAN_V1",
   "HOUSING_BACKUP_PLAN_DESCRIPTION",
   "HOUSING_SUCCESS",
   "HOUSING_STEP",
+  "HOUSING_STEP_V1",
+  "LEVEL_OF_EDUCATION",
   "EDUCATION_PLANS",
   "EDUCATION_PLANS_DESCRIPTION",
   "WORK_PLANS",
   "WORK_PLANS_DESCRIPTION",
+  "WORK_PLANS_V1",
+  "WORK_PLANS_DESCRIPTION_V1",
+  "WORK_NO_PLANS_DESCRIPTION",
   "EDUCATION_WORK_SUCCESS",
   "EDUCATION_WORK_STEP",
+  "EDUCATION_WORK_STEP_V1",
   "TRANSPORTATION_PLAN",
+  "TRANSPORTATION_PLAN_V1",
   "CAR_INSURANCE_REGISTRATION",
+  "CAR_INSURANCE_REGISTRATION_V1",
   "TRANSPORTATION_STEP",
   "DO_FOR_FUN",
   "STAY_AWAY_FROM",
   "STAY_AWAY_FROM_DESCRIPTION",
   "FINES_AND_FEES",
   "DEBTS",
+  "DEBTS_V1",
   "SOCIAL_SECURITY",
   "CHILDREN",
   "CHILDREN_DESCRIPTION",
@@ -170,6 +271,8 @@ export const checkInQuestionIds = [
   "WELLNESS_STEP",
   "MEDICAL_CONCERNS",
   "MEDICAL_CONCERNS_DESCRIPTION",
+  "MEDICAL_CONCERNS_V1",
+  "MEDICAL_CONCERNS_DESCRIPTION_V1",
   "MEDICINE",
   "MEDICINE_DESCRIPTION",
   "HEALTH_GOALS",
@@ -198,9 +301,22 @@ export const checkInQuestionConfig: Record<
       "FIGURING_IT_OUT",
     ],
   },
+  WHERE_WILL_YOU_LIVE_V1: {
+    format: "RADIO",
+    answers: [
+      "FAMILY_OR_FRIENDS_RENT",
+      "FAMILY_OR_FRIENDS_OWN",
+      "OWN_PLACE",
+      "TRANSITIONAL",
+      "FIGURING_IT_OUT",
+    ],
+  },
   HOUSING_BACKUP_PLAN: {
     format: "RADIO",
     answers: checkInStandardRadioAnswers,
+  },
+  HOUSING_BACKUP_PLAN_V1: {
+    format: "FREE_TEXT",
   },
   HOUSING_BACKUP_PLAN_DESCRIPTION: {
     format: "FREE_TEXT",
@@ -215,6 +331,20 @@ export const checkInQuestionConfig: Record<
   },
   HOUSING_STEP: {
     format: "FREE_TEXT",
+  },
+  HOUSING_STEP_V1: {
+    format: "FREE_TEXT",
+  },
+  LEVEL_OF_EDUCATION: {
+    format: "RADIO",
+    answers: [
+      "SOME_HIGH_SCHOOL",
+      "HIGH_SCHOOL_DEGREE",
+      "GED",
+      "SOME_COLLEGE",
+      "COLLEGE_DEGREE",
+      "NONE_OF_ABOVE",
+    ],
   },
   EDUCATION_PLANS: {
     format: "RADIO",
@@ -232,6 +362,10 @@ export const checkInQuestionConfig: Record<
     format: "RADIO",
     answers: checkInStandardRadioAnswers,
   },
+  WORK_PLANS_V1: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
   WORK_PLANS_DESCRIPTION: {
     format: "FREE_TEXT",
     showIf: {
@@ -240,21 +374,59 @@ export const checkInQuestionConfig: Record<
       value: "YES",
     },
   },
+  WORK_PLANS_DESCRIPTION_V1: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "WORK_PLANS_V1",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  WORK_NO_PLANS_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "WORK_PLANS_V1",
+      operator: "equals",
+      value: "NO",
+    },
+  },
   EDUCATION_WORK_SUCCESS: {
     format: "FREE_TEXT",
   },
   EDUCATION_WORK_STEP: {
     format: "FREE_TEXT",
   },
+  EDUCATION_WORK_STEP_V1: {
+    format: "FREE_TEXT",
+  },
   TRANSPORTATION_PLAN: {
     format: "RADIO",
     answers: ["PUBLIC_TRANSPORT", "GET_A_RIDE", "OWN_CAR", "FIGURING_IT_OUT"],
+  },
+  TRANSPORTATION_PLAN_V1: {
+    format: "RADIO",
+    answers: [
+      "PUBLIC_TRANSPORT",
+      "GET_A_RIDE",
+      "OWN_CAR",
+      "BIKE_WALK",
+      "FIGURING_IT_OUT",
+    ],
   },
   CAR_INSURANCE_REGISTRATION: {
     format: "RADIO",
     answers: checkInStandardRadioAnswers,
     showIf: {
       questionId: "TRANSPORTATION_PLAN",
+      operator: "equals",
+      value: "OWN_CAR",
+    },
+  },
+  CAR_INSURANCE_REGISTRATION_V1: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+    showIf: {
+      questionId: "TRANSPORTATION_PLAN_V1",
       operator: "equals",
       value: "OWN_CAR",
     },
@@ -284,6 +456,9 @@ export const checkInQuestionConfig: Record<
   DEBTS: {
     format: "FREE_TEXT",
     optional: true,
+  },
+  DEBTS_V1: {
+    format: "FREE_TEXT",
   },
   SOCIAL_SECURITY: {
     format: "RADIO",
@@ -338,6 +513,18 @@ export const checkInQuestionConfig: Record<
     format: "FREE_TEXT",
     showIf: {
       questionId: "MEDICAL_CONCERNS",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  MEDICAL_CONCERNS_V1: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  MEDICAL_CONCERNS_DESCRIPTION_V1: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "MEDICAL_CONCERNS_V1",
       operator: "equals",
       value: "YES",
     },

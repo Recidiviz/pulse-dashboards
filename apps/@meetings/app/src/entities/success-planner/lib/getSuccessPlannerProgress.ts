@@ -20,28 +20,31 @@ import { getVisibleQuestions } from "~@jii/configs";
 import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
 import {
   SuccessPlanner,
-  SuccessPlannerAnswers,
   SuccessPlannerSection,
   SuccessPlannerStatus,
 } from "../model/successPlanner";
 
+export function getSections({ version }: SuccessPlanner) {
+  return SUCCESS_PLANNER_SECTIONS[version];
+}
+
 export function isSectionComplete(
   section: SuccessPlannerSection,
-  answers: SuccessPlannerAnswers,
+  planner: SuccessPlanner,
 ) {
-  const visibleQuestions = getVisibleQuestions(answers).map(
+  const visibleQuestions = getVisibleQuestions(planner).map(
     ({ questionId }) => questionId,
   );
 
   return section.questions.every(
     (question) =>
-      question.id in answers || !visibleQuestions.includes(question.id),
+      question.id in planner.answers || !visibleQuestions.includes(question.id),
   );
 }
 
-export function getCompletedSectionCount(answers: SuccessPlannerAnswers) {
-  return SUCCESS_PLANNER_SECTIONS.filter((section) =>
-    isSectionComplete(section, answers),
+export function getCompletedSectionCount(planner: SuccessPlanner) {
+  return getSections(planner).filter((section) =>
+    isSectionComplete(section, planner),
   ).length;
 }
 
@@ -65,7 +68,7 @@ export function getSuccessPlannerProgress(
 ): SuccessPlannerProgress {
   return {
     status: getSuccessPlannerStatus(planner),
-    completedSectionCount: getCompletedSectionCount(planner.answers),
-    totalSectionCount: SUCCESS_PLANNER_SECTIONS.length,
+    completedSectionCount: getCompletedSectionCount(planner),
+    totalSectionCount: getSections(planner).length,
   };
 }

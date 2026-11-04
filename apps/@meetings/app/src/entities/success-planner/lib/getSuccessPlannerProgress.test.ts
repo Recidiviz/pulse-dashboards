@@ -24,12 +24,13 @@ import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
 import { getAnswerState } from "../model/successPlanner";
 import {
   getCompletedSectionCount,
+  getSections,
   getSuccessPlannerProgress,
   getSuccessPlannerStatus,
   isSectionComplete,
 } from "./getSuccessPlannerProgress";
 
-const HOUSING = SUCCESS_PLANNER_SECTIONS[0];
+const HOUSING = SUCCESS_PLANNER_SECTIONS["v0"][0];
 
 describe("getSuccessPlannerStatus", () => {
   test("no answers is NOT_STARTED", () => {
@@ -53,14 +54,21 @@ describe("getSuccessPlannerStatus", () => {
 describe("isSectionComplete", () => {
   test("is false while any question is unreached", () => {
     const partial = { WHERE_WILL_YOU_LIVE: "Staying with family or friends" };
-    expect(isSectionComplete(HOUSING, partial)).toBe(false);
+    expect(
+      isSectionComplete(HOUSING, { ...NOT_STARTED_PLANNER, answers: partial }),
+    ).toBe(false);
   });
 
   test("counts a deliberately skipped question as reached", () => {
     const skippedThroughout = Object.fromEntries(
       HOUSING.questions.map((question) => [question.id, null]),
     );
-    expect(isSectionComplete(HOUSING, skippedThroughout)).toBe(true);
+    expect(
+      isSectionComplete(HOUSING, {
+        ...NOT_STARTED_PLANNER,
+        answers: skippedThroughout,
+      }),
+    ).toBe(true);
   });
 
   test("counts a skipped conditional question as reached", () => {
@@ -69,18 +77,20 @@ describe("isSectionComplete", () => {
     const { HOUSING_BACKUP_PLAN_DESCRIPTION, ...partial } = Object.fromEntries(
       HOUSING.questions.map((question) => [question.id, "NO"]),
     );
-    expect(isSectionComplete(HOUSING, partial)).toBe(true);
+    expect(
+      isSectionComplete(HOUSING, { ...NOT_STARTED_PLANNER, answers: partial }),
+    ).toBe(true);
   });
 });
 
 describe("getCompletedSectionCount", () => {
   test("counts the sections the in-progress fixture covers", () => {
-    expect(getCompletedSectionCount(IN_PROGRESS_PLANNER.answers)).toBe(3);
+    expect(getCompletedSectionCount(IN_PROGRESS_PLANNER)).toBe(3);
   });
 
   test("counts every section once the planner is done", () => {
-    expect(getCompletedSectionCount(COMPLETED_PLANNER.answers)).toBe(
-      SUCCESS_PLANNER_SECTIONS.length,
+    expect(getCompletedSectionCount(COMPLETED_PLANNER)).toBe(
+      getSections(COMPLETED_PLANNER).length,
     );
   });
 });

@@ -23,36 +23,57 @@ describe("getVisibleQuestions", () => {
     info.map(({ questionId }) => questionId);
 
   it("correctly handles radio conditions", () => {
-    expect(idsFrom(getVisibleQuestions({}))).not.toInclude(
-      "HOUSING_BACKUP_PLAN_DESCRIPTION",
-    );
     expect(
-      idsFrom(getVisibleQuestions({ HOUSING_BACKUP_PLAN: "NO" })),
+      idsFrom(getVisibleQuestions({ version: "v0", answers: {} })),
+    ).not.toInclude("HOUSING_BACKUP_PLAN_DESCRIPTION");
+    expect(
+      idsFrom(
+        getVisibleQuestions({
+          version: "v0",
+          answers: { HOUSING_BACKUP_PLAN: "NO" },
+        }),
+      ),
     ).not.toInclude("HOUSING_BACKUP_PLAN_DESCRIPTION");
 
     expect(
-      idsFrom(getVisibleQuestions({ HOUSING_BACKUP_PLAN: "YES" })),
+      idsFrom(
+        getVisibleQuestions({
+          version: "v0",
+          answers: { HOUSING_BACKUP_PLAN: "YES" },
+        }),
+      ),
     ).toInclude("HOUSING_BACKUP_PLAN_DESCRIPTION");
   });
 
   it("correctly handles checkbox conditions", () => {
-    expect(idsFrom(getVisibleQuestions({}))).not.toInclude(
-      "WELLNESS_SUPPORT_OTHER",
-    );
+    expect(
+      idsFrom(getVisibleQuestions({ version: "v0", answers: {} })),
+    ).not.toInclude("WELLNESS_SUPPORT_OTHER");
     expect(
       idsFrom(
         getVisibleQuestions({
-          WELLNESS_SUPPORT: ["SUPPORT_GROUP", "COUNSELOR"],
+          version: "v0",
+          answers: {
+            WELLNESS_SUPPORT: ["SUPPORT_GROUP", "COUNSELOR"],
+          },
         }),
       ),
     ).not.toInclude("WELLNESS_SUPPORT_OTHER");
 
     expect(
-      idsFrom(getVisibleQuestions({ WELLNESS_SUPPORT: ["OTHER"] })),
+      idsFrom(
+        getVisibleQuestions({
+          version: "v0",
+          answers: { WELLNESS_SUPPORT: ["OTHER"] },
+        }),
+      ),
     ).toInclude("WELLNESS_SUPPORT_OTHER");
     expect(
       idsFrom(
-        getVisibleQuestions({ WELLNESS_SUPPORT: ["SUPPORT_GROUP", "OTHER"] }),
+        getVisibleQuestions({
+          version: "v0",
+          answers: { WELLNESS_SUPPORT: ["SUPPORT_GROUP", "OTHER"] },
+        }),
       ),
     ).toInclude("WELLNESS_SUPPORT_OTHER");
   });

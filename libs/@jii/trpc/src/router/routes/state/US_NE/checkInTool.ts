@@ -18,7 +18,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { usNeCheckInSchema } from "~@jii/configs";
+import { usNeCheckInAnswerSchema } from "~@jii/configs";
 import { checkInStatus } from "~@jii/configs";
 
 import {
@@ -46,7 +46,7 @@ export const getCheckIn = nebraskaProcedure
       return { ...result, status: { kind: "COMPLETED" } as const };
     }
 
-    return { ...result, status: checkInStatus(result.answers) };
+    return { ...result, status: checkInStatus(result) };
   });
 
 /**
@@ -66,7 +66,7 @@ export const updateCheckIn = nebraskaProcedure
     z.object({
       id: z.string(),
       pseudonymizedId: z.string(),
-      answers: usNeCheckInSchema,
+      answers: usNeCheckInAnswerSchema,
     }),
   )
   .use(residentRestrictedMiddleware)
@@ -88,8 +88,10 @@ export const updateCheckIn = nebraskaProcedure
         message: `Resident ${input.pseudonymizedId} cannot update another person's Check-In (Check-In ID: ${input.id})`,
       });
     }
-
-    const nextStatus = checkInStatus(input.answers);
+    const nextStatus = checkInStatus({
+      version: checkIn.version,
+      answers: input.answers,
+    });
 
     const result = await ctx.prisma.usNeCheckIn.update({
       where: {
@@ -103,7 +105,7 @@ export const updateCheckIn = nebraskaProcedure
 
     return {
       ...result,
-      answers: usNeCheckInSchema.parse(result.answers),
+      answers: input.answers,
       status: nextStatus,
     };
   });

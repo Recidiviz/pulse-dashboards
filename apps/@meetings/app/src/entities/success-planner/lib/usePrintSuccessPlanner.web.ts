@@ -23,13 +23,13 @@ import {
 } from "~@meetings/app/shared/lib/print.web";
 
 import copy from "../config/successPlannerCopy";
-import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
 import {
   getAnswerState,
   SuccessPlanner,
   SuccessPlannerQuestion,
   SupportSystemContact,
 } from "../model/successPlanner";
+import { getSections } from "./getSuccessPlannerProgress";
 import { getSuccessPlannerSummary } from "./getSuccessPlannerSummary";
 
 function renderAnswer(
@@ -90,6 +90,7 @@ export function usePrintSuccessPlanner({
 }) {
   return () => {
     const { title, subtitle } = getSuccessPlannerSummary(planner);
+    const sections = getSections(planner);
 
     printHtmlDocument({
       title: `120-Day Check-In - ${person.fullName}`,
@@ -98,8 +99,9 @@ export function usePrintSuccessPlanner({
         <p>ID: ${escapeHtml(person.displayPersonExternalId)}</p>
         <h2>${escapeHtml(title)}</h2>
         <p>${escapeHtml(subtitle)}</p>
-        ${SUCCESS_PLANNER_SECTIONS.map(
-          (section) => `
+        ${sections
+          .map(
+            (section) => `
           <h2>${escapeHtml(section.heading)}</h2>
           ${section.questions
             .map(
@@ -108,7 +110,8 @@ export function usePrintSuccessPlanner({
             )
             .join("")}
         `,
-        ).join("")}
+          )
+          .join("")}
       `,
     });
   };

@@ -25,7 +25,7 @@ const SENT_AT = new Date(2026, 7, 17, 10, 2);
 const LAST_UPDATED_AT = new Date(2026, 7, 21, 9, 14);
 const COMPLETED_AT = new Date(2026, 7, 28, 15, 40);
 
-const COMPLETED_ANSWERS: Required<SuccessPlannerAnswers> = {
+const COMPLETED_ANSWERS: SuccessPlannerAnswers = {
   WHERE_WILL_YOU_LIVE: "FAMILY_OR_FRIENDS",
   HOUSING_BACKUP_PLAN: "YES",
   HOUSING_BACKUP_PLAN_DESCRIPTION:
@@ -105,9 +105,8 @@ const IN_PROGRESS_SECTION_IDS: CheckInSectionId[] = [
 ];
 
 const IN_PROGRESS_ANSWERS: SuccessPlannerAnswers = Object.fromEntries(
-  SUCCESS_PLANNER_SECTIONS.filter((section) =>
-    IN_PROGRESS_SECTION_IDS.includes(section.id),
-  )
+  SUCCESS_PLANNER_SECTIONS["v0"]
+    .filter((section) => IN_PROGRESS_SECTION_IDS.includes(section.id))
     .flatMap((section) => section.questions)
     .map((question) => [question.id, COMPLETED_ANSWERS[question.id]]),
 );
@@ -118,6 +117,7 @@ export const NOT_STARTED_PLANNER: SuccessPlanner = {
   createdAt: SENT_AT,
   updatedAt: SENT_AT,
   completedAt: null,
+  version: "v0",
   answers: {},
 };
 
@@ -127,6 +127,7 @@ export const IN_PROGRESS_PLANNER: SuccessPlanner = {
   createdAt: SENT_AT,
   updatedAt: LAST_UPDATED_AT,
   completedAt: null,
+  version: "v0",
   answers: IN_PROGRESS_ANSWERS,
 };
 
@@ -136,6 +137,7 @@ export const COMPLETED_PLANNER: SuccessPlanner = {
   createdAt: SENT_AT,
   updatedAt: COMPLETED_AT,
   completedAt: COMPLETED_AT,
+  version: "v0",
   answers: COMPLETED_ANSWERS,
 };
 

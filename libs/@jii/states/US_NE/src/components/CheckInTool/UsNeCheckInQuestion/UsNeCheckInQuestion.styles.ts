@@ -18,6 +18,7 @@
 import { rem, rgba } from "polished";
 import styled, { css } from "styled-components";
 
+import { CopyWrapper } from "~@jii/common-ui";
 import { animation, palette, spacing, typography } from "~design-system";
 
 export const QuestionNumber = styled.span`
@@ -34,8 +35,12 @@ export const QuestionWrapper = styled.div`
   margin-top: ${rem(spacing.sm)};
 `;
 
-export const QuestionText = styled.h2`
-  ${typography.Sans24}
+export const QuestionText = styled(CopyWrapper)`
+  margin-bottom: 0;
+
+  > h2 {
+    margin-bottom: 0;
+  }
 `;
 
 export const QuestionDescription = styled.span`

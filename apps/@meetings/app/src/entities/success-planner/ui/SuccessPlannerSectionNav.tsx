@@ -21,21 +21,25 @@ import CheckIcon from "react-native-heroicons/outline/CheckIcon";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
-import { isSectionComplete } from "../lib/getSuccessPlannerProgress";
-import { SuccessPlannerAnswers } from "../model/successPlanner";
+import {
+  getSections,
+  isSectionComplete,
+} from "../lib/getSuccessPlannerProgress";
+import { SuccessPlanner } from "../model/successPlanner";
 
 export function SuccessPlannerSectionNav({
-  answers,
+  planner,
 }: {
-  answers: SuccessPlannerAnswers;
+  planner: SuccessPlanner;
 }) {
+  const sections = getSections(planner);
+
   return (
     <View className="gap-3">
       <Typography variant="body-m-medium">Sections</Typography>
       <View className="gap-2.5">
-        {SUCCESS_PLANNER_SECTIONS.map((section) => {
-          const isComplete = isSectionComplete(section, answers);
+        {sections.map((section) => {
+          const isComplete = isSectionComplete(section, planner);
 
           return (
             <View key={section.id} className="flex-row items-center gap-2">

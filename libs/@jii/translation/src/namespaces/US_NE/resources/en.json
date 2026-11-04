@@ -329,11 +329,39 @@
       "HOUSING_SUCCESS": {
         "question": "If your housing was successful, what would that look like day to day?"
       },
+      "WHERE_WILL_YOU_LIVE_V1": {
+        "question": "Where will you live when you go home?",
+        "answers": {
+          "FAMILY_OR_FRIENDS_RENT": "Staying with family or friends who rent",
+          "FAMILY_OR_FRIENDS_OWN": "Staying with family or friends who own their home",
+          "OWN_PLACE": "My own place (rented or owned)",
+          "TRANSITIONAL": "Transitional housing",
+          "FIGURING_IT_OUT": "Still figuring it out"
+        }
+      },
+      "HOUSING_BACKUP_PLAN_V1": {
+        "question": "If this housing isn’t approved or doesn’t work out, what’s your backup plan?"
+      },
       "HOUSING_BACKUP_PLAN_DESCRIPTION": {
         "question": "What is your housing backup plan?"
       },
       "HOUSING_STEP": {
         "question": "What is one small step you could take right now to support your housing plan?"
+      },
+      "HOUSING_STEP_V1": {
+        "question": "What is one small thing you could do **right now** to make sure you’ll be successful in your post-prison housing?",
+        "description": "Example: Since I’m going to a transitional house, I could review the rules & expectations of the home."
+      },
+      "LEVEL_OF_EDUCATION": {
+        "question": "What level of education have you completed?",
+        "answers": {
+          "SOME_HIGH_SCHOOL": "Some high school",
+          "HIGH_SCHOOL_DEGREE": "High school diploma",
+          "GED": "GED",
+          "SOME_COLLEGE": "Some college",
+          "COLLEGE_DEGREE": "College degree",
+          "NONE_OF_ABOVE": "None of the above"
+        }
       },
       "EDUCATION_PLANS": {
         "question": "Do you have plans to further your education after you go home?"
@@ -347,11 +375,24 @@
       "WORK_PLANS_DESCRIPTION": {
         "question": "What’s the organization and role?"
       },
+      "WORK_PLANS_V1": {
+        "question": "Do you know what you’ll be doing for work, {{name}}?"
+      },
+      "WORK_PLANS_DESCRIPTION_V1": {
+        "question": "Who do you work for, and what is your job there?"
+      },
+      "WORK_NO_PLANS_DESCRIPTION": {
+        "question": "What are your goals or tentative plans for work after release?"
+      },
       "EDUCATION_WORK_SUCCESS": {
         "question": "Think about your school and work plans being successful. What would that look like?"
       },
       "EDUCATION_WORK_STEP": {
         "question": "What is one small step you could take right now that would help your education or work plans?"
+      },
+      "EDUCATION_WORK_STEP_V1": {
+        "question": "What is one small thing you could do **right now** that would help you be successful with your work and education when you go home?",
+        "description": "Example: Since I’m interested in furthering my education, I could find out where & what night the classes I’m interested in meet."
       },
       "TRANSPORTATION_PLAN": {
         "question": "How will you get to work or to appointments after your release?",
@@ -362,11 +403,25 @@
           "FIGURING_IT_OUT": "Still figuring it out"
         }
       },
+      "TRANSPORTATION_PLAN_V1": {
+        "question": "What will be your primary mode of transportation after your release?",
+        "answers": {
+          "PUBLIC_TRANSPORT": "I’ll take public transportation",
+          "GET_A_RIDE": "I’ll get a ride with a friend or family member",
+          "OWN_CAR": "I’ll have my own car",
+          "FIGURING_IT_OUT": "Still figuring it out",
+          "BIKE_WALK": "I’ll bike or walk"
+        }
+      },
       "CAR_INSURANCE_REGISTRATION": {
         "question": "Is it insured and currently registered?"
       },
+      "CAR_INSURANCE_REGISTRATION_V1": {
+        "question": "Is your car insured and currently registered?"
+      },
       "TRANSPORTATION_STEP": {
-        "question": "What is one small step you could take right now to make your transportation plan more solid?"
+        "question": "What is one small thing you could do **right now** to make your transportation plan more solid?",
+        "description": "Example: I could confirm that my family member understands my work schedule & when I’ll need transportation."
       },
       "DO_FOR_FUN": {
         "question": "What do you like to do for fun, {{name}}?"
@@ -386,6 +441,10 @@
       "DEBTS": {
         "question": "Do you have other debts you’ll need to manage after release? If so, what are they?"
       },
+      "DEBTS_V1": {
+        "question": "Do you have other debts you’ll need to manage after release? If so, what are they?",
+        "description": "Example: previous credit card debt. You can put “I don’t know” if you’re not sure."
+      },
       "SOCIAL_SECURITY": {
         "question": "Have you ever received money from Social Security, like SSI or SSDI?"
       },
@@ -399,7 +458,8 @@
         "question": "If your finances were going well, what would be different?"
       },
       "FINANCES_STEP": {
-        "question": "What is one small step you could take right now to improve your finances?"
+        "question": "What is one small step you could take **right now** to improve your finances?",
+        "description": "Example: I could read a book about personal finance or make a budget."
       },
       "WELLNESS_SUPPORT": {
         "question": "Which of the following options could help you?",
@@ -424,6 +484,12 @@
       "MEDICAL_CONCERNS_DESCRIPTION": {
         "question": "Please describe any medical concerns you have prior to going home."
       },
+      "MEDICAL_CONCERNS_V1": {
+        "question": "Do you have any medical or mental health concerns?"
+      },
+      "MEDICAL_CONCERNS_DESCRIPTION_V1": {
+        "question": "Please describe any medical or mental health challenges you are experiencing."
+      },
       "MEDICINE": {
         "question": "Do you take any medicine right now?"
       },
@@ -434,10 +500,11 @@
         "question": "Is there anything about your health you want to work on? This can be about your body, your mental health, or drug or alcohol use."
       },
       "HEALTH_STEP": {
-        "question": "What is one small step you could take right now to improve your health?"
+        "question": "What is one small step you could take **right now** to improve your mental health or physical health?"
       },
       "SUPPORT_SYSTEM": {
-        "question": "Who are the four people who most support you?"
+        "question": "Who are the people who support you most?",
+        "description": "You can list up to 4."
       },
       "STRENGTH_1": {
         "question": "What’s one strength that will help you after release?",

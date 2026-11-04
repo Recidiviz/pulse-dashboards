@@ -46,6 +46,7 @@ export function useSuccessPlanner(
       updatedAt: data.updatedAt,
       completedAt: data.completedAt,
       answers: data.answers,
+      version: data.version,
     },
     isLoading,
     isError,

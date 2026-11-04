@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInQuestionId, CheckInSectionId } from "~@jii/configs";
+import {
+  CheckInQuestionId,
+  CheckInSectionId,
+  CheckInVersion,
+} from "~@jii/configs";
 
 export type SupportSystemContact = {
   name: string;
@@ -39,6 +43,7 @@ export type SuccessPlanner = {
   createdAt: Date;
   updatedAt: Date;
   completedAt: Date | null;
+  version: CheckInVersion;
   answers: SuccessPlannerAnswers;
 };
 
