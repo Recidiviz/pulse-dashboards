@@ -25,6 +25,7 @@ import { usMaStateDataSchema } from "./US_MA";
 import { usNcStateDataSchema } from "./US_NC";
 import { usNdStateDataSchema } from "./US_ND";
 import { usNeStateDataSchema } from "./US_NE";
+import { usNycStateDataSchema } from "./US_NYC";
 import { usTnStateDataSchema } from "./US_TN";
 
 export const stateDataSchemas = {
@@ -35,6 +36,7 @@ export const stateDataSchemas = {
   US_NC: usNcStateDataSchema,
   US_ND: usNdStateDataSchema,
   US_NE: usNeStateDataSchema,
+  US_NYC: usNycStateDataSchema,
   US_TN: usTnStateDataSchema,
 };
 
