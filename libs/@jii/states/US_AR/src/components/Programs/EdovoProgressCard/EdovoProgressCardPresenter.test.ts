@@ -86,31 +86,3 @@ describe("progress bar", () => {
     expect(presenter.isDataCurrent).toBe(true);
   });
 });
-
-describe("bar widths", () => {
-  it("splits the bar between carry-in and this month", () => {
-    const presenter = createPresenter();
-    expect(presenter.carryInWidth).toBe(18.75);
-    expect(presenter.currentMonthWidth).toBe(40.625);
-  });
-
-  it("gives this month only the space the carry-in leaves", () => {
-    const presenter = createPresenter({
-      edovoCarryInHours: 15,
-      edovoHoursThisMonth: 4,
-    });
-    expect(presenter.carryInWidth).toBe(93.75);
-    expect(presenter.currentMonthWidth).toBe(6.25);
-  });
-
-  it("fills the bar in a credited month whose floored hours sum under 16", () => {
-    const presenter = createPresenter({
-      edovoCarryInHours: 7.9,
-      edovoHoursThisMonth: 8,
-      edovoTotalHours: 16,
-      edovoHoursToNextCpu: 0,
-      edovoIsCreditingMonth: true,
-    });
-    expect(presenter.currentMonthWidth).toBeCloseTo(50.625);
-  });
-});

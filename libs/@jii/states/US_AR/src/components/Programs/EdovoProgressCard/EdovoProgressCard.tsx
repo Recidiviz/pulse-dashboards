@@ -18,24 +18,15 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
-import { SlateCopy } from "~@jii/common-ui";
+import { Card, CardValue } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { useUsArTranslations } from "~@jii/translation";
-import { Icon, palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import {
-  CARRY_IN_COLOR,
-  CheckCircle,
-  CURRENT_MONTH_COLOR,
   Fill,
-  HoursToGo,
-  LegendSwatch,
-  ProgressBarWrapper,
-  ProgressCard,
+  ProgressFooter,
   ProgressLabel,
-  RightColumn,
-  ScaleLabel,
   Track,
 } from "./EdovoProgressCard.styles";
 import { EdovoProgressCardPresenter } from "./EdovoProgressCardPresenter";
@@ -43,58 +34,28 @@ import { EdovoProgressCardPresenter } from "./EdovoProgressCardPresenter";
 const ManagedComponent: FC<{ presenter: EdovoProgressCardPresenter }> =
   observer(function EdovoProgressCard({ presenter }) {
     const { t } = useUsArTranslations();
-    const {
-      edovoCarryInHours,
-      edovoTotalHours,
-      edovoHoursToNextCpu,
-      edovoIsCreditingMonth,
-    } = presenter.progress;
-
-    const { currentMonthWidth, carryInWidth, hasCarryInHours, completedKey } =
-      presenter;
+    const { edovoTotalHours, edovoCarryInHours } = presenter.progress;
+    const { hasCarryInHours, progressWidth } = presenter;
 
     return (
-      <ProgressCard>
+      <Card>
         <ProgressLabel>
           <div>
-            <SlateCopy>
-              {t(($) => $.programs.onMyTablet.progressBar[completedKey], {
-                hours: edovoTotalHours,
-              })}
-            </SlateCopy>
-            {hasCarryInHours && (
-              <div>
-                <LegendSwatch />
-                {t(($) => $.programs.onMyTablet.progressBar.carriedIn, {
-                  count: edovoCarryInHours,
-                })}
-              </div>
-            )}
+            <CardValue>{edovoTotalHours}</CardValue>
+            {t(($) => $.programs.onMyTablet.progressBar.hoursCompleted)}
           </div>
-          <RightColumn>
-            <HoursToGo>{edovoHoursToNextCpu}</HoursToGo>
-            <div>
-              {t(($) => $.programs.onMyTablet.progressBar.hoursToGo, {
-                count: edovoHoursToNextCpu,
-              })}
-            </div>
-          </RightColumn>
+          <div>{t(($) => $.programs.onMyTablet.progressBar.scale)}</div>
         </ProgressLabel>
-        <ProgressBarWrapper>
-          <Track>
-            <Fill $width={carryInWidth} $color={CARRY_IN_COLOR} />
-            <Fill $width={currentMonthWidth} $color={CURRENT_MONTH_COLOR} />
-          </Track>
-          {edovoIsCreditingMonth && (
-            <CheckCircle>
-              <Icon kind="Check" size={16} color={palette.pine1} />
-            </CheckCircle>
-          )}
-        </ProgressBarWrapper>
-        <ScaleLabel>
-          {t(($) => $.programs.onMyTablet.progressBar.scale)}
-        </ScaleLabel>
-      </ProgressCard>
+        <Track>
+          <Fill $width={progressWidth} />
+        </Track>
+        <ProgressFooter>
+          {hasCarryInHours &&
+            t(($) => $.programs.onMyTablet.progressBar.carriedIn, {
+              count: edovoCarryInHours,
+            })}
+        </ProgressFooter>
+      </Card>
     );
   });
 

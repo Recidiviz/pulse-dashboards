@@ -63,31 +63,11 @@ export class EdovoProgressCardPresenter {
     return this.isDataCurrent ? this.metadata : DEFAULT_VALUES;
   }
 
-  // The percent of the progress bar taken up by hours from this month.
-  get currentMonthWidth() {
-    const { edovoCarryInHours, edovoHoursThisMonth, edovoIsCreditingMonth } =
-      this.progress;
-    // The backend floors each field to one decimal, so a credited month can sum
-    // to just under 16. Fill the rest of the bar so it ends at the checkmark if a
-    // cpu was earned that month
-    if (edovoIsCreditingMonth) return 100 - this.carryInWidth;
-    // Carry-in can reach 15 hours, so carry-in plus this month can pass 16.
-    // The bar always shows all of the carry-in and gives this month only the space left.
-    const currentMonthHours = Math.min(
-      edovoHoursThisMonth,
-      HOURS_PER_UNIT - edovoCarryInHours,
-    );
-    return (currentMonthHours / HOURS_PER_UNIT) * 100;
-  }
-  get carryInWidth() {
-    return (this.progress.edovoCarryInHours / HOURS_PER_UNIT) * 100;
+  get progressWidth() {
+    return Math.min(this.progress.edovoTotalHours / HOURS_PER_UNIT, 1) * 100;
   }
 
   get hasCarryInHours() {
     return this.progress.edovoCarryInHours !== 0;
-  }
-
-  get completedKey() {
-    return this.hasCarryInHours ? "totalHoursCompleted" : "hoursCompleted";
   }
 }
