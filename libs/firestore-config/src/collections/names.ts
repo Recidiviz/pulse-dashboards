@@ -23,6 +23,8 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   residents: "residents",
   paroleBoardClientProfiles: "paroleBoardClientProfiles",
   paroleBoardReports: "paroleBoardReports",
+  // The reports under a resident's paroleBoardReports document, one per hearing.
+  paroleBoardResidentReports: "reports",
   clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",

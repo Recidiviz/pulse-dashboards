@@ -20,6 +20,7 @@ export * from "./customTask";
 export * from "./metadata";
 export * from "./milestones";
 export * from "./opportunity";
+export * from "./paroleBoardReport";
 export * from "./person";
 export * from "./task";
 export * from "./user";

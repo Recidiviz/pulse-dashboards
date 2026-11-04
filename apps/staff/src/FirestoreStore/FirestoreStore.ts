@@ -27,6 +27,7 @@ import {
   DocumentData,
   documentId,
   DocumentReference,
+  FieldPath,
   Firestore,
   getDoc,
   getDocs,
@@ -36,9 +37,11 @@ import {
   PartialWithFieldValue,
   query,
   QueryDocumentSnapshot,
+  runTransaction,
   serverTimestamp,
   setDoc,
   Timestamp,
+  updateDoc,
   waitForPendingWrites,
   where,
   writeBatch,
@@ -56,6 +59,11 @@ import {
   OpportunityType,
   ParoleBoardClientProfileRecord,
   paroleBoardClientProfileRecordSchema,
+  ParoleBoardReport,
+  paroleBoardReportSchema,
+  ParoleBoardReportSectionKey,
+  ParoleBoardReportsForResident,
+  paroleBoardReportsForResidentSchema,
   WorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "~datatypes";
@@ -93,6 +101,12 @@ import {
   MilestonesMessage,
   OfficerRequest,
   OpportunityUpdateWithForm,
+  ParoleBoardReportFieldName,
+  ParoleBoardReportFieldValue,
+  ParoleBoardReportRef,
+  ParoleBoardReportRow,
+  ParoleBoardReportRowFieldName,
+  ParoleBoardReportRowFieldValue,
   PersonUpdateType,
   SupervisionTaskUpdate,
   UserUpdateRecord,
@@ -582,6 +596,332 @@ export default class FirestoreStore {
     return batches.flatMap((results) =>
       parseParoleBoardClientProfiles(results.docs),
     );
+  }
+
+  /** The resident's parent PHI report document, paroleBoardReports/{recordId}. */
+  private paroleBoardReportsDoc(recordId: string) {
+    return this.doc({ key: "paroleBoardReports" }, recordId);
+  }
+
+  private paroleBoardReportDoc({ recordId, reportId }: ParoleBoardReportRef) {
+    return this.doc(
+      { key: "paroleBoardReports" },
+      recordId,
+      FIRESTORE_GENERAL_COLLECTION_MAP.paroleBoardResidentReports,
+      reportId,
+    );
+  }
+
+  /**
+   * Subscribes to the resident's parent PHI report document, whose
+   * activeReportId points at their report in progress. Only PHIs and Recidiviz
+   * users can read it.
+   *
+   * @param recordId - The resident's record id (WorkflowsResidentRecord.recordId).
+   */
+  buildParoleBoardReportsForResidentSubscription(recordId: string) {
+    return new CollectionDocumentSubscription<ParoleBoardReportsForResident>(
+      this,
+      { key: "paroleBoardReports" },
+      recordId,
+      (record) => {
+        const parsed = paroleBoardReportsForResidentSchema.safeParse(record);
+        if (!parsed.success) {
+          throw new Error(
+            `Failed to parse the PHI reports document at fields [${profileParseErrorPaths(parsed.error)}]`,
+          );
+        }
+        return parsed.data;
+      },
+    );
+  }
+
+  /** Subscribes to one PHI report. */
+  buildParoleBoardReportSubscription(report: ParoleBoardReportRef) {
+    return new CollectionDocumentSubscription<ParoleBoardReport>(
+      this,
+      { key: "paroleBoardReports" },
+      `${report.recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.paroleBoardResidentReports}/${report.reportId}`,
+      (record) => {
+        const parsed = paroleBoardReportSchema.safeParse(record);
+        if (!parsed.success) {
+          throw new Error(
+            `Failed to parse the PHI report at fields [${profileParseErrorPaths(parsed.error)}]`,
+          );
+        }
+        return parsed.data;
+      },
+    );
+  }
+
+  /**
+   * Whether to skip a PHI report write. As in updateClientUpdatesV2Document,
+   * impersonators and Recidiviz users don't write in production. The log
+   * leaves out the document path, which carries the resident's DOC id.
+   */
+  private skipParoleBoardReportWrite(): boolean {
+    if (import.meta.env.VITE_DEPLOY_ENV !== "production") return false;
+    if (
+      !this.rootStore.isImpersonating &&
+      !this.rootStore.userStore.isRecidivizUser
+    ) {
+      return false;
+    }
+    // eslint-disable-next-line no-console
+    console.log(
+      "Impersonator or Recidiviz user in production; skipping a PHI report write",
+    );
+    return true;
+  }
+
+  /**
+   * Returns the signed-in user's Firebase uid, which every report write stamps
+   * as updatedBy. Firestore rules require it to match the writer's uid, which
+   * the staff token endpoint sets to the user's email.
+   */
+  private get paroleBoardReportEditor(): string {
+    const uid = this.currentUserUid;
+    if (!uid) {
+      throw new Error("Trying to edit a PHI report while signed out");
+    }
+    return uid;
+  }
+
+  /**
+   * Returns the id of the resident's report in progress, creating one for the
+   * hearing if they have none. The PHI's first edit calls this. It runs as a
+   * transaction on the resident's parent document, so two tabs that make a
+   * first edit at once share one report rather than starting two.
+   *
+   * @param recordId - The resident's record id. It keys the documents and is
+   *   never written as a field, since it carries the resident's DOC id.
+   * @param pseudonymizedId - The resident's pseudonymized id, which the report
+   *   stores to link it to them.
+   * @param hearing - The docket hearing the report is for.
+   * @returns The report's id, or undefined when the write is skipped (see
+   *   skipParoleBoardReportWrite).
+   */
+  async getOrCreateActiveParoleBoardReport(
+    recordId: string,
+    pseudonymizedId: string,
+    hearing: ParoleBoardReport["hearing"],
+  ): Promise<string | undefined> {
+    // Rejects a malformed hearing date before anything is written.
+    const { atlasHearingId, hearingDate, hearingType } =
+      paroleBoardReportSchema.shape.hearing.parse(hearing);
+    if (this.skipParoleBoardReportWrite()) return undefined;
+
+    // Firestore rejects undefined values, so optional fields are left out.
+    const reportHearing = {
+      hearingDate,
+      ...(atlasHearingId !== undefined && { atlasHearingId }),
+      ...(hearingType !== undefined && { hearingType }),
+    };
+    const stateCode = recordId.slice(0, 5).toUpperCase();
+    const editor = this.paroleBoardReportEditor;
+    const parentRef = this.paroleBoardReportsDoc(recordId);
+    const reportRef = doc(
+      collection(
+        this.db,
+        this.collectionName({ key: "paroleBoardReports" }),
+        recordId,
+        FIRESTORE_GENERAL_COLLECTION_MAP.paroleBoardResidentReports,
+      ),
+    );
+
+    return runTransaction(this.db, async (transaction) => {
+      const parent = await transaction.get(parentRef);
+      const activeReportId: unknown = parent.data()?.activeReportId;
+      if (typeof activeReportId === "string") return activeReportId;
+
+      transaction.set(reportRef, {
+        stateCode,
+        pseudonymizedId,
+        hearing: reportHearing,
+        status: "IN_PROGRESS",
+        createdBy: editor,
+        createdAt: serverTimestamp(),
+        updatedBy: editor,
+        updatedAt: serverTimestamp(),
+        sections: {},
+      });
+      transaction.set(
+        parentRef,
+        {
+          stateCode,
+          activeReportId: reportRef.id,
+          latestReport: {
+            reportId: reportRef.id,
+            status: "IN_PROGRESS",
+            hearingDate,
+          },
+        },
+        { merge: true },
+      );
+      return reportRef.id;
+    });
+  }
+
+  /**
+   * Updates a PHI report one field path at a time, stamping who edited it and
+   * when. Never write a parsed report back whole, because Zod drops keys it
+   * doesn't know, which would delete sections added since the report loaded.
+   */
+  private async updateParoleBoardReport(
+    report: ParoleBoardReportRef,
+    updates: Array<[FieldPath, unknown]>,
+  ): Promise<void> {
+    if (this.skipParoleBoardReportWrite()) return;
+    const [[firstPath, firstValue], ...rest] = [
+      ...updates,
+      [new FieldPath("updatedBy"), this.paroleBoardReportEditor],
+      [new FieldPath("updatedAt"), serverTimestamp()],
+    ] as Array<[FieldPath, unknown]>;
+    await updateDoc(
+      this.paroleBoardReportDoc(report),
+      firstPath,
+      firstValue,
+      ...rest.flat(),
+    );
+  }
+
+  private phiValue(value: unknown) {
+    return {
+      value,
+      updatedBy: this.paroleBoardReportEditor,
+      updatedAt: serverTimestamp(),
+    };
+  }
+
+  /**
+   * Saves the PHI's value for a field that belongs to a section as a whole,
+   * such as Victim. A null value records that the PHI cleared the field.
+   */
+  async setParoleBoardReportFieldValue<
+    Section extends ParoleBoardReportSectionKey,
+    Field extends ParoleBoardReportFieldName<Section>,
+  >(
+    report: ParoleBoardReportRef,
+    section: Section,
+    field: Field,
+    value: ParoleBoardReportFieldValue<Section, Field>,
+  ): Promise<void> {
+    return this.updateParoleBoardReport(report, [
+      [
+        new FieldPath("sections", section, "fields", field),
+        this.phiValue(value),
+      ],
+    ]);
+  }
+
+  /**
+   * Saves the PHI's value for a field on one row, such as an instant offense's
+   * sentencing date, along with the row's source and label. A null value
+   * records that the PHI cleared the field.
+   */
+  async setParoleBoardReportRowValue<
+    Section extends ParoleBoardReportSectionKey,
+    Field extends ParoleBoardReportRowFieldName<Section>,
+  >(
+    report: ParoleBoardReportRef,
+    section: Section,
+    row: ParoleBoardReportRow,
+    field: Field,
+    value: ParoleBoardReportRowFieldValue<Section, Field>,
+  ): Promise<void> {
+    const rowPath = ["sections", section, "rows", row.id];
+    return this.updateParoleBoardReport(report, [
+      [new FieldPath(...rowPath, "source"), row.source],
+      ...(row.atlasLabel === undefined
+        ? []
+        : [
+            [new FieldPath(...rowPath, "atlasLabel"), row.atlasLabel] as [
+              FieldPath,
+              unknown,
+            ],
+          ]),
+      [new FieldPath(...rowPath, "fields", field), this.phiValue(value)],
+    ]);
+  }
+
+  /** Reverts a section-level field to its Atlas value by deleting the PHI's. */
+  async revertParoleBoardReportFieldValue<
+    Section extends ParoleBoardReportSectionKey,
+  >(
+    report: ParoleBoardReportRef,
+    section: Section,
+    field: ParoleBoardReportFieldName<Section>,
+  ): Promise<void> {
+    return this.updateParoleBoardReport(report, [
+      [new FieldPath("sections", section, "fields", field), deleteField()],
+    ]);
+  }
+
+  /** Reverts a field on one row to its Atlas value by deleting the PHI's. */
+  async revertParoleBoardReportRowValue<
+    Section extends ParoleBoardReportSectionKey,
+  >(
+    report: ParoleBoardReportRef,
+    section: Section,
+    rowId: string,
+    field: ParoleBoardReportRowFieldName<Section>,
+  ): Promise<void> {
+    return this.updateParoleBoardReport(report, [
+      [
+        new FieldPath("sections", section, "rows", rowId, "fields", field),
+        deleteField(),
+      ],
+    ]);
+  }
+
+  /**
+   * Deletes all of the PHI's input for one row. This backs the Remove action
+   * on a row that is no longer in Atlas.
+   */
+  async deleteParoleBoardReportRow(
+    report: ParoleBoardReportRef,
+    section: ParoleBoardReportSectionKey,
+    rowId: string,
+  ): Promise<void> {
+    return this.updateParoleBoardReport(report, [
+      [new FieldPath("sections", section, "rows", rowId), deleteField()],
+    ]);
+  }
+
+  /**
+   * Points a report in progress at its hearing's current date, type, and
+   * Atlas id, and keeps the parent document's latestReport in step. The app
+   * calls this when the docket hearing changes, for example after a
+   * reschedule.
+   */
+  async updateParoleBoardReportHearing(
+    report: ParoleBoardReportRef,
+    hearing: ParoleBoardReport["hearing"],
+  ): Promise<void> {
+    const { atlasHearingId, hearingDate, hearingType } =
+      paroleBoardReportSchema.shape.hearing.parse(hearing);
+    if (this.skipParoleBoardReportWrite()) return;
+
+    const batch = writeBatch(this.db);
+    batch.update(
+      this.paroleBoardReportDoc(report),
+      new FieldPath("hearing"),
+      {
+        hearingDate,
+        ...(atlasHearingId !== undefined && { atlasHearingId }),
+        ...(hearingType !== undefined && { hearingType }),
+      },
+      new FieldPath("updatedBy"),
+      this.paroleBoardReportEditor,
+      new FieldPath("updatedAt"),
+      serverTimestamp(),
+    );
+    batch.update(
+      this.paroleBoardReportsDoc(report.recordId),
+      new FieldPath("latestReport", "hearingDate"),
+      hearingDate,
+    );
+    await batch.commit();
   }
 
   private get userUpdatesKey() {

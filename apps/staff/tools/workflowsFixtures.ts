@@ -50,6 +50,7 @@ import { earnedDischargeReferralsFixture } from "./fixtures/earnedDischargeRefer
 import { locationsData } from "./fixtures/locations";
 import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
 import { FixtureOpportunityType } from "./fixtures/opportunities";
+import { paroleBoardReportsFixture } from "./fixtures/paroleBoardReports";
 import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
 import { usArInstitutionalWorkerStatusReferrals } from "./fixtures/usArInstitutionalWorkerStatusReferrals";
@@ -580,6 +581,22 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     .then(() => logger(`opportunity update fixtures loaded successfully`));
 }
 
+async function loadParoleBoardReports(logger: Logger): Promise<void> {
+  const collName = generateCollectionName({ key: "paroleBoardReports" });
+  logger(`wiping existing ${collName} data ...`);
+  await deleteCollection(db, collName);
+
+  logger(`loading new ${collName} data...`);
+  const { recordId, reportId, parent, report } = paroleBoardReportsFixture;
+  const parentRef = db.collection(collName).doc(recordId);
+  await parentRef.set(parent);
+  await parentRef
+    .collection(FIRESTORE_GENERAL_COLLECTION_MAP.paroleBoardResidentReports)
+    .doc(reportId)
+    .set(report);
+  logger(`new ${collName} data loaded successfully`);
+}
+
 export async function loadWorkflowsFixtures({
   quietLogs = false,
 } = {}): Promise<void> {
@@ -593,5 +610,6 @@ export async function loadWorkflowsFixtures({
     loadFixtures(logger),
     loadClientUpdatesV2(logger),
     loadOpportunityUpdates(logger),
+    loadParoleBoardReports(logger),
   ]);
 }

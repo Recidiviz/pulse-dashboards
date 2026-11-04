@@ -22,7 +22,9 @@ import {
   getDoc,
   getDocs,
   query,
+  serverTimestamp,
   setDoc,
+  Timestamp,
   updateDoc,
   where,
   writeBatch,
@@ -94,10 +96,31 @@ function snapshotDoc(
   );
 }
 
+// The PHI test users' uid, and another PHI's, who created the seeded reports.
+const PHI_UID = "phi@us_id.gov";
+const OTHER_PHI_UID = "other.phi@us_id.gov";
+const SEEDED_AT = Timestamp.fromDate(new Date("2026-01-01"));
+
+// The attribution every report write carries.
+const STAMP = { updatedBy: PHI_UID, updatedAt: serverTimestamp() };
+
 // An edit that leaves a report in progress.
 const FIELD_EDIT = {
   "sections.offenseInformation.fields.victim": { value: "YES" },
+  ...STAMP,
 };
+
+/** Builds a report in progress as the app creates it, with overrides. */
+function newReport(overrides: Record<string, unknown> = {}) {
+  return {
+    stateCode: "US_ID",
+    status: "IN_PROGRESS",
+    createdBy: PHI_UID,
+    createdAt: serverTimestamp(),
+    ...STAMP,
+    ...overrides,
+  } as Record<string, unknown>;
+}
 
 /**
  * Builds the batch the app commits on submission: the report's new status, a
@@ -115,6 +138,7 @@ function submissionBatch(
   const snapshotsPath = [ID_RECORD, "reports", reportId, "snapshot"] as const;
   batch.update(reportDoc(db, ID_RECORD, reportId, collectionName), {
     status: "SUBMITTED",
+    ...STAMP,
   });
   batch.set(doc(db, collectionName, ...snapshotsPath, "summary"), {
     stateCode: "US_ID",
@@ -139,6 +163,12 @@ async function seedRecord(
   recordId: string,
   stateCode: string,
 ) {
+  const attribution = {
+    createdBy: OTHER_PHI_UID,
+    createdAt: SEEDED_AT,
+    updatedBy: OTHER_PHI_UID,
+    updatedAt: SEEDED_AT,
+  };
   await testEnv.withSecurityRulesDisabled(async (context) => {
     const db = context.firestore();
     await setDoc(parentDoc(db, recordId, collectionName), {
@@ -148,10 +178,12 @@ async function seedRecord(
     await setDoc(reportDoc(db, recordId, IN_PROGRESS, collectionName), {
       stateCode,
       status: "IN_PROGRESS",
+      ...attribution,
     });
     await setDoc(reportDoc(db, recordId, SUBMITTED, collectionName), {
       stateCode,
       status: "SUBMITTED",
+      ...attribution,
     });
     await setDoc(snapshotDoc(db, recordId, IN_PROGRESS, collectionName), {
       stateCode,
@@ -269,16 +301,49 @@ describe("paroleBoardReports reports", () => {
   test("PHI can create, read, and update a report in progress", async () => {
     const db = getIDPhi(testEnv).firestore();
     await assertSucceeds(
-      setDoc(reportDoc(db, ID_RECORD, "new_report"), {
-        stateCode: "US_ID",
-        status: "IN_PROGRESS",
-      }),
+      setDoc(reportDoc(db, ID_RECORD, "new_report"), newReport()),
     );
     await assertSucceeds(getDoc(reportDoc(db, ID_RECORD, IN_PROGRESS)));
     await assertSucceeds(
-      updateDoc(reportDoc(db, ID_RECORD, IN_PROGRESS), {
-        "sections.offenseInformation.fields.victim": { value: "YES" },
-      }),
+      updateDoc(reportDoc(db, ID_RECORD, IN_PROGRESS), FIELD_EDIT),
+    );
+  });
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([
+    ["createdBy", { createdBy: OTHER_PHI_UID }],
+    ["updatedBy", { updatedBy: OTHER_PHI_UID }],
+    ["createdAt", { createdAt: SEEDED_AT }],
+    ["updatedAt", { updatedAt: SEEDED_AT }],
+  ])(
+    "PHI cannot create a report whose %s is not their own uid or the request time",
+    async (_field, overrides) => {
+      await assertFails(
+        setDoc(
+          reportDoc(getIDPhi(testEnv).firestore(), ID_RECORD, "new_report"),
+          newReport(overrides),
+        ),
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([
+    // The report keeps the updatedBy of the PHI who seeded it.
+    [
+      "without stamping it",
+      { "sections.offenseInformation.fields.victim": { value: "YES" } },
+    ],
+    ["under another user's uid", { ...FIELD_EDIT, updatedBy: OTHER_PHI_UID }],
+    ["with a backdated updatedAt", { ...FIELD_EDIT, updatedAt: SEEDED_AT }],
+    ["changing createdBy", { ...FIELD_EDIT, createdBy: PHI_UID }],
+    ["changing createdAt", { ...FIELD_EDIT, createdAt: serverTimestamp() }],
+  ])("PHI cannot edit a report %s", async (_label, edit) => {
+    await assertFails(
+      updateDoc(
+        reportDoc(getIDPhi(testEnv).firestore(), ID_RECORD, IN_PROGRESS),
+        edit,
+      ),
     );
   });
 
@@ -293,7 +358,10 @@ describe("paroleBoardReports reports", () => {
   test("PHI cannot submit a report without creating its snapshot manifest, so a submitted report always has a snapshot", async () => {
     const db = getIDPhi(testEnv).firestore();
     await assertFails(
-      updateDoc(reportDoc(db, ID_RECORD, IN_PROGRESS), { status: "SUBMITTED" }),
+      updateDoc(reportDoc(db, ID_RECORD, IN_PROGRESS), {
+        status: "SUBMITTED",
+        ...STAMP,
+      }),
     );
     await assertFails(
       submissionBatch(db, IN_PROGRESS, { withManifest: false }).commit(),
@@ -304,10 +372,12 @@ describe("paroleBoardReports reports", () => {
   test.each([["SUBMITTED"], ["ARCHIVED"], [undefined]])(
     "PHI cannot create a report whose status is %s, only one in progress",
     async (status) => {
+      const report = newReport({ status });
+      if (status === undefined) delete report["status"];
       await assertFails(
         setDoc(
           reportDoc(getIDPhi(testEnv).firestore(), ID_RECORD, "new_report"),
-          { stateCode: "US_ID", ...(status && { status }) },
+          report,
         ),
       );
     },
@@ -318,7 +388,7 @@ describe("paroleBoardReports reports", () => {
     await assertFails(
       updateDoc(
         reportDoc(getIDPhi(testEnv).firestore(), ID_RECORD, IN_PROGRESS),
-        { status: "ARCHIVED" },
+        { status: "ARCHIVED", ...STAMP },
       ),
     );
   });
@@ -327,13 +397,12 @@ describe("paroleBoardReports reports", () => {
   test("PHI cannot edit or reopen a submitted report", async () => {
     const db = getIDPhi(testEnv).firestore();
     await assertFails(
-      updateDoc(reportDoc(db, ID_RECORD, SUBMITTED), {
-        "sections.offenseInformation.fields.victim": { value: "NO" },
-      }),
+      updateDoc(reportDoc(db, ID_RECORD, SUBMITTED), FIELD_EDIT),
     );
     await assertFails(
       updateDoc(reportDoc(db, ID_RECORD, SUBMITTED), {
         status: "IN_PROGRESS",
+        ...STAMP,
       }),
     );
   });
@@ -455,10 +524,7 @@ describe("paroleBoardReports reports", () => {
       updateDoc(reportDoc(db, ID_RECORD, IN_PROGRESS), FIELD_EDIT),
     );
     await assertFails(
-      setDoc(reportDoc(db, ID_RECORD, "new_report"), {
-        stateCode: "US_ID",
-        status: "IN_PROGRESS",
-      }),
+      setDoc(reportDoc(db, ID_RECORD, "new_report"), newReport()),
     );
   });
 

@@ -271,19 +271,34 @@ service cloud.firestore {
       );
   }
 
+  // Every write to a report stamps updatedBy with the writer's uid (the staff
+  // token endpoint sets it to the user's email) and updatedAt with the request
+  // time. These are the report's attribution the rules can check. The
+  // updatedBy on each PHI value under sections is a display label they cannot,
+  // since rules cannot loop over a map's entries.
+  function isParoleBoardReportStampedByRequester() {
+    return request.resource.data.get("updatedBy", null) == request.auth.uid &&
+      request.resource.data.get("updatedAt", null) == request.time;
+  }
+
   // A report starts in progress, and a client can only edit it or submit it.
   // Submitting must create the report's snapshot/manifest doc in the same
   // batch, so a submitted report always has a snapshot. No client sets
-  // ARCHIVED.
+  // ARCHIVED. createdBy and createdAt are set on creation and never change.
   function allowParoleBoardReportCreate(collection, recordId) {
     return allowParoleBoardReportsWrite(collection, recordId) &&
-      request.resource.data.get("status", null) == "IN_PROGRESS";
+      request.resource.data.get("status", null) == "IN_PROGRESS" &&
+      isParoleBoardReportStampedByRequester() &&
+      request.resource.data.get("createdBy", null) == request.auth.uid &&
+      request.resource.data.get("createdAt", null) == request.time;
   }
 
   function allowParoleBoardReportUpdate(collection, recordId, manifestPath) {
     let newStatus = request.resource.data.get("status", null);
     return allowParoleBoardReportsWrite(collection, recordId) &&
       isParoleBoardReportInProgress(resource) &&
+      isParoleBoardReportStampedByRequester() &&
+      !request.resource.data.diff(resource.data).affectedKeys().hasAny(["createdBy", "createdAt"]) &&
       (newStatus == "IN_PROGRESS" || (newStatus == "SUBMITTED" && existsAfter(manifestPath)));
   }
 
