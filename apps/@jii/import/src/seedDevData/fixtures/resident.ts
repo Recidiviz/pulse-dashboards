@@ -20,13 +20,16 @@ import { rawAllResidentCommon } from "~datatypes";
 import { buildFixtureMap } from "./buildFixtureMap";
 import { rawResidentStateDataFixtures } from "./residentStateData";
 
-const residentFixturesWithoutSSD = buildFixtureMap(rawAllResidentCommon);
+const residentCommonFixtures = buildFixtureMap(rawAllResidentCommon);
 
 export const residentFixtures = new Map(
-  Array.from(residentFixturesWithoutSSD, ([stateCode, records]) => [
+  Array.from(residentCommonFixtures, ([stateCode, records]) => [
     stateCode,
     records.map((r, i) => ({
       ...r,
+      // it is not required that these fields have matching values,
+      // but it's usually true in practice and it's convenient to do here
+      tabletUserId: r.displayId,
       stateSpecificData: rawResidentStateDataFixtures.get(stateCode)?.[i],
     })),
   ]),

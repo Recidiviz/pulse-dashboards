@@ -40,6 +40,7 @@ const personData = {
   pseudonymized_id: "test_pseudo_id",
   person_external_id: "EXT001",
   display_id: "D001",
+  tablet_user_id: "T001",
   state_code: "US_NC",
   person_name: JSON.stringify({
     given_names: "JANE",
@@ -89,6 +90,7 @@ describe("residentHandler", () => {
             "stateCode": "US_NC",
           },
           "surname": "Doe",
+          "tabletUserId": "T001",
           "unitId": "UN1",
         },
       ]
@@ -279,6 +281,7 @@ describe("residentHandler", () => {
     pseudonymized_id: "minimal_pseudo_id",
     person_external_id: "EXT_MIN",
     display_id: "D_MIN",
+    tablet_user_id: "T_MIN",
     state_code: "US_NC",
     person_name: JSON.stringify({}),
     state_specific_data: JSON.stringify({ state_code: "US_NC" }),

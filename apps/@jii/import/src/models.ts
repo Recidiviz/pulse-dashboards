@@ -59,6 +59,7 @@ const personNameDefaults: Record<keyof FullName, null> = {
 
 export const residentImportSchema = residentCommonSchema
   .extend({
+    tabletUserId: z.string().nullable(),
     // this is a plain object with passthrough because our goal here is to validate it
     // against existing SSD schemas while still storing the original input in the DB.
     // we do this because it will be parsed again at read time for type safety

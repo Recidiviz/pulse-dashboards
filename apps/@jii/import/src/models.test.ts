@@ -36,6 +36,7 @@ function usNdResident(stateSpecificData: Record<string, unknown>) {
     personExternalId: "RES001",
     pseudonymizedId: "anonres001",
     displayId: "d001",
+    tabletUserId: "t001",
     personName: { givenNames: "Given", surname: "Sur" },
     stateSpecificData,
   };

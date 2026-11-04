@@ -24,6 +24,7 @@ model Resident {
     pseudonymizedId   String   @id
     personExternalId  String
     displayId         String
+    tabletUserId      String?
     givenNames        String?
     middleNames       String?
     surname           String?

@@ -34,6 +34,11 @@ export const getResident = firebaseAuthedResidentProcedure
   .query(async ({ ctx: { prisma }, input: { pseudonymizedId } }) => {
     const resident = await prisma.resident.findUnique({
       where: { pseudonymizedId },
+      omit: {
+        // the frontend doesn't need this,
+        // and it also makes migration safer if it isn't immediately referenced
+        tabletUserId: true,
+      },
     });
 
     if (!resident) {
