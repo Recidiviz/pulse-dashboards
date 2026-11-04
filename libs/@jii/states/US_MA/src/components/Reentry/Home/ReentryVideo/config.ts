@@ -17,8 +17,16 @@
 
 import type { OnboardingVideoAssets } from "~@jii/onboarding-video";
 
-// TODO(REE-200): import the mp4 and vtt here once the video is ready, then
-// drop `| undefined` here and on ReentryVideoModal's video prop, along with
-// the modal's placeholder. libs/@jii/onboarding-video/README.md describes
-// how to prepare both files.
-export const REENTRY_VIDEO: OnboardingVideoAssets | undefined = undefined;
+import reentryVideo from "./assets/UsMaReentryVideo.mp4";
+import reentryVideoCaptions from "./assets/UsMaReentryVideo.vtt";
+
+// TODO(OBT-55332): move these assets into ~@jii/onboarding-video when this
+// modal switches to its lightbox.
+export const REENTRY_VIDEO: OnboardingVideoAssets = {
+  source: reentryVideo,
+  captions: {
+    src: reentryVideoCaptions,
+    srcLang: "en",
+    label: "English",
+  },
+};

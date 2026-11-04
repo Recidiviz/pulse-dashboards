@@ -51,9 +51,14 @@ export type ReentryEvents = {
     destination: Exclude<ReentryPage, "topic_page">;
   };
   frontend_reentry_home_cta_clicked: HomeCta;
-  // TODO(REE-200): add video_played, video_paused and video_closed once the video exists
   frontend_reentry_video_cta_clicked: {
     entryPoint: "top_banner" | "bottom_cta";
+  };
+  frontend_reentry_video_played: { positionSeconds: number };
+  frontend_reentry_video_paused: { positionSeconds: number };
+  frontend_reentry_video_closed: {
+    positionSeconds: number;
+    completed: boolean;
   };
   frontend_reentry_video_banner_dismissed: NoProperties;
   frontend_reentry_questionnaire_started: NoProperties;

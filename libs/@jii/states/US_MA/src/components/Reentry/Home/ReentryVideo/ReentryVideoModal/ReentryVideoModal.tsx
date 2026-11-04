@@ -15,16 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { SyntheticEvent, useRef } from "react";
+
 import type { OnboardingVideoAssets } from "~@jii/onboarding-video";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useReentryAnalytics } from "../../../../../hooks/useReentryAnalytics";
+import { getPositionSeconds, hasWatchedWholeVideo } from "../utils";
 import { VideoContainer, VideoModal } from "./ReentryVideoModal.styles";
 
 export type ReentryVideoModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  // TODO(REE-200): make this required once the video is ready
-  video: OnboardingVideoAssets | undefined;
+  video: OnboardingVideoAssets;
 };
 
 // TODO(OBT-55332): replace this modal with the ~@jii/onboarding-video lightbox.
@@ -33,21 +36,52 @@ export const ReentryVideoModal = ({
   onClose,
   video,
 }: ReentryVideoModalProps) => {
+  const trackEvent = useReentryAnalytics();
+
   const { t } = useUsMaTranslations();
   const title = t(($) => $.reentry.overview.video.modalTitle);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const trackPlay = (event: SyntheticEvent<HTMLVideoElement>) => {
+    trackEvent("frontend_reentry_video_played", {
+      positionSeconds: getPositionSeconds(event.currentTarget),
+    });
+  };
+
+  const trackPause = (event: SyntheticEvent<HTMLVideoElement>) => {
+    // Browsers also fire pause when the video ends on its own.
+    const isEndOfVideo = event.currentTarget.ended;
+    if (isEndOfVideo) return;
+
+    trackEvent("frontend_reentry_video_paused", {
+      positionSeconds: getPositionSeconds(event.currentTarget),
+    });
+  };
+
+  const close = () => {
+    if (videoRef.current) {
+      trackEvent("frontend_reentry_video_closed", {
+        positionSeconds: getPositionSeconds(videoRef.current),
+        completed: hasWatchedWholeVideo(videoRef.current),
+      });
+    }
+    onClose();
+  };
+
   return (
-    <VideoModal isOpen={isOpen} onRequestClose={onClose} contentLabel={title}>
+    <VideoModal isOpen={isOpen} onRequestClose={close} contentLabel={title}>
       <VideoContainer>
-        {/* TODO(REE-200): drop the placeholder once the video is ready */}
-        {video ? (
-          <video controls>
-            <source src={video.source} type="video/mp4" />
-            <track kind="captions" default {...video.captions} />
-          </video>
-        ) : (
-          "Video coming soon"
-        )}
+        <video
+          ref={videoRef}
+          autoPlay
+          controls
+          onPlay={trackPlay}
+          onPause={trackPause}
+        >
+          <source src={video.source} type="video/mp4" />
+          <track kind="captions" {...video.captions} />
+        </video>
       </VideoContainer>
     </VideoModal>
   );

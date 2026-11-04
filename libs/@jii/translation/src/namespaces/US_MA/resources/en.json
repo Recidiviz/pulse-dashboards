@@ -232,10 +232,10 @@
       },
       "video": {
         "title": "How to use the Reentry section",
-        "bannerDescription": "Watch a two-minute video tour of this Reentry section.",
-        "learnMoreDescription": "Watch a two-minute video tour of the new Reentry section.",
+        "bannerDescription": "Watch a three-minute video tour of this Reentry section.",
+        "learnMoreDescription": "Watch a three-minute video tour of the new Reentry section.",
         "dismissBanner": "Dismiss",
-        "modalTitle": "All about Reentry (2 minutes)"
+        "modalTitle": "All about Reentry (3 minutes)"
       }
     },
     "questionnaire": {

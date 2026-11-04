@@ -19,7 +19,7 @@ import { rem, rgba } from "polished";
 import styled from "styled-components";
 
 import { PAGE_WIDTH } from "~@jii/common-ui";
-import { Modal, palette, spacing, typography } from "~design-system";
+import { Modal, spacing } from "~design-system";
 
 // TODO(OBT-55332): replace this modal with the ~@jii/onboarding-video lightbox.
 // Until then, these styles copy its AboutVideoModal so the switch looks the same.
@@ -39,18 +39,9 @@ export const VideoModal = styled(Modal)`
 `;
 
 export const VideoContainer = styled.div`
-  ${typography.Sans14}
-
-  align-items: center;
-  aspect-ratio: 16 / 12;
-  color: ${palette.white70};
-  display: flex;
-  justify-content: center;
-
   video {
-    height: 100%;
-    object-fit: contain;
-    object-position: top;
+    height: auto;
     width: 100%;
+    display: block;
   }
 `;
