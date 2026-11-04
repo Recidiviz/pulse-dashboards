@@ -18,7 +18,12 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
-import { ClassificationNote } from "~datatypes";
+import {
+  adSeg,
+  ClassificationNote,
+  latestIncidents,
+  UsMiAssessmentQuestionNote,
+} from "~datatypes";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import {
@@ -27,7 +32,7 @@ import {
   NoteField,
   NoteHeader,
   NoteMisconducts,
-  NotesList,
+  NotesBox,
   NotesRow,
   ViewMoreQuestionNotes,
 } from "./Styles";
@@ -35,6 +40,7 @@ import {
 export function formatClassificationNote(date: Date | string | null) {
   if (date instanceof Date) return formatWorkflowsDate(date);
   if (typeof date === "string") return formatWorkflowsDate(new Date(date));
+  return "Present";
 }
 
 export const NoteRow = observer(function NoteRow({
@@ -42,25 +48,83 @@ export const NoteRow = observer(function NoteRow({
   date,
 }: {
   event: string;
-  date: Date;
+  date: Date | string;
 }) {
   return (
     <NotesRow>
       <div>{event}</div>
-      <NoteDate>{formatWorkflowsDate(date)}</NoteDate>
+      <NoteDate>
+        {typeof date === "string" ? date : formatWorkflowsDate(date)}
+      </NoteDate>
     </NotesRow>
   );
 });
+
+function newestIncidentsFirst(incidents: latestIncidents): latestIncidents {
+  return incidents.toSorted(
+    (a, b) => b.incidentDate.getTime() - a.incidentDate.getTime(),
+  );
+}
+
+function toGoodBehaviorRows(
+  adSegPlacements: adSeg | adSeg[],
+  incidents: latestIncidents,
+): NoteRowData[] {
+  if (!Array.isArray(adSegPlacements)) adSegPlacements = [adSegPlacements];
+  // Sort on the raw dates, since ad seg rows display a formatted date range.
+  return [
+    ...adSegPlacements.map((adSeg) => ({
+      sortTime: adSeg.adSegStartDate?.getTime() ?? 0,
+      event: "Administrative Segregation",
+      date: `${formatClassificationNote(adSeg.adSegStartDate)} – ${
+        formatClassificationNote(adSeg.adSegEndDateExclusive) ?? "present"
+      }`,
+    })),
+    ...incidents.map((incident) => ({
+      sortTime: incident.incidentDate.getTime(),
+      event: incident.infractionTypeRawText.replaceAll("@@", " & "),
+      date: incident.incidentDate,
+    })),
+  ]
+    .toSorted((a, b) => b.sortTime - a.sortTime)
+    .map(({ event, date }) => ({ event, date }));
+}
+
+// Returns undefined for notes that are not one of the good behavior kinds.
+function goodBehaviorNotes(
+  note: ClassificationNote,
+  noteInfo: UsMiAssessmentQuestionNote,
+): { header?: string; rows: NoteRowData[] } | undefined {
+  switch (note.kind) {
+    case "goodBehaviorFourMonth":
+      return {
+        header: noteInfo.header,
+        rows: toGoodBehaviorRows(
+          note.data.latestAdSegPlacement ?? [],
+          note.data.latestIncidents,
+        ),
+      };
+    case "goodBehaviorPastYear":
+      return {
+        header: noteInfo.secondary,
+        rows: toGoodBehaviorRows(
+          note.data.adSegPlacementList ?? [],
+          note.data.incidentsList ?? [],
+        ),
+      };
+    default:
+      return undefined;
+  }
+}
+
+type NoteRowData = { event: string; date: Date | string };
 
 export const QuestionNotes = function QuestionNotes({
   note,
   noteInfo,
 }: {
   note?: ClassificationNote | null;
-  noteInfo?: {
-    header: string;
-    notfound: string;
-  };
+  noteInfo?: UsMiAssessmentQuestionNote;
 }) {
   const [showMore, updateShowMore] = useState(false);
 
@@ -87,10 +151,51 @@ export const QuestionNotes = function QuestionNotes({
     (note.kind === "programs" && note.data.length) ||
     0;
 
+  const goodBehavior = goodBehaviorNotes(note, noteInfo);
+
+  if (goodBehavior?.rows.length === 0) {
+    return (
+      <div>
+        <NoteHeader>{goodBehavior.header}</NoteHeader>
+        <NoNoteFound>{noteInfo.notfound}</NoNoteFound>
+      </div>
+    );
+  }
+
+  if (goodBehavior) {
+    return (
+      <div>
+        <NoteHeader>{goodBehavior.header}</NoteHeader>
+        <NotesBox>
+          {goodBehavior.rows
+            .slice(0, sliceAmount)
+            .map(({ event, date }, index) => (
+              <NoteRow
+                // eslint-disable-next-line react/no-array-index-key
+                key={`good-behavior-note-${index}`}
+                event={event}
+                date={date}
+              />
+            ))}
+          {goodBehavior.rows.length > 4 && (
+            <ViewMoreQuestionNotes
+              onClick={(e) => {
+                e.preventDefault();
+                updateShowMore(!showMore);
+              }}
+            >
+              {showMore ? "Show Fewer" : "Show More"}
+            </ViewMoreQuestionNotes>
+          )}
+        </NotesBox>
+      </div>
+    );
+  }
+
   return (
     <div>
       <NoteHeader>{noteInfo?.header}</NoteHeader>
-      <NotesList>
+      <NotesBox>
         {note.kind === "vfo" && (
           <NoteRow
             event={`VFO: ${note.data.vfoLevelDetail}`}
@@ -143,9 +248,19 @@ export const QuestionNotes = function QuestionNotes({
             </NotesRow>
           </>
         )}
+
+        {note.kind === "programs" &&
+          note.data.slice(0, sliceAmount).map((program, index) => (
+            <NoteRow
+              // eslint-disable-next-line react/no-array-index-key
+              key={`program-note-${index}`}
+              event={program.programName}
+              date={program.completionDate}
+            />
+          ))}
         {note.kind === "incidents" &&
-          note.data.incidentsList
-            ?.slice(0, sliceAmount)
+          newestIncidentsFirst(note.data.incidentsList ?? [])
+            .slice(0, sliceAmount)
             .map((incident, index) => {
               const incidents = incident.infractionTypeRawText.replaceAll(
                 "@@",
@@ -161,17 +276,7 @@ export const QuestionNotes = function QuestionNotes({
                 />
               );
             })}
-
-        {note.kind === "programs" &&
-          note.data.slice(0, sliceAmount).map((program, index) => (
-            <NoteRow
-              // eslint-disable-next-line react/no-array-index-key
-              key={`program-note-${index}`}
-              event={program.programName}
-              date={program.completionDate}
-            />
-          ))}
-      </NotesList>
+      </NotesBox>
 
       {listLength > 4 && (
         <ViewMoreQuestionNotes

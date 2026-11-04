@@ -322,6 +322,16 @@ export const QuestionDescription = styled.div`
   margin: 8px 0;
 `;
 
+export const OptionText = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const OptionSubtext = styled.span`
+  color: ${palette.slate60};
+  font-size: ${rem(13)};
+`;
+
 export const QuestionTitle = styled.div`
   font-weight: 600;
   font-size: ${rem(16)};
@@ -360,12 +370,6 @@ export const ViewMoreQuestionNotes = styled.button`
 `;
 
 export const NotesBox = styled.div`
-  border-left: 2px solid ${palette.slate20};
-  margin-left: 5px;
-  padding-left: 5px;
-`;
-
-export const NotesList = styled.div`
   border-left: 2px solid ${palette.slate20};
   margin-left: 5px;
   padding: 2px;

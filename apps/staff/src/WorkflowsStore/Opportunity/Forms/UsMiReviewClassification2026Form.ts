@@ -61,11 +61,34 @@ const ReviewKeySelections = [
   "s3q14Selection",
   "s3q15Selection",
   "s3q16Selection",
+  "s3q17Selection",
 ] as const;
 
 function getHighProgramCompletion(count: number | null | undefined) {
   if (count === undefined || count === null) return 1;
   return count > 0 ? 0 : 1;
+}
+
+// These match the option scores of the good behavior question in
+// ReviewQuestionsSchema.ts.
+const GOOD_BEHAVIOR_FOUR_MONTH_SCORE = -2.6;
+const GOOD_BEHAVIOR_PAST_YEAR_SCORE = -1.7;
+
+function hasFourMonthGoodBehavior(
+  pastFourMonthsScore: number | null | undefined,
+) {
+  return pastFourMonthsScore === GOOD_BEHAVIOR_FOUR_MONTH_SCORE;
+}
+
+// With neither score on record, the selection is left for the user to fill in.
+function getGoodBehaviorSelection(
+  pastFourMonthsScore: number | null,
+  pastYearScore: number | null,
+) {
+  if (pastFourMonthsScore === null && pastYearScore === null) return undefined;
+  if (hasFourMonthGoodBehavior(pastFourMonthsScore)) return 0;
+  if (pastYearScore === GOOD_BEHAVIOR_PAST_YEAR_SCORE) return 1;
+  return 2;
 }
 
 // With no recorded completions, the count is 0 rather than left for the user
@@ -181,15 +204,18 @@ function inferredMiClassificationData(
 
   const s2q13Selection = countIncidents(formInformation.currentOtherIncNotes);
 
-  const s3q14Selection = getCoreProgramCompletion(
+  const s3q14Selection = getGoodBehaviorSelection(
+    formInformation.goodBehPastFourMonthScore,
+    formInformation.goodBehPastYearScore,
+  );
+
+  const s3q15Selection = getCoreProgramCompletion(
     formInformation.programCompleteCoreNotes,
   );
 
-  const s3q15Selection = getHighProgramCompletion(
+  const s3q16Selection = getHighProgramCompletion(
     formInformation.programCompleteHighNotes?.highProgramCompletionCount,
   );
-
-  // notes yay
 
   const s1q1Notes = formInformation.ageNotes;
 
@@ -202,9 +228,16 @@ function inferredMiClassificationData(
 
   const s2q13Notes = formInformation.currentOtherIncNotes;
 
-  const s3q14Notes =
-    formInformation.programCompleteCoreNotes?.coreProgramCompletionsList;
+  const s3q14Notes = hasFourMonthGoodBehavior(
+    formInformation.goodBehPastFourMonthScore,
+  )
+    ? formInformation.goodBehPastFourMonthNotes
+    : formInformation.goodBehPastYearNotes;
+
   const s3q15Notes =
+    formInformation.programCompleteCoreNotes?.coreProgramCompletionsList;
+
+  const s3q16Notes =
     formInformation.programCompleteHighNotes?.highProgramCompletionsList;
 
   return {
@@ -227,6 +260,7 @@ function inferredMiClassificationData(
     // section 3
     s3q14Selection,
     s3q15Selection,
+    s3q16Selection,
 
     s1q1Notes,
     s1q2Notes,
@@ -243,6 +277,7 @@ function inferredMiClassificationData(
     s2q13Notes,
     s3q14Notes,
     s3q15Notes,
+    s3q16Notes,
   };
 }
 
@@ -271,6 +306,7 @@ export function deriveMiClassification(
     s3q14Selection,
     s3q15Selection,
     s3q16Selection,
+    s3q17Selection,
 
     override1_1Selection,
     override1_2Selection,
@@ -340,13 +376,19 @@ export function deriveMiClassification(
   // section 3
 
   const s3q14 = questionsList[2].questions[0];
-  const s3q14Score = getMultiplierScore(s3q14, s3q14Selection);
+  const s3q14Score = getSingleScore(s3q14, s3q14Selection);
   const s3q15 = questionsList[2].questions[1];
-  const s3q15Score = getSingleScore(s3q15, s3q15Selection);
+  const s3q15Score = getMultiplierScore(s3q15, s3q15Selection);
   const s3q16 = questionsList[2].questions[2];
-  const s3q16Score = getMultiplierScore(s3q16, s3q16Selection);
+  const s3q16Score = getSingleScore(s3q16, s3q16Selection);
+  const s3q17 = questionsList[2].questions[3];
+  const s3q17Score = getMultiplierScore(s3q17, s3q17Selection);
 
-  let s3SubScore = (s3q14Score || 0) + (s3q15Score || 0) + (s3q16Score || 0);
+  let s3SubScore =
+    (s3q14Score || 0) +
+    (s3q15Score || 0) +
+    (s3q16Score || 0) +
+    (s3q17Score || 0);
 
   s3SubScore = Number(s3SubScore.toFixed(2));
 
@@ -404,11 +446,26 @@ export function deriveMiClassification(
     formData.currentOtherIncNotes,
   );
 
-  const s3q14Notes = classificationNote(
+  const s3q14Notes = hasFourMonthGoodBehavior(
+    formData.goodBehPastFourMonthScore,
+  )
+    ? classificationNote(
+        "goodBehaviorFourMonth",
+        formData.goodBehPastFourMonthNotes ?? {
+          latestAdSegPlacement: null,
+          latestIncidents: [],
+        },
+      )
+    : classificationNote(
+        "goodBehaviorPastYear",
+        formData.goodBehPastYearNotes ?? {},
+      );
+
+  const s3q15Notes = classificationNote(
     "programs",
     formData.programCompleteCoreNotes?.coreProgramCompletionsList,
   );
-  const s3q15Notes = classificationNote(
+  const s3q16Notes = classificationNote(
     "programs",
     formData.programCompleteHighNotes?.highProgramCompletionsList,
   );
@@ -436,6 +493,7 @@ export function deriveMiClassification(
     s3q14Score,
     s3q15Score,
     s3q16Score,
+    s3q17Score,
     subscores: [s1SubScore, s2SubScore, s3SubScore],
     totalScore: Math.min(totalScore, MAX_TOTAL_SCORE),
     s1q1Notes,
@@ -453,6 +511,7 @@ export function deriveMiClassification(
     s2q13Notes,
     s3q14Notes,
     s3q15Notes,
+    s3q16Notes,
 
     // overrides
     override1_1Selection,

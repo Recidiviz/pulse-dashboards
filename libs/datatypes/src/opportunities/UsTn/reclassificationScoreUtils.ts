@@ -35,6 +35,7 @@ import {
 export type AssessmentOption = {
   text: string;
   score: number;
+  subtext?: string;
 };
 
 export type SingleSectionAssessmentQuestionSpec = {

@@ -179,6 +179,36 @@ export const miBaseReviewClassificationQuestions = [
     title: "Good behavior and programming",
     questions: [
       {
+        title:
+          "Time since most recent Class I or Class II misconduct or administrative segregation placement",
+        type: "SINGLE",
+        description:
+          "Based on Class I or Class II misconducts (incident date) and administrative segregation placements. If a placement was for MSP referral, protective order with no other beds, or TB test refusal, update the answer so that placement doesn't count.",
+        options: [
+          { text: "4 or more months", score: -2.6 },
+          {
+            text: "Under 4 months",
+            subtext:
+              "Went 4 months in a row with no misconduct or placement in the 12 months before it",
+            score: -1.7,
+          },
+          {
+            text: "N/A",
+            subtext:
+              "Did not go 4 months in a row with no misconduct or placement in the 12 months before it",
+            score: 0.0,
+          },
+        ],
+        note: {
+          header:
+            "Most recent misconduct (incident date) and/or administrative segregation placement",
+          secondary:
+            "Misconducts (incident date) and/or administrative segregation placements in the 12 months before",
+          notfound: "None recorded.",
+        },
+      },
+
+      {
         title: "Program completion since 2021 - Core (max 2)",
         type: "NUMBER",
         countDescriptor: "Programs",
@@ -248,7 +278,7 @@ const miMaleAgeClassificationQuestions = {
         { text: "Low", score: -1.2 },
         { text: "Medium", score: 0 },
         { text: "High", score: 2.1 },
-        { text: "None", score: 0 },
+        { text: "None", subtext: "No COMPAS assessment on record", score: 0 },
       ],
       note: {
         header: "Most recent COMPAS assessment",

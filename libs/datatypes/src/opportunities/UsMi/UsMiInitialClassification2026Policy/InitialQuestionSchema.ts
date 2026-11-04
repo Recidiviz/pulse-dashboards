@@ -19,6 +19,7 @@ import { SingleSectionAssessmentQuestionSpec } from "~datatypes";
 
 export type UsMiAssessmentQuestionNote = {
   header: string;
+  secondary?: string;
   notfound: string;
 };
 
@@ -261,7 +262,7 @@ const miFemaleAgeClassificationQuestions = {
       options: [
         { text: "Low", score: -1.2 },
         { text: "Medium", score: 0 },
-        { text: "None", score: 0 },
+        { text: "None", subtext: "No COMPAS assessment on record", score: 0 },
       ],
       note: {
         header: "Most recent COMPAS assessment",

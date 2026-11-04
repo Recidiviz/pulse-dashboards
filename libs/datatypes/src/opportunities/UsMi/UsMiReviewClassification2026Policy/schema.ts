@@ -28,6 +28,28 @@ export const programCompletionsList = z.array(
   }),
 );
 
+export const latestIncidents = z.array(
+  z.object({
+    incarcerationIncidentId: z.coerce.number(),
+    incidentClass: z.string(),
+    incidentDate: dateStringSchema,
+    infractionTypeRawText: z.string(),
+  }),
+);
+
+export const adSeg = z.object({
+  adSegEndDateExclusive: dateStringSchema.nullable(),
+  adSegStartDate: dateStringSchema.nullable(),
+});
+
+export type adSeg = z.infer<typeof adSeg>;
+export type latestIncidents = z.infer<typeof latestIncidents>;
+
+export const goodBehaviorPastYearNotes = z.object({
+  adSegPlacementList: z.array(adSeg).nullish(),
+  incidentsList: latestIncidents.nullish(),
+});
+
 export const goodBehaviorPastFourMonthsNotes = z.object({
   latestAdSegPlacement: z
     .object({
@@ -35,24 +57,17 @@ export const goodBehaviorPastFourMonthsNotes = z.object({
       adSegStartDate: dateStringSchema.nullable(),
     })
     .nullable(),
-  latestIncidents: z.array(
-    z.object({
-      incarcerationIncidentId: z.coerce.number(),
-      incidentClass: z.string(),
-      incidentDate: dateStringSchema,
-      infractionTypeRawText: z.string(),
-    }),
-  ),
+  latestIncidents,
 });
 
-export type programCompletionsList = z.infer<typeof programCompletionsList>;
+export type goodBehaviorPastYearNotes = z.infer<
+  typeof goodBehaviorPastYearNotes
+>;
+export type goodBehaviorPastFourMonthsNotes = z.infer<
+  typeof goodBehaviorPastFourMonthsNotes
+>;
 
-// Built on the frontend from goodBehaviorNotes: the misconduct count in each
-// four-month period of the past 12 months.
-export type goodBehaviorPeriodNotes = {
-  timePeriod: string;
-  misconductCount: number;
-}[];
+export type programCompletionsList = z.infer<typeof programCompletionsList>;
 
 export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
@@ -99,11 +114,10 @@ export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
       .passthrough()
       .partial()
       .nullish(),
+    goodBehPastYearNotes: goodBehaviorPastYearNotes.nullable(),
+    goodBehPastYearScore: z.coerce.number().nullable(),
     goodBehPastFourMonthScore: z.coerce.number().nullable(),
-    goodBehPastFourMonthNotes: goodBehaviorPastFourMonthsNotes
-      .passthrough()
-      .partial()
-      .nullable(),
+    goodBehPastFourMonthNotes: goodBehaviorPastFourMonthsNotes.nullable(),
   }),
 });
 
@@ -134,6 +148,7 @@ export type UsMiReviewClassification2026DraftData =
     s3q14Selection: number;
     s3q15Selection: number;
     s3q16Selection: number;
+    s3q17Selection: number;
 
     // for overrides
 

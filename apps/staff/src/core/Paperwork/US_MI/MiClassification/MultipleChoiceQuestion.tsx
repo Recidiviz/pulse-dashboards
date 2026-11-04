@@ -33,6 +33,8 @@ import {
   NumberQuestionError,
   NumberScore,
   OptionScore,
+  OptionSubtext,
+  OptionText,
   PlacementsSection,
   QuestionBox,
   QuestionDescription,
@@ -118,7 +120,10 @@ export const SingleSelectionQuestion = function SingleSelectionQuestion({
         />
         <Styled.RecommendationDetails>
           <Styled.RecommendationOptionLabel smallFont={true}>
-            {value.text}
+            <OptionText>
+              {value.text}
+              {value.subtext && <OptionSubtext>{value.subtext}</OptionSubtext>}
+            </OptionText>
             <OptionScore>
               {value.score > 0 ? `+${value.score}` : value.score}
             </OptionScore>
