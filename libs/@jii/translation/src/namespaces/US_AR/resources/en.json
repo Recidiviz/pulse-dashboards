@@ -85,19 +85,22 @@
     "onMyTablet": {
       "coursesButton": "Go to my courses",
       "progressExplainer": "The progress bar tracks how many hours of Edovo courses you have completed and passed this month. Only [courses]({{coursesUrl}}) count — not [resources]({{resourcesUrl}}). This updates once a day.",
-      "carryOverUnder": "Under 16 hours? They all carry over to next month.",
-      "carryOverOver": "Over 16 hours? Only 2 hours carry over.",
-      "learnMore": "[Learn more about the tablet programming policy]({{policyUrl}})",
-      "title": "Programs on my tablet",
       "ineligible": {
+        "title": "Programs on my tablet",
         "heading": "Courses on your tablet are available to you",
         "body": "You may have heard that Edovo courses now count toward release. This currently only applies to people sentenced under the Protect Arkansas Act, which does not include your sentence. Edovo courses are still open to you and can help you build new skills. Ask Records if you have any questions about your release date."
       },
       "progressBar": {
         "hoursCompleted": "hours completed",
+        "scale": "16 hrs",
+        "title": "Course progress",
         "carriedIn_one": "Includes {{count}} hour carried in.",
         "carriedIn_other": "Includes {{count}} hours carried in.",
-        "scale": "16 hrs"
+        "learnMore": "Learn more",
+        "overlay": {
+          "heading": "How units and carry-over hours work",
+          "body": "**Policy details:**\n\n- If your balance is under 16 hours, it will carry over fully.\n- If your balance is over 16 hours, it will carry over a maximum of 2 hours.\n- 16 hrs = 1 program unit.\n\n[Learn more about the tablet programming policy]({{policyUrl}})"
+        }
       }
     }
   },

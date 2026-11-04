@@ -85,19 +85,22 @@
     "onMyTablet": {
       "coursesButton": "[US_AR]programs.onMyTablet.coursesButton",
       "progressExplainer": "[US_AR]programs.onMyTablet.progressExplainer",
-      "carryOverUnder": "[US_AR]programs.onMyTablet.carryOverUnder",
-      "carryOverOver": "[US_AR]programs.onMyTablet.carryOverOver",
-      "learnMore": "[US_AR]programs.onMyTablet.learnMore",
-      "title": "[US_AR]programs.onMyTablet.title",
       "ineligible": {
+        "title": "[US_AR]programs.onMyTablet.ineligible.title",
         "heading": "[US_AR]programs.onMyTablet.ineligible.heading",
         "body": "[US_AR]programs.onMyTablet.ineligible.body"
       },
       "progressBar": {
         "hoursCompleted": "[US_AR]programs.onMyTablet.progressBar.hoursCompleted",
+        "scale": "[US_AR]programs.onMyTablet.progressBar.scale",
+        "title": "[US_AR]programs.onMyTablet.progressBar.title",
         "carriedIn_one": "[US_AR]programs.onMyTablet.progressBar.carriedIn_one",
         "carriedIn_other": "[US_AR]programs.onMyTablet.progressBar.carriedIn_other",
-        "scale": "[US_AR]programs.onMyTablet.progressBar.scale"
+        "learnMore": "[US_AR]programs.onMyTablet.progressBar.learnMore",
+        "overlay": {
+          "heading": "[US_AR]programs.onMyTablet.progressBar.overlay.heading",
+          "body": "[US_AR]programs.onMyTablet.progressBar.overlay.body"
+        }
       }
     }
   },

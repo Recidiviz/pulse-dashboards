@@ -16,17 +16,11 @@
 // =============================================================================
 
 import { FC } from "react";
-import styled from "styled-components";
 
 import { JIIButton } from "~@jii/common-ui";
 import { sendEdovoReferral, useRootStore } from "~@jii/data";
 import { useUsArTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
-
-const CoursesButton = styled(JIIButton)`
-  width: 100%;
-  justify-content: center;
-`;
 
 export const GoToCoursesButton: FC = () => {
   const { t } = useUsArTranslations();
@@ -40,9 +34,9 @@ export const GoToCoursesButton: FC = () => {
   };
 
   return (
-    <CoursesButton kind="primary" onClick={handleGoToCourses}>
+    <JIIButton kind="primary" onClick={handleGoToCourses}>
       <span>{t(($) => $.programs.onMyTablet.coursesButton)}</span>
       <Icon kind="Open" size={12} />
-    </CoursesButton>
+    </JIIButton>
   );
 };

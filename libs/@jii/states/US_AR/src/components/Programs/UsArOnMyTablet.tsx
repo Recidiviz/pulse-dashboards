@@ -21,7 +21,7 @@ import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
-import { BackLink, HomepageSectionHeading } from "~@jii/common-ui";
+import { BackLink } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { State } from "~@jii/paths";
@@ -29,6 +29,7 @@ import { useUsArTranslations } from "~@jii/translation";
 
 import { isPaaResident } from "../../isPaaResident";
 import { EdovoProgressCard } from "./EdovoProgressCard/EdovoProgressCard";
+import { GoToCoursesButton } from "./GoToCoursesButton";
 import { IneligibleCard } from "./IneligibleCard";
 import { PolicyExplainerCard } from "./PolicyExplainerCard";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./ProgramsNavBar/ProgramsNavBar.styles";
@@ -52,14 +53,12 @@ export const UsArOnMyTablet: FC = () => {
         <BackLink to={State.Resident.buildPath(pathParams)}>
           {t(($) => $.programs.backLink)}
         </BackLink>
-        <HomepageSectionHeading>
-          {t(($) => $.programs.onMyTablet.title)}
-        </HomepageSectionHeading>
       </Header>
       {isPaaResident(metadata) ? (
         <>
           <EdovoProgressCard />
           <PolicyExplainerCard />
+          <GoToCoursesButton />
         </>
       ) : (
         <IneligibleCard />

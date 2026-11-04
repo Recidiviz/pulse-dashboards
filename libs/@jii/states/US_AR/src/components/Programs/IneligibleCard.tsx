@@ -17,20 +17,30 @@
 
 import { FC } from "react";
 
-import { Card, CardHeading, SlateCopy } from "~@jii/common-ui";
+import {
+  Card,
+  CardHeading,
+  HomepageSectionHeading,
+  SlateCopy,
+} from "~@jii/common-ui";
 import { useUsArTranslations } from "~@jii/translation";
 
 export const IneligibleCard: FC = () => {
   const { t } = useUsArTranslations();
 
   return (
-    <Card>
-      <CardHeading>
-        {t(($) => $.programs.onMyTablet.ineligible.heading)}
-      </CardHeading>
-      <SlateCopy options={{ forceBlock: true }}>
-        {t(($) => $.programs.onMyTablet.ineligible.body)}
-      </SlateCopy>
-    </Card>
+    <>
+      <HomepageSectionHeading>
+        {t(($) => $.programs.onMyTablet.ineligible.title)}
+      </HomepageSectionHeading>
+      <Card>
+        <CardHeading>
+          {t(($) => $.programs.onMyTablet.ineligible.heading)}
+        </CardHeading>
+        <SlateCopy options={{ forceBlock: true }}>
+          {t(($) => $.programs.onMyTablet.ineligible.body)}
+        </SlateCopy>
+      </Card>
+    </>
   );
 };

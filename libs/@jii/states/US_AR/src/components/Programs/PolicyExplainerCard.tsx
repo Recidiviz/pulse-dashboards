@@ -15,21 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
 import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
-import { Card, RowDivider, SlateCopy } from "~@jii/common-ui";
+import { Card, SlateCopy } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
-import { spacing } from "~design-system";
-
-import { GoToCoursesButton } from "./GoToCoursesButton";
-
-const ExplainerDivider = styled(RowDivider)`
-  margin-bottom: ${rem(spacing.md)};
-`;
 
 const TightSlateCopy = styled(SlateCopy)`
   margin-bottom: 0;
@@ -50,23 +42,12 @@ export const PolicyExplainerCard: FC = () => {
 
   return (
     <Card>
-      <SlateCopy options={{ forceBlock: true }}>
+      <TightSlateCopy options={{ forceBlock: true }}>
         {t(($) => $.programs.onMyTablet.progressExplainer, {
           coursesUrl,
           resourcesUrl,
         })}
-      </SlateCopy>
-      <ExplainerDivider />
-      <TightSlateCopy options={{ forceBlock: true }}>
-        {t(($) => $.programs.onMyTablet.carryOverUnder)}
       </TightSlateCopy>
-      <SlateCopy options={{ forceBlock: true }}>
-        {t(($) => $.programs.onMyTablet.carryOverOver)}
-      </SlateCopy>
-      <SlateCopy options={{ forceBlock: true }}>
-        {t(($) => $.programs.onMyTablet.learnMore, { policyUrl })}
-      </SlateCopy>
-      <GoToCoursesButton />
     </Card>
   );
 };

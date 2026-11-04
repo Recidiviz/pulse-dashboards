@@ -18,7 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { palette, spacing } from "~design-system";
+import { Button, palette, spacing } from "~design-system";
 
 export const ProgressLabel = styled.div`
   display: flex;
@@ -45,4 +45,9 @@ export const Fill = styled.div<{ $width: number }>`
 export const ProgressFooter = styled.div`
   margin-top: ${rem(spacing.sm)};
   color: ${palette.slate85};
+`;
+
+export const LearnMoreButton = styled(Button)`
+  font: inherit;
+  text-decoration: underline;
 `;

@@ -16,15 +16,25 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { Card, CardValue } from "~@jii/common-ui";
+import {
+  BottomSheet,
+  Card,
+  CardValue,
+  HomepageSectionHeading,
+  OverlayBody,
+  OverlayHeading,
+} from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import {
   Fill,
+  LearnMoreButton,
   ProgressFooter,
   ProgressLabel,
   Track,
@@ -36,26 +46,59 @@ const ManagedComponent: FC<{ presenter: EdovoProgressCardPresenter }> =
     const { t } = useUsArTranslations();
     const { edovoTotalHours, edovoCarryInHours } = presenter.progress;
     const { hasCarryInHours, progressWidth } = presenter;
+    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+    const params = useTypedParams(State.Resident.UsArMoreInformation);
+    const policyUrl =
+      State.Resident.UsArMoreInformation.EarnedReleaseCredits.buildPath(params);
 
     return (
-      <Card>
-        <ProgressLabel>
-          <div>
-            <CardValue>{edovoTotalHours}</CardValue>
-            {t(($) => $.programs.onMyTablet.progressBar.hoursCompleted)}
-          </div>
-          <div>{t(($) => $.programs.onMyTablet.progressBar.scale)}</div>
-        </ProgressLabel>
-        <Track>
-          <Fill $width={progressWidth} />
-        </Track>
-        <ProgressFooter>
-          {hasCarryInHours &&
-            t(($) => $.programs.onMyTablet.progressBar.carriedIn, {
-              count: edovoCarryInHours,
-            })}
-        </ProgressFooter>
-      </Card>
+      <>
+        <HomepageSectionHeading>
+          {t(($) => $.programs.onMyTablet.progressBar.title)}
+        </HomepageSectionHeading>
+        <Card>
+          <ProgressLabel>
+            <div>
+              <CardValue>{edovoTotalHours}</CardValue>
+              {t(($) => $.programs.onMyTablet.progressBar.hoursCompleted)}
+            </div>
+            <div>{t(($) => $.programs.onMyTablet.progressBar.scale)}</div>
+          </ProgressLabel>
+          <Track>
+            <Fill $width={progressWidth} />
+          </Track>
+          <ProgressFooter>
+            {hasCarryInHours &&
+              t(($) => $.programs.onMyTablet.progressBar.carriedIn, {
+                count: edovoCarryInHours,
+              })}{" "}
+            <LearnMoreButton
+              kind="link"
+              onClick={() => {
+                setIsOverlayOpen(true);
+              }}
+            >
+              {t(($) => $.programs.onMyTablet.progressBar.learnMore)}
+            </LearnMoreButton>
+            <BottomSheet
+              isOpen={isOverlayOpen}
+              onRequestClose={() => setIsOverlayOpen(false)}
+              ariaLabel={t(
+                ($) => $.programs.onMyTablet.progressBar.overlay.heading,
+              )}
+            >
+              <OverlayHeading>
+                {t(($) => $.programs.onMyTablet.progressBar.overlay.heading)}
+              </OverlayHeading>
+              <OverlayBody>
+                {t(($) => $.programs.onMyTablet.progressBar.overlay.body, {
+                  policyUrl,
+                })}
+              </OverlayBody>
+            </BottomSheet>
+          </ProgressFooter>
+        </Card>
+      </>
     );
   });
 
