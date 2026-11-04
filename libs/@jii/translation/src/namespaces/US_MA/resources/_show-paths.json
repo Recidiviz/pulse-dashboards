@@ -653,6 +653,9 @@
         },
         "ASKED_ABOUT_SOBER_HOUSE_FUNDING": {
           "label": "[US_MA]reentry.checklist.itemCopy.ASKED_ABOUT_SOBER_HOUSE_FUNDING.label"
+        },
+        "UNDERSTANDS_HEALTH_DISCHARGE_PLANNING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.UNDERSTANDS_HEALTH_DISCHARGE_PLANNING.label"
         }
       },
       "personalizationReasons": {

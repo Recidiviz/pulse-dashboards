@@ -115,6 +115,7 @@ export const reentryChecklistItemIds = [
   "HAS_JOB_APPLICATION_EMAIL",
   "HAS_PAID_HOUSING_PROGRAM_DEPOSIT",
   "ASKED_ABOUT_SOBER_HOUSE_FUNDING",
+  "UNDERSTANDS_HEALTH_DISCHARGE_PLANNING",
 ] as const;
 export type ReentryChecklistItemId = (typeof reentryChecklistItemIds)[number];
 
@@ -667,5 +668,9 @@ export const reentryChecklistConfig: Record<
       operator: "equals",
       value: "SOBER_HOUSE",
     },
+  },
+  UNDERSTANDS_HEALTH_DISCHARGE_PLANNING: {
+    section: "ONE_MONTH",
+    domain: "HEALTH",
   },
 };

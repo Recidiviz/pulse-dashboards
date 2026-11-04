@@ -653,6 +653,9 @@
         },
         "ASKED_ABOUT_SOBER_HOUSE_FUNDING": {
           "label": "I have asked my Reentry Specialist whether MASH funding or another source can pay for my first month in a sober house."
+        },
+        "UNDERSTANDS_HEALTH_DISCHARGE_PLANNING": {
+          "label": "I understand the importance of meeting with a discharge planner to set up my medical providers and appointments."
         }
       },
       "personalizationReasons": {
