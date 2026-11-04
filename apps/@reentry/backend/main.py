@@ -138,8 +138,6 @@ exclude_paths = [
     "/metrics",
     "/external/",
     "/public/",
-    "/autocomplete-city",
-    "/autocomplete-address",
     "/webhooks/deepgram/transcription",
     "/intake/services",
     "/socket.io",
@@ -228,7 +226,9 @@ app.include_router(seen_items_router.router, prefix="/seen-items")
 app.include_router(transcription_router.router, prefix="/transcription")
 app.include_router(impersonation_router.router, prefix="/impersonate")
 
-# External routers -- no auth required
+# External routers -- the client verify route and the Deepgram transcription
+# webhook are exempt from Auth0 (see exclude_paths). The autocomplete router is
+# not exempt, so it requires Auth0.
 app.include_router(intake_auth_router.router, prefix="/external/client/verify")
 app.include_router(autocomplete_router.router, prefix="/autocomplete")
 app.include_router(webhook_router.router, prefix="/webhooks")

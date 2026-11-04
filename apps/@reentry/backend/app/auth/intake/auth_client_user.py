@@ -31,6 +31,9 @@ from app.services.client_data.queries import Queries
 logger = structlog.get_logger(__name__)
 security = HTTPBearer()
 
+# Path prefixes that require a valid client JWT (token_type="client").
+CLIENT_AUTH_REQUIRED_PATHS = ("/external/client", "/intake/services")
+
 
 async def handle_rate_limiting(
     redis_client: Optional[redis.Redis],
@@ -389,7 +392,7 @@ class ClientAuthMiddleware(BaseHTTPMiddleware):
         if request.method == "OPTIONS":
             return await call_next(request)
 
-        if request.url.path.startswith("/external/client"):
+        if request.url.path.startswith(CLIENT_AUTH_REQUIRED_PATHS):
             auth_header = request.headers.get("Authorization")
             if not auth_header or not auth_header.startswith("Bearer "):
                 return JSONResponse(
