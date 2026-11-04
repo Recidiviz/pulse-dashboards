@@ -26,6 +26,10 @@ import {
   useNavigationType,
 } from "react-router-dom";
 
+import {
+  isUnloadCancellation,
+  trackPageUnload,
+} from "../core/utils/exceptions";
 import ErrorMessage from "./ErrorMessage";
 
 interface Props {
@@ -59,6 +63,7 @@ function SentryErrorBoundary({
 }: Props): JSX.Element {
   const navigate = useNavigate();
   useEffect(() => {
+    trackPageUnload();
     Sentry.init({
       environment: import.meta.env.VITE_SENTRY_ENV,
       dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -68,6 +73,7 @@ function SentryErrorBoundary({
         // https://docs.sentry.io/platforms/javascript/configuration/integrations/debug/?original_referrer=https://www.google.com/
         if (IS_DEBUG)
           console.error(hint.originalException || hint.syntheticException); // log the error in the console.
+        if (isUnloadCancellation(hint.originalException)) return null;
         return event; // send the error to sentry
       },
       tracesSampleRate: 0.1,
