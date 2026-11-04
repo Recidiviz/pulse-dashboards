@@ -72,6 +72,11 @@ exclude-newer = "7 days"
 # quarantine above caps resolution at an older release; this overrides the
 # cutoff for certifi alone. Safe to delete once exclude-newer moves past it.
 exclude-newer-package = { certifi = "2026-10-22T00:00:00Z" }
+# brotli and brotlicffi 1.2.1 fix CVE-2026-111497, a decoder out-of-bounds write. Both are
+# transitive (via weasyprint's font stack). The 7-day quarantine above hid 1.2.1 on Oct 28, so a
+# routine re-lock silently put 1.2.0 back. Constraining them makes a re-lock fail instead of
+# downgrading. Safe to delete once a newer release makes this moot.
+constraint-dependencies = ["brotli>=1.2.1", "brotlicffi>=1.2.1.0"]
 
 [tool.uv.sources]
 
