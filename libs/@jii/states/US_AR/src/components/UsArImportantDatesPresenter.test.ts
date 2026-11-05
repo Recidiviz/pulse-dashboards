@@ -145,14 +145,14 @@ describe("dateEntries", () => {
     },
   );
 
-  it("leaves out the program units for TE", () => {
+  it("leaves out the program units and overlays for TE", () => {
     const [eligibilityEntry] = createPresenter(
       transferEligibilityResident,
       allFlagsOn,
     ).dateEntries;
 
     expect(eligibilityEntry.description).toBe("new TE description");
-    expect(eligibilityEntry.overlays?.[1].body).toBe("TE programming body");
+    expect(eligibilityEntry.overlays).toBeUndefined();
   });
 
   it("links each overlay to its section of the dates page", () => {

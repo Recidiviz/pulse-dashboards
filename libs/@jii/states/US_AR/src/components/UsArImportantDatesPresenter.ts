@@ -104,7 +104,11 @@ export class UsArImportantDatesPresenter {
 
   private get overlays(): DateInfoProps["overlays"] {
     const { metadata, t } = this;
-    if (!this.residentFlags.usArEdovoCredits) return undefined;
+    if (
+      !this.residentFlags.usArEdovoCredits ||
+      metadata.eligibilityDateName !== "Release Eligibility Date"
+    )
+      return undefined;
 
     const programmingOverlay = t(
       ($) =>
