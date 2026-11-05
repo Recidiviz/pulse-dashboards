@@ -181,6 +181,10 @@
       "description": "[US_MA]reentry.homepageCta.description",
       "link": "[US_MA]reentry.homepageCta.link"
     },
+    "homepageBanner": {
+      "message": "[US_MA]reentry.homepageBanner.message",
+      "link": "[US_MA]reentry.homepageBanner.link"
+    },
     "overview": {
       "pageTitle": "[US_MA]reentry.overview.pageTitle",
       "greeting": "[US_MA]reentry.overview.greeting",

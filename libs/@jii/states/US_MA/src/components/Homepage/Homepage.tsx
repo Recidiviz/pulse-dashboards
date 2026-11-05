@@ -36,6 +36,7 @@ import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
 import { ReentryCtaSection } from "./ReentryCtaSection/ReentryCtaSection";
+import { ReentryLaunchBanner } from "./ReentryLaunchBanner";
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 import { ShowHideLaunchBanner } from "./ShowHideLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
@@ -52,6 +53,10 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomepagePresenter }> =
     const { residentFlags } = useSingleResidentContext();
     usePageTitle(t(($) => $.home.pageTitle));
 
+    const showReentryBanner = residentFlags.usMaReentry;
+    const showSentenceDatesBanner =
+      residentFlags.usMaSentenceDatesV1 && !showReentryBanner;
+
     return (
       <div>
         <LastUpdatedBanner
@@ -59,7 +64,8 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomepagePresenter }> =
             lastUpdatedDate: presenter.lastUpdatedDate,
           })}
         />
-        {residentFlags.usMaSentenceDatesV1 && <ShowHideLaunchBanner />}
+        {showReentryBanner && <ReentryLaunchBanner />}
+        {showSentenceDatesBanner && <ShowHideLaunchBanner />}
         <ProgramsCtaSection stateCode="US_MA" />
 
         <ReentryCtaSection />

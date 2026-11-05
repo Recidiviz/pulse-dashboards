@@ -181,6 +181,10 @@
       "description": "Take ownership of your reentry plan. Build a reentry profile, track your progress with a personal reentry checklist, and explore housing resources.",
       "link": "Get started"
     },
+    "homepageBanner": {
+      "message": "**Get ready for reentry, one step at a time**\n\nBuild your reentry profile to see a checklist of steps you can take to prepare.\n\nBegin with housing and your vital documents whenever you're ready.",
+      "link": "Go to Reentry"
+    },
     "overview": {
       "pageTitle": "Reentry Overview",
       "greeting": "Hello, {{name}}",
