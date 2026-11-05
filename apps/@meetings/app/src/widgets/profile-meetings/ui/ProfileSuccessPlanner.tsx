@@ -25,6 +25,8 @@ import {
 } from "~@meetings/app/entities/success-planner";
 import { Person } from "~@meetings/app/shared/api";
 
+import { SendSuccessPlannerButton } from "./SendSuccessPlannerButton";
+
 export function ProfileSuccessPlanner({ person }: { person: Person }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { planner } = useSuccessPlanner(person.pseudonymizedId);
@@ -36,6 +38,9 @@ export function ProfileSuccessPlanner({ person }: { person: Person }) {
       <SuccessPlannerCard
         planner={planner}
         onOpen={() => setIsDrawerOpen(true)}
+        secondaryAction={
+          <SendSuccessPlannerButton person={person} allowResend />
+        }
       />
       {isDrawerOpen && (
         <SuccessPlannerDrawer

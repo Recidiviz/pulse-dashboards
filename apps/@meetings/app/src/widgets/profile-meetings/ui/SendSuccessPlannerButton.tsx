@@ -28,16 +28,21 @@ import { jiiTrpc, Person } from "~@meetings/app/shared/api";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-export function SendSuccessPlannerButton({ person }: { person: Person }) {
+export function SendSuccessPlannerButton({
+  person,
+  allowResend = false,
+}: {
+  person: Person;
+  allowResend?: boolean; // only certain call sites should render the resend button
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // One ID for the component's lifetime, to avoid the possibility of saving a second
   // check-in, which could reset JII form progress.
   const [checkInId] = useState(() => crypto.randomUUID());
 
-  const { planner, isLoading, isError } = useSuccessPlanner(
-    person.pseudonymizedId,
-  );
+  const { planner, canResendSuccessPlanner, isLoading, isError } =
+    useSuccessPlanner(person.pseudonymizedId);
   const utils = jiiTrpc.useUtils();
   const createCheckIn = jiiTrpc.meetingsStaff.usNe.createCheckIn.useMutation({
     onSettled: () =>
@@ -46,7 +51,9 @@ export function SendSuccessPlannerButton({ person }: { person: Person }) {
       }),
   });
 
-  if (planner) return null;
+  const shouldRenderResendBtn = allowResend && canResendSuccessPlanner;
+
+  if (planner && !shouldRenderResendBtn) return null;
 
   if (isError) {
     return (
@@ -72,7 +79,7 @@ export function SendSuccessPlannerButton({ person }: { person: Person }) {
         loading={isLoading || createCheckIn.isPending}
         onPress={() => setIsModalOpen(true)}
       >
-        120-Day Check-In
+        {canResendSuccessPlanner ? "Resend Check-In" : "120-Day Check-In"}
       </Button>
       {isModalOpen && (
         <SendSuccessPlannerModal
@@ -88,6 +95,7 @@ export function SendSuccessPlannerButton({ person }: { person: Person }) {
           }
           isSending={createCheckIn.isPending}
           isError={createCheckIn.isError}
+          isResend={canResendSuccessPlanner}
         />
       )}
     </>

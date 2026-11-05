@@ -23,11 +23,27 @@ import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+const COPY = {
+  send: {
+    title: "Send 120-Day Check-In?",
+    body: "Send the 120-Day Check-In to the resident to complete before their 120-day pre-release meeting.",
+    error: "Couldn't send the 120-Day Check-In. Please try again.",
+    action: "Send",
+  },
+  resend: {
+    title: "Resend 120-Day Check-In?",
+    body: "Send a new 120-Day Check-In to the resident's tablet. Their previous responses will no longer show here.",
+    error: "Couldn't resend the 120-Day Check-In. Please try again.",
+    action: "Resend",
+  },
+};
+
 type Props = {
   onCancel: () => void;
   onSend: () => void;
   isSending: boolean;
   isError: boolean;
+  isResend?: boolean;
 };
 
 export function SendSuccessPlannerModal({
@@ -35,7 +51,10 @@ export function SendSuccessPlannerModal({
   onSend,
   isSending,
   isError,
+  isResend = false,
 }: Props) {
+  const copy = COPY[isResend ? "resend" : "send"];
+
   return (
     <Modal
       visible
@@ -45,20 +64,17 @@ export function SendSuccessPlannerModal({
     >
       <View className="gap-3">
         <View className="flex-row justify-between">
-          <Modal.Title>Send 120-Day Check-In?</Modal.Title>
+          <Modal.Title>{copy.title}</Modal.Title>
           <TouchableOpacity onPress={onCancel}>
             <XIcon className="stroke-tertiary" />
           </TouchableOpacity>
         </View>
-        <Modal.Body className="!text-left">
-          Send the 120-Day Check-In to the resident to complete before their
-          120-day pre-release meeting.
-        </Modal.Body>
+        <Modal.Body className="!text-left">{copy.body}</Modal.Body>
         {isError && (
           <View className="flex-row items-center gap-1.5">
             <ExclamationCircleIcon className="size-4 fill-attention" />
             <Typography variant="caption-s-regular" className="!text-attention">
-              Couldn't send the 120-Day Check-In. Please try again.
+              {copy.error}
             </Typography>
           </View>
         )}
@@ -67,7 +83,7 @@ export function SendSuccessPlannerModal({
             Cancel
           </Button>
           <Button variant="primary" loading={isSending} onPress={onSend}>
-            Send
+            {copy.action}
           </Button>
         </Modal.Actions>
       </View>

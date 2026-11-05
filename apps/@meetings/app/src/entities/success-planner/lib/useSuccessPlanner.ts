@@ -15,13 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInDays } from "date-fns";
+
 import { jiiTrpc } from "~@meetings/app/shared/api";
 
 import { SuccessPlanner } from "../model/successPlanner";
 import { useIsSuccessPlannerVisible } from "./useIsSuccessPlannerVisible";
 
+const RESEND_AFTER_DAYS = 90;
+
+/**
+ * Returns whether staff can send a new check-in to the tablet.
+ *
+ * Currently, we allow re-sending 90 days after the prior check-in's creation, and
+ * only after the prior checkin is completed.
+ */
+export function canResendSuccessPlanner(
+  planner: SuccessPlanner,
+  now: Date = new Date(),
+): boolean {
+  if (!planner.completedAt) return false;
+  return differenceInDays(now, planner.createdAt) >= RESEND_AFTER_DAYS;
+}
+
 type UseSuccessPlannerResult = {
   planner: SuccessPlanner | null;
+  canResendSuccessPlanner: boolean;
   isLoading: boolean;
   isError: boolean;
 };
@@ -36,18 +55,28 @@ export function useSuccessPlanner(
       { enabled: isVisible },
     );
 
-  if (!isVisible || !data) return { planner: null, isLoading, isError };
+  if (!isVisible || !data) {
+    return {
+      planner: null,
+      canResendSuccessPlanner: false,
+      isLoading,
+      isError,
+    };
+  }
+
+  const planner: SuccessPlanner = {
+    id: data.id,
+    assignedBy: data.assignedBy,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    completedAt: data.completedAt,
+    answers: data.answers,
+    version: data.version,
+  };
 
   return {
-    planner: {
-      id: data.id,
-      assignedBy: data.assignedBy,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-      completedAt: data.completedAt,
-      answers: data.answers,
-      version: data.version,
-    },
+    planner,
+    canResendSuccessPlanner: canResendSuccessPlanner(planner),
     isLoading,
     isError,
   };

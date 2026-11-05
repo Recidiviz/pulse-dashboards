@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ReactNode } from "react";
 import { View } from "react-native";
 
 import { Button } from "~@meetings/app/shared/ui/Button";
@@ -27,9 +28,15 @@ import { SuccessPlannerStatusBadge } from "./SuccessPlannerStatusBadge";
 type Props = {
   planner: SuccessPlanner;
   onOpen: () => void;
+  // Rendered to the left of the open button
+  secondaryAction?: ReactNode;
 };
 
-export function SuccessPlannerCard({ planner, onOpen }: Props) {
+export function SuccessPlannerCard({
+  planner,
+  onOpen,
+  secondaryAction,
+}: Props) {
   const { status, statusLabel, title, subtitle, actionLabel } =
     getSuccessPlannerSummary(planner);
 
@@ -42,9 +49,12 @@ export function SuccessPlannerCard({ planner, onOpen }: Props) {
         </View>
         <Typography variant="caption-s-regular">{subtitle}</Typography>
       </View>
-      <Button variant="secondary" onPress={onOpen}>
-        {actionLabel}
-      </Button>
+      <View className="flex-row items-center gap-2">
+        {secondaryAction}
+        <Button variant="secondary" onPress={onOpen}>
+          {actionLabel}
+        </Button>
+      </View>
     </View>
   );
 }
