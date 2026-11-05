@@ -17,10 +17,10 @@
 
 /** Renders the oncall dashboard page. Pure string building — no I/O. */
 
-import { NotetakingPipelineRun } from "~@meetings/prisma/client";
 import { REPROCESS_STEPS } from "~@meetings/server/scripts/meetings-oncall/actions";
 import {
   DashboardMeeting,
+  DashboardPipelineRun,
   DashboardRow,
   FetchFilters,
 } from "~@meetings/server/scripts/meetings-oncall/data";
@@ -106,7 +106,7 @@ function renderTranscriptionCell(meeting: DashboardMeeting): string {
 }
 
 function renderNotetakingCell(
-  pipelineRun: NotetakingPipelineRun | undefined,
+  pipelineRun: DashboardPipelineRun | undefined,
 ): string {
   if (!pipelineRun) {
     return `<span class="muted">—</span>`;
@@ -125,7 +125,7 @@ function renderNotetakingCell(
  * persists for any pipeline stage, so show it verbatim when present.
  */
 function renderErrorDetails(
-  pipelineRun: NotetakingPipelineRun | undefined,
+  pipelineRun: DashboardPipelineRun | undefined,
 ): string {
   if (!pipelineRun?.errorDetails) {
     return "";

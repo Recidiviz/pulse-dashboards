@@ -25,15 +25,28 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { MEETINGS_STATE_CODES } from "~@meetings/config";
-import {
-  NotetakingPipelineRun,
-  Prisma,
-  PrismaClient,
-  StateCode,
-} from "~@meetings/prisma/client";
+import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 
-const meetingIncludeArgs = {
-  include: {
+// The dashboard runs from a local checkout, whose schema is often ahead of the
+// databases it reads until the next deploy runs the migrations. Selecting only
+// the columns it shows, rather than every column, keeps a newly added column
+// from failing the query in every state.
+const meetingSelectArgs = {
+  select: {
+    id: true,
+    startTime: true,
+    endTime: true,
+    staffEmail: true,
+    meetingType: true,
+    meetingTypeCategory: true,
+    postMeetingProcessingStatus: true,
+    notetakingPipelineRunId: true,
+    clientId: true,
+    residentId: true,
+    recordingsGCSBucket: true,
+    finalRecordingGCSPath: true,
+    audioDeletedAt: true,
+    transcriptDeletedAt: true,
     client: { select: { pseudonymizedId: true } },
     resident: { select: { pseudonymizedId: true } },
     transcriptions: {
@@ -47,14 +60,28 @@ const meetingIncludeArgs = {
 } satisfies Prisma.MeetingDefaultArgs;
 
 export type DashboardMeeting = Prisma.MeetingGetPayload<
-  typeof meetingIncludeArgs
+  typeof meetingSelectArgs
+>;
+
+const pipelineRunSelectArgs = {
+  select: {
+    id: true,
+    meetingId: true,
+    status: true,
+    langsmithTraceId: true,
+    errorDetails: true,
+  },
+} satisfies Prisma.NotetakingPipelineRunDefaultArgs;
+
+export type DashboardPipelineRun = Prisma.NotetakingPipelineRunGetPayload<
+  typeof pipelineRunSelectArgs
 >;
 
 /** One row of the dashboard, flattened and ready to render. */
 export interface DashboardRow {
   stateCode: StateCode;
   meeting: DashboardMeeting;
-  pipelineRun: NotetakingPipelineRun | undefined;
+  pipelineRun: DashboardPipelineRun | undefined;
 }
 
 export interface FetchFilters {
@@ -108,7 +135,7 @@ async function fetchRowsForStateCode(
       // trims, so this only bounds how much each state can contribute.
       take: filters.limit,
       orderBy: { startTime: "desc" },
-      ...meetingIncludeArgs,
+      ...meetingSelectArgs,
     });
 
     if (meetings.length === 0) {
@@ -120,6 +147,7 @@ async function fetchRowsForStateCode(
     const pipelineRuns = await prisma.notetakingPipelineRun.findMany({
       where: { meetingId: { in: meetings.map((m) => m.id) } },
       orderBy: { createdAt: "desc" },
+      ...pipelineRunSelectArgs,
     });
 
     return meetings.map((meeting) => ({
@@ -157,12 +185,18 @@ export async function fetchRows(
       console.log(`  ${stateCode}: ${result.value.length} meeting(s)`);
       allRows.push(...result.value);
     } else {
-      // Prisma connection errors run many lines long; one per state would bury
-      // the summary, so only the first line is shown here.
+      // Prisma errors run many lines long; one per state would bury the
+      // summary, so only one line is shown here. Query errors open with an
+      // "Invalid invocation" header and a code frame and end with the cause,
+      // so the last non-empty line is the one that says what went wrong.
       const message = String(
         result.reason instanceof Error ? result.reason.message : result.reason,
       ).trim();
-      console.warn(`  ⚠️  ${stateCode}: skipped — ${message.split("\n")[0]}`);
+      const cause = message
+        .split("\n")
+        .filter((line) => line.trim())
+        .at(-1);
+      console.warn(`  ⚠️  ${stateCode}: skipped — ${cause?.trim()}`);
       skippedStates.push(stateCode);
     }
   });
