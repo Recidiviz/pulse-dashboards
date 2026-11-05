@@ -31,7 +31,7 @@ describe("main", () => {
     vi.resetModules();
   });
 
-  test("without a FILES env var, imports only the non-CNI files", async () => {
+  test("without a FILES env var, imports only the non-CNI files for a state without CNI", async () => {
     process.env["STATE_CODE"] = "US_XX";
 
     await import("~@meetings/import/main");
@@ -40,6 +40,21 @@ describe("main", () => {
       "clients.json",
       "residents.json",
       "staff.json",
+    ]);
+  });
+
+  test("without a FILES env var, imports the CNI files after the other files for a CNI-enabled state", async () => {
+    process.env["STATE_CODE"] = "US_CO";
+
+    await import("~@meetings/import/main");
+
+    expect(importMock).toHaveBeenCalledWith("US_CO", [
+      "clients.json",
+      "residents.json",
+      "staff.json",
+      "case_note_insights_employment_summary.json",
+      "case_note_insights_housing_summary.json",
+      "case_note_insights_payments_summary.json",
     ]);
   });
 

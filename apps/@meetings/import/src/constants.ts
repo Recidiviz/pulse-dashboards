@@ -39,16 +39,30 @@ export const CNI_HOUSING_FILE_NAME = "case_note_insights_housing_summary.json";
 export const CNI_PAYMENTS_FILE_NAME =
   "case_note_insights_payments_summary.json";
 
-// Exclude CNI files from the default list so they will only be imported via a
-// manual command (prevents import job errors when CNI files don't exist in GCS yet,
-// and to avoid clobbering "lastImportedAt" dates in the CNI summary db.
-//
-// TODO(OBT-48016): Remove this once CNI infra is out of "sandbox mode".
 export const DEFAULT_IMPORT_FILE_NAMES = [
   CLIENTS_FILE_NAME,
   RESIDENTS_FILE_NAME,
   STAFF_FILE_NAME,
 ];
+
+export const CNI_FILE_NAMES = [
+  CNI_EMPLOYMENT_FILE_NAME,
+  CNI_HOUSING_FILE_NAME,
+  CNI_PAYMENTS_FILE_NAME,
+];
+
+/**
+ * Returns the files to be imported for a given state (you can override this manually
+ * by passing a FILES override in the gcloud execute command).
+ *
+ * CNI is only enabled in US_CO right now, and CNI files must be imported after
+ * clients.json because each CNI summary references a Client row.
+ */
+export function getImportFileNames(stateCode: string) {
+  if (stateCode === "US_CO")
+    return [...DEFAULT_IMPORT_FILE_NAMES, ...CNI_FILE_NAMES];
+  return DEFAULT_IMPORT_FILE_NAMES;
+}
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [CLIENTS_FILE_NAME]: {

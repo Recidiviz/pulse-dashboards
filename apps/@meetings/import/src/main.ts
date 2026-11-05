@@ -15,20 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DEFAULT_IMPORT_FILE_NAMES } from "~@meetings/import/constants";
+import { getImportFileNames } from "~@meetings/import/constants";
 import { getImportHandler } from "~@meetings/import/handler";
 
 async function importData() {
-  if (!process.env["STATE_CODE"]) {
+  const stateCode = process.env["STATE_CODE"];
+  if (!stateCode) {
     throw new Error("Missing state code environment variable");
   }
 
-  // TODO(OBT-48016): Remove "default" logic once CNI infra is out of "sandbox mode".
-  const files = process.env["FILES"]?.split(",") ?? DEFAULT_IMPORT_FILE_NAMES;
+  const files =
+    process.env["FILES"]?.split(",") ?? getImportFileNames(stateCode);
 
   const importHandler = getImportHandler();
 
-  await importHandler.import(process.env["STATE_CODE"], files);
+  await importHandler.import(stateCode, files);
 }
 
 await importData();
