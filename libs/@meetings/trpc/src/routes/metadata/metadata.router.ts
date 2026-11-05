@@ -18,11 +18,30 @@
 import { baseProcedure, router } from "~@meetings/trpc/init";
 import { checkAppVersionInputSchema } from "~@meetings/trpc/routes/metadata/metadata.schema";
 
+const MINIMUM_APP_VERSION = "0.10.12";
+
+const UNRELEASED_APP_VERSION = "0.0.0";
+
+function parseVersion(version: string) {
+  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
+  return match ? match.slice(1).map(Number) : null;
+}
+
+export function requiresUpgrade(appVersion: string) {
+  const current = parseVersion(appVersion);
+  const minimum = parseVersion(MINIMUM_APP_VERSION);
+  if (!current || !minimum || appVersion === UNRELEASED_APP_VERSION) {
+    return false;
+  }
+
+  const differing = current.findIndex((part, i) => part !== minimum[i]);
+  return differing !== -1 && current[differing] < minimum[differing];
+}
+
 export const metadataRouter = router({
   checkAppVersion: baseProcedure
     .input(checkAppVersionInputSchema)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- we'll check versions eventually
     .query(async ({ input }) => {
-      return { requiresUpgrade: false };
+      return { requiresUpgrade: requiresUpgrade(input.appVersion) };
     }),
 });
