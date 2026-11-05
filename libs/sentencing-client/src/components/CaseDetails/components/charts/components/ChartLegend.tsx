@@ -33,11 +33,13 @@ interface ChartLegendProps {
   >;
   isReport?: boolean;
   inlineLayout?: boolean;
+  formatPercentage?: (decimal: number) => string | number;
 }
 export function ChartLegend({
   datapoints,
   isReport,
   inlineLayout,
+  formatPercentage = convertDecimalToPercentage,
 }: ChartLegendProps) {
   const chartLegend = useMemo(
     () =>
@@ -60,10 +62,10 @@ export function ChartLegend({
                 <>
                   {isReport ? (
                     <span style={{ fontWeight: 700 }}>
-                      - {convertDecimalToPercentage(dp.percentage)}%
+                      - {formatPercentage(dp.percentage)}%
                     </span>
                   ) : (
-                    <>({convertDecimalToPercentage(dp.percentage)}%)</>
+                    <>({formatPercentage(dp.percentage)}%)</>
                   )}
                 </>
               )}
@@ -71,7 +73,7 @@ export function ChartLegend({
           </CommonStyled.ChartLegendItem>
         );
       }),
-    [datapoints, isReport],
+    [datapoints, isReport, formatPercentage],
   );
 
   return (

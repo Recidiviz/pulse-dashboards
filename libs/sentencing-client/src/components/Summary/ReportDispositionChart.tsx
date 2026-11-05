@@ -19,16 +19,16 @@ import { arc, pie, PieArcDatum } from "d3-shape";
 import React from "react";
 
 import { SARInsight } from "../../api";
-import {
-  convertDecimalToPercentage,
-  printFormattedRecordString,
-} from "../../utils/utils";
+import { printFormattedRecordString } from "../../utils/utils";
 import FlagIcon from "../assets/flag-icon.svg?react";
 import {
   getSentenceLengthBucketLabel,
   LEGEND_LABELS,
 } from "../CaseDetails/components/charts/common/utils";
-import { getRiskChipLabel } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
+import {
+  formatSARDispositionPercentage,
+  getRiskChipLabel,
+} from "../CaseDetails/components/charts/DispositionChart/sarUtils";
 import { GenderToDisplayName } from "../CaseDetails/constants";
 import {
   InsightDescriptionContext,
@@ -133,12 +133,12 @@ export const ReportDispositionChartEmpty: React.FC<
 
 interface ReportDispositionChartProps {
   insight: NonNullable<SARInsight>;
-  sortedDispositionData: NonNullable<SARInsight>["dispositionData"];
+  visibleDispositionData: NonNullable<SARInsight>["dispositionData"];
 }
 
 export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
   insight,
-  sortedDispositionData,
+  visibleDispositionData,
 }) => {
   const { gender, assessmentRiskLevel, offense, dispositionNumRecords } =
     insight;
@@ -148,7 +148,7 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
   const offenseChip = offense.toUpperCase();
 
   const percentageByLabel = Object.fromEntries(
-    sortedDispositionData.map((dp) => [
+    visibleDispositionData.map((dp) => [
       getSentenceLengthBucketLabel(
         dp.recommendationType,
         dp.sentenceLengthBucketStart,
@@ -158,7 +158,9 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
     ]),
   );
 
-  const pieData = sortedDispositionData.filter((dp) => dp.percentage > 0);
+  const legendLabels = LEGEND_LABELS.filter(
+    (label) => label in percentageByLabel,
+  );
 
   return (
     <SentencingAssessmentReportSection title={SECTION_TITLE}>
@@ -204,13 +206,13 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
 
           <Styled.DispositionChartRow>
             <Styled.DispositionDonutWrapper>
-              <DispositionDonutSVG pieData={pieData} />
+              <DispositionDonutSVG pieData={visibleDispositionData} />
             </Styled.DispositionDonutWrapper>
 
             <Styled.DispositionLegendList>
-              {LEGEND_LABELS.map((label) => {
-                const pct = convertDecimalToPercentage(
-                  percentageByLabel[label] ?? 0,
+              {legendLabels.map((label) => {
+                const pct = formatSARDispositionPercentage(
+                  percentageByLabel[label],
                 );
                 const config = DISPOSITION_FILL[label] ?? FALLBACK_FILL;
                 return (

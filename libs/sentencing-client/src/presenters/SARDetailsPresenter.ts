@@ -63,13 +63,13 @@ import {
   ORASFormData,
 } from "../components/OffenderAssessment/utils";
 import {
-  DISPOSITION_TYPE_ORDER,
   SARSection,
   type SARSectionName,
 } from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
 import {
   getSARSections,
+  getVisibleSARDispositionData,
   isPSRAllExceptVictimImpact,
   isPSRVictimImpactOnly,
   shouldShowInSARReport,
@@ -283,13 +283,9 @@ export class SARDetailsPresenter implements Hydratable {
     };
   }
 
-  get sortedDispositionData() {
+  get visibleDispositionData() {
     if (!this.insight?.dispositionData) return [];
-    return [...this.insight.dispositionData].sort(
-      (a, b) =>
-        (DISPOSITION_TYPE_ORDER[a.recommendationType ?? ""] ?? 4) -
-        (DISPOSITION_TYPE_ORDER[b.recommendationType ?? ""] ?? 4),
-    );
+    return getVisibleSARDispositionData(this.insight.dispositionData);
   }
 
   get staffPseudoId(): string | undefined {

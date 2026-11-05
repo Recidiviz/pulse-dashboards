@@ -18,16 +18,8 @@
 import React from "react";
 
 import { SARInsight } from "../../api";
-import {
-  convertDecimalToPercentage,
-  formatOffenseLabel,
-  formatTimeServedPct,
-} from "../../utils/utils";
-import {
-  getDescriptionGender,
-  getSentenceLengthBucketLabel,
-  sentenceLengthLabelFilter,
-} from "../CaseDetails/components/charts/common/utils";
+import { formatOffenseLabel } from "../../utils/utils";
+import { getDescriptionGender } from "../CaseDetails/components/charts/common/utils";
 import { getRiskLevelDescription } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
 import {
   getAssessmentTypeShortName,
@@ -35,6 +27,7 @@ import {
   ORAS_TOOL_KEYS,
 } from "../OffenderAssessment/assessmentTypeUtils";
 import { RiskLevelKey } from "../OffenderAssessment/constants";
+import { getKeyFindingValues } from "../SARDetails/utils";
 
 export type InsightDescriptionContext = {
   gender: NonNullable<SARInsight>["gender"];
@@ -109,39 +102,25 @@ export function buildKeyFindingText(
   dispositionData: NonNullable<SARInsight>["dispositionData"],
   avgPctServed?: number | null,
 ): React.ReactNode {
-  if (dispositionData.length === 0) return null;
-  const mostCommon = dispositionData.reduce((best, d) =>
-    d.percentage > best.percentage ? d : best,
-  );
-
-  const mostCommonLabel = getSentenceLengthBucketLabel(
-    mostCommon.recommendationType,
-    mostCommon.sentenceLengthBucketStart,
-    mostCommon.sentenceLengthBucketEnd,
-  ).toLowerCase();
+  const values = getKeyFindingValues(dispositionData, avgPctServed);
+  if (!values) return null;
 
   const baseText = (
     <>
       The most common sentence given for previous, similar cases was{" "}
-      <strong>{mostCommonLabel}</strong>.
+      <strong>{values.mostCommonLabel}</strong>.
     </>
   );
 
-  if (avgPctServed == null) {
-    return baseText;
-  }
-
-  const incarcerationPct = dispositionData
-    .filter((d) => !sentenceLengthLabelFilter(d))
-    .reduce((sum, d) => sum + convertDecimalToPercentage(d.percentage), 0);
-  const pct = formatTimeServedPct(avgPctServed);
+  if (!values.incarceration) return baseText;
+  const { incarceration } = values;
 
   return (
     <>
-      {baseText} Of the <strong>{incarcerationPct}%</strong> of defendants
+      {baseText} Of the <strong>{incarceration.pct}%</strong> of defendants
       sentenced to incarceration, on average individuals served{" "}
-      <strong>{pct}%</strong> of their sentence in custody before being granted
-      parole.
+      <strong>{incarceration.avgPctServed}%</strong> of their sentence in
+      custody before being granted parole.
     </>
   );
 }

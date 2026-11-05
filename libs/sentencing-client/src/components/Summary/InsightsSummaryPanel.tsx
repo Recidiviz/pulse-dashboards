@@ -31,7 +31,10 @@ import * as CommonStyled from "../CaseDetails/components/charts/components/Style
 import { SENTENCE_DISTRIBUTION_TEXT } from "../CaseDetails/components/charts/constants";
 import { DispositionDonutChart } from "../CaseDetails/components/charts/DispositionChart/DispositionDonutChart";
 import { SARDispositionChartExplanation } from "../CaseDetails/components/charts/DispositionChart/SARDispositionChartExplanation";
-import { getSARDispositionChartSubtitle } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
+import {
+  formatSARDispositionPercentage,
+  getSARDispositionChartSubtitle,
+} from "../CaseDetails/components/charts/DispositionChart/sarUtils";
 import DraggableScrollContainer, {
   DraggableScrollContainerHandle,
 } from "../DraggableScrollContainer/DraggableScrollContainer";
@@ -66,7 +69,7 @@ export const InsightsSummaryPanel: React.FC<{
   presenter: SARDetailsPresenter;
 }> = observer(function InsightsSummaryPanel({ presenter }) {
   const insightData = presenter.insightData;
-  const sortedDispositionData = presenter.sortedDispositionData;
+  const visibleDispositionData = presenter.visibleDispositionData;
   const hasOrasAssessment = presenter.offenderAssessment.hasOrasAssessment;
   const emptyStateContext = presenter.emptyStateDescriptionContext;
   const clientFullName = presenter.SARAttributes.client?.fullName;
@@ -124,15 +127,16 @@ export const InsightsSummaryPanel: React.FC<{
       </CommonStyled.ChartSubTitle>
       <Styled.InsightsDonutWrapper>
         <DispositionDonutChart
-          datapoints={sortedDispositionData}
+          datapoints={visibleDispositionData}
           numberOfRecords={insightData.dispositionNumRecords}
           selectedRecommendation={null}
           inlineLayout
+          formatPercentage={formatSARDispositionPercentage}
         />
       </Styled.InsightsDonutWrapper>
     </Styled.InsightsChartCard>
   ) : (
-    <Styled.InsightsChartCard $isEmpty>
+    <Styled.InsightsChartCard>
       <CommonStyled.ChartTitle>Sentence Distribution</CommonStyled.ChartTitle>
       <InsightsChartEmptyState
         hasOrasAssessment={hasOrasAssessment}
@@ -197,7 +201,7 @@ export const InsightsSummaryPanel: React.FC<{
         </Styled.TimeServedChartWrapper>
       </Styled.InsightsChartCard>
     ) : (
-      <Styled.InsightsChartCard $isEmpty>
+      <Styled.InsightsChartCard>
         <Styled.InsightsChartTitleRow>
           <CommonStyled.ChartTitle>Average Time Served</CommonStyled.ChartTitle>
         </Styled.InsightsChartTitleRow>

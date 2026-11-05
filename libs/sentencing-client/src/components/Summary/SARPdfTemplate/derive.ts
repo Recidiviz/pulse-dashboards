@@ -24,15 +24,11 @@
 import type { SAR, SARInsight } from "../../../api";
 import {
   calculateAgeAtDate,
-  convertDecimalToPercentage,
   formatClientFullName,
   formatDisplayDate,
   titleCase,
 } from "../../../utils/utils";
-import {
-  getSentenceLengthBucketLabel,
-  sentenceLengthLabelFilter,
-} from "../../CaseDetails/components/charts/common/utils";
+import { getSentenceLengthBucketLabel } from "../../CaseDetails/components/charts/common/utils";
 import {
   NeedsToBeAddressed,
   OTHER_OPTION,
@@ -49,8 +45,12 @@ import {
   getDomainsForAssessmentType,
   ORASDomainRiskLevelField,
 } from "../../OffenderAssessment/utils";
-import { DISPOSITION_TYPE_ORDER, SARSection } from "../../SARDetails/constants";
-import { shouldShowInSARReport } from "../../SARDetails/utils";
+import { SARSection } from "../../SARDetails/constants";
+import {
+  getKeyFindingValues,
+  getVisibleSARDispositionData,
+  shouldShowInSARReport,
+} from "../../SARDetails/utils";
 
 /**
  * Minimal shape of the per-section skip flags the report reads from the raw
@@ -268,59 +268,45 @@ export const splitParagraphs = (text?: string | null): string[] =>
 
 export interface SentenceDistributionRow {
   label: string;
+  // Share of cases as a decimal, e.g. 0.38.
   pct: number;
   recommendationType: string | null;
 }
 
-/** Donut/legend rows from insight disposition data, sorted + percentage-ized. */
+/**
+ * Donut and legend rows from insight disposition data, sorted, with
+ * dispositions that have no share left out.
+ */
 export const sentenceDistributionRows = (
   insight: NonNullable<SARInsight>,
 ): SentenceDistributionRow[] =>
-  [...insight.dispositionData]
-    .sort(
-      (a, b) =>
-        (DISPOSITION_TYPE_ORDER[a.recommendationType ?? ""] ?? 4) -
-        (DISPOSITION_TYPE_ORDER[b.recommendationType ?? ""] ?? 4),
-    )
-    .map((d) => ({
-      label: getSentenceLengthBucketLabel(
-        d.recommendationType,
-        d.sentenceLengthBucketStart,
-        d.sentenceLengthBucketEnd,
-      ),
-      pct: convertDecimalToPercentage(d.percentage),
-      recommendationType: d.recommendationType,
-    }));
+  getVisibleSARDispositionData(insight.dispositionData).map((d) => ({
+    label: getSentenceLengthBucketLabel(
+      d.recommendationType,
+      d.sentenceLengthBucketStart,
+      d.sentenceLengthBucketEnd,
+    ),
+    pct: d.percentage,
+    recommendationType: d.recommendationType,
+  }));
 
 /**
- * Plain-string Key Finding sentence. The DOM report's `buildKeyFindingText`
- * returns JSX with <strong> (DOM-only); react-pdf needs a string, so this
- * ports the same logic without inline bolding.
+ * Returns the Key Finding sentence as plain text for react-pdf, which can't
+ * render the DOM report's bolded JSX (buildKeyFindingText). Both build from
+ * getKeyFindingValues.
  */
 export const keyFindingText = (
   insight: NonNullable<SARInsight>,
 ): string | null => {
-  const { dispositionData, avgPctServed } = insight;
-  if (dispositionData.length === 0) return null;
-  const mostCommon = dispositionData.reduce((best, d) =>
-    d.percentage > best.percentage ? d : best,
+  const values = getKeyFindingValues(
+    insight.dispositionData,
+    insight.avgPctServed,
   );
-  const mostCommonLabel = getSentenceLengthBucketLabel(
-    mostCommon.recommendationType,
-    mostCommon.sentenceLengthBucketStart,
-    mostCommon.sentenceLengthBucketEnd,
-  ).toLowerCase();
-
-  const base = `The most common sentence given for previous, similar cases was ${mostCommonLabel}.`;
-  if (avgPctServed == null) return base;
-
-  // Incarceration buckets are the non-flat ones (a real sentence-length range),
-  // matching the DOM report's `!sentenceLengthLabelFilter(d)`.
-  const incarcerationPct = dispositionData
-    .filter((d) => !sentenceLengthLabelFilter(d))
-    .reduce((sum, d) => sum + convertDecimalToPercentage(d.percentage), 0);
-  const served = Math.round(avgPctServed * 10) / 10;
-  return `${base} Of the ${incarcerationPct}% of defendants sentenced to incarceration, on average individuals served ${served}% of their sentence in custody before being granted parole.`;
+  if (!values) return null;
+  const base = `The most common sentence given for previous, similar cases was ${values.mostCommonLabel}.`;
+  if (!values.incarceration) return base;
+  const { pct, avgPctServed } = values.incarceration;
+  return `${base} Of the ${pct}% of defendants sentenced to incarceration, on average individuals served ${avgPctServed}% of their sentence in custody before being granted parole.`;
 };
 
 // --- Signature derivations ------------------------------------------------

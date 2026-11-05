@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatOffenseLabel } from "../../../../../../src/utils/utils";
+import {
+  convertDecimalToPercentage,
+  formatOffenseLabel,
+} from "../../../../../../src/utils/utils";
 import { SARInsight } from "../../../../../api";
 import {
   RISK_LEVELS,
@@ -31,6 +34,19 @@ export function getRiskLevelDescription(riskLevel: RiskLevelKey): string {
 /** Returns the insight chip label for riskLevel, e.g. "Moderate Risk Score". */
 export function getRiskChipLabel(riskLevel: RiskLevelKey): string {
   return `${RISK_LEVELS[riskLevel]} Risk Score`;
+}
+
+/**
+ * Returns a disposition share as display text without the "%" sign, e.g.
+ * 0.42 → "42". A non-zero share that would round to 0 gets one decimal place
+ * so it never reads as zero: 0.004 → "0.4", and anything below 0.0005 →
+ * "<0.1".
+ */
+export function formatSARDispositionPercentage(decimal: number): string {
+  const wholePct = convertDecimalToPercentage(decimal);
+  if (wholePct >= 1) return String(wholePct);
+  const pct = decimal * 100;
+  return pct >= 0.05 ? pct.toFixed(1) : "<0.1";
 }
 
 export function getSARDispositionChartSubtitle(

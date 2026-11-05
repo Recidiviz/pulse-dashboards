@@ -213,7 +213,11 @@ export const Charts = styled.div`
 
 export const SignatureSidePanel = styled(InsightsSidePanel)``;
 
-export const InsightsChartCard = styled.div<{ $isEmpty?: boolean }>`
+// Every card is the height of the Sentence Distribution card with a two-line
+// subtitle, so cards don't change height between slides or when one is empty.
+const INSIGHTS_CHART_CARD_HEIGHT = 416;
+
+export const InsightsChartCard = styled.div`
   display: flex;
   padding: 24px;
   flex-direction: column;
@@ -226,7 +230,7 @@ export const InsightsChartCard = styled.div<{ $isEmpty?: boolean }>`
   position: relative;
   flex-shrink: 0;
   width: ${INSIGHTS_CHART_CARD_WIDTH}px;
-  ${({ $isEmpty }) => $isEmpty && `min-height: 521px;`}
+  height: ${INSIGHTS_CHART_CARD_HEIGHT}px;
 `;
 
 export const InsightsSubtitle = styled.p`
@@ -251,12 +255,8 @@ export const InsightsChartTitleRow = styled.div`
 `;
 
 export const InsightsEmptyState = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 552px;
-  height: 473px;
+  flex: 1;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

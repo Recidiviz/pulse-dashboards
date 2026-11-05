@@ -290,7 +290,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   (insightData?.dispositionNumRecords ? (
                     <ReportDispositionChart
                       insight={insightData}
-                      sortedDispositionData={presenter.sortedDispositionData}
+                      visibleDispositionData={presenter.visibleDispositionData}
                     />
                   ) : (
                     <ReportDispositionChartEmpty

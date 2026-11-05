@@ -411,7 +411,12 @@ async function addSARClientsAndReports(
             0,
           );
 
-          return { assessmentType, assessmentScore, ...domainScores };
+          return {
+            assessmentType,
+            assessmentScore,
+            assessmentRiskLevel: randLevel(),
+            ...domainScores,
+          };
         })(),
         assessmentDate: faker.date.recent(),
         assessmentAdministeredBy: faker.person.fullName(),

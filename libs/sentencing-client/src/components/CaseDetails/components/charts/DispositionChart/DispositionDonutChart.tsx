@@ -37,6 +37,7 @@ interface DispositionDonutChartProps {
   isReport?: boolean;
   inlineLayout?: boolean;
   selectedRecommendation?: string | null;
+  formatPercentage?: (decimal: number) => string | number;
 }
 
 interface TooltipState {
@@ -44,7 +45,7 @@ interface TooltipState {
   y: number;
   index: number;
   label: string;
-  percentage: number;
+  percentage: string | number;
   records: number;
 }
 
@@ -54,6 +55,7 @@ export function DispositionDonutChart({
   inlineLayout,
   selectedRecommendation,
   numberOfRecords,
+  formatPercentage = convertDecimalToPercentage,
 }: DispositionDonutChartProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
@@ -119,9 +121,7 @@ export function DispositionDonutChart({
                       y: e.clientY,
                       index: i,
                       label,
-                      percentage: convertDecimalToPercentage(
-                        dp.data.percentage,
-                      ),
+                      percentage: formatPercentage(dp.data.percentage),
                       records: Math.round(numberOfRecords * dp.data.percentage),
                     });
                   }}
@@ -144,6 +144,7 @@ export function DispositionDonutChart({
                 datapoints={datapoints}
                 isReport={isReport}
                 inlineLayout={inlineLayout}
+                formatPercentage={formatPercentage}
               />
             </CommonStyled.ChartLegend>
           </div>

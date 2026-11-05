@@ -23,6 +23,7 @@ import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
 import { printFormattedRecordString } from "../../../../utils/utils";
+import { formatSARDispositionPercentage } from "../../../CaseDetails/components/charts/DispositionChart/sarUtils";
 import type { InsightDescriptionContext } from "../../insightsUtils";
 import { Donut } from "../primitives/Donut";
 import { LegendGlyphView } from "../primitives/LegendGlyph";
@@ -132,7 +133,7 @@ export const SentenceDistribution: React.FC<{
                   fontWeight: font.weight.bold,
                 }}
               >
-                {it.pct}%
+                {formatSARDispositionPercentage(it.pct)}%
               </Text>
             </View>
           ))}

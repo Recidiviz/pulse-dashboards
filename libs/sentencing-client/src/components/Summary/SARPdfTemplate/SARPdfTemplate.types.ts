@@ -54,6 +54,7 @@ export type LegendGlyph =
  */
 export interface SentenceDistributionItem {
   label: string;
+  // Share of cases as a decimal, e.g. 0.38.
   pct: number;
   glyph: LegendGlyph;
 }

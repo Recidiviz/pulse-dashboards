@@ -15,13 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { SAR } from "../../api";
+import type { SAR, SARInsight } from "../../api";
+import {
+  convertDecimalToPercentage,
+  formatTimeServedPct,
+} from "../../utils/utils";
+import {
+  getSentenceLengthBucketLabel,
+  sentenceLengthLabelFilter,
+} from "../CaseDetails/components/charts/common/utils";
 import {
   DECLINED_SAR_REPORT_SECTIONS,
+  DISPOSITION_TYPE_ORDER,
   SAR_REPORT_SECTIONS,
   SARSection,
   type SARSectionName,
 } from "./constants";
+
+type DispositionData = NonNullable<SARInsight>["dispositionData"];
 
 /** True when this officer is assigned only the Victim Impact section. */
 export const isPSRVictimImpactOnly = (
@@ -109,3 +120,60 @@ export const shouldShowInSARReport = (
   }
   return shouldShowInSARSummary(section, scope);
 };
+
+/**
+ * Returns the dispositions the SAR Sentence Distribution shows: those with a
+ * non-zero share, in legend order (Deferred Prosecution, Probation, Treatment
+ * In Prison, Suspended, then everything else).
+ */
+export function getVisibleSARDispositionData(
+  dispositionData: DispositionData,
+): DispositionData {
+  return dispositionData
+    .filter((d) => d.percentage > 0)
+    .sort(
+      (a, b) =>
+        (DISPOSITION_TYPE_ORDER[a.recommendationType ?? ""] ?? 4) -
+        (DISPOSITION_TYPE_ORDER[b.recommendationType ?? ""] ?? 4),
+    );
+}
+
+export interface KeyFindingValues {
+  // Lowercased label of the most common disposition, e.g. "probation".
+  mostCommonLabel: string;
+  // Null when there is no time-served data.
+  incarceration: {
+    // Whole-number percent of cases sentenced to incarceration.
+    pct: number;
+    // Average percent of sentence served in custody, e.g. "16.3".
+    avgPctServed: string;
+  } | null;
+}
+
+/**
+ * Returns the values the SAR Key Finding sentence is built from, or null when
+ * there is no disposition data. Incarceration buckets are the ones with a real
+ * sentence-length range, so they fail sentenceLengthLabelFilter.
+ */
+export function getKeyFindingValues(
+  dispositionData: DispositionData,
+  avgPctServed: number | null | undefined,
+): KeyFindingValues | null {
+  if (dispositionData.length === 0) return null;
+  const mostCommon = dispositionData.reduce((best, d) =>
+    d.percentage > best.percentage ? d : best,
+  );
+  const mostCommonLabel = getSentenceLengthBucketLabel(
+    mostCommon.recommendationType,
+    mostCommon.sentenceLengthBucketStart,
+    mostCommon.sentenceLengthBucketEnd,
+  ).toLowerCase();
+  if (avgPctServed == null) return { mostCommonLabel, incarceration: null };
+  const pct = dispositionData
+    .filter((d) => !sentenceLengthLabelFilter(d))
+    .reduce((sum, d) => sum + convertDecimalToPercentage(d.percentage), 0);
+  return {
+    mostCommonLabel,
+    incarceration: { pct, avgPctServed: formatTimeServedPct(avgPctServed) },
+  };
+}
