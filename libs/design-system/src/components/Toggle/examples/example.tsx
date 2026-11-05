@@ -31,29 +31,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "storybook/test";
+import { useState } from "react";
 
-import SwitchExample, { type SwitchExampleArgs } from "./examples/example";
-import exampleSource from "./examples/example?raw";
+import { Toggle, type ToggleProps } from "../Toggle";
 
-const meta: Meta<SwitchExampleArgs> = {
-  title: "Sentence Dates/Switch",
-  render: (args) => <SwitchExample {...args} />,
-  parameters: {
-    docs: {
-      codePanel: true,
-      source: { code: exampleSource },
-    },
-  },
-  args: {
-    onChange: fn(),
-    children: "Hide my sentence dates",
-  },
-};
+export type ToggleExampleArgs = Omit<ToggleProps, "checked">;
 
-export default meta;
+export default function ToggleExample({
+  onChange,
+  children,
+}: ToggleExampleArgs) {
+  const [checked, setChecked] = useState(true);
 
-type SwitchStory = StoryObj<typeof meta>;
-
-export const Default: SwitchStory = {};
+  return (
+    <Toggle
+      checked={checked}
+      onChange={(next) => {
+        setChecked(next);
+        onChange?.(next);
+      }}
+    >
+      {children}
+    </Toggle>
+  );
+}

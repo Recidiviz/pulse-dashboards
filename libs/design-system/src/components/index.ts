@@ -29,6 +29,7 @@ export * from "./Modal";
 export * from "./Pill";
 export * from "./RadioGroup";
 export * from "./Stepper";
+export * from "./Toggle";
 export * from "./Toolbar";
 export * from "./Tooltip";
 export * from "./Typography";

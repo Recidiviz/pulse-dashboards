@@ -20,15 +20,16 @@ import * as React from "react";
 import { type JSX } from "react";
 import styled from "styled-components";
 
-import { palette, typography } from "~design-system";
+import { palette, typography } from "../../styles";
 
-export interface SwitchProps {
+export interface ToggleProps {
   checked: boolean;
-  onChange: (checked: boolean) => void;
   children: React.ReactNode;
+  onChange?: (checked: boolean) => void;
+  className?: string;
 }
 
-const SwitchLabel = styled.label`
+const ToggleLabel = styled.label`
   ${typography.Sans14}
   display: inline-flex;
   align-items: center;
@@ -38,7 +39,7 @@ const SwitchLabel = styled.label`
   text-decoration: underline;
 `;
 
-const SwitchTrack = styled.span`
+const ToggleTrack = styled.span`
   position: relative;
   display: inline-flex;
   flex-shrink: 0;
@@ -46,7 +47,7 @@ const SwitchTrack = styled.span`
   height: ${rem(15)};
 `;
 
-const SwitchInput = styled.input`
+const ToggleInput = styled.input`
   appearance: none;
   -webkit-appearance: none;
   width: 100%;
@@ -71,7 +72,7 @@ const SwitchInput = styled.input`
   }
 `;
 
-const SwitchThumb = styled.span.attrs({ "aria-hidden": "true" })`
+const ToggleThumb = styled.span.attrs({ "aria-hidden": "true" })`
   position: absolute;
   top: ${rem(2)};
   left: ${rem(2)};
@@ -82,28 +83,29 @@ const SwitchThumb = styled.span.attrs({ "aria-hidden": "true" })`
   pointer-events: none;
   transition: transform 0.1s ease-in-out;
 
-  ${SwitchInput}:checked + & {
+  ${ToggleInput}:checked + & {
     transform: translateX(${rem(9)});
   }
 `;
 
-export const Switch = ({
+export const Toggle = ({
   checked,
   onChange,
   children,
-}: SwitchProps): JSX.Element => {
+  className,
+}: ToggleProps): JSX.Element => {
   return (
-    <SwitchLabel>
-      <SwitchTrack>
-        <SwitchInput
+    <ToggleLabel className={className}>
+      <ToggleTrack>
+        <ToggleInput
           type="checkbox"
           role="switch"
           checked={checked}
-          onChange={(event) => onChange(event.target.checked)}
+          onChange={(event) => onChange?.(event.target.checked)}
         />
-        <SwitchThumb />
-      </SwitchTrack>
+        <ToggleThumb />
+      </ToggleTrack>
       {children}
-    </SwitchLabel>
+    </ToggleLabel>
   );
 };

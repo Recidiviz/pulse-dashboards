@@ -22,11 +22,10 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import { useRootStore } from "~@jii/data";
-import { spacing } from "~design-system";
+import { spacing, Toggle } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import type { SentenceDatesData } from "../../data/types";
-import { Switch } from "../Switch/Switch";
 import { SentenceDatesPresenter } from "./SentenceDatesPresenter";
 import { SentenceDatesComponents, StateCodeWithSentenceDates } from "./types";
 
@@ -105,12 +104,12 @@ const ManagedComponent = observer(function ManagedComponent({
       </CardsWrapper>
       {showToggle && (
         <ToggleWrapper>
-          <Switch
+          <Toggle
             checked={!hidden}
             onChange={(checked) => presenter.setHidden(!checked)}
           >
             {hidden ? showToggleText : hideToggleText}
-          </Switch>
+          </Toggle>
         </ToggleWrapper>
       )}
     </SectionWrapper>
