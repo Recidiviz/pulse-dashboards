@@ -25,6 +25,9 @@ export const usArResidentsConfig: ResidentsConfig = {
   translation: {
     additionalLanguages: [],
   },
+  enabledResidentFlags: {
+    usArEdovoCredits: parseISO("2026-11-12T08:00:00-06:00"),
+  },
   enabledUserFlags: {
     useNewResidentData: parseISO("2026-10-05T16:00:00-07:00"),
   },
