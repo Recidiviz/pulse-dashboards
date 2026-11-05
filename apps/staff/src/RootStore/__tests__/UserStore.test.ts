@@ -1179,16 +1179,16 @@ describe("parole Public Calendar route-based access (US_CO)", () => {
     return store;
   }
 
-  test("hides the Public Calendar when the user lacks the parolePublicCalendar route", async () => {
+  test("hides the Public Calendar when the user lacks the publicCalendar route", async () => {
     const store = await authorizeUser({ stateCode: "US_CO", routes: {} });
 
     expect(store.userAllowedNavigation?.parole).toBeUndefined();
   });
 
-  test("shows only the Public Calendar when the user has only the parolePublicCalendar route", async () => {
+  test("shows only the Public Calendar when the user has only the publicCalendar route", async () => {
     const store = await authorizeUser({
       stateCode: "US_CO",
-      routes: { parolePublicCalendar: true },
+      routes: { publicCalendar: true },
     });
 
     expect(store.userAllowedNavigation?.parole).toEqual(["publicCalendar"]);
@@ -1209,7 +1209,7 @@ describe("parole Public Calendar route-based access (US_CO)", () => {
   test("keeps the docket first for a user with both routes, so they land on it", async () => {
     const store = await authorizeUser({
       stateCode: "US_CO",
-      routes: { parole: true, parolePublicCalendar: true },
+      routes: { parole: true, publicCalendar: true },
     });
 
     expect(store.userAllowedNavigation?.parole).toEqual([
@@ -1229,7 +1229,7 @@ describe("parole Public Calendar route-based access (US_CO)", () => {
     const store = await authorizeUser(
       {
         stateCode: "US_CO",
-        routes: { parole: true, parolePublicCalendar: true },
+        routes: { parole: true, publicCalendar: true },
       },
       {},
     );
@@ -1265,7 +1265,7 @@ describe("parole Public Calendar route-based access (US_CO)", () => {
         email_verified: true,
         [metadataField]: {
           stateCode: "US_CO",
-          routes: { parolePublicCalendar: true },
+          routes: { publicCalendar: true },
         },
       });
       const store = new UserStore({

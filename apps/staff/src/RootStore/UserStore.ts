@@ -653,10 +653,10 @@ export default class UserStore {
         }
 
         // The Public Calendar subpage has its own route permission,
-        // parolePublicCalendar (Auth0 sends parole_parolePublicCalendar), so
-        // the parole permission doesn't grant it.
+        // publicCalendar (Auth0 sends parole_publicCalendar), so the parole
+        // permission doesn't grant it.
         if (route === "parole" && subpage === "publicCalendar") {
-          return permissionName === "parolePublicCalendar";
+          return permissionName === "publicCalendar";
         }
 
         return (
