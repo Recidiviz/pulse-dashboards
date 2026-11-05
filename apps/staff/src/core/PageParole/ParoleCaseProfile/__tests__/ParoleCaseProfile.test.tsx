@@ -115,6 +115,15 @@ describe("ParoleCaseProfile", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders NotFound when no resident exists for the pseudonymizedId", async () => {
+    renderAtPath("/parole/case/99999999");
+
+    expect(await screen.findByText("Oops Page Not Found")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /^back$/i }),
+    ).not.toBeInTheDocument();
+  });
+
   describe("the identity/hearing info section", () => {
     it("renders the individual's identity, personal, hearing, and sentence info", async () => {
       renderAtPath("/parole/case/45821");

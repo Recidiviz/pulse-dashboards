@@ -15,17 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import { ParoleCase } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { ParoleConfig } from "../../core/models/types";
+import { ParoleCaseNotFoundError } from "../api/ParoleCaseNotFoundError";
 import { ParoleStore } from "../ParoleStore";
 
 /**
  * Drives the Parole case profile (detail) page: hydrates a single case's
  * data by pseudonymized id through ParoleStore, which caches it for the session.
+ * An id with no resident still hydrates successfully, with isNotFound set.
  */
 export class ParoleCaseProfilePresenter implements Hydratable {
   constructor(
@@ -38,18 +40,29 @@ export class ParoleCaseProfilePresenter implements Hydratable {
       expectPopulated: [
         () => {
           if (
+            !this.isNotFound &&
             !this.paroleStore.caseDetailsByPseudonymizedId.has(
               this.pseudonymizedId,
             )
           )
-            throw new Error(
-              `Failed to populate Parole case [${this.pseudonymizedId}]`,
-            );
+            throw new Error("Failed to populate Parole case");
         },
       ],
-      populate: () => this.paroleStore.populateCaseDetail(this.pseudonymizedId),
+      populate: async () => {
+        try {
+          await this.paroleStore.populateCaseDetail(this.pseudonymizedId);
+        } catch (e) {
+          if (!(e instanceof ParoleCaseNotFoundError)) throw e;
+          runInAction(() => {
+            this.isNotFound = true;
+          });
+        }
+      },
     });
   }
+
+  /** True once hydration found no resident for the pseudonymized id. */
+  isNotFound = false;
 
   private hydrator: HydratesFromSource;
 

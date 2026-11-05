@@ -29,6 +29,7 @@ import {
 
 import { ParoleStore } from "../ParoleStore";
 import { ParoleAPI } from "./interface";
+import { ParoleCaseNotFoundError } from "./ParoleCaseNotFoundError";
 
 export class ParoleOfflineAPIClient implements ParoleAPI {
   constructor(public readonly paroleStore: ParoleStore) {}
@@ -54,11 +55,7 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
 
   async caseDetail(pseudonymizedId: string): Promise<ParoleCase> {
     const caseDetail = this.casesFixture[pseudonymizedId];
-    if (!caseDetail) {
-      throw new Error(
-        `Parole case ${pseudonymizedId} not present in fixture data`,
-      );
-    }
+    if (!caseDetail) throw new ParoleCaseNotFoundError();
     return caseDetail;
   }
 

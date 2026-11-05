@@ -33,8 +33,10 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   presenter: ParoleCaseProfilePresenter;
 }) {
   const { currentTenantId } = useRootStore();
+  if (presenter.isNotFound) return <NotFound />;
+
   // ModelHydrator only renders this component once hydration has succeeded,
-  // so `presenter.caseDetail` is safe to access here.
+  // so `presenter.caseDetail` is safe to access here once isNotFound is ruled out.
   const { caseDetail, config } = presenter;
 
   const StateCaseProfile = currentTenantId

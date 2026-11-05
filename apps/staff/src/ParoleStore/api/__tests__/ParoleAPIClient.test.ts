@@ -32,6 +32,7 @@ import { RootStore } from "../../../RootStore";
 import { formatDateToISO } from "../../../utils";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleAPIClient } from "../ParoleAPIClient";
+import { ParoleCaseNotFoundError } from "../ParoleCaseNotFoundError";
 
 function buildUsIdResident(
   raw: Partial<RawWorkflowsResidentRecord> = {},
@@ -463,14 +464,15 @@ describe("ParoleAPIClient", () => {
       );
     });
 
-    it("throws when no resident is found for the pseudonymizedId", async () => {
+    it("throws ParoleCaseNotFoundError, without the id, when no resident is found", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         undefined,
       );
 
-      await expect(client.caseDetail("UNKNOWN_ID")).rejects.toThrow(
-        /No US_ID resident found for pseudonymizedId \[UNKNOWN_ID\]/,
-      );
+      const error = await client.caseDetail("UNKNOWN_ID").catch((e) => e);
+
+      expect(error).toBeInstanceOf(ParoleCaseNotFoundError);
+      expect(error.message).not.toContain("UNKNOWN_ID");
     });
 
     it("fails when the profile read is denied", async () => {

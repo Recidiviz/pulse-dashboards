@@ -18,6 +18,7 @@
 import { ParoleCase } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
+import { ParoleCaseNotFoundError } from "../../api/ParoleCaseNotFoundError";
 import { ParoleOfflineAPIClient } from "../../api/ParoleOfflineAPIClient";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleCaseProfilePresenter } from "../ParoleCaseProfilePresenter";
@@ -105,6 +106,30 @@ describe("ParoleCaseProfilePresenter", () => {
     await presenter.hydrate();
 
     expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
+  });
+
+  test("an id with no resident hydrates with isNotFound set", async () => {
+    vi.spyOn(ParoleOfflineAPIClient.prototype, "caseDetail").mockRejectedValue(
+      new ParoleCaseNotFoundError(),
+    );
+
+    await presenter.hydrate();
+
+    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
+    expect(presenter.isNotFound).toBe(true);
+    expect(() => presenter.caseDetail).toThrow(
+      "caseDetail accessed before hydration completed successfully",
+    );
+  });
+
+  test("isNotFound stays false for a found case", async () => {
+    vi.spyOn(ParoleOfflineAPIClient.prototype, "caseDetail").mockResolvedValue(
+      TEST_CASE,
+    );
+
+    await presenter.hydrate();
+
+    expect(presenter.isNotFound).toBe(false);
   });
 
   test("caseDetail throws before hydration completes", () => {

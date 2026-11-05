@@ -60,6 +60,7 @@ import { FirestoreDateRangeFilter } from "../../FirestoreStore/FirestoreStore";
 import { formatDateToISO, formatNameLastFirstMiddle } from "../../utils";
 import { ParoleStore } from "../ParoleStore";
 import { ParoleAPI } from "./interface";
+import { ParoleCaseNotFoundError } from "./ParoleCaseNotFoundError";
 
 export const SUPPORTED_TENANT_IDS = ["US_ID", "US_CO"] as const;
 export type SupportedTenantId = (typeof SUPPORTED_TENANT_IDS)[number];
@@ -325,8 +326,8 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
-   * The full case profile for one resident. Throws when the current tenant
-   * has no resident under that id.
+   * The full case profile for one resident. Throws ParoleCaseNotFoundError
+   * when the current tenant has no resident under that id.
    *
    * @param pseudonymizedId - The resident's pseudonymized id, as the docket
    *   links to it.
@@ -342,11 +343,7 @@ export class ParoleAPIClient implements ParoleAPI {
         currentTenantId,
       ),
     ]);
-    if (!resident) {
-      throw new Error(
-        `No ${currentTenantId} resident found for pseudonymizedId [${pseudonymizedId}].`,
-      );
-    }
+    if (!resident) throw new ParoleCaseNotFoundError();
 
     return this.caseDetailForResident(resident, profile);
   }
