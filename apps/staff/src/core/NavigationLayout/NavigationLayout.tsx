@@ -571,7 +571,7 @@ function HousingLink() {
         onClick={(e) => e.stopPropagation()}
       >
         {isMobile && <Icon kind={IconSVG.Open} width={20} />}
-        Transitional Housing
+        Reentry Housing
         <BetaPill textColor="rgba(0, 85, 188, 1)">BETA</BetaPill>
         <Icon kind={IconSVG.Open} width={15} />
       </a>

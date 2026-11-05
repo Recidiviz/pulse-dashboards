@@ -73,7 +73,7 @@ async function renderAndOpenProfileMenu() {
 // DropdownMenuItem wraps each link in its own role="menuitem" button, so a
 // role query matches both; select the anchor itself instead.
 function getHousingLink() {
-  return screen.getByText("Transitional Housing").closest("a");
+  return screen.getByText("Reentry Housing").closest("a");
 }
 
 describe("the Transitional Housing link", () => {
