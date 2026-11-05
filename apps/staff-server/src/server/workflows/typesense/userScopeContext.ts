@@ -34,6 +34,7 @@ import type { RoleSubtype } from "~datatypes";
 import { fetchOfflineUser } from "../../core";
 import { fetchImpersonatedUserRestrictions } from "../../routes/api";
 import { getAppMetadata } from "../../utils/getAppMetadata";
+import { getUserEmail } from "../../utils/getUserEmail";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { readOfflineUserOverrides } from "../../utils/offlineUserOverrides";
 import type { RequestIdentity, UserScopeContext } from "./types";
@@ -68,7 +69,10 @@ function resolveRequestIdentity(req: Request): RequestIdentity {
       )
     : (req as Request & { user?: Record<string, unknown> }).user;
 
-  return requestIdentityFromMetadata(user?.["email"], getAppMetadata({ user }));
+  return requestIdentityFromMetadata(
+    getUserEmail({ user }),
+    getAppMetadata({ user }),
+  );
 }
 
 /**

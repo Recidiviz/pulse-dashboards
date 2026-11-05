@@ -26,6 +26,17 @@ import { type SupervisedEntry, supervisedStaffDoc } from "./supervisedEntry";
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../core");
 
+// getAppMetadata and getUserEmail read the namespace when their modules load,
+// so it has to be set before the imports above run; vi.hoisted runs first.
+const METADATA_NAMESPACE = vi.hoisted(() => {
+  const namespace = "https://dashboard.recidiviz.org/";
+  vi.stubEnv("METADATA_NAMESPACE", namespace);
+  return namespace;
+});
+afterAll(() => {
+  vi.unstubAllEnvs();
+});
+
 // Only fetchImpersonatedUserRestrictions is used from routes/api in the mint
 // path; stub it so impersonation tests don't hit the recidiviz-data auth API.
 const mockFetchImpersonatedUserRestrictions = vi.fn();
@@ -186,9 +197,9 @@ function makeUser(
   } = {},
 ) {
   return {
-    email: overrides.email ?? "user@example.com",
-    // process.env.METADATA_NAMESPACE is undefined in tests, so the prefix is "undefined"
-    undefinedapp_metadata: {
+    [`${METADATA_NAMESPACE}email_address`]:
+      overrides.email ?? "user@example.com",
+    [`${METADATA_NAMESPACE}app_metadata`]: {
       ...(overrides.externalId === null
         ? {}
         : { externalId: overrides.externalId ?? "OFFICER123" }),

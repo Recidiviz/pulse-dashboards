@@ -36,7 +36,11 @@ export function fetchOfflineUser({
     name,
     given_name: "Demo",
     family_name: "Jones",
+    // The frontend treats this object as an Auth0 ID token, which reads the
+    // plain email; staff-server treats it as an access token, which carries
+    // the email only in the namespaced claim. Offline mode needs both.
     email,
+    [`${process.env.METADATA_NAMESPACE}email_address`]: email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
       role: "supervision_officer",
       externalId,
