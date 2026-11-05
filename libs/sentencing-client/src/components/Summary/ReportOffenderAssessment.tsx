@@ -36,7 +36,7 @@ import {
   STATIC_99R_RISK_CATEGORY_TO_RISK_LEVEL,
 } from "../OffenderAssessment/utils";
 import { useStore } from "../StoreProvider/StoreProvider";
-import { ReportBlock } from "./ReportBlock";
+import { ReportBlock, SplittableFreeText } from "./ReportBlock";
 import { ReportDomainSection } from "./ReportDomainSection";
 import {
   ReportDrugHistoryTable,
@@ -206,18 +206,14 @@ export const ReportOffenderAssessment: React.FC<
         </Styled.SectionTitleContainer>
         {note && <Styled.HeaderMetaNote>{note}</Styled.HeaderMetaNote>}
         {isDeclined && sarData.defendantStatement && (
-          <Styled.FreeTextContent>
-            {sarData.defendantStatement}
-          </Styled.FreeTextContent>
+          <SplittableFreeText text={sarData.defendantStatement} />
         )}
         {!shouldShowOrasContent(
           sarData.ORASDomainsAvailable,
           activeFeatureVariants,
         ) &&
           sarData.noORASDomainReason && (
-            <Styled.FreeTextContent>
-              {sarData.noORASDomainReason}
-            </Styled.FreeTextContent>
+            <SplittableFreeText text={sarData.noORASDomainReason} />
           )}
       </ReportBlock>
 
@@ -250,9 +246,7 @@ export const ReportOffenderAssessment: React.FC<
               </Styled.ReportCardHeader>
               {sarData.sexualHistorySummary && (
                 <Styled.ReportDomainSectionBody>
-                  <Styled.FreeTextContent>
-                    {sarData.sexualHistorySummary}
-                  </Styled.FreeTextContent>
+                  <SplittableFreeText text={sarData.sexualHistorySummary} />
                 </Styled.ReportDomainSectionBody>
               )}
             </ReportBlock>

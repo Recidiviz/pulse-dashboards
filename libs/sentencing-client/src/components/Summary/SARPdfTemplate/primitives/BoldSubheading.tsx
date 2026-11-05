@@ -20,22 +20,25 @@ import React from "react";
 
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { font, space } from "../tokens";
+import { KeepWithNext } from "./KeepWithNext";
 
 export const BoldSubheading: React.FC<{
   children: React.ReactNode;
   style?: PdfStyle;
 }> = ({ children, style = {} }) => (
-  <Text
-    style={[
-      {
-        fontSize: font.size.base,
-        fontWeight: font.weight.bold,
-        marginTop: space[6],
-        marginBottom: space[4],
-      },
-      style,
-    ]}
-  >
-    {children}
-  </Text>
+  <KeepWithNext>
+    <Text
+      style={[
+        {
+          fontSize: font.size.base,
+          fontWeight: font.weight.bold,
+          marginTop: space[6],
+          marginBottom: space[4],
+        },
+        style,
+      ]}
+    >
+      {children}
+    </Text>
+  </KeepWithNext>
 );

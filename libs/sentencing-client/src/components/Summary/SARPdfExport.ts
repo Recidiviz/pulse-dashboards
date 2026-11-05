@@ -72,42 +72,55 @@ const HTML2CANVAS_OPTS = {
 };
 
 /**
- * Shared conversion context for a tbody measurement pass.
- * Avoids recomputing tbodyRect / mmPerCSSPx across multiple helpers.
+ * Shared conversion context for a tbody measurement pass, so helpers don't
+ * each recompute the tbody's scale. toMM converts a viewport y position in CSS
+ * pixels to MM from the tbody top.
  */
 function getTbodyMeasurementContext(
   tbodyEl: HTMLElement,
   pageWidthMM: number,
-): { tbodyRect: DOMRect; mmPerCSSPx: number } {
+): { mmPerCSSPx: number; toMM: (y: number) => number } {
   const tbodyRect = tbodyEl.getBoundingClientRect();
   // getBoundingClientRect().width is more reliable than offsetWidth on <tbody>.
-  return { tbodyRect, mmPerCSSPx: pageWidthMM / tbodyRect.width };
+  const mmPerCSSPx = pageWidthMM / tbodyRect.width;
+  return { mmPerCSSPx, toMM: (y) => (y - tbodyRect.top) * mmPerCSSPx };
 }
 
 /**
  * Measures each .sar-no-split element's top/bottom position relative to
  * the tbody, converting CSS pixels to PDF millimetres.
  *
+ * A block that contains nested blocks also gets a "head" block, from its top
+ * to the bottom of the head of its first nested block. When the outer block is
+ * too tall to keep whole, the head block still keeps its heading on the same
+ * page as the first nested block (e.g. a section title and the first line of
+ * its free text).
+ *
  * Must be called BEFORE html2canvas — canvas capture can shift DOM layout,
  * making post-capture getBoundingClientRect unreliable.
  */
-function measureNoSplitBlocks(
+export function measureNoSplitBlocks(
   tbodyEl: HTMLElement,
   pageWidthMM: number,
 ): BlockBound[] {
-  const { tbodyRect, mmPerCSSPx } = getTbodyMeasurementContext(
-    tbodyEl,
-    pageWidthMM,
+  const { toMM } = getTbodyMeasurementContext(tbodyEl, pageWidthMM);
+  const elements = Array.from(
+    tbodyEl.querySelectorAll<HTMLElement>(`.${NO_SPLIT_CLASS}`),
   );
 
-  return Array.from(
-    tbodyEl.querySelectorAll<HTMLElement>(`.${NO_SPLIT_CLASS}`),
-  ).map((el) => {
+  const headBottom = (el: Element): number => {
+    const firstNested = el.querySelector(`.${NO_SPLIT_CLASS}`);
+    return firstNested
+      ? headBottom(firstNested)
+      : el.getBoundingClientRect().bottom;
+  };
+
+  return elements.flatMap((el) => {
     const { top, bottom } = el.getBoundingClientRect();
-    return {
-      top: (top - tbodyRect.top) * mmPerCSSPx,
-      bottom: (bottom - tbodyRect.top) * mmPerCSSPx,
-    };
+    const block = { top: toMM(top), bottom: toMM(bottom) };
+    return el.querySelector(`.${NO_SPLIT_CLASS}`)
+      ? [block, { top: block.top, bottom: toMM(headBottom(el)) }]
+      : [block];
   });
 }
 
@@ -122,14 +135,11 @@ function measurePageStartPositions(
   tbodyEl: HTMLElement,
   pageWidthMM: number,
 ): number[] {
-  const { tbodyRect, mmPerCSSPx } = getTbodyMeasurementContext(
-    tbodyEl,
-    pageWidthMM,
-  );
+  const { toMM } = getTbodyMeasurementContext(tbodyEl, pageWidthMM);
 
   return Array.from(
     tbodyEl.querySelectorAll<HTMLElement>(`.${PAGE_START_CLASS}`),
-  ).map((el) => (el.getBoundingClientRect().top - tbodyRect.top) * mmPerCSSPx);
+  ).map((el) => toMM(el.getBoundingClientRect().top));
 }
 
 type ContinuationHeader = {
@@ -155,10 +165,7 @@ function measureContinuationHeaders(
   tbodyEl: HTMLElement,
   pageWidthMM: number,
 ): ContinuationHeader[] {
-  const { tbodyRect, mmPerCSSPx } = getTbodyMeasurementContext(
-    tbodyEl,
-    pageWidthMM,
-  );
+  const { toMM } = getTbodyMeasurementContext(tbodyEl, pageWidthMM);
   const result: ContinuationHeader[] = [];
 
   for (const el of Array.from(
@@ -172,9 +179,7 @@ function measureContinuationHeaders(
     // Use the block's top, not the element's top. The element returns a zero
     // rect when display:none; the block remains in layout with the same top
     // position (hiding the element shrinks the block height, not its top).
-    const headerTop =
-      (continuationSection.getBoundingClientRect().top - tbodyRect.top) *
-      mmPerCSSPx;
+    const headerTop = toMM(continuationSection.getBoundingClientRect().top);
 
     let prev = continuationSection.previousElementSibling as HTMLElement | null;
     while (prev && !prev.classList.contains(NO_SPLIT_CLASS)) {
@@ -182,8 +187,7 @@ function measureContinuationHeaders(
     }
     if (!prev) continue;
 
-    const primaryBottom =
-      (prev.getBoundingClientRect().bottom - tbodyRect.top) * mmPerCSSPx;
+    const primaryBottom = toMM(prev.getBoundingClientRect().bottom);
     result.push({ element: el, headerTop, primaryBottom });
   }
 
@@ -207,13 +211,15 @@ function canvasToJpeg(canvas: HTMLCanvasElement): string {
  * Determines where a page should end.
  *
  * 1. Start at the natural cut (bodyOffset + sliceMM).
- * 2. Snap back to the top of the first no-split block that straddles the cut.
+ * 2. Snap back to the top of the highest no-split block that straddles the
+ *    cut, ignoring blocks taller than a slice.
  * 3. Snap back further to any page-start element within the page's range,
  *    ensuring it always begins at the top of the next page.
- * 4. Guard: if a block is taller than a full slice, force-advance to avoid an
- *    infinite loop.
+ * 4. Guard: if the cut didn't advance, force-advance a full slice to avoid
+ *    an infinite loop. The snaps above always land past bodyOffset, so this
+ *    is a safety net only.
  */
-function computePageCutPoint(
+export function computePageCutPoint(
   bodyOffset: number,
   sliceMM: number,
   bodyMM: number,
@@ -222,19 +228,25 @@ function computePageCutPoint(
 ): number {
   let cutPoint = Math.min(bodyOffset + sliceMM, bodyMM);
 
-  // Snap back to just before the first no-split block that straddles the cut.
-  // Use an inset rather than the exact block top so the white mask on the
-  // previous page covers any JPEG DCT bleed from the card's border/background.
-  for (const block of blocks) {
-    if (
-      block.top < cutPoint &&
-      block.bottom > cutPoint &&
-      block.top > bodyOffset
-    ) {
-      const insetSnap = block.top - SNAP_INSET_MM;
-      cutPoint = insetSnap > bodyOffset ? insetSnap : block.top;
-      break;
-    }
+  // Snap back to just before the highest no-split block that straddles the
+  // cut, so a nested block moves with its outer block. Blocks taller than a
+  // slice split wherever they fall; snapping before one would leave a nearly
+  // blank page. Use an inset rather than the exact block top so the white
+  // mask on the previous page covers any JPEG DCT bleed from a card's
+  // border/background.
+  const straddlingTops = blocks
+    .filter(
+      (block) =>
+        block.bottom - block.top <= sliceMM &&
+        block.top < cutPoint &&
+        block.bottom > cutPoint &&
+        block.top > bodyOffset,
+    )
+    .map((block) => block.top);
+  if (straddlingTops.length) {
+    const top = Math.min(...straddlingTops);
+    const insetSnap = top - SNAP_INSET_MM;
+    cutPoint = insetSnap > bodyOffset ? insetSnap : top;
   }
 
   // Snap back further to the first page-start element within this page's range.
@@ -246,7 +258,7 @@ function computePageCutPoint(
     }
   }
 
-  // Guard: block is taller than a full page slice — force-advance to avoid an infinite loop.
+  // Guard: force-advance if the cut didn't move past bodyOffset.
   if (cutPoint <= bodyOffset) cutPoint = bodyOffset + sliceMM;
 
   return cutPoint;

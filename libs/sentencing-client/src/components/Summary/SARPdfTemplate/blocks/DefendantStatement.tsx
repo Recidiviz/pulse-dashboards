@@ -30,9 +30,8 @@ export const DefendantStatement: React.FC<{ style?: PdfStyle }> = ({
   const { sar } = useSAR();
   if (!shouldShowDefendantStatement(sar)) return null;
   return (
-    // Keep heading attached to its narrative so we don't see a lone label at
-    // the bottom of a page with the text on the next.
-    <View style={style} wrap={false}>
+    // The statement can run longer than a page, so the section has to wrap.
+    <View style={style}>
       <UnderlinedHeading>Defendant&apos;s Version</UnderlinedHeading>
       <Paragraph>{sar.defendantStatement}</Paragraph>
     </View>

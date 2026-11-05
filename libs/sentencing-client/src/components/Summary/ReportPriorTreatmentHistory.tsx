@@ -29,7 +29,11 @@ import {
   DOCTreatmentHistory,
   TreatmentProgramCategory,
 } from "../OffenderAssessment/PriorTreatmentHistory/types";
-import { ReportBlock, SectionContinuationHeader } from "./ReportBlock";
+import {
+  ReportBlock,
+  SectionContinuationHeader,
+  SplittableFreeText,
+} from "./ReportBlock";
 import { ReportPriorTreatmentHistoryTable } from "./ReportHistoryTable";
 import { BLOCK_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
@@ -129,9 +133,7 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
                     Community Treatments and Programming
                   </Styled.ReportSubsectionTitle>
                   {treatmentSummary && (
-                    <Styled.FreeTextContent>
-                      {treatmentSummary}
-                    </Styled.FreeTextContent>
+                    <SplittableFreeText text={treatmentSummary} />
                   )}
                   {communityHistories.length > 0 && (
                     <>
@@ -157,9 +159,7 @@ export const ReportPriorTreatmentHistory: React.FC<ReportPriorTreatmentHistoryPr
                 Community Treatments and Programming
               </Styled.ReportSubsectionTitle>
               {treatmentSummary && (
-                <Styled.FreeTextContent>
-                  {treatmentSummary}
-                </Styled.FreeTextContent>
+                <SplittableFreeText text={treatmentSummary} />
               )}
               {communityHistories.length > 0 && (
                 <>

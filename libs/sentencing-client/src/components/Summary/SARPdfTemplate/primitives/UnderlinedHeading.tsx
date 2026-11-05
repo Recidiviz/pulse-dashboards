@@ -20,6 +20,7 @@ import React from "react";
 
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { border, color, font, space } from "../tokens";
+import { KeepWithNext } from "./KeepWithNext";
 
 /**
  * Primary section heading — uppercase bold title with a 1pt full-width
@@ -29,42 +30,47 @@ import { border, color, font, space } from "../tokens";
 export const UnderlinedHeading: React.FC<{
   children: React.ReactNode;
   meta?: React.ReactNode;
+  /** Space the heading needs below it on the same page. Defaults to
+   * space.headingMinPresence. */
+  minPresenceAhead?: number;
   style?: PdfStyle;
-}> = ({ children, meta, style = {} }) => (
-  <View
-    style={[
-      {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
-        paddingBottom: space[4],
-        marginBottom: space[6],
-        borderBottomWidth: border.width.regular,
-        borderBottomColor: color.text.default,
-      },
-      style,
-    ]}
-  >
-    <Text
-      style={{
-        fontSize: font.size.md,
-        fontWeight: font.weight.bold,
-        textTransform: "uppercase",
-        letterSpacing: font.letterSpacing.wide,
-      }}
+}> = ({ children, meta, minPresenceAhead, style = {} }) => (
+  <KeepWithNext minPresenceAhead={minPresenceAhead}>
+    <View
+      style={[
+        {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          paddingBottom: space[4],
+          marginBottom: space[6],
+          borderBottomWidth: border.width.regular,
+          borderBottomColor: color.text.default,
+        },
+        style,
+      ]}
     >
-      {children}
-    </Text>
-    {meta ? (
       <Text
         style={{
-          fontSize: font.size.base,
-          fontWeight: font.weight.medium,
-          color: color.text.default,
+          fontSize: font.size.md,
+          fontWeight: font.weight.bold,
+          textTransform: "uppercase",
+          letterSpacing: font.letterSpacing.wide,
         }}
       >
-        {meta}
+        {children}
       </Text>
-    ) : null}
-  </View>
+      {meta ? (
+        <Text
+          style={{
+            fontSize: font.size.base,
+            fontWeight: font.weight.medium,
+            color: color.text.default,
+          }}
+        >
+          {meta}
+        </Text>
+      ) : null}
+    </View>
+  </KeepWithNext>
 );

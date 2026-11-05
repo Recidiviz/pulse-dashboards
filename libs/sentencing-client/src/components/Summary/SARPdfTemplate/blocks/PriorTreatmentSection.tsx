@@ -51,16 +51,23 @@ export const PriorTreatmentSection: React.FC<{ style?: PdfStyle }> = ({
     (communityHistories.length > 0 || !!communitySummary);
   if (!groups.length && !hasCommunity) return null;
 
+  // Without DOC tiles, the heading is followed directly by the community
+  // subheading, so it needs room for that heading too.
+  const heading = (
+    <UnderlinedHeading minPresenceAhead={space.headingBeforeHeadingMinPresence}>
+      Prior Treatment and Programming History
+    </UnderlinedHeading>
+  );
+
   return (
-    // The whole prior-treatment unit (heading + subheading + tile grid +
-    // community-treatments paragraph) needs to land on one page — splitting
-    // the tile grid mid-column produces an orphan row across the page break.
-    <View style={style} wrap={false}>
-      <UnderlinedHeading>
-        Prior Treatment and Programming History
-      </UnderlinedHeading>
+    // The DOC block (heading + subheading + tile grid) lands on one page, since
+    // splitting the tile grid mid-column produces an orphan row across the
+    // page break. The community block can run longer than a page, so it
+    // wraps.
+    <View style={style}>
       {groups.length ? (
-        <>
+        <View wrap={false}>
+          {heading}
           <BoldSubheading>
             Department of Corrections Incarceration Program Completion History
           </BoldSubheading>
@@ -111,8 +118,10 @@ export const PriorTreatmentSection: React.FC<{ style?: PdfStyle }> = ({
               </View>
             ))}
           </View>
-        </>
-      ) : null}
+        </View>
+      ) : (
+        heading
+      )}
       {hasCommunity ? (
         <View style={{ marginTop: space[8] }}>
           <BoldSubheading>Community Treatments and Programming</BoldSubheading>

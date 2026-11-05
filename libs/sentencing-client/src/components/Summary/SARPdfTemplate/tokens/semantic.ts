@@ -98,6 +98,14 @@ export const space = {
   sectionGap: primitive.space[150],
   /** Gap between top-level report blocks (owned by `SARPdfTemplate`). */
   blockGap: primitive.space[300],
+  /** Space a heading needs below it on the same page, passed as
+   * minPresenceAhead. With less room left, react-pdf moves the heading to the
+   * next page instead of orphaning it. */
+  headingMinPresence: 40,
+  /** headingMinPresence for a heading followed directly by another heading:
+   * room for the tallest following heading (a Banner title, about 60pt) plus
+   * that heading's own headingMinPresence. */
+  headingBeforeHeadingMinPresence: 100,
   /** Page frame. */
   pageMargin: {
     top: primitive.pageFrame.top,

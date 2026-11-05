@@ -67,11 +67,11 @@ export const OrasDomainSection: React.FC<{
       : null;
 
   return (
-    // Keep each domain banner + body together so the badge doesn't orphan at
-    // the bottom of a page. Long narratives fall back to splitting if the
-    // section truly cannot fit on one page (react-pdf treats wrap=false as a
-    // hint, not a guarantee, when content > page height).
-    <View style={[{ marginBottom: space[10] }, style]} wrap={false}>
+    // The section must be allowed to wrap: a narrative can run longer than a
+    // page, and react-pdf draws a wrap={false} node that doesn't fit on one
+    // page over the footer instead of splitting it. SectionHeading keeps the
+    // banner from orphaning at a page bottom.
+    <View style={[{ marginBottom: space[10] }, style]}>
       {/* ORAS banners render uppercase per the Figma; the shared domain config
           keeps title-case titles (used by the on-screen ORAS UI and the
           title-case Risk Profile Summary columns). */}

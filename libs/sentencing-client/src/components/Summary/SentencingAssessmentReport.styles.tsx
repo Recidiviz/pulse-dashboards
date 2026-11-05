@@ -471,6 +471,12 @@ export const DOCCategoryBoxMore = styled.div`
 
 // ─── Recommendation and Supervision Plan ──────────────────────────────────────
 
+/** Space between the section title and the first strategy block, on top of the
+ * title's own bottom margin. */
+export const FirstStrategyContainer = styled.div`
+  margin-top: ${BLOCK_GAP / 2}px;
+`;
+
 /** Outer gray container for a strategy block (Community or Institutional). */
 export const StrategyBox = styled.div`
   display: flex;

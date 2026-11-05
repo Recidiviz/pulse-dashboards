@@ -30,7 +30,8 @@ export const VictimImpact: React.FC<{ style?: PdfStyle }> = ({
   const { sar } = useSAR();
   if (!shouldShowVictimImpact(sar)) return null;
   return (
-    <View style={style} wrap={false}>
+    // The statement can run longer than a page, so the section has to wrap.
+    <View style={style}>
       <UnderlinedHeading>Victim Impact</UnderlinedHeading>
       <Paragraph>{sar.victimImpactStatement}</Paragraph>
     </View>

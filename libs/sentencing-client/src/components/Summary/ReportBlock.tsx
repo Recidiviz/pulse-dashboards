@@ -29,6 +29,8 @@ import * as Styled from "./SentencingAssessmentReport.styles";
  *
  * - `splittable`: when false (default), adds `sar-no-split` so the PDF
  *   generator snaps cuts to this block's boundary rather than splitting it.
+ *   A no-split block taller than a page still splits, between its nested
+ *   blocks; `splittable` lets a block split even when it would fit on a page.
  * - `pageStart`: adds `sar-page-start` so the PDF generator forces a cut
  *   immediately before this element, making it always open at the top of a page.
  *   Can be combined with `splittable` when the element's own content may span
@@ -63,6 +65,24 @@ export const ReportBlock: React.FC<ReportBlockProps> = ({
     </Styled.ReportBlockContainer>
   );
 };
+
+/**
+ * Free text rendered as one no-split block per line, so the PDF generator can
+ * cut between lines when the text runs longer than a page. Empty lines keep
+ * their height, so the text looks the same as a single pre-wrap block.
+ */
+export const SplittableFreeText: React.FC<{ text: string }> = ({ text }) => (
+  <div>
+    {text.split("\n").map((line, i) => (
+      // Lines render in their fixed order from the text, so index keys are
+      // stable.
+      // eslint-disable-next-line react/no-array-index-key
+      <ReportBlock key={i}>
+        <Styled.FreeTextContent>{line || "\u00a0"}</Styled.FreeTextContent>
+      </ReportBlock>
+    ))}
+  </div>
+);
 
 // A ReportBlock with a titled section header, matching the SAR document style.
 interface SentencingAssessmentReportSectionProps {

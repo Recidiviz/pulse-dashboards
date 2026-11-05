@@ -34,7 +34,7 @@ export const Chip: React.FC<{
         borderRadius: border.radius.md,
         paddingVertical: space[4],
         paddingHorizontal: space[10],
-        fontSize: font.size.base,
+        fontSize: font.size.chartText,
         backgroundColor: color.surface.pill,
       },
       style,

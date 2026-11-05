@@ -19,19 +19,15 @@ import React from "react";
 
 import { SAR } from "../../api";
 import HomePlanIcon from "../assets/home-plan-icon.svg?react";
-import { ReportBlock, SectionContinuationHeader } from "./ReportBlock";
 import {
-  BLOCK_GAP,
-  DECLINED_TEXT,
-} from "./SentencingAssessmentReport.constants";
+  ReportBlock,
+  SentencingAssessmentReportSection,
+  SplittableFreeText,
+} from "./ReportBlock";
+import { DECLINED_TEXT } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const SECTION_TITLE = "Recommendation and Supervision Plan";
-const CONTINUATION_TITLE = `${SECTION_TITLE} Continued...`;
-
-function splitParagraphs(text: string): string[] {
-  return text.split("\n").filter((l) => l.trim());
-}
 
 interface ReportRecommendationProps {
   sarData: SAR;
@@ -48,84 +44,54 @@ export const ReportRecommendation: React.FC<ReportRecommendationProps> = ({
     institutionalStrategyRecommendation,
   } = sarData;
 
-  const hasCommunity = !!(communityStrategyRecommendation || homePlan);
-  const hasInstitutional = !!institutionalStrategyRecommendation;
-
   if (isDeclined) {
     return (
-      <ReportBlock>
-        <Styled.SectionTitleContainer>
-          <Styled.SectionTitle>{SECTION_TITLE}</Styled.SectionTitle>
-        </Styled.SectionTitleContainer>
+      <SentencingAssessmentReportSection title={SECTION_TITLE}>
         <Styled.FreeTextContent>{DECLINED_TEXT}</Styled.FreeTextContent>
-      </ReportBlock>
+      </SentencingAssessmentReportSection>
     );
   }
 
-  if (!hasCommunity && !hasInstitutional) return null;
+  const communityBox =
+    communityStrategyRecommendation || homePlan ? (
+      <Styled.StrategyBox>
+        <Styled.StrategyTitle>Community Strategies</Styled.StrategyTitle>
+        {communityStrategyRecommendation && (
+          <SplittableFreeText text={communityStrategyRecommendation} />
+        )}
+        {homePlan && (
+          <ReportBlock>
+            <Styled.HomePlanBox>
+              <Styled.HomePlanTitleRow>
+                <HomePlanIcon />
+                <Styled.HomePlanTitle>Home Plan</Styled.HomePlanTitle>
+              </Styled.HomePlanTitleRow>
+              <SplittableFreeText text={homePlan} />
+            </Styled.HomePlanBox>
+          </ReportBlock>
+        )}
+      </Styled.StrategyBox>
+    ) : null;
 
-  const communityParagraphs = communityStrategyRecommendation
-    ? splitParagraphs(communityStrategyRecommendation)
-    : [];
+  const institutionalBox = institutionalStrategyRecommendation ? (
+    <Styled.StrategyBox>
+      <Styled.StrategyTitle>Institutional Strategies</Styled.StrategyTitle>
+      <SplittableFreeText text={institutionalStrategyRecommendation} />
+    </Styled.StrategyBox>
+  ) : null;
 
-  const institutionalParagraphs = institutionalStrategyRecommendation
-    ? splitParagraphs(institutionalStrategyRecommendation)
-    : [];
+  const firstBox = communityBox ?? institutionalBox;
+  if (!firstBox) return null;
 
   return (
-    // All siblings flat so measureContinuationHeaders finds sar-no-split blocks via previousElementSibling.
-    <Styled.ColumnFlexContainer gap={BLOCK_GAP / 2}>
-      <ReportBlock>
-        <Styled.SectionTitleContainer>
-          <Styled.SectionTitle>{SECTION_TITLE}</Styled.SectionTitle>
-        </Styled.SectionTitleContainer>
-      </ReportBlock>
-
-      {hasCommunity && (
-        // StrategyBox is not a ReportBlock so cuts can fall between inner paragraph blocks.
-        <Styled.StrategyBox>
-          <Styled.StrategyTitle>Community Strategies</Styled.StrategyTitle>
-          {communityParagraphs.map((paragraph) => (
-            <ReportBlock key={paragraph}>
-              <Styled.FreeTextContent>{paragraph}</Styled.FreeTextContent>
-            </ReportBlock>
-          ))}
-          {homePlan && (
-            <ReportBlock>
-              <Styled.HomePlanBox>
-                <Styled.HomePlanTitleRow>
-                  <HomePlanIcon />
-                  <Styled.HomePlanTitle>Home Plan</Styled.HomePlanTitle>
-                </Styled.HomePlanTitleRow>
-                <Styled.FreeTextContent>{homePlan}</Styled.FreeTextContent>
-              </Styled.HomePlanBox>
-            </ReportBlock>
-          )}
-        </Styled.StrategyBox>
-      )}
-
-      {hasInstitutional && (
-        <>
-          {/* Sentinel: gives measureContinuationHeaders a sar-no-split boundary after community. */}
-          <ReportBlock>
-            <div />
-          </ReportBlock>
-          <ReportBlock>
-            <SectionContinuationHeader title={CONTINUATION_TITLE} />
-            <Styled.StrategyBox>
-              <Styled.StrategyTitle>
-                Institutional Strategies
-              </Styled.StrategyTitle>
-              {institutionalParagraphs.map((paragraph) => (
-                // Outer ReportBlock governs first-page snap only; inner blocks take over once past its top.
-                <ReportBlock key={paragraph}>
-                  <Styled.FreeTextContent>{paragraph}</Styled.FreeTextContent>
-                </ReportBlock>
-              ))}
-            </Styled.StrategyBox>
-          </ReportBlock>
-        </>
-      )}
-    </Styled.ColumnFlexContainer>
+    // The section title shares a block with the first strategy box, so it
+    // stays on the same page as that box's first line. The second box goes in
+    // the section's "Continued..." block.
+    <SentencingAssessmentReportSection
+      title={SECTION_TITLE}
+      continuationContent={communityBox ? institutionalBox : null}
+    >
+      <Styled.FirstStrategyContainer>{firstBox}</Styled.FirstStrategyContainer>
+    </SentencingAssessmentReportSection>
   );
 };

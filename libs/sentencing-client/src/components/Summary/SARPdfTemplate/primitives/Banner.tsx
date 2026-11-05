@@ -20,6 +20,7 @@ import React from "react";
 
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { color, font, space } from "../tokens";
+import { KeepWithNext } from "./KeepWithNext";
 
 /** Cream banner heading — scoped to Community / Institutional Strategies. */
 export const Banner: React.FC<{
@@ -40,19 +41,20 @@ export const Banner: React.FC<{
     ]}
   >
     {/* The banner may run longer than a page, so it has to be allowed to
-        wrap. minPresenceAhead keeps the title from orphaning at a page bottom. */}
-    <Text
-      minPresenceAhead={40}
-      style={{
-        textAlign: "center",
-        fontSize: font.size.xxxl,
-        fontWeight: font.weight.bold,
-        color: color.text.default,
-        marginVertical: space[10],
-      }}
-    >
-      {title}
-    </Text>
+        wrap. KeepWithNext keeps the title from orphaning at a page bottom. */}
+    <KeepWithNext>
+      <Text
+        style={{
+          textAlign: "center",
+          fontSize: font.size.xxxl,
+          fontWeight: font.weight.bold,
+          color: color.text.default,
+          marginVertical: space[10],
+        }}
+      >
+        {title}
+      </Text>
+    </KeepWithNext>
     {children}
   </View>
 );

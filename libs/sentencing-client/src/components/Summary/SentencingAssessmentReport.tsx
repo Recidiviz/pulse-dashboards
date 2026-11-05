@@ -28,6 +28,7 @@ import {
   ReportBlock,
   SectionContinuationHeader,
   SentencingAssessmentReportSection,
+  SplittableFreeText,
 } from "./ReportBlock";
 import { ReportCharge } from "./ReportCharge";
 import {
@@ -236,9 +237,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     <SentencingAssessmentReportSection
                       title={SARSection.DEFENDANTS_VERSION}
                     >
-                      <Styled.FreeTextContent>
-                        {sarData.defendantStatement}
-                      </Styled.FreeTextContent>
+                      <SplittableFreeText text={sarData.defendantStatement} />
                     </SentencingAssessmentReportSection>
                   )}
                 {presenter.shouldShowInReport(SARSection.VICTIM_IMPACT) &&
@@ -247,9 +246,9 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     <SentencingAssessmentReportSection
                       title={SARSection.VICTIM_IMPACT}
                     >
-                      <Styled.FreeTextContent>
-                        {sarData.victimImpactStatement}
-                      </Styled.FreeTextContent>
+                      <SplittableFreeText
+                        text={sarData.victimImpactStatement}
+                      />
                     </SentencingAssessmentReportSection>
                   )}
                 {/* TODO(OBT-29467): remove spread once import skips manually-updated SARs */}

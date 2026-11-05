@@ -28,10 +28,12 @@ import { SARSection } from "../../../SARDetails/constants";
 import { shouldShowInSARReport } from "../../../SARDetails/utils";
 import { ageAtAssessment as getAgeAtAssessment } from "../derive";
 import { HeadingMeta } from "../primitives/HeadingMeta";
+import { KeepWithNext } from "../primitives/KeepWithNext";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useActiveFeatureVariants, useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
+import { space } from "../tokens";
 import { OrasDomainSection } from "./OrasDomainSection";
 
 /**
@@ -86,26 +88,22 @@ export const OrasAssessment: React.FC<{ style?: PdfStyle }> = ({
     sar.noORASDomainReason
       ? sar.noORASDomainReason
       : null;
-  const [firstDomain, ...remainingDomains] = domains;
-
   return (
     <View style={style}>
-      {/* Keeps the heading on the same page as the first domain, which is
-          itself unbreakable. Only when no paragraph sits between them: a
-          free-text paragraph can be longer than a page, and the heading then
-          flows with the paragraph instead. */}
-      <View wrap={!!statement || !!noOrasReason}>
+      {/* Keeps the heading on the same page as what follows it: the first
+          domain's banner plus a few lines of its body, or the first lines of
+          the statement paragraph. */}
+      <KeepWithNext minPresenceAhead={space.headingBeforeHeadingMinPresence}>
         <UnderlinedHeading>
           {declined
             ? "Offender Risk Assessment"
             : `Offender Risk Assessment (${getAssessmentTypeShortName(sar.assessmentType)})`}
         </UnderlinedHeading>
         {meta ? <HeadingMeta>{meta}</HeadingMeta> : null}
-        {statement ? <Paragraph>{statement}</Paragraph> : null}
-        {noOrasReason ? <Paragraph>{noOrasReason}</Paragraph> : null}
-        {firstDomain ? <OrasDomainSection domain={firstDomain} /> : null}
-      </View>
-      {remainingDomains.map((domain) => (
+      </KeepWithNext>
+      {statement ? <Paragraph>{statement}</Paragraph> : null}
+      {noOrasReason ? <Paragraph>{noOrasReason}</Paragraph> : null}
+      {domains.map((domain) => (
         <OrasDomainSection key={domain.key} domain={domain} />
       ))}
     </View>

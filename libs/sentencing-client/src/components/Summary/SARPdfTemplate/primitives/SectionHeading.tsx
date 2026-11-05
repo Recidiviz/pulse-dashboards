@@ -22,6 +22,7 @@ import { RiskLevelKey } from "../../../OffenderAssessment/constants";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { color, font, space } from "../tokens";
 import { Badge } from "./Badge";
+import { KeepWithNext } from "./KeepWithNext";
 import { RiskPipBadge } from "./RiskPipBadge";
 
 /** Gray banner heading with optional right-aligned meta text / risk badge. */
@@ -46,38 +47,40 @@ export const SectionHeading: React.FC<{
   }
 
   return (
-    <View
-      style={[
-        {
-          backgroundColor: color.surface.section,
-          fontWeight: font.weight.semibold,
-          paddingVertical: space[4],
-          paddingHorizontal: space[10],
-          marginTop: space.sectionGap,
-          marginBottom: space[4],
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        },
-        style,
-      ]}
-    >
-      <Text style={{ fontSize: font.size.base }}>{title}</Text>
+    <KeepWithNext>
       <View
-        style={{ flexDirection: "row", alignItems: "center", gap: space[8] }}
+        style={[
+          {
+            backgroundColor: color.surface.section,
+            fontWeight: font.weight.semibold,
+            paddingVertical: space[4],
+            paddingHorizontal: space[10],
+            marginTop: space.sectionGap,
+            marginBottom: space[4],
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          },
+          style,
+        ]}
       >
-        {meta ? (
-          <Text
-            style={{
-              fontWeight: font.weight.regular,
-              fontSize: font.size.base,
-            }}
-          >
-            {meta}
-          </Text>
-        ) : null}
-        {riskIndicator}
+        <Text style={{ fontSize: font.size.base }}>{title}</Text>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", gap: space[8] }}
+        >
+          {meta ? (
+            <Text
+              style={{
+                fontWeight: font.weight.regular,
+                fontSize: font.size.base,
+              }}
+            >
+              {meta}
+            </Text>
+          ) : null}
+          {riskIndicator}
+        </View>
       </View>
-    </View>
+    </KeepWithNext>
   );
 };

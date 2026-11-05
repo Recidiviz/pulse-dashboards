@@ -28,6 +28,7 @@ import { DECLINED_TEXT } from "../../SentencingAssessmentReport.constants";
 import { sectionSkipped, splitParagraphs } from "../derive";
 import { Banner } from "../primitives/Banner";
 import { HomeIcon } from "../primitives/icons/HomeIcon";
+import { KeepWithNext } from "../primitives/KeepWithNext";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
@@ -75,9 +76,9 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
           <Paragraph key={i}>{s}</Paragraph>
         ))}
         {homePlan ? (
-          // Moves to the next page whole instead of splitting its border box.
+          // The home plan can run longer than a page, so its border box has to
+          // wrap. KeepWithNext keeps the title with the first lines.
           <View
-            wrap={false}
             style={{
               marginTop: space[6],
               padding: space[16],
@@ -85,26 +86,28 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
               borderRadius: border.radius.sm,
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: space[4],
-              }}
-            >
-              <View style={{ width: 10, height: 10, marginRight: space[6] }}>
-                <HomeIcon />
-              </View>
-              <Text
+            <KeepWithNext>
+              <View
                 style={{
-                  fontSize: font.size.md,
-                  fontWeight: font.weight.bold,
-                  marginBottom: space[2],
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: space[4],
                 }}
               >
-                Home Plan
-              </Text>
-            </View>
+                <View style={{ width: 10, height: 10, marginRight: space[6] }}>
+                  <HomeIcon />
+                </View>
+                <Text
+                  style={{
+                    fontSize: font.size.md,
+                    fontWeight: font.weight.bold,
+                    marginBottom: space[2],
+                  }}
+                >
+                  Home Plan
+                </Text>
+              </View>
+            </KeepWithNext>
             <Paragraph>{homePlan}</Paragraph>
           </View>
         ) : null}
@@ -126,11 +129,11 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
       {/* Keep the heading on the same page as the start of the first banner.
           The banners themselves can be taller than a page, so they can't be
           held together with wrap={false}. */}
-      <View minPresenceAhead={100}>
-        <UnderlinedHeading>
-          Recommendation and Supervision Plan
-        </UnderlinedHeading>
-      </View>
+      <UnderlinedHeading
+        minPresenceAhead={space.headingBeforeHeadingMinPresence}
+      >
+        Recommendation and Supervision Plan
+      </UnderlinedHeading>
       {banners}
     </View>
   );

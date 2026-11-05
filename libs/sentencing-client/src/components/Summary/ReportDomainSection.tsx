@@ -23,7 +23,11 @@ import {
   DomainConfig,
   ORASDomainRiskLevelField,
 } from "../OffenderAssessment/utils";
-import { ReportBlock, SectionContinuationHeader } from "./ReportBlock";
+import {
+  ReportBlock,
+  SectionContinuationHeader,
+  SplittableFreeText,
+} from "./ReportBlock";
 import { RISK_COLUMN_CONFIG } from "./ReportRiskProfileSummaryCard";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -92,7 +96,7 @@ export const ReportDomainSection: React.FC<ReportDomainSectionProps> = ({
         )}
       </Styled.ReportCardHeader>
       <Styled.ReportDomainSectionBody>
-        {summary && <Styled.FreeTextContent>{summary}</Styled.FreeTextContent>}
+        {summary && <SplittableFreeText text={summary} />}
         {extraContent}
         {tableContent}
       </Styled.ReportDomainSectionBody>
