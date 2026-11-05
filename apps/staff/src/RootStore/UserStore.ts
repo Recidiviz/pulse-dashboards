@@ -100,6 +100,8 @@ export default class UserStore {
 
   isAuthorized: boolean;
 
+  shouldMaskPII: boolean;
+
   userIsLoading: boolean;
 
   user?: User;
@@ -131,6 +133,7 @@ export default class UserStore {
 
     this.isAuthorized = false;
     this.userIsLoading = true;
+    this.shouldMaskPII = true;
   }
 
   /**

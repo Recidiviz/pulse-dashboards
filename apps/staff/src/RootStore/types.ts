@@ -78,6 +78,7 @@ export type FeatureVariant =
   | "hideWorkflowsOpportunities"
   | "hideWorkflowsResidentsPage"
   | "indefiniteSnooze"
+  | "showMaskPIIToggle"
   | "supervisionUnrestrictedSearch"
   | "taskSnoozeReason"
   | "tasksOneRowPerClient"
@@ -357,6 +358,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   useStableExternalId: {},
   usCoParolePublicCalendar: {},
   usIdParoleBoardReports: {},
+  showMaskPIIToggle: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

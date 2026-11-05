@@ -34,6 +34,7 @@ import {
   Menubar,
   palette,
   spacing,
+  Toggle,
   typography,
 } from "~design-system";
 import { psiUrl, sarUrl } from "~sentencing-client";
@@ -677,6 +678,53 @@ function EnvironmentLinks() {
   ));
 }
 
+// The menu item handles clicks and keyboard input, so the toggle ignores
+// pointer events.
+const MaskPIIToggleControl = styled(Toggle)`
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  gap: ${rem(spacing.md)};
+  width: 100%;
+  pointer-events: none;
+  color: ${palette.slate80};
+  transition: color ease 500ms;
+  text-decoration: none;
+`;
+
+// Matches the link items' text color. Otherwise, the menu item's default
+// action style fills the background on hover.
+const MaskPIIMenuItem = styled(DropdownMenuItem)`
+  &:focus {
+    background-color: ${palette.white};
+  }
+
+  &:hover ${MaskPIIToggleControl}, &:focus ${MaskPIIToggleControl} {
+    color: ${palette.pine2};
+  }
+`;
+
+const MaskPIIToggle = observer(function MaskPIIToggle() {
+  const { showMaskPIIToggle } = useFeatureVariants();
+  const { userStore } = useRootStore();
+
+  if (!showMaskPIIToggle) return null;
+
+  const toggleValue = userStore.shouldMaskPII;
+
+  return (
+    <MaskPIIMenuItem
+      onClick={() => {
+        userStore.shouldMaskPII = !toggleValue;
+      }}
+      preventCloseOnClickEvent
+    >
+      <MaskPIIToggleControl checked={toggleValue}>
+        {toggleValue ? "Masked PII" : "Unmasked PII"}
+      </MaskPIIToggleControl>
+    </MaskPIIMenuItem>
+  );
+});
+
 type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
@@ -791,6 +839,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <MeetingsLink enabled={isMeetingsRouteEnabled} />
         <HousingLink />
         <EnvironmentLinks />
+        <MaskPIIToggle />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );
