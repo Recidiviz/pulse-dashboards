@@ -22,7 +22,7 @@
  * patternRuleSchema from rules.ts, the library's one definition of a valid
  * rule, so a new rule type is a new union member there and needs no migration.
  *
- * Callers parse the column on every write and every read (Spec D, D20). A
+ * Callers parse the column on every write and every read (Spec D). A
  * failed parse on read means the stored row is bad, not the request, so the
  * API returns PRECONDITION_FAILED for it rather than BAD_REQUEST.
  */

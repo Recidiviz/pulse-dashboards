@@ -22,7 +22,7 @@
  * state. The calendar's behaviour settings and each entry type's behaviour
  * (whether it needs a resource, can be cancelled or deleted, is public and
  * counts toward totals) are the state's own code, not rows, so they're not
- * part of this contract (D36).
+ * part of this contract.
  */
 
 import { z } from "zod";
@@ -50,7 +50,7 @@ const timeSchema = z
 
 /**
  * The Calendar row: its code and name, all it stores. Each state has its own
- * database, so the row has no stateCode (D37).
+ * database, so the row has no stateCode.
  */
 const calendarSchema = z
   .object({
@@ -81,7 +81,7 @@ const resourceSchema = z
 /**
  * An entry kind row. The row exists so entries and patterns can reference
  * their kind with a calendar-scoped foreign key; the kind's behaviour is the
- * state's entry-type list in code (D36).
+ * state's entry-type list in code.
  */
 const kindSchema = z
   .object({

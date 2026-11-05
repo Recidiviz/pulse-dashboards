@@ -104,7 +104,7 @@ const config = {
   ],
   // This is the only build that runs the react-magnetic-di Babel plugin,
   // which wraps each function's imported dependencies so examples can inject
-  // replacements (D29). The library builds, Vitest and the staff build never
+  // replacements. The library builds, Vitest and the staff build never
   // load this file, so production code has no DI wrapping. The plugin skips
   // production by default, and `nx build-examples` runs as production, so
   // enabledEnvs lists it. A library that imports SVGs as components needs

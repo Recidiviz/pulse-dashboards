@@ -95,7 +95,7 @@ export type HolidayPolicy = (typeof HOLIDAY_POLICIES)[number];
 
 /**
  * A calendar's behaviour settings. Each state's code supplies them as a typed
- * constant; the Calendar row stores none of them (D36).
+ * constant; the Calendar row stores none of them.
  */
 export interface CalendarSettings {
   /** First day of a pattern week, e.g. "SUNDAY". */

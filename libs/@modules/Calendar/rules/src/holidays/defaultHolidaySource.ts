@@ -29,7 +29,7 @@ import { HolidaySource } from "./types";
  *
  * Any region date-holidays knows, such as "US-CO", gets that region's public
  * weekday holidays, and null gets a source with no holidays. The region alone
- * picks the holidays, so no state needs code of its own here (D30). Any other
+ * picks the holidays, so no state needs code of its own here. Any other
  * region throws INVALID_SETTINGS.
  */
 export function getDefaultHolidaySource(

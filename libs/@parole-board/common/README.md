@@ -33,7 +33,7 @@ It shows the skeleton while its children suspend and an error with "Try again" i
 
 ## Isolation rules
 
-The calendar UI lives in these libraries rather than in the staff app, so it can be tested on its own and reused by each state (D26). `eslint.config.mjs` enforces the boundaries through `@nx/enforce-module-boundaries`:
+The calendar UI lives in these libraries rather than in the staff app, so it can be tested on its own and reused by each state. `eslint.config.mjs` enforces the boundaries through `@nx/enforce-module-boundaries`:
 
 | Tag                                            | Rule                                             |
 | ---------------------------------------------- | ------------------------------------------------ |
@@ -78,7 +78,7 @@ Render components in tests with `renderWithHost(ui, { host, route })`. To check 
 
 ## Examples
 
-Every Parole Board library renders its `*.examples.tsx` files with its own targets, sharing the config in `.examples/` (D29):
+Every Parole Board library renders its `*.examples.tsx` files with its own targets, sharing the config in `.examples/`:
 
 ```bash
 nx examples @parole-board/common [path]        # paths are relative to the library, default src

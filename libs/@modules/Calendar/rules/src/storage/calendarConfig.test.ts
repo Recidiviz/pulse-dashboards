@@ -87,7 +87,7 @@ describe("parseCalendarConfig", () => {
   });
 
   it.each([
-    // Settings are each state's code, not stored data (D36).
+    // Settings are each state's code, not stored data.
     ["a timezone", { timezone: "America/Denver" }, "calendar"],
     ["publicMonthsAhead", { publicMonthsAhead: 2 }, "calendar"],
     ["an extra key", { color: "blue" }, "calendar"],

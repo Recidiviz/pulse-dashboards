@@ -1,11 +1,11 @@
 // =============================================================================
 // Calendar (Spec D v2). Each state that uses the Calendar module has its own
-// database (CALENDAR__<STATE>, D37), so no model has a stateCode column. Every
+// database (CALENDAR__<STATE>), so no model has a stateCode column. Every
 // model and enum starts with "Calendar".
 //
 // The migration adds CHECK constraints that Prisma can't express (see
 // migrations/*_calendar_models/migration.sql). A calendar's settings and its
-// entry types' behaviour are its state's code, not columns (D36), so the rules
+// entry types' behaviour are its state's code, not columns, so the rules
 // that depend on them are checked in code on every write.
 // =============================================================================
 
@@ -27,7 +27,7 @@ enum CalendarMonthStatusEventType {
   UNPUBLISHED
 }
 
-/// One calendar, such as the Parole Board's public hearing calendar. Holds only its identity; its timezone, week start, week numbering, holidays, editor route and allowed weekdays are its state's code (D36).
+/// One calendar, such as the Parole Board's public hearing calendar. Holds only its identity; its timezone, week start, week numbering, holidays, editor route and allowed weekdays are its state's code.
 model Calendar {
   id   String @id @default(cuid())
   /// Stable code, e.g. "PAROLE_BOARD_PUBLIC". Never changes after insert.
@@ -94,7 +94,7 @@ model CalendarResource {
   @@index([calendarId, isActive, sortOrder])
 }
 
-/// A kind of entry, e.g. HEARING, FULL_BOARD or BUSINESS_MEETING. The row exists for the calendar-scoped foreign keys; its behaviour (needs a resource, cancellable, deletable, public, counts in totals) is its state's entry-type list in code (D36).
+/// A kind of entry, e.g. HEARING, FULL_BOARD or BUSINESS_MEETING. The row exists for the calendar-scoped foreign keys; its behaviour (needs a resource, cancellable, deletable, public, counts in totals) is its state's entry-type list in code.
 model CalendarEntryKind {
   id         String   @id @default(cuid())
   calendarId String
@@ -149,7 +149,7 @@ model CalendarMonth {
   /// 1 to 12
   month      Int
   status     CalendarMonthStatus @default(DRAFT)
-  /// Goes up by 1 on every entry write and every status change. Publish sends the revision the user reviewed (D6).
+  /// Goes up by 1 on every entry write and every status change. Publish sends the revision the user reviewed.
   revision   Int                 @default(1)
 
   createdAt      DateTime @default(now())
@@ -181,7 +181,7 @@ model CalendarEntry {
   resourceId String?
   resource   CalendarResource? @relation(fields: [calendarId, resourceId], references: [calendarId, id], onDelete: Restrict)
 
-  /// "<kind code>:<resource code>" when there is a resource, otherwise the kind code. The unique key below uses it (D19).
+  /// "<kind code>:<resource code>" when there is a resource, otherwise the kind code. The unique key below uses it.
   slotKey String
 
   /// "HH:mm", calendar-local, copied from the pattern. Stored, not published.
@@ -193,7 +193,7 @@ model CalendarEntry {
   cancelledAt      DateTime?
   cancelledByEmail String?
 
-  /// Goes up by 1 on every update. Move, delete and cancel send it (D6).
+  /// Goes up by 1 on every update. Move, delete and cancel send it.
   version Int @default(1)
 
   createdAt      DateTime @default(now())
@@ -218,7 +218,7 @@ model CalendarMonthStatusEvent {
   revision   Int
 
   createdAt  DateTime @default(now())
-  /// Who made the change. During impersonation this is the Recidiviz user's email (D3).
+  /// Who made the change. During impersonation this is the Recidiviz user's email.
   actorEmail String
 
   @@index([monthId, createdAt])
