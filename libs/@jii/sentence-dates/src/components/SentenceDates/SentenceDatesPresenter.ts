@@ -17,7 +17,7 @@
 
 import type { ResidentsStore, SegmentClient } from "~@jii/data";
 
-import { SentenceDatesData } from "../../data/types";
+import { DateLabels, SentenceDatesData } from "../../data/types";
 import { defaultComponents } from "../defaultComponents";
 import { DatePresenter } from "./DatePresenter";
 import { SentenceDatesComponents, TFn } from "./types";
@@ -31,6 +31,7 @@ export class SentenceDatesPresenter {
     private componentOverrides?: Partial<SentenceDatesComponents>,
     private residentsStore?: ResidentsStore,
     private segmentClient?: SegmentClient,
+    private dateLabels?: DateLabels,
   ) {
     this.data = {
       ...inputData,
@@ -39,13 +40,19 @@ export class SentenceDatesPresenter {
   }
 
   private getValidatedDatesData() {
-    const { t, inputData } = this;
+    const { t, inputData, dateLabels } = this;
 
-    const datesInCopy = Object.keys(
-      // we only care about the keys here, so it doesn't matter that the values
-      // will be missing input data (e.g. the actual dates)
-      t(($) => $.sentenceDates.dates, { returnObjects: true }),
-    );
+    let datesInCopy: string[];
+    if (dateLabels) {
+      datesInCopy = dateLabels.map((d) => d.id);
+    } else {
+      datesInCopy = Object.keys(
+        // we only care about the keys here, so it doesn't matter that the values
+        // will be missing input data (e.g. the actual dates)
+        t(($) => $.sentenceDates.dates, { returnObjects: true }),
+      );
+    }
+
     const datesInData = new Set(inputData.dates.map((d) => d.id));
 
     // all dates in reference copy MUST be present in the input data
@@ -70,7 +77,15 @@ export class SentenceDatesPresenter {
   }
 
   get datePresenters() {
-    return this.data.dates.map((d) => new DatePresenter(d, this.t));
+    const labels = this.dateLabels;
+    return this.data.dates.map(
+      (d) =>
+        new DatePresenter(
+          d,
+          this.t,
+          labels?.find((l) => l.id === d.id),
+        ),
+    );
   }
 
   get sectionHeadingText() {

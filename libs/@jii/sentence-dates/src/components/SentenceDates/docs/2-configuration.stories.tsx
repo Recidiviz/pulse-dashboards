@@ -16,6 +16,7 @@
 // =============================================================================
 
 import type { StoryObj } from "@storybook/react";
+import { addDays, startOfDay } from "date-fns";
 
 import {
   copyFixtureEnglishWithCustomHeading,
@@ -89,5 +90,29 @@ export const CustomizeSharedCopy: SentenceDateStory = {
 export const ShowHideToggle: SentenceDateStory = {
   args: {
     showToggle: true,
+  },
+};
+
+/**
+ * Date labels normally come from your state's copy, keyed by each date's id,
+ * which suits a fixed set of date types. When the dates vary by resident (one
+ * per court case, for example), pass dateLabels instead. It lists the id
+ * and label of every date to show, and SentenceDates checks the data against
+ * it in place of the copy.
+ *
+ * Dates shown this way have no description from the copy.
+ */
+export const DateLabelsFromData: SentenceDateStory = {
+  args: {
+    data: {
+      dates: [
+        { id: "case-A1234", date: startOfDay(addDays(new Date(), 12)) },
+        { id: "case-B5678", date: startOfDay(addDays(new Date(), 60)) },
+      ],
+    },
+    dateLabels: [
+      { id: "case-A1234", label: "Court date for case A1234" },
+      { id: "case-B5678", label: "Court date for case B5678" },
+    ],
   },
 };

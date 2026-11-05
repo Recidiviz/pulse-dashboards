@@ -25,7 +25,7 @@ import { useRootStore } from "~@jii/data";
 import { spacing, Toggle } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import type { SentenceDatesData } from "../../data/types";
+import type { DateLabels, SentenceDatesData } from "../../data/types";
 import { SentenceDatesPresenter } from "./SentenceDatesPresenter";
 import { SentenceDatesComponents, StateCodeWithSentenceDates } from "./types";
 
@@ -38,6 +38,7 @@ export type SentenceDatesProps = {
   stateCode: StateCodeWithSentenceDates;
   componentOverrides?: Partial<SentenceDatesComponents>;
   showToggle?: boolean;
+  dateLabels?: DateLabels;
 };
 
 const ManagedComponent = observer(function ManagedComponent({
@@ -120,6 +121,7 @@ function usePresenter({
   stateCode,
   data,
   componentOverrides,
+  dateLabels,
 }: SentenceDatesProps) {
   const { t } = useTranslation([stateCode, "common"]);
   const {
@@ -133,6 +135,7 @@ function usePresenter({
     componentOverrides,
     residentsStore,
     segmentClient,
+    dateLabels,
   );
 }
 

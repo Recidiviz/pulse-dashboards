@@ -24,3 +24,10 @@ export type SentenceDate = {
 export type SentenceDatesData = {
   dates: Array<SentenceDate>;
 };
+
+export type SentenceDateIdLabel = {
+  id: string;
+  label: string;
+};
+
+export type DateLabels = Array<SentenceDateIdLabel>;
