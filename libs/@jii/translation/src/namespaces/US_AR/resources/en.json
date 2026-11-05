@@ -100,6 +100,10 @@
         "overlay": {
           "heading": "How units and carry-over hours work",
           "body": "**Policy details:**\n\n- If your balance is under 16 hours, it will carry over fully.\n- If your balance is over 16 hours, it will carry over a maximum of 2 hours.\n- 16 hrs = 1 program unit.\n\n[Learn more about the tablet programming policy]({{policyUrl}})"
+        },
+        "banner": {
+          "completed": "**You completed the hours required for this month.** These hours count toward 1 program unit.",
+          "completedExtra": "**You completed the hours required for this month.** Up to 2 extra hours can carry over to next month."
         }
       }
     }

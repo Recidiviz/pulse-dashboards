@@ -100,6 +100,10 @@
         "overlay": {
           "heading": "[US_AR]programs.onMyTablet.progressBar.overlay.heading",
           "body": "[US_AR]programs.onMyTablet.progressBar.overlay.body"
+        },
+        "banner": {
+          "completed": "[US_AR]programs.onMyTablet.progressBar.banner.completed",
+          "completedExtra": "[US_AR]programs.onMyTablet.progressBar.banner.completedExtra"
         }
       }
     }

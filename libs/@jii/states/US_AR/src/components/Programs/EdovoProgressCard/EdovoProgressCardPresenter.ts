@@ -70,4 +70,7 @@ export class EdovoProgressCardPresenter {
   get hasCarryInHours() {
     return this.progress.edovoCarryInHours !== 0;
   }
+  get totalHoursExceedsOneCredit() {
+    return this.progress.edovoTotalHours > HOURS_PER_UNIT;
+  }
 }

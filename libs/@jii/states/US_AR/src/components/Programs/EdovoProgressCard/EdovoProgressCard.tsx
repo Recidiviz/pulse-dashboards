@@ -32,6 +32,7 @@ import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { CompletedHoursBanner } from "./CompletedHoursBanner";
 import {
   Fill,
   LearnMoreButton,
@@ -44,8 +45,10 @@ import { EdovoProgressCardPresenter } from "./EdovoProgressCardPresenter";
 const ManagedComponent: FC<{ presenter: EdovoProgressCardPresenter }> =
   observer(function EdovoProgressCard({ presenter }) {
     const { t } = useUsArTranslations();
-    const { edovoTotalHours, edovoCarryInHours } = presenter.progress;
-    const { hasCarryInHours, progressWidth } = presenter;
+    const { edovoTotalHours, edovoCarryInHours, edovoIsCreditingMonth } =
+      presenter.progress;
+    const { hasCarryInHours, progressWidth, totalHoursExceedsOneCredit } =
+      presenter;
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
     const params = useTypedParams(State.Resident.UsArMoreInformation);
     const policyUrl =
@@ -98,6 +101,11 @@ const ManagedComponent: FC<{ presenter: EdovoProgressCardPresenter }> =
             </BottomSheet>
           </ProgressFooter>
         </Card>
+        {edovoIsCreditingMonth && (
+          <CompletedHoursBanner
+            totalHoursExceedsOneCredit={totalHoursExceedsOneCredit}
+          />
+        )}
       </>
     );
   });
