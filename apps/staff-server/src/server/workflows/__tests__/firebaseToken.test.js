@@ -66,6 +66,7 @@ test("requests Firebase auth token", async () => {
     recidivizAllowedStates: [],
     forceWorkflowsDemoData: false,
     hasParoleBoardAccess: false,
+    canEditParoleBoardReports: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -101,6 +102,7 @@ test("Firebase token with allowedStates", async () => {
     recidivizAllowedStates: ["US_XX"],
     forceWorkflowsDemoData: false,
     hasParoleBoardAccess: false,
+    canEditParoleBoardReports: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -136,6 +138,7 @@ test("Firebase token with forceWorkflowsDemoData: true", async () => {
     recidivizAllowedStates: [],
     forceWorkflowsDemoData: true,
     hasParoleBoardAccess: false,
+    canEditParoleBoardReports: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -172,6 +175,7 @@ test("Firebase token for offline mode allows all states", async () => {
     recidivizAllowedStates: Object.values(stateCodes),
     forceWorkflowsDemoData: false,
     hasParoleBoardAccess: false,
+    canEditParoleBoardReports: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -208,13 +212,30 @@ test("requests Firebase auth token for impersonated user", async () => {
     recidivizAllowedStates: [],
     forceWorkflowsDemoData: false,
     hasParoleBoardAccess: false,
+    canEditParoleBoardReports: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
   });
 });
 
-test("grants hasParoleBoardAccess to a user with the parole route", async () => {
+test.each([
+  [
+    "a commissioner, with only the parole route, Parole Board access but not report editing",
+    { parole: true },
+    { hasParoleBoardAccess: true, canEditParoleBoardReports: false },
+  ],
+  [
+    "a PHI, with the parole and report editing routes, both claims",
+    { parole: true, paroleBoardReportEditing: true },
+    { hasParoleBoardAccess: true, canEditParoleBoardReports: true },
+  ],
+  [
+    "a user with the report editing route but not the parole route, neither claim",
+    { paroleBoardReportEditing: true },
+    { hasParoleBoardAccess: false, canEditParoleBoardReports: false },
+  ],
+])("grants %s", async (_label, routes, claims) => {
   const userId = "TEST123@somewhere.com";
 
   createCustomTokenMock.mockResolvedValue("tokenabc123");
@@ -222,7 +243,7 @@ test("grants hasParoleBoardAccess to a user with the parole route", async () => 
     user: {
       undefinedemail_address: userId,
       // this key includes an env variable that is not set in this test environment
-      undefinedapp_metadata: { stateCode: "us_xx", routes: { parole: true } },
+      undefinedapp_metadata: { stateCode: "us_xx", routes },
     },
   };
 
@@ -230,14 +251,14 @@ test("grants hasParoleBoardAccess to a user with the parole route", async () => 
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(
     userId,
-    expect.objectContaining({ hasParoleBoardAccess: true }),
+    expect.objectContaining(claims),
   );
 });
 
-test("grants an impersonated user hasParoleBoardAccess from their own permissions, not the impersonator's", async () => {
+test("grants an impersonated user the Parole Board claims from their own permissions, not the impersonator's", async () => {
   const userId = "impersonatedEmail@somewhere.com";
   fetchImpersonatedUserRestrictions.mockResolvedValue({
-    routes: { parole: true },
+    routes: { parole: true, paroleBoardReportEditing: true },
   });
 
   createCustomTokenMock.mockResolvedValue("tokenabc123");
@@ -258,11 +279,14 @@ test("grants an impersonated user hasParoleBoardAccess from their own permission
   expect(fetchImpersonatedUserRestrictions).toHaveBeenCalledWith(userId);
   expect(createCustomTokenMock).toHaveBeenCalledWith(
     userId,
-    expect.objectContaining({ hasParoleBoardAccess: true }),
+    expect.objectContaining({
+      hasParoleBoardAccess: true,
+      canEditParoleBoardReports: true,
+    }),
   );
 });
 
-test("withholds only hasParoleBoardAccess when the impersonated user's permissions cannot be fetched", async () => {
+test("withholds only the Parole Board claims when the impersonated user's permissions cannot be fetched", async () => {
   const userId = "impersonatedEmail@somewhere.com";
   const consoleErrorSpy = vi
     .spyOn(console, "error")
@@ -287,7 +311,11 @@ test("withholds only hasParoleBoardAccess when the impersonated user's permissio
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(
     userId,
-    expect.objectContaining({ hasParoleBoardAccess: false }),
+    expect.objectContaining({
+      stateCode: "US_YY",
+      hasParoleBoardAccess: false,
+      canEditParoleBoardReports: false,
+    }),
   );
   expect(JSON.stringify(consoleErrorSpy.mock.calls)).not.toContain(userId);
   consoleErrorSpy.mockRestore();

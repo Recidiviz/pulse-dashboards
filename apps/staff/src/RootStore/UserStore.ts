@@ -732,6 +732,22 @@ export default class UserStore {
     return this.stateCode === "CSG";
   }
 
+  /**
+   * Whether the user holds the permission to edit Parole Board PHI reports,
+   * which only Pre-Hearing Investigators (PHIs) get. Everyone else,
+   * commissioners included, sees the case profile read-only. Recidiviz users
+   * get every route but never edit reports, and Firestore rules deny their
+   * writes. Matches the canEditParoleBoardReports claim staff-server mints,
+   * which also needs the parole route.
+   */
+  get canEditParoleBoardReports(): boolean {
+    return (
+      !this.isRecidivizUser &&
+      this.getRoutePermission("parole") &&
+      this.getRoutePermission("paroleBoardReportEditing")
+    );
+  }
+
   async getTokenSilently(): Promise<any> {
     if (!this.getToken || !this.logout) return;
 

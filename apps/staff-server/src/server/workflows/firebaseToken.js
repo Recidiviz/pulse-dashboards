@@ -53,22 +53,32 @@ if (!firebaseAdmin.apps.length) {
 }
 
 /**
- * Whether these user permissions include the Parole Board route. Firestore
- * rules read the resulting hasParoleBoardAccess claim to gate the
- * paroleBoardClientProfiles collection.
+ * Returns the Parole Board claims these user permissions grant. Firestore
+ * rules read hasParoleBoardAccess, from the parole route, to gate the
+ * paroleBoardClientProfiles collection and submitted PHI reports. They read
+ * canEditParoleBoardReports, from the paroleBoardReportEditing route that only
+ * Pre-Hearing Investigators (PHIs) hold, to gate writing PHI reports and
+ * reading reports in progress. The edit claim also needs the parole route, so
+ * a user can't edit reports on a profile they can't open.
  *
  * @param {{ routes?: Record<string, boolean> } | undefined} userMetadata - The
  *   user's Auth0 app metadata, or the impersonated user's restrictions.
  */
-function hasParoleBoardRoute(userMetadata) {
-  return userMetadata?.routes?.parole === true;
+function getParoleBoardClaims(userMetadata) {
+  const hasParoleBoardAccess = userMetadata?.routes?.parole === true;
+  return {
+    hasParoleBoardAccess,
+    canEditParoleBoardReports:
+      hasParoleBoardAccess &&
+      userMetadata?.routes?.paroleBoardReportEditing === true,
+  };
 }
 
 export async function getFirebaseToken(req, res) {
   let uid;
   let stateCode;
   let recidivizAllowedStates = [];
-  let hasParoleBoardAccess;
+  let paroleBoardClaims;
   const appMetadata = getAppMetadata(req);
 
   const { impersonationParams } = req.query ?? {};
@@ -84,7 +94,7 @@ export async function getFirebaseToken(req, res) {
     stateCode = offlineAppMetadata.stateCode;
     uid = user.email;
     recidivizAllowedStates = Object.values(stateCodes);
-    hasParoleBoardAccess = hasParoleBoardRoute(offlineAppMetadata);
+    paroleBoardClaims = getParoleBoardClaims(offlineAppMetadata);
   } else if (impersonateUser) {
     if (appMetadata.stateCode.toLowerCase() !== "recidiviz") {
       respondWithForbidden(res);
@@ -100,11 +110,11 @@ export async function getFirebaseToken(req, res) {
       return;
     }
     // The impersonator's own token carries none of the impersonated user's
-    // permissions, so look them up to mint the claim they would get. A failed
-    // lookup withholds only the Parole Board claim, so impersonation keeps the
+    // permissions, so look them up to mint the claims they would get. A failed
+    // lookup withholds only the Parole Board claims, so impersonation keeps the
     // rest of its access.
     try {
-      hasParoleBoardAccess = hasParoleBoardRoute(
+      paroleBoardClaims = getParoleBoardClaims(
         await fetchImpersonatedUserRestrictions(uid),
       );
     } catch (e) {
@@ -113,7 +123,7 @@ export async function getFirebaseToken(req, res) {
       console.error(
         `Failed to look up the impersonated user's permissions; minting the token without Parole Board access. Status: [${e?.response?.status}]`,
       );
-      hasParoleBoardAccess = false;
+      paroleBoardClaims = getParoleBoardClaims(undefined);
     }
   } else {
     uid = req.user[`${METADATA_NAMESPACE}email_address`];
@@ -121,7 +131,7 @@ export async function getFirebaseToken(req, res) {
     recidivizAllowedStates = (appMetadata.allowedStates ?? []).map((sc) =>
       sc.toUpperCase(),
     );
-    hasParoleBoardAccess = hasParoleBoardRoute(appMetadata);
+    paroleBoardClaims = getParoleBoardClaims(appMetadata);
   }
 
   if (!uid) {
@@ -144,7 +154,7 @@ export async function getFirebaseToken(req, res) {
     impersonator: impersonateUser,
     environment,
     forceWorkflowsDemoData,
-    hasParoleBoardAccess,
+    ...paroleBoardClaims,
   });
 
   res.json({ firebaseToken });

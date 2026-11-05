@@ -1119,6 +1119,36 @@ describe("parole board route-based access (US_ID)", () => {
 
     expect(store.userAllowedNavigation?.parole).toEqual(["docket"]);
   });
+
+  test.each([
+    ["a PHI", "US_ID", { parole: true, paroleBoardReportEditing: true }, true],
+    ["a commissioner", "US_ID", { parole: true }, false],
+    [
+      "a user with report editing but not the parole route",
+      "US_ID",
+      { paroleBoardReportEditing: true },
+      false,
+    ],
+    [
+      "a Recidiviz user, who gets every other route",
+      "RECIDIVIZ",
+      { parole: true, paroleBoardReportEditing: true },
+      false,
+    ],
+  ])(
+    "canEditParoleBoardReports for %s",
+    async (_label, stateCode, routes, expected) => {
+      mockIsAuthenticated.mockResolvedValue(true);
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        [metadataField]: { stateCode, routes },
+      });
+      const store = buildStore("US_ID");
+      await store.authorize(mockHandleUrl);
+
+      expect(store.canEditParoleBoardReports).toBe(expected);
+    },
+  );
 });
 
 describe("parole Public Calendar route-based access (US_CO)", () => {

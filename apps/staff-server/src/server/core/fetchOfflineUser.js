@@ -55,6 +55,7 @@ export function fetchOfflineUser({
           // state (not "recidiviz"). The routes commented out here are provided to make it easier
           // to toggle them on and off when testing.
           // parole: true,
+          // paroleBoardReportEditing: true,
           // system_prison: true,
           // system_supervision: true,
           // operations: true,
