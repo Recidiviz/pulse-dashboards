@@ -33,4 +33,15 @@ export const usMaResidentsConfig: ResidentsConfig = {
   enabledResidentFlags: {
     usMaSentenceDatesV1: parseISO("2026-10-28T09:00:00-04:00"),
   },
+  enabledResidentFacilityFlags: {
+    NEC: {
+      usMaReentry: parseISO("2026-11-09T07:00:00-05:00"),
+    },
+    SHI: {
+      usMaReentry: parseISO("2026-11-09T07:00:00-05:00"),
+    },
+    FRA: {
+      usMaReentry: parseISO("2026-11-10T07:00:00-05:00"),
+    },
+  },
 };
