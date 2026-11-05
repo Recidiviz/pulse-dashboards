@@ -24,7 +24,6 @@ import {
   Card,
   CopyWrapper,
   GoLink,
-  JIIButton,
   OverlayBody,
   OverlayHeading,
 } from "~@jii/common-ui";
@@ -33,7 +32,7 @@ import {
   useDateDistanceTranslation,
   useUsArTranslations,
 } from "~@jii/translation";
-import { spacing } from "~design-system";
+import { Button, Icon, spacing } from "~design-system";
 
 const DateInfoContent = styled(CopyWrapper)`
   p:last-child {
@@ -47,6 +46,13 @@ const OverlayButtons = styled.div`
   align-items: flex-start;
   gap: ${rem(spacing.md)};
   margin-top: ${rem(spacing.md)};
+`;
+
+const OverlayButton = styled(Button)`
+  font: inherit;
+  display: flex;
+  align-items: center;
+  column-gap: ${rem(6)};
 `;
 
 export type OverlayCopy = {
@@ -103,16 +109,17 @@ export function DateInfoCard({
         <>
           <OverlayButtons>
             {overlays.map((overlay, index) => (
-              <JIIButton
-                kind="secondary"
+              <OverlayButton
+                kind="link"
                 key={overlay.id}
                 onClick={() => {
                   setOverlayIndex(index);
                   setIsOverlayOpen(true);
                 }}
               >
-                {overlay.openOverlayLabel}
-              </JIIButton>
+                <span>{overlay.openOverlayLabel}</span>
+                <Icon kind="Arrow" size={16} />
+              </OverlayButton>
             ))}
           </OverlayButtons>
           <BottomSheet
