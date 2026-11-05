@@ -50,6 +50,12 @@ const API_METADATA = {
       { value: "2024", label: "2024" },
       { value: "2025", label: "2025" },
     ]),
+    movement_date_id_name_map: JSON.stringify([
+      { value: "2024-02-17", label: "February 17, 2024" },
+      { value: "2024-11-03", label: "November 3, 2024" },
+      { value: "2025-04-09", label: "April 9, 2025" },
+      { value: "2025-08-21", label: "August 21, 2025" },
+    ]),
     release_to_community_supervision_indicator_id_name_map: JSON.stringify([
       {
         value: "released_to_community_supervision",
@@ -140,6 +146,31 @@ describe("Admissions & Releases filters", () => {
     expect(metric.dimensionValueLabels).toEqual({
       admissionType: labels,
       releaseType: labels,
+    });
+  });
+
+  describe("the as-of label on the snapshot charts", () => {
+    it("shows the months the data covers when every year is selected", async () => {
+      const metric = metricsStore.admissionsByType;
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      expect(metric.latestUpdateLabel).toBe("Feb 2024 - Aug 2025");
+    });
+
+    it("narrows to the months inside the selected years", async () => {
+      mockRootStore.filtersStore.setFilters({
+        [FILTER_TYPES.CALENDAR_YEAR]: ["2025"],
+      });
+      const metric = metricsStore.admissionsByType;
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      expect(metric.latestUpdateLabel).toBe("Apr 2025 - Aug 2025");
+    });
+
+    it("shows nothing before the metadata arrives", () => {
+      expect(metricsStore.admissionsByType.latestUpdateLabel).toBe("");
     });
   });
 

@@ -69,6 +69,7 @@ type PopulationSnapshotChartProps = {
   title: string;
   subtitle?: string;
   latestUpdate?: string;
+  eyebrow?: string;
   chartXAxisTitle?: string;
   accessor: string;
   isRate: boolean;
@@ -301,6 +302,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   title,
   subtitle,
   latestUpdate,
+  eyebrow,
   chartXAxisTitle,
   accessor,
   isRate,
@@ -485,6 +487,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     <VizPathways
       title={title}
       latestUpdate={latestUpdate}
+      eyebrow={eyebrow}
       subtitle={subtitle}
       legend={
         legendItems && legendItems.length > 1 ? (

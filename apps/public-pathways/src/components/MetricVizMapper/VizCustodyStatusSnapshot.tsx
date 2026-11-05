@@ -177,6 +177,7 @@ const VizCustodyStatusSnapshot: React.FC<Props> = observer(
           title={chartTitle}
           subtitle={filtersStore.filtersDescription}
           latestUpdate={metric.latestUpdateLabel}
+          eyebrow={metric.uploadDateLabel}
         />
       );
     }
@@ -188,6 +189,7 @@ const VizCustodyStatusSnapshot: React.FC<Props> = observer(
         title={chartTitle}
         subtitle={filtersStore.filtersDescription}
         latestUpdate={metric.latestUpdateLabel}
+        eyebrow={metric.uploadDateLabel}
         chartXAxisTitle={metric.chartXAxisTitle}
         accessor={metric.accessor as string}
         isRate={false}

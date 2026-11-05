@@ -17,7 +17,12 @@
 
 import { snakeCase } from "lodash";
 
+import { FILTER_TYPES } from "../constants";
 import { PopulationFilterValues } from "../filters";
+import {
+  formatDataWindowLabel,
+  formatUploadDateLabel,
+} from "./admissionsAndReleasesDataWindow";
 import {
   appendClearedEventSpecificFilters,
   hasClearedFilterForEveryRecord,
@@ -40,6 +45,8 @@ type ConstructorOptions = ConstructorParameters<typeof SnapshotMetric>[0] & {
  *   own bars.
  * - Clearing every option of an event-specific filter keeps the other event
  *   type, instead of showing no data.
+ * - Its "as of" label is the range of months the data covers within the
+ *   selected calendar years, not the date the backend last updated.
  */
 export default class AdmissionsAndReleasesSnapshotMetric extends SnapshotMetric {
   readonly eventSpecificFilters: readonly string[];
@@ -51,6 +58,19 @@ export default class AdmissionsAndReleasesSnapshotMetric extends SnapshotMetric 
 
   override get hasEmptyFilterSelection(): boolean {
     return hasClearedFilterForEveryRecord(this.eventSpecificFilterState);
+  }
+
+  override get latestUpdateLabel(): string {
+    return (
+      formatDataWindowLabel(
+        this.movementDates,
+        this.store.filters[FILTER_TYPES.CALENDAR_YEAR],
+      ) ?? ""
+    );
+  }
+
+  override get uploadDateLabel(): string | undefined {
+    return formatUploadDateLabel(this.lastUpdated);
   }
 
   override getQueryParams(): URLSearchParams {

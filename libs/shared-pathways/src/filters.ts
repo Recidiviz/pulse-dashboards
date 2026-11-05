@@ -112,8 +112,18 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
       "communitySupervision",
   };
 
+/**
+ * Metadata key listing every date the backend has movement data for, as
+ * `{ value: "2024-02-17", label: "February 17, 2024" }` options. It feeds no
+ * filter; the Admissions & Releases charts read their data window from it.
+ */
+export const MOVEMENT_DATE_METADATA_KEY = "movement_date_id_name_map";
+
+/** Metadata key labeling the admission and release type values. */
+export const MOVEMENT_TYPE_METADATA_KEY = "movement_type_id_name_map";
+
 /** Metadata keys that label a chart dimension's values without feeding a filter. */
-export type DimensionLabelMetadataKey = "movement_type_id_name_map";
+export type DimensionLabelMetadataKey = typeof MOVEMENT_TYPE_METADATA_KEY;
 
 /**
  * The record fields each label-only metadata key labels. The Admissions &
@@ -124,7 +134,7 @@ export const dimensionLabelMapToAccessors: Record<
   DimensionLabelMetadataKey,
   readonly string[]
 > = {
-  movement_type_id_name_map: ["admissionType", "releaseType"],
+  [MOVEMENT_TYPE_METADATA_KEY]: ["admissionType", "releaseType"],
 };
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;

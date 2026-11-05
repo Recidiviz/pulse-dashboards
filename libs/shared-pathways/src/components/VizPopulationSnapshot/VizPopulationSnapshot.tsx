@@ -173,6 +173,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
         title={chartTitle}
         subtitle={filtersDescription}
         latestUpdate={metric.latestUpdateLabel}
+        eyebrow={metric.uploadDateLabel}
       />
     );
   }
@@ -184,6 +185,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       title={chartTitle}
       subtitle={filtersDescription}
       latestUpdate={metric.latestUpdateLabel}
+      eyebrow={metric.uploadDateLabel}
       chartXAxisTitle={chartXAxisTitle}
       accessor={accessor as string}
       isRate={isRate}

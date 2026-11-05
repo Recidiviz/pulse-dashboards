@@ -94,12 +94,20 @@ const Wrapper = styled.div`
   }
 `;
 
-const Header = styled.div`
+const Eyebrow = styled.p`
+  ${typography.Sans14}
+  font-family: ${({ theme }) => theme.typography.fontFamily};
+  color: ${({ theme }) => theme.chart.subtitleColor};
+  margin: 0;
+  padding: 2.5rem 3rem 0;
+`;
+
+const Header = styled.div<{ $hasEyebrow: boolean }>`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 2.5rem 3rem 0;
+  padding: ${({ $hasEyebrow }) => ($hasEyebrow ? "0.5rem" : "2.5rem")} 3rem 0;
   gap: 0.5rem;
 `;
 
@@ -135,6 +143,8 @@ type Props = {
   title: string;
   subtitle?: string;
   latestUpdate?: string;
+  /** A line of copy shown above the title, e.g. when the data was uploaded. */
+  eyebrow?: string;
   className?: string;
   legend?: React.ReactNode;
   withPadding?: boolean;
@@ -145,6 +155,7 @@ const VizPathways: React.FC<Props> = ({
   title,
   subtitle,
   latestUpdate,
+  eyebrow,
   className,
   legend,
   withPadding = true,
@@ -171,7 +182,8 @@ const VizPathways: React.FC<Props> = ({
 
   return (
     <Wrapper className={className} ref={wrapperRef}>
-      <Header>
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <Header $hasEyebrow={!!eyebrow}>
         <Title
           id="chart-title"
           // Passing the title and description into the Semiotic chart wasn't working as

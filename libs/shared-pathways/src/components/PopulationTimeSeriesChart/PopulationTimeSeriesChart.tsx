@@ -35,6 +35,7 @@ const CROWDED_POINT_COUNT = 60;
 type CommonProps = {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   /**
    * Places points one slot apart in date order, rather than by date, so dates
    * the data skips take no space on the x axis.
@@ -59,7 +60,7 @@ type MultiSeriesProps = CommonProps & {
 type Props = SinglePopulationProps | MultiSeriesProps;
 
 const PopulationTimeSeriesChart: React.FC<Props> = (props) => {
-  const { title, subtitle, placePointsInSequence } = props;
+  const { title, subtitle, eyebrow, placePointsInSequence } = props;
 
   // A chart draws either its own named series or a single population, never
   // both, so the props above keep them apart.
@@ -104,6 +105,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = (props) => {
     <PopulationTimeSeriesBaseChart
       title={title}
       subtitle={subtitle}
+      eyebrow={eyebrow}
       historicalPopulation={lines ? [] : allPoints}
       series={lines}
       chartTop={chartTop}

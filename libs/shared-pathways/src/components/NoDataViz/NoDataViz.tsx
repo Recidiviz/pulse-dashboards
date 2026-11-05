@@ -29,18 +29,13 @@ const NoDataWrapper = styled.div`
   width: 100%;
 `;
 
-type NoDataVizProps = {
-  title: string;
-  subtitle?: string;
-  latestUpdate?: string;
-};
+type NoDataVizProps = Pick<
+  React.ComponentProps<typeof VizPathways>,
+  "title" | "subtitle" | "latestUpdate" | "eyebrow"
+>;
 
-const NoDataViz: React.FC<NoDataVizProps> = ({
-  title,
-  subtitle,
-  latestUpdate,
-}) => (
-  <VizPathways title={title} subtitle={subtitle} latestUpdate={latestUpdate}>
+const NoDataViz: React.FC<NoDataVizProps> = (props) => (
+  <VizPathways {...props}>
     <NoDataWrapper>
       <div>No data available for the current selection.</div>
     </NoDataWrapper>

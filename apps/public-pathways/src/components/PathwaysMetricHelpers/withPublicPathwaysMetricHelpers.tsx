@@ -34,6 +34,7 @@ type WithMetricHelperProps = {
   metric: HydratablePathwaysMetric & {
     chartTitle: string;
     latestUpdateLabel?: string;
+    uploadDateLabel?: string;
   };
   filtersStore: FiltersStoreBase;
 };
@@ -78,6 +79,7 @@ const NoDataHelper: React.FC<
         title={metric.chartTitle}
         subtitle={filtersStore.filtersDescription}
         latestUpdate={metric.latestUpdateLabel}
+        eyebrow={metric.uploadDateLabel}
       />
     );
   }

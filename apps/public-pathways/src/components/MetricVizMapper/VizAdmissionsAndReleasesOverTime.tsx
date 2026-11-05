@@ -80,6 +80,7 @@ const VizAdmissionsAndReleasesOverTime: React.FC<Props> = observer(
       <PopulationTimeSeriesChart
         title={chartTitleForEventType(metric.content, eventType)}
         subtitle={filtersStore.filtersDescription}
+        eyebrow={metric.uploadDateLabel}
         series={buildEventTypeSeries(metric.dataSeries, eventType)}
         placePointsInSequence
       />

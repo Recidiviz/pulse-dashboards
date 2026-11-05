@@ -42,6 +42,7 @@ import {
   MetricContent,
   MetricId,
   MetricRecord,
+  MOVEMENT_DATE_METADATA_KEY,
   NewBackendRecord,
   PageContent,
   PATHWAYS_PAGES,
@@ -112,6 +113,13 @@ export default abstract class PathwaysNewBackendMetric<
   dynamicFilterOptions: Partial<DynamicFilterOptions>;
 
   /**
+   * ISO dates ("2024-02-17") the backend has movement data for, read from the
+   * same metadata as the filter options. Empty until the metric hydrates, and
+   * for tenants whose metadata lists none.
+   */
+  movementDates: string[];
+
+  /**
    * Labels for the values of a record field that no filter covers, keyed by
    * field and then by value, e.g. admissionType → court_commitment → "Court
    * Commitment". Read from the same metadata as the filter options.
@@ -151,6 +159,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.accessorIsNotFilterType = accessorIsNotFilterType;
     this.multiSelectFilters = multiSelectFilters;
     this.dynamicFilterOptions = {};
+    this.movementDates = [];
     this.dimensionValueLabels = {};
 
     makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
@@ -303,6 +312,16 @@ export default abstract class PathwaysNewBackendMetric<
           return;
         }
 
+        if (nameMapKey === MOVEMENT_DATE_METADATA_KEY) {
+          const movementDateOptions: FilterOption[] = JSON.parse(optionValues);
+          if (!validateDynamicFilterOptions(movementDateOptions))
+            throw new Error(
+              `Invalid movement dates for ${this.id}: ${nameMapKey}`,
+            );
+          this.movementDates = movementDateOptions.map(({ value }) => value);
+          return;
+        }
+
         const filterType =
           dynamicFilterOptionMapToFilterType[
             nameMapKey as DynamicFilterOptionMetadataKey
@@ -390,6 +409,14 @@ export default abstract class PathwaysNewBackendMetric<
           });
         }
       });
+  }
+
+  /**
+   * Copy shown above the chart title saying when the data was uploaded. Empty
+   * by default; a metric whose charts label their own date range overrides it.
+   */
+  get uploadDateLabel(): string | undefined {
+    return undefined;
   }
 
   get records(): RecordFormat[] | undefined {

@@ -26,6 +26,7 @@ import {
   DownloadableDataset,
 } from "../types";
 import { getRecordDate } from "../utils";
+import { formatUploadDateLabel } from "./admissionsAndReleasesDataWindow";
 import {
   appendClearedEventSpecificFilters,
   hasClearedFilterForEveryRecord,
@@ -82,6 +83,10 @@ export default class AdmissionsAndReleasesOverTimeMetric extends PathwaysNewBack
     this.dataTransformer = (records) =>
       fillMissingMonths(records, (year) => this.isYearChecked(year));
     this.eventSpecificFilters = eventSpecificFilters;
+  }
+
+  override get uploadDateLabel(): string | undefined {
+    return formatUploadDateLabel(this.lastUpdated);
   }
 
   /** Clearing an event-specific filter keeps the other event type's line. */

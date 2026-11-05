@@ -72,6 +72,7 @@ const ChartWrapper = styled(VizPathways)<{
 type Props = {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   historicalPopulation: ChartPoint[];
   projectedPopulation?: ChartPoint[];
   series?: TimeSeriesLine[];
@@ -109,6 +110,7 @@ function computeYTicks(bottom: number, top: number): number[] {
 const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   title,
   subtitle,
+  eyebrow,
   historicalPopulation,
   projectedPopulation,
   series,
@@ -246,6 +248,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     <ChartWrapper
       title={title}
       subtitle={subtitle}
+      eyebrow={eyebrow}
       legend={
         legendItems.length > 1 ? <ChartLegend items={legendItems} /> : undefined
       }
