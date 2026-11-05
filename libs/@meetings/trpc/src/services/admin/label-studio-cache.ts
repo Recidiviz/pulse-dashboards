@@ -37,7 +37,11 @@ import type {
 } from "~@meetings/tasks/label-studio-client";
 
 // =============================================================================
-// A cached snapshot of one Label Studio project's annotations.
+// Cached snapshots of Label Studio projects' annotations. Every project is
+// crawled the same way (list tasks, skip unannotated ones, fetch each
+// annotated task's annotations) and cached the same way; only how a task's
+// annotations decode into a per-meeting result differs between kinds of
+// project.
 //
 // The crawl is slow: the task list pages 100 at a time and every annotated
 // task needs its own request. Skipping tasks that report zero annotations
@@ -50,15 +54,19 @@ import type {
 // — Cloud Run throttles CPU outside request handling, so a background refresh
 // after the response is sent is not reliably allowed to finish.
 //
-// The snapshot is per instance. With min_instance_count = 1 and a handful of
+// Snapshots are per instance. With min_instance_count = 1 and a handful of
 // internal users that is fine; if it stops being fine, the shape here is
-// unchanged by moving the snapshot into the global database.
+// unchanged by moving snapshots into the global database.
 // =============================================================================
 
 const TTL_MS = 15 * 60 * 1000;
 
 /** How many per-task annotation requests are in flight at once. */
 const ANNOTATION_FETCH_CONCURRENCY = 20;
+
+type RawAnnotation = Awaited<
+  ReturnType<LabelStudioClient["listAnnotationsForTask"]>
+>[number];
 
 export interface LabelStudioAnnotation {
   raterEmail: string;
@@ -89,10 +97,10 @@ export interface LabelStudioTaskAnnotations {
   latestAnnotationAt: Date | null;
 }
 
-export interface LabelStudioSnapshot {
+interface CrawlSnapshot<TTaskResult> {
   fetchedAt: Date;
   /** Annotated tasks only; a task nobody has rated yet has no entry here. */
-  byMeetingId: Map<string, LabelStudioTaskAnnotations>;
+  byMeetingId: Map<string, TTaskResult>;
   /**
    * The task id of every usable task, rated or not, so a meeting that was sent
    * to Label Studio but not rated yet can be told apart from one that was
@@ -106,6 +114,8 @@ export interface LabelStudioSnapshot {
   /** Tasks dropped for having no usable meeting id or state in their payload. */
   unusableTaskCount: number;
 }
+
+export type LabelStudioSnapshot = CrawlSnapshot<LabelStudioTaskAnnotations>;
 
 function taskString(task: LabelStudioTask, key: string): string | undefined {
   const value = task.data[key];
@@ -140,12 +150,7 @@ function buildTaskAnnotations(
   meetingId: string,
   stateCode: string,
   config: LabelConfig,
-  rawAnnotations: {
-    completed_by: number;
-    result: Parameters<typeof decodeAnnotationResults>[1];
-    created_at: string;
-    updated_at: string;
-  }[],
+  rawAnnotations: RawAnnotation[],
   emailById: Map<number, string>,
 ): LabelStudioTaskAnnotations | null {
   const annotations: LabelStudioAnnotation[] = [];
@@ -202,10 +207,25 @@ function buildTaskAnnotations(
   };
 }
 
-async function crawl(
+/**
+ * Lists a project's tasks and fetches annotations for the ones that have any,
+ * building one result per task via buildTaskResult, which is the only part
+ * that differs between kinds of project.
+ */
+async function crawlProject<
+  TTaskResult extends { meetingId: string; latestAnnotationAt: Date | null },
+>(
   client: LabelStudioClient,
   projectId: number,
-): Promise<LabelStudioSnapshot> {
+  buildTaskResult: (
+    task: LabelStudioTask,
+    meetingId: string,
+    stateCode: string,
+    config: LabelConfig,
+    rawAnnotations: RawAnnotation[],
+    emailById: Map<number, string>,
+  ) => TTaskResult | null,
+): Promise<CrawlSnapshot<TTaskResult>> {
   const [labelConfigXml, tasks, users] = await Promise.all([
     client.getProjectLabelConfig(projectId),
     // The full field set costs a larger listing payload but reports
@@ -248,7 +268,7 @@ async function crawl(
     async (task) => {
       try {
         const rawAnnotations = await client.listAnnotationsForTask(task.id);
-        return buildTaskAnnotations(
+        return buildTaskResult(
           task,
           task.data["meeting_id"] as string,
           task.data["state_code"] as string,
@@ -266,20 +286,17 @@ async function crawl(
     },
   );
 
-  const byMeetingId = new Map<string, LabelStudioTaskAnnotations>();
+  const byMeetingId = new Map<string, TTaskResult>();
+  const latestAtByMeetingId = new Map<string, number>();
   for (const entry of entries) {
     if (!entry) continue;
     // A meeting can have more than one task (see dedupe-label-studio-tasks);
     // keep the one with the most recent rater activity.
-    const existing = byMeetingId.get(entry.meetingId);
-    if (
-      existing &&
-      (existing.latestAnnotationAt?.getTime() ?? 0) >=
-        (entry.latestAnnotationAt?.getTime() ?? 0)
-    ) {
-      continue;
-    }
+    const latestAt = entry.latestAnnotationAt?.getTime() ?? 0;
+    const existingLatest = latestAtByMeetingId.get(entry.meetingId) ?? -1;
+    if (existingLatest >= latestAt) continue;
     byMeetingId.set(entry.meetingId, entry);
+    latestAtByMeetingId.set(entry.meetingId, latestAt);
   }
 
   return {
@@ -293,63 +310,97 @@ async function crawl(
   };
 }
 
-let cached: LabelStudioSnapshot | null = null;
-let cachedProjectId: number | null = null;
-let inFlight: Promise<LabelStudioSnapshot> | null = null;
-// Bumped by invalidation so a crawl that started before a write cannot store
-// its (now stale) snapshot when it finishes.
-let generation = 0;
+// =============================================================================
+// Caching. Each cache keeps one snapshot, reused for 15 minutes (TTL_MS), and
+// concurrent reads share one crawl instead of starting several.
+// =============================================================================
 
-/**
- * The project's annotations, from cache when fresh. Concurrent callers share
- * one crawl; a failed crawl rejects every waiter rather than resolving to an
- * empty snapshot that would read as "nobody has reviewed anything".
- */
-export async function getLabelStudioSnapshot(
+/** One Label Studio project's snapshot, cached for TTL_MS and refreshed by crawl. */
+class SnapshotCache<TSnapshot extends { fetchedAt: Date }> {
+  private snapshot: TSnapshot | null = null;
+  private snapshotProjectId: number | null = null;
+  private inFlight: Promise<TSnapshot> | null = null;
+  // Bumped by invalidation so a crawl that started before a write cannot
+  // store its (now stale) snapshot when it finishes.
+  private generation = 0;
+
+  constructor(
+    private readonly crawl: (
+      client: LabelStudioClient,
+      projectId: number,
+    ) => Promise<TSnapshot>,
+  ) {}
+
+  /**
+   * The project's snapshot, from cache when fresh. Concurrent callers share
+   * one crawl; a failed crawl rejects every waiter rather than resolving to
+   * an empty snapshot that would read as "nobody has reviewed anything".
+   */
+  async get(
+    client: LabelStudioClient,
+    projectId: number,
+    now: number,
+  ): Promise<TSnapshot> {
+    if (
+      this.snapshot &&
+      this.snapshotProjectId === projectId &&
+      now - this.snapshot.fetchedAt.getTime() < TTL_MS
+    ) {
+      return this.snapshot;
+    }
+    if (this.inFlight) return this.inFlight;
+
+    const startedAt = this.generation;
+    this.inFlight = this.crawl(client, projectId)
+      .then((snapshot) => {
+        if (startedAt === this.generation) {
+          this.snapshot = snapshot;
+          this.snapshotProjectId = projectId;
+        }
+        return snapshot;
+      })
+      .finally(() => {
+        this.inFlight = null;
+      });
+
+    return this.inFlight;
+  }
+
+  /**
+   * Drops the snapshot after this server changes Label Studio, so the next
+   * read sees the change instead of waiting out the TTL. Other instances
+   * still serve their own snapshot until it expires.
+   */
+  invalidate(): void {
+    this.generation += 1;
+    this.reset();
+  }
+
+  /** Empties the cache without bumping the generation. */
+  reset(): void {
+    this.snapshot = null;
+    this.snapshotProjectId = null;
+    this.inFlight = null;
+  }
+}
+
+const fullReviewCache = new SnapshotCache((client, projectId) =>
+  crawlProject(client, projectId, buildTaskAnnotations),
+);
+
+export function getLabelStudioSnapshot(
   client: LabelStudioClient,
   projectId: number,
   { now = Date.now() }: { now?: number } = {},
 ): Promise<LabelStudioSnapshot> {
-  if (
-    cached &&
-    cachedProjectId === projectId &&
-    now - cached.fetchedAt.getTime() < TTL_MS
-  ) {
-    return cached;
-  }
-  if (inFlight) return inFlight;
-
-  const startedAt = generation;
-  inFlight = crawl(client, projectId)
-    .then((snapshot) => {
-      if (startedAt === generation) {
-        cached = snapshot;
-        cachedProjectId = projectId;
-      }
-      return snapshot;
-    })
-    .finally(() => {
-      inFlight = null;
-    });
-
-  return inFlight;
+  return fullReviewCache.get(client, projectId, now);
 }
 
-/**
- * Drops the snapshot after this server changes Label Studio, so the next read
- * sees the change instead of waiting out the TTL. Other instances still serve
- * their own snapshot until it expires.
- */
 export function invalidateLabelStudioSnapshot(): void {
-  generation += 1;
-  cached = null;
-  cachedProjectId = null;
-  inFlight = null;
+  fullReviewCache.invalidate();
 }
 
-/** Test seam: drop the module-level snapshot. */
+/** Empties the full-review cache. Only tests call this, to start each test fresh. */
 export function resetLabelStudioSnapshotCache(): void {
-  cached = null;
-  cachedProjectId = null;
-  inFlight = null;
+  fullReviewCache.reset();
 }
