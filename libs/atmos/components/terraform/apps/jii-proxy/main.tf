@@ -121,6 +121,7 @@ module "load_balancer" {
   }
 
   ssl                             = true
+  https_redirect                  = true
   ssl_policy                      = var.min_tls_version == null ? null : google_compute_ssl_policy.restricted[0].self_link
   ssl_certificates                = [google_compute_ssl_certificate.edovo_ssl.id]
   managed_ssl_certificate_domains = var.managed_certificate_domains
