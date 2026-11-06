@@ -130,7 +130,7 @@ export const ActionItemsTab = ({
     return (
       <View className="flex-1 pb-4">
         <View className="mb-3 flex flex-col">
-          <Typography variant="heading-4">Action items</Typography>
+          <Typography variant="heading-4">Action Items</Typography>
           <Typography variant="body-s-regular" className="mt-1">
             No action items were generated for this meeting
           </Typography>
@@ -147,7 +147,7 @@ export const ActionItemsTab = ({
         <View className="flex flex-col">
           <View className="flex-row items-center gap-1.5">
             <Typography variant="heading-4">
-              {isMobileEditMode ? "Edit Action Items" : "Action items"}
+              {isMobileEditMode ? "Edit Action Items" : "Action Items"}
             </Typography>
             <AiGeneratedIndicator />
           </View>

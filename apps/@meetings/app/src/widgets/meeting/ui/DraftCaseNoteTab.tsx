@@ -141,7 +141,7 @@ const DraftCaseNoteTab = ({
       <View className="flex-row items-center justify-between">
         <View>
           <View className="flex-row items-center gap-1.5">
-            <Typography variant="heading-4">Draft case note</Typography>
+            <Typography variant="heading-4">Draft Case Note</Typography>
             <AiGeneratedIndicator />
           </View>
           {isEditable && (
@@ -185,7 +185,7 @@ const DraftCaseNoteTab = ({
             onPress={onCopy}
             className="mt-6 self-start px-6"
           >
-            Copy to clipboard
+            Copy to Clipboard
           </Button>
         )}
         {isNoteShown && outputVote}
