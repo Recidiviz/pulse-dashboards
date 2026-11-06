@@ -164,11 +164,13 @@ const MeetingRow = ({
               </View>
             )}
             {!isProcessing && (
-              <View className="flex flex-row items-center gap-3">
+              <View className="flex flex-row items-start gap-3">
                 {meeting?.approvals?.caseNote && (
-                  <ReviewIndicator
-                    isApproved={meeting.approvals.caseNote.isApproved}
-                  />
+                  <View className="h-6 justify-center">
+                    <ReviewIndicator
+                      isApproved={meeting.approvals.caseNote.isApproved}
+                    />
+                  </View>
                 )}
                 <Typography
                   variant="body-m-regular"
@@ -216,7 +218,9 @@ const MeetingsTable = ({
         <Table className="table-fixed">
           <TableHead>
             <TableHeadRow>
-              <TableHeadCell className="w-1/4">DATE / TIME</TableHeadCell>
+              <TableHeadCell className="w-1/4 first:!pl-4">
+                DATE / TIME
+              </TableHeadCell>
               <TableHeadCell className="w-1/4">
                 {hasMeetingTypes ? "MEETING" : "STAFF"}
               </TableHeadCell>
