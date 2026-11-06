@@ -28,18 +28,12 @@ import { AUDIO_FORMATS, MEETINGS_STATE_CODES } from "~@meetings/config";
 import { StateCode } from "~@meetings/prisma/client";
 import { fetchMeetingStorageLocation } from "~@meetings/server/scripts/meetings-oncall/data";
 
-export const REPROCESS_STEPS = [
-  "stitching",
-  "transcription",
-  "notetaking",
-] as const;
+export const REPROCESS_STEPS = ["transcription", "notetaking"] as const;
 export type ReprocessStep = (typeof REPROCESS_STEPS)[number];
 
 /**
- * Extensions the pipeline can actually stitch. Derived from AUDIO_FORMATS rather
- * than hardcoded: stitchAudio throws "Unexpected file format" for anything not
- * in there, and since it feeds every object in the meeting's folder to ffmpeg,
- * an out-of-range upload breaks later stitches too, not just its own.
+ * Extensions the pipeline can transcribe. Derived from AUDIO_FORMATS rather
+ * than hardcoded, since those are the formats the app itself uploads.
  */
 const ALLOWED_AUDIO_EXTENSIONS = Object.keys(AUDIO_FORMATS).map(
   (extension) => `.${extension}`,
@@ -80,7 +74,7 @@ export function validateStep(value: unknown): ReprocessStep {
  * returns the bucket-relative path the reprocess endpoint expects.
  *
  * The object is written under a new timestamped name rather than overwriting
- * `final.*`, so the original stitched audio stays recoverable.
+ * the original recording, so it stays recoverable.
  */
 export async function uploadReplacementAudio(options: {
   dbUrlTemplate: string;

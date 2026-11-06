@@ -130,7 +130,7 @@ describe("buildMeetingFailureMessage", () => {
     stateCode: "US_ID",
     personPseudoId: "pseudo-1",
     meetingId: "abc",
-    errorStep: "stitching" as const,
+    errorStep: "transcription" as const,
   };
 
   test("without person info, includes the failed step", () => {
@@ -139,7 +139,7 @@ describe("buildMeetingFailureMessage", () => {
     expect(buildMeetingFailureMessage(baseParams)).toEqual(
       [
         ":warning: Meeting processing error",
-        "• Failed step: stitching",
+        "• Failed step: transcription",
         "• Staff: staff@example.com",
         "• State: US_ID",
         "• Client/Resident Pseudonymized ID: pseudo-1",
@@ -161,7 +161,7 @@ describe("buildMeetingFailureMessage", () => {
     ).toEqual(
       [
         ":warning: Meeting processing error",
-        "• Failed step: stitching",
+        "• Failed step: transcription",
         "• Staff: staff@example.com",
         "• State: US_ID",
         "• Client/Resident Pseudonymized ID: pseudo-1",
@@ -183,7 +183,7 @@ describe("buildMeetingFailureMessage", () => {
     ).toEqual(
       [
         ":warning: Meeting processing error",
-        "• Failed step: stitching",
+        "• Failed step: transcription",
         "• Staff: staff@example.com",
         "• State: US_ID",
         "• Client/Resident Pseudonymized ID: pseudo-1",

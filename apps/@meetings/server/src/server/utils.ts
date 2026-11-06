@@ -48,79 +48,6 @@ const MIN_CONFIDENCE_THRESHOLD = 0.9;
 // and this will aid that
 const DEEPGRAM_CONFIDENCE_PENALTY = 0.04;
 
-export function queueTranscriptionTaskLocal(
-  stateCode: string,
-  meetingId: string,
-) {
-  // Don't await the fetch to avoid blocking
-  fetch(env.TRANSCRIPTION_TASK_REQUEST_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ stateCode, meetingId }),
-  });
-}
-
-export async function queueTranscriptionTaskCloud(
-  stateCode: string,
-  meetingId: string,
-) {
-  const cloudTaskClient = new CloudTasksClient();
-
-  const parent = cloudTaskClient.queuePath(
-    env.CLOUD_TASKS_PROJECT,
-    env.CLOUD_TASKS_LOCATION,
-    env.TRANSCRIPTION_TASK_QUEUE_NAME,
-  );
-
-  const request: protos.google.cloud.tasks.v2.ICreateTaskRequest = {
-    parent,
-    task: {
-      httpRequest: {
-        headers: {
-          "Content-Type": "application/json",
-          ...getTraceData(),
-        },
-        body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
-        httpMethod: "POST",
-        url: env.TRANSCRIPTION_TASK_REQUEST_URL,
-        oidcToken: {
-          serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
-        },
-      },
-    },
-  };
-
-  await cloudTaskClient.createTask(request);
-}
-
-export async function queueTranscriptionTask(
-  stateCode: string,
-  meetingId: string,
-  prisma: PrismaClient,
-) {
-  // Go ahead and set the status to stitching queued so we don't accidentally overwrite it from the other process
-
-  await prisma.meeting.update({
-    where: {
-      id: meetingId,
-    },
-    data: {
-      postMeetingProcessingStatus:
-        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
-    },
-  });
-
-  // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
-  if (env.NODE_ENV === "development") {
-    // Don't await to avoid blocking
-    queueTranscriptionTaskLocal(stateCode, meetingId);
-  } else {
-    await queueTranscriptionTaskCloud(stateCode, meetingId);
-  }
-}
-
 type DeepgramUtterance = NonNullable<
   SyncPrerecordedResponse["results"]["utterances"]
 >[number];
@@ -601,8 +528,6 @@ export async function handleNotetakingProcessing(
 
 export function getStepFromUserSetStep(step?: string) {
   switch (step) {
-    case "stitching":
-      return "STITCHING";
     case "transcription":
       return "TRANSCRIPTION";
     case "notetaking":
@@ -614,9 +539,11 @@ export function getStepFromUserSetStep(step?: string) {
 
 export function getStepFromMeetingStatus(status: PostMeetingProcessingStatus) {
   switch (status) {
+    // Stitching no longer runs, so a meeting left in any stitching status is stuck
     case PostMeetingProcessingStatus.NOT_STARTED:
+    case PostMeetingProcessingStatus.STITCHING_QUEUED:
+    case PostMeetingProcessingStatus.STITCHING_IN_PROGRESS:
     case PostMeetingProcessingStatus.STITCHING_ERROR:
-      return "STITCHING";
     case PostMeetingProcessingStatus.TRANSCRIPTION_ERROR:
       return "TRANSCRIPTION";
     case PostMeetingProcessingStatus.NOTETAKING_ERROR:

@@ -87,7 +87,7 @@ const FAKE_DEEPGRAM_TRANSCRIPT_OBJECT = {
   },
 };
 
-const mockStitchAudio = vi.spyOn(tasks, "stitchAudio");
+const mockFindUploadedRecording = vi.spyOn(tasks, "findUploadedRecording");
 const mockTranscribeAudioWithAssemblyAI = vi.spyOn(
   tasks,
   "transcribeAudioWithAssemblyAI",
@@ -105,8 +105,12 @@ vi.spyOn(evaluators, "createEvaluatorClients").mockReturnValue(
 );
 
 // Make these succeed by default
-mockStitchAudio.mockImplementation(async () => {
-  return { outputFileName: "final-path.m4a", durationMs: 1000 };
+mockFindUploadedRecording.mockImplementation(async () => {
+  return {
+    filePath: "uploaded-path.m4a",
+    durationMs: 1000,
+    uploadedFiles: [{ fileName: "uploaded-path.m4a", sizeBytes: 2048 }],
+  };
 });
 mockExportLabelStudioTask.mockImplementation(
   vi.fn().mockResolvedValue(undefined),
@@ -160,11 +164,96 @@ mockTranscribeAudioWithDeepgram.mockImplementation(
 
 describe("tasks", () => {
   describe("/stitch-audio", () => {
+    test("Should return authorization error if token is not provided", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/stitch-audio",
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(401);
+    });
+
+    test("Should queue transcription for a stitching task queued before deploy", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: {
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.STITCHING_QUEUED,
+        },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/stitch-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+      expect(meeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+      );
+      expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith(
+        expect.objectContaining({
+          parent:
+            "projects/test-project/locations/us-central1/queues/transcription-task-queue",
+        }),
+      );
+    });
+
+    test("Should set transcription error if queueing transcription fails", async () => {
+      mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/stitch-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+      expect(meeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+      );
+    });
+  });
+
+  describe("/transcribe-audio", () => {
+    beforeEach(async () => {
+      // Set the state to what is expected before queueing transcription
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: {
+          finalRecordingGCSPath: "final-path.m4a",
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
+        },
+      });
+    });
+
     describe("auth", () => {
       test("Should return authorization error if token is not provided", async () => {
         const response = await testServer.inject({
           method: "POST",
-          url: "/stitch-audio",
+          url: "/transcribe-audio",
           body: {
             stateCode: "US_NE",
             meetingId: fakeMeeting.id,
@@ -190,7 +279,7 @@ describe("tasks", () => {
 
         const response = await testServer.inject({
           method: "POST",
-          url: "/stitch-audio",
+          url: "/transcribe-audio",
           headers: { authorization: `Bearer token` },
           body: {
             stateCode: "US_NE",
@@ -218,7 +307,7 @@ describe("tasks", () => {
 
         const response = await testServer.inject({
           method: "POST",
-          url: "/stitch-audio",
+          url: "/transcribe-audio",
           headers: { authorization: `Bearer token` },
           body: {
             stateCode: "US_NE",
@@ -231,185 +320,6 @@ describe("tasks", () => {
         expect(JSON.parse(response.body)).toEqual(
           expect.objectContaining({ message: "Invalid token" }),
         );
-      });
-    });
-
-    test("Should return 500 if meeting does not exist", async () => {
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/stitch-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: "Not a meeting",
-        },
-      });
-
-      expect(response.statusCode).toBe(500);
-      expect(JSON.parse(response.body)).toEqual(
-        expect.objectContaining({
-          error: "Internal Server Error",
-          message: expect.stringContaining(
-            "Invalid `prisma.meeting.findUniqueOrThrow()` invocation",
-          ),
-        }),
-      );
-    });
-
-    test("Should return 500 and set stitching error if audio stitching fails", async () => {
-      mockStitchAudio.mockImplementationOnce(() => {
-        throw new Error("Audio stitching failed");
-      });
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/stitch-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: fakeMeeting.id,
-        },
-      });
-
-      expect(response.statusCode).toBe(500);
-      expect(JSON.parse(response.body)).toEqual(
-        expect.objectContaining({
-          error: "Internal Server Error",
-          message: "Audio stitching failed",
-        }),
-      );
-
-      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
-        where: { id: fakeMeeting.id },
-      });
-
-      expect(meeting.postMeetingProcessingStatus).toBe(
-        PostMeetingProcessingStatus.STITCHING_ERROR,
-      );
-    });
-
-    test("Should return 200 and set transcribing error if audio stitching succeeds but queueing transcription fails", async () => {
-      mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/stitch-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: fakeMeeting.id,
-        },
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual(
-        "Audio stitching completed successfully; queuing transcription failed.",
-      );
-
-      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
-        where: { id: fakeMeeting.id },
-      });
-
-      expect(meeting).toEqual(
-        expect.objectContaining({
-          finalRecordingGCSPath: "final-path.m4a",
-          postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
-        }),
-      );
-    });
-
-    test("Should return 500 and set stitching error if there is no audio to stitch", async () => {
-      mockStitchAudio.mockImplementationOnce(async () => {
-        return null;
-      });
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/stitch-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: fakeMeeting.id,
-        },
-      });
-
-      expect(response.statusCode).toBe(500);
-      expect(JSON.parse(response.body)).toEqual(
-        expect.objectContaining({
-          error: "Internal Server Error",
-          message: `No audio files found to stitch for meeting ${fakeMeeting.id}`,
-        }),
-      );
-
-      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
-        where: { id: fakeMeeting.id },
-      });
-
-      expect(meeting.postMeetingProcessingStatus).toBe(
-        PostMeetingProcessingStatus.STITCHING_ERROR,
-      );
-      expect(meeting.finalRecordingGCSPath).toBeNull();
-    });
-
-    test("Should return 200 and set transcribing queued if audio stitching succeeds", async () => {
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/stitch-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: fakeMeeting.id,
-        },
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual("Audio stitching completed successfully");
-
-      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
-        where: { id: fakeMeeting.id },
-      });
-
-      expect(meeting).toEqual(
-        expect.objectContaining({
-          finalRecordingGCSPath: "final-path.m4a",
-          postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
-        }),
-      );
-
-      expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
-        parent:
-          "projects/test-project/locations/us-central1/queues/transcription-task-queue",
-        task: {
-          httpRequest: {
-            headers: {
-              "Content-Type": "application/json",
-              "sentry-trace": expect.any(String),
-              baggage: expect.any(String),
-            },
-            body: expect.any(Buffer),
-            httpMethod: "POST",
-            url: env.TRANSCRIPTION_TASK_REQUEST_URL,
-            oidcToken: {
-              serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
-            },
-          },
-        },
-      });
-    });
-  });
-
-  describe("/transcribe-audio", () => {
-    beforeEach(async () => {
-      // Set the state to what is expected before queueing transcription
-      await testPrismaClient.meeting.update({
-        where: { id: fakeMeeting.id },
-        data: {
-          finalRecordingGCSPath: "final-path.m4a",
-          postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
-        },
       });
     });
 
@@ -435,7 +345,148 @@ describe("tasks", () => {
       );
     });
 
-    test("Should return 500 and set transcription error if there is no final recording path", async () => {
+    test("Should transcribe the uploaded recording when no final recording path is set", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: { finalRecordingGCSPath: null, durationMs: null },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meeting).toEqual(
+        expect.objectContaining({
+          finalRecordingGCSPath: "uploaded-path.m4a",
+          durationMs: 1000,
+        }),
+      );
+      await testAndGetSentryReports(0);
+      expect(mockTranscribeAudioWithAssemblyAI).toHaveBeenCalledWith(
+        expect.any(String),
+        "uploaded-path.m4a",
+        expect.any(String),
+        expect.any(Array),
+      );
+    });
+
+    test("Should return 500 and set transcription error if the folder holds recordings of different sizes", async () => {
+      mockFindUploadedRecording.mockResolvedValueOnce({
+        filePath: "US_NE/meeting-1/1760832300.m4a",
+        durationMs: 1000,
+        uploadedFiles: [
+          { fileName: "US_NE/meeting-1/1760832000.m4a", sizeBytes: 1048576 },
+          { fileName: "US_NE/meeting-1/1760832300.m4a", sizeBytes: 524288 },
+        ],
+      });
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: { finalRecordingGCSPath: null },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(500);
+      expect(JSON.parse(response.body)).toEqual(
+        expect.objectContaining({
+          message: expect.stringContaining("Manual stitching required"),
+        }),
+      );
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+      expect(meeting.postMeetingProcessingStatus).toBe(
+        PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+      );
+      expect(meeting.finalRecordingGCSPath).toBeNull();
+      expect(mockTranscribeAudioWithAssemblyAI).not.toHaveBeenCalled();
+    });
+
+    test("Should transcribe the newest retried upload and warn Sentry with every file's size", async () => {
+      const uploadedFiles = [
+        { fileName: "US_NE/meeting-1/1760832000.m4a", sizeBytes: 1048576 },
+        { fileName: "US_NE/meeting-1/1760832300.m4a", sizeBytes: 1048576 },
+      ];
+      mockFindUploadedRecording.mockResolvedValueOnce({
+        filePath: "US_NE/meeting-1/1760832300.m4a",
+        durationMs: 1000,
+        uploadedFiles,
+      });
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: { finalRecordingGCSPath: null },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      expect(mockTranscribeAudioWithAssemblyAI).toHaveBeenCalledWith(
+        expect.any(String),
+        "US_NE/meeting-1/1760832300.m4a",
+        expect.any(String),
+        expect.any(Array),
+      );
+
+      const [report] = await testAndGetSentryReports();
+      expect(report.level).toBe("warning");
+      expect(report.message).toContain("retried uploads");
+      expect(report.extra?.["uploadedFiles"]).toEqual(uploadedFiles);
+      expect(report.tags?.["meetingId"]).toBe(fakeMeeting.id);
+    });
+
+    test("Should keep an existing final recording path without looking for uploads", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockFindUploadedRecording).not.toHaveBeenCalled();
+      expect(mockTranscribeAudioWithAssemblyAI).toHaveBeenCalledWith(
+        expect.any(String),
+        "final-path.m4a",
+        expect.any(String),
+        expect.any(Array),
+      );
+    });
+
+    test("Should return 500 and set transcription error if there is no uploaded audio", async () => {
+      mockFindUploadedRecording.mockResolvedValueOnce(null);
       await testPrismaClient.meeting.update({
         where: { id: fakeMeeting.id },
         data: { finalRecordingGCSPath: null },
@@ -455,7 +506,7 @@ describe("tasks", () => {
       expect(JSON.parse(response.body)).toEqual(
         expect.objectContaining({
           error: "Internal Server Error",
-          message: "Final recording GCS path is not set for meeting",
+          message: `No audio files found to transcribe for meeting ${fakeMeeting.id}`,
         }),
       );
 
@@ -465,6 +516,40 @@ describe("tasks", () => {
 
       expect(meeting.postMeetingProcessingStatus).toBe(
         PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+      );
+    });
+
+    test("Should return 500 and set transcription error if looking up the uploaded recording fails", async () => {
+      mockFindUploadedRecording.mockRejectedValueOnce(
+        new Error("GCS lookup failed"),
+      );
+      await testPrismaClient.meeting.update({
+        where: { id: fakeMeeting.id },
+        data: { finalRecordingGCSPath: null },
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(500);
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+      });
+
+      expect(meeting).toEqual(
+        expect.objectContaining({
+          finalRecordingGCSPath: null,
+          postMeetingProcessingStatus:
+            PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
+        }),
       );
     });
 
@@ -1386,9 +1471,12 @@ describe("tasks", () => {
     describe("without step", () => {
       test.each([
         PostMeetingProcessingStatus.NOT_STARTED,
+        PostMeetingProcessingStatus.STITCHING_QUEUED,
+        PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
         PostMeetingProcessingStatus.STITCHING_ERROR,
+        PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
       ])(
-        "Should queue audio stitching if processing has not started/has an error",
+        "Should queue transcription if processing has not started/has a %s status",
         async (startStatus) => {
           await testPrismaClient.meeting.update({
             where: { id: fakeMeeting.id },
@@ -1409,7 +1497,7 @@ describe("tasks", () => {
 
           expect(response.statusCode).toBe(200);
           expect(response.body).toEqual(
-            "Audio stitching task queued successfully.",
+            "Transcription task queued successfully.",
           );
 
           const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
@@ -1417,12 +1505,12 @@ describe("tasks", () => {
           });
 
           expect(meeting.postMeetingProcessingStatus).toBe(
-            PostMeetingProcessingStatus.STITCHING_QUEUED,
+            PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
           );
 
           expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
             parent:
-              "projects/test-project/locations/us-central1/queues/test-stitching-task-queue",
+              "projects/test-project/locations/us-central1/queues/transcription-task-queue",
             task: {
               httpRequest: {
                 headers: {
@@ -1432,7 +1520,7 @@ describe("tasks", () => {
                 },
                 body: expect.any(Buffer),
                 httpMethod: "POST",
-                url: env.STITCHING_TASK_REQUEST_URL,
+                url: env.TRANSCRIPTION_TASK_REQUEST_URL,
                 oidcToken: {
                   serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
                 },
@@ -1442,62 +1530,7 @@ describe("tasks", () => {
         },
       );
 
-      test("Should queue transcription if there was a transcription error", async () => {
-        await testPrismaClient.meeting.update({
-          where: { id: fakeMeeting.id },
-          data: {
-            postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
-          },
-        });
-
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/reprocess-meeting",
-          headers: { authorization: `Bearer token` },
-          body: {
-            stateCode: "US_NE",
-            meetingId: fakeMeeting.id,
-          },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(
-          "Transcription task queued successfully.",
-        );
-
-        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
-          where: { id: fakeMeeting.id },
-        });
-
-        expect(meeting.postMeetingProcessingStatus).toBe(
-          PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
-        );
-
-        expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith({
-          parent:
-            "projects/test-project/locations/us-central1/queues/transcription-task-queue",
-          task: {
-            httpRequest: {
-              headers: {
-                "Content-Type": "application/json",
-                "sentry-trace": expect.any(String),
-                baggage: expect.any(String),
-              },
-              body: expect.any(Buffer),
-              httpMethod: "POST",
-              url: env.TRANSCRIPTION_TASK_REQUEST_URL,
-              oidcToken: {
-                serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
-              },
-            },
-          },
-        });
-      });
-
       test.each([
-        PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
-        PostMeetingProcessingStatus.STITCHING_QUEUED,
         PostMeetingProcessingStatus.TRANSCRIPTION_IN_PROGRESS,
         PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
         PostMeetingProcessingStatus.COMPLETED,

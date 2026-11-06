@@ -40,12 +40,6 @@ const envSchema = z.object({
   NODE_ENV: z.string().min(1, "NODE_ENV is required"),
   IS_LOCAL_MODE: z.coerce.boolean().default(false),
   LOCAL_STORAGE_DIR: z.string().optional(),
-  STITCHING_TASK_QUEUE_NAME: z
-    .string()
-    .min(1, "STITCHING_TASK_QUEUE_NAME is required"),
-  STITCHING_TASK_REQUEST_URL: z
-    .string()
-    .min(1, "STITCHING_TASK_REQUEST_URL is required"),
   LLMAJ_TASK_QUEUE_NAME: z.string().min(1, "LLMAJ_TASK_QUEUE_NAME is required"),
   LLMAJ_TASK_REQUEST_URL: z
     .string()

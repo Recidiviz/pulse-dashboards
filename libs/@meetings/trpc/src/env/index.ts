@@ -26,12 +26,12 @@ const envSchema = z.object({
   CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL: z
     .string()
     .min(1, "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL is required"),
-  STITCHING_TASK_QUEUE_NAME: z
+  TRANSCRIPTION_TASK_QUEUE_NAME: z
     .string()
-    .min(1, "STITCHING_TASK_QUEUE_NAME is required"),
-  STITCHING_TASK_REQUEST_URL: z
+    .min(1, "TRANSCRIPTION_TASK_QUEUE_NAME is required"),
+  TRANSCRIPTION_TASK_REQUEST_URL: z
     .string()
-    .min(1, "STITCHING_TASK_REQUEST_URL is required"),
+    .min(1, "TRANSCRIPTION_TASK_REQUEST_URL is required"),
   NODE_ENV: z.string().min(1, "NODE_ENV is required"),
   DEPLOY_ENV: z.string().min(1, "DEPLOY_ENV is required"),
   RECIDIVIZ_DATA_API_URL: z

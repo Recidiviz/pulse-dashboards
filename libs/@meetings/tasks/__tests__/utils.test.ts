@@ -41,14 +41,15 @@ import {
 } from "~@meetings/tasks/test/setup";
 import {
   cleanupStaleLocalFiles,
+  findUploadedRecording,
   getSignedUrlForNewRecording,
   getSignedUrlForRecording,
-  stitchAudio,
   transcribeAudioWithAssemblyAI,
   transcribeAudioWithDeepgram,
 } from "~@meetings/tasks/utils";
 
 const AUDIO_RECORDINGS_BUCKET_NAME = "test-audio-recordings";
+const FIXTURE_SIZE_BYTES = fs.statSync("__tests__/data/1.m4a").size;
 
 describe("utils", () => {
   describe("getSignedUrlForNewRecording", () => {
@@ -92,41 +93,33 @@ describe("utils", () => {
     });
   });
 
-  describe("stitchAudio", () => {
+  describe("findUploadedRecording", () => {
+    const storage = new Storage({
+      apiEndpoint: GCS_API_ENDPOINT,
+      projectId: "test",
+    });
+
+    const uploadFixture = (destination: string) =>
+      storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .upload("__tests__/data/1.m4a", { destination, resumable: false });
+
     beforeAll(async () => {
-      const folderName = "stitch-audio-test-folder";
-
-      const storage = new Storage({
-        apiEndpoint: GCS_API_ENDPOINT,
-        projectId: "test",
-      });
-
       await storage.createBucket(AUDIO_RECORDINGS_BUCKET_NAME);
 
-      console.log(process.cwd());
+      await uploadFixture("single-recording-folder/1760832000.m4a");
+      await storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .file("single-recording-folder/label-studio-task.json")
+        .save("{}", { resumable: false });
 
-      await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/1.m4a", {
-          destination: `${folderName}/1.m4a`,
-          resumable: false,
-        });
-      await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/2.m4a", {
-          destination: `${folderName}/2.m4a`,
-          resumable: false,
-        });
-      await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/3.m4a", {
-          destination: `${folderName}/3.m4a`,
-          resumable: false,
-        });
+      // 999999999 sorts after 1760832000 as a string but is the older upload
+      await uploadFixture("multiple-recordings-folder/1760832000.m4a");
+      await uploadFixture("multiple-recordings-folder/999999999.m4a");
     });
 
     test("Should return null if no audio files are found", async () => {
-      const result = await stitchAudio(
+      const result = await findUploadedRecording(
         AUDIO_RECORDINGS_BUCKET_NAME,
         "non-existent-folder",
       );
@@ -134,82 +127,63 @@ describe("utils", () => {
       expect(result).toBeNull();
     });
 
-    // `/tmp` is tmpfs on Cloud Run, so a leaked working directory holds the
-    // container's memory until the instance recycles. Spying on mkdtempSync
-    // both proves a per-invocation directory was used and tells us which one
-    // to assert was removed.
-    const expectTempDirRemoved = (tempDir: unknown) => {
-      expect(tempDir).toMatch(/stitch-/);
-      expect(fs.existsSync(tempDir as string)).toBe(false);
-    };
+    test("Should return the recording and its duration, ignoring non-audio files", async () => {
+      const result = await findUploadedRecording(
+        AUDIO_RECORDINGS_BUCKET_NAME,
+        "single-recording-folder",
+      );
 
-    test("Should remove its temp directory after stitching", async () => {
+      expect(result).toEqual({
+        filePath: "single-recording-folder/1760832000.m4a",
+        durationMs: 1500,
+        uploadedFiles: [
+          {
+            fileName: "single-recording-folder/1760832000.m4a",
+            sizeBytes: FIXTURE_SIZE_BYTES,
+          },
+        ],
+      });
+    });
+
+    test("Should return the newest recording if the folder holds more than one", async () => {
+      const result = await findUploadedRecording(
+        AUDIO_RECORDINGS_BUCKET_NAME,
+        "multiple-recordings-folder",
+      );
+
+      expect(result).toEqual({
+        filePath: "multiple-recordings-folder/1760832000.m4a",
+        durationMs: 1500,
+        uploadedFiles: expect.arrayContaining([
+          {
+            fileName: "multiple-recordings-folder/1760832000.m4a",
+            sizeBytes: FIXTURE_SIZE_BYTES,
+          },
+          {
+            fileName: "multiple-recordings-folder/999999999.m4a",
+            sizeBytes: FIXTURE_SIZE_BYTES,
+          },
+        ]),
+      });
+    });
+
+    // /tmp is tmpfs on Cloud Run, so a leaked download holds the container's
+    // memory until the instance recycles.
+    test("Should remove its temp directory after probing", async () => {
       const mkdtempSpy = vi.spyOn(fs, "mkdtempSync");
 
       try {
-        await stitchAudio(
+        await findUploadedRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
-          "stitch-audio-test-folder",
+          "single-recording-folder",
         );
 
-        expect(mkdtempSpy).toHaveBeenCalled();
-        expectTempDirRemoved(mkdtempSpy.mock.results[0]?.value);
+        const tempDir = mkdtempSpy.mock.results[0]?.value;
+        expect(tempDir).toMatch(/recording-/);
+        expect(fs.existsSync(tempDir)).toBe(false);
       } finally {
         mkdtempSpy.mockRestore();
       }
-    });
-
-    test("Should remove its temp directory when stitching throws", async () => {
-      const folderName = "stitch-audio-cleanup-on-error";
-      const storage = new Storage({
-        apiEndpoint: GCS_API_ENDPOINT,
-        projectId: "test",
-      });
-      // An unrecognized extension makes stitchAudio throw after the temp
-      // directory exists and the segment has been downloaded into it.
-      await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
-        .upload("__tests__/data/1.m4a", {
-          destination: `${folderName}/1.aiff`,
-          resumable: false,
-        });
-
-      const mkdtempSpy = vi.spyOn(fs, "mkdtempSync");
-
-      try {
-        await expect(
-          stitchAudio(AUDIO_RECORDINGS_BUCKET_NAME, folderName),
-        ).rejects.toThrow("Unexpected file format");
-
-        expect(mkdtempSpy).toHaveBeenCalled();
-        expectTempDirRemoved(mkdtempSpy.mock.results[0]?.value);
-      } finally {
-        mkdtempSpy.mockRestore();
-      }
-    });
-
-    test("Should stitch audio if meeting exists", async () => {
-      const stitchedAudioPath = await stitchAudio(
-        AUDIO_RECORDINGS_BUCKET_NAME,
-        "stitch-audio-test-folder",
-      );
-
-      const storage = new Storage({
-        apiEndpoint: GCS_API_ENDPOINT,
-        projectId: "test",
-      });
-
-      const [files] = await storage
-        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
-        .getFiles({ prefix: `stitch-audio-test-folder/` });
-
-      expect(stitchedAudioPath).toEqual({
-        outputFileName: "stitch-audio-test-folder/final.m4a",
-        durationMs: 1500,
-      });
-      expect(files.map((f) => f.name)).toEqual(
-        expect.arrayContaining([`stitch-audio-test-folder/final.m4a`]),
-      );
     });
   });
 
@@ -448,22 +422,20 @@ describe("utils", () => {
       });
     });
 
-    describe("stitchAudio (local mode)", () => {
-      const meetingId = "local-stitch-test-meeting";
+    describe("findUploadedRecording (local mode)", () => {
+      const meetingId = "local-recording-test-meeting";
       const meetingDir = path.join(testStorageDir, meetingId);
 
       beforeEach(() => {
-        // Create meeting directory with test audio files
         fs.mkdirSync(meetingDir, { recursive: true });
-
-        // Copy test audio files
-        fs.copyFileSync("__tests__/data/1.m4a", path.join(meetingDir, "1.m4a"));
-        fs.copyFileSync("__tests__/data/2.m4a", path.join(meetingDir, "2.m4a"));
-        fs.copyFileSync("__tests__/data/3.m4a", path.join(meetingDir, "3.m4a"));
+        fs.copyFileSync(
+          "__tests__/data/1.m4a",
+          path.join(meetingDir, "1760832000.m4a"),
+        );
       });
 
       test("Should return null if meeting directory doesn't exist", async () => {
-        const result = await stitchAudio(
+        const result = await findUploadedRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           "non-existent-meeting",
         );
@@ -476,7 +448,7 @@ describe("utils", () => {
         const emptyMeetingDir = path.join(testStorageDir, emptyMeetingId);
         fs.mkdirSync(emptyMeetingDir, { recursive: true });
 
-        const result = await stitchAudio(
+        const result = await findUploadedRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           emptyMeetingId,
         );
@@ -484,49 +456,46 @@ describe("utils", () => {
         expect(result).toBeNull();
       });
 
-      test("Should stitch audio files and save locally", async () => {
-        const result = await stitchAudio(
+      test("Should return the recording and its duration", async () => {
+        const result = await findUploadedRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           meetingId,
         );
 
         expect(result).toEqual({
-          outputFileName: `${meetingId}/final.m4a`,
+          filePath: `${meetingId}/1760832000.m4a`,
           durationMs: 1500,
+          uploadedFiles: [
+            {
+              fileName: `${meetingId}/1760832000.m4a`,
+              sizeBytes: FIXTURE_SIZE_BYTES,
+            },
+          ],
         });
-
-        // Verify final file exists
-        const finalPath = path.join(meetingDir, "final.m4a");
-        expect(fs.existsSync(finalPath)).toBe(true);
-
-        // Verify final file has content
-        const stats = fs.statSync(finalPath);
-        expect(stats.size).toBeGreaterThan(0);
       });
 
-      test("Should sort files by timestamp", async () => {
-        // Create files with different timestamps
-        const timestamps = [1000, 3000, 2000];
-        for (const ts of timestamps) {
-          fs.copyFileSync(
-            "__tests__/data/1.m4a",
-            path.join(meetingDir, `${ts}.m4a`),
-          );
-        }
+      test("Should return the newest recording if the directory holds more than one", async () => {
+        // 999999999 sorts after 1760832000 as a string but is the older upload
+        fs.copyFileSync(
+          "__tests__/data/1.m4a",
+          path.join(meetingDir, "999999999.m4a"),
+        );
 
-        const result = await stitchAudio(
+        const result = await findUploadedRecording(
           AUDIO_RECORDINGS_BUCKET_NAME,
           meetingId,
         );
 
         expect(result).toEqual({
-          outputFileName: `${meetingId}/final.m4a`,
+          filePath: `${meetingId}/1760832000.m4a`,
           durationMs: 1500,
+          uploadedFiles: expect.arrayContaining([
+            {
+              fileName: `${meetingId}/999999999.m4a`,
+              sizeBytes: FIXTURE_SIZE_BYTES,
+            },
+          ]),
         });
-
-        // Verify final file was created
-        const finalPath = path.join(meetingDir, "final.m4a");
-        expect(fs.existsSync(finalPath)).toBe(true);
       });
     });
 

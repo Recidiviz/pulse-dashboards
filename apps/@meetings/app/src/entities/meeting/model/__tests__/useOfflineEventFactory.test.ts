@@ -202,7 +202,7 @@ describe("useOfflineEventFactory", () => {
       );
     });
 
-    it("updates the target meeting in the client cache with endTime and STITCHING_QUEUED status", () => {
+    it("updates the target meeting in the client cache with endTime and TRANSCRIPTION_QUEUED status", () => {
       const { result } = renderHook(() => useOfflineEventFactory());
       result.current.dispatch({
         type: MeetingEventType.Ended,
@@ -234,7 +234,7 @@ describe("useOfflineEventFactory", () => {
         expect.objectContaining({
           id: MEETING_ID,
           endTime: END_TIME,
-          postMeetingProcessingStatus: "STITCHING_QUEUED",
+          postMeetingProcessingStatus: "TRANSCRIPTION_QUEUED",
         }),
       );
       // Does not affect other meetings
@@ -247,7 +247,7 @@ describe("useOfflineEventFactory", () => {
       );
     });
 
-    it("updates the meeting details cache with endTime and STITCHING_QUEUED status", () => {
+    it("updates the meeting details cache with endTime and TRANSCRIPTION_QUEUED status", () => {
       const { result } = renderHook(() => useOfflineEventFactory());
       result.current.dispatch({
         type: MeetingEventType.Ended,
@@ -265,7 +265,7 @@ describe("useOfflineEventFactory", () => {
       });
       expect(updated).toMatchObject({
         endTime: END_TIME,
-        postMeetingProcessingStatus: "STITCHING_QUEUED",
+        postMeetingProcessingStatus: "TRANSCRIPTION_QUEUED",
       });
     });
 

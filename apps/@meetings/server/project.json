@@ -262,8 +262,6 @@
           "CLOUD_TASKS_PROJECT": "recidiviz-dashboard-staging",
           "CLOUD_TASKS_LOCATION": "us-central1",
           "CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL": "meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com",
-          "STITCHING_TASK_QUEUE_NAME": "audio-stitching-task-queue",
-          "STITCHING_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/stitch-audio",
           "TRANSCRIPTION_TASK_QUEUE_NAME": "transcription-task-queue",
           "TRANSCRIPTION_TASK_REQUEST_URL": "https://m-preview-$VERSION-626425930051.us-central1.run.app/transcribe-audio",
           "NOTETAKING_TASK_QUEUE_NAME": "notetaking-task-queue",

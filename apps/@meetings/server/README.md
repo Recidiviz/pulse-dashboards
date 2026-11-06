@@ -45,7 +45,7 @@ When running locally via `nx dev @meetings/server`, local mode is enabled automa
 
 - Audio recordings are stored locally on your file system instead of GCS
 - The signed URL endpoint returns a local HTTP endpoint (`/upload-audio/:meetingId/:filename`)
-- Stitching and transcription read from local files
+- Transcription reads from local files
 - Files are kept after transcription so audio playback works; on startup the server deletes meeting folders untouched for 7 days, and playback is hidden for recordings whose files are gone
 - No GCS bucket or service account credentials needed
 
@@ -96,13 +96,13 @@ Please only deploy the meetings server via the `nx deploy` command. This will en
 
 ## Reprocessing Meetings
 
-There is an internal API endpoint to reprocess meetings. This can be used to re-run post-meeting processing steps (like audio stitching and transcription) for a specific meeting in the case that something went wrong during the initial processing or you want to re-run processing with updated logic.
+There is an internal API endpoint to reprocess meetings. This can be used to re-run post-meeting processing steps (like transcription and notetaking) for a specific meeting in the case that something went wrong during the initial processing or you want to re-run processing with updated logic.
 
 The endpoint is a POST request to `/reprocess-meeting` with the following body parameters:
 
 - `stateCode`: The state code of the meeting to reprocess (e.g. `US_CA` for California)
 - `meetingId`: The ID of the meeting to reprocess
-- `step` (optional): The specific post-meeting processing step to reprocess. Valid values are `stitching`, `transcription`, and `notetaking`. If not provided, the server will determine the appropriate step to reprocess based on the current status of the meeting.
+- `step` (optional): The specific post-meeting processing step to reprocess. Valid values are `transcription` and `notetaking`. If not provided, the server will determine the appropriate step to reprocess based on the current status of the meeting.
 
 You will need to pass a Google Identity Token in the `Authorization` header of the request. The token must be for a service account that has permission to access the meetings server (`meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com` for the staging and demo servers, and `meetings@recidiviz-dashboard-production.iam.gserviceaccount.com` for the production server).
 

@@ -31,7 +31,7 @@ import { GoogleAuth, IdTokenClient, Impersonated } from "google-auth-library";
 // eslint-disable-next-line @nx/enforce-module-boundaries, no-restricted-imports -- shares the deploy PAM helper
 import { requestPamDeployGrant } from "../../../../tools/deploy/pam.mjs";
 
-const VALID_STEPS = ["stitching", "transcription", "notetaking"] as const;
+const VALID_STEPS = ["transcription", "notetaking"] as const;
 type Step = (typeof VALID_STEPS)[number];
 
 interface ScriptArgs {
@@ -45,7 +45,7 @@ function parseArgs(): ScriptArgs {
   const program = new Command()
     .name("reprocess-meeting-with-uploaded-audio")
     .description(
-      "Manually trigger audio stitching for a meeting with uploaded audio file",
+      "Manually trigger reprocessing for a meeting with uploaded audio file",
     )
     .requiredOption("--meeting-id <meeting-id>", "Meeting ID to reprocess")
     .requiredOption("--state-code <state-code>", "State code (e.g., US_NE)")
@@ -56,7 +56,7 @@ function parseArgs(): ScriptArgs {
     .addOption(
       new Option(
         "--step <step>",
-        "Optional processing step to execute (stitching, transcription, or notetaking). If omitted, the step is inferred from the meeting's current processing status.",
+        "Optional processing step to execute (transcription or notetaking). If omitted, the step is inferred from the meeting's current processing status.",
       ).choices(VALID_STEPS),
     )
     .parse();

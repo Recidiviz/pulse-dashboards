@@ -16,21 +16,19 @@
 // =============================================================================
 
 /**
- * Inspects a meeting's GCS folder and reports likely causes of a stitching
+ * Inspects a meeting's GCS folder and reports likely causes of a transcription
  * failure.
  *
- * Nothing about a stitching error is persisted — the database only records
- * `STITCHING_ERROR` — so the surviving audio objects are the primary evidence.
- * They do survive: the failure path only clears the local temp dir, and the
- * artifact cleanup job skips meetings whose `endTime` is null, which is the case
- * for anything that never stitched successfully.
+ * The database only records TRANSCRIPTION_ERROR, so the surviving audio objects
+ * are the primary evidence. They stay in the folder until the artifact cleanup
+ * job deletes them at the end of the state's audio retention window.
  *
- * The checks below mirror the failure modes in `stitchAudio`
+ * The checks below mirror the failure modes in findUploadedRecording
  * (libs/@meetings/tasks/src/utils.ts).
  */
 
 import { Storage } from "@google-cloud/storage";
-import { extname } from "path";
+import { basename, extname } from "path";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
 import { StateCode } from "~@meetings/prisma/client";
@@ -95,7 +93,7 @@ function buildMp4Findings(objects: GCSObject[]): Finding[] {
   if (noMoov.length) {
     findings.push({
       level: "error",
-      message: `${noMoov.length} file(s) have media data but no “moov” atom: ${noMoov.map((o) => o.basename).join(", ")}. The recording was interrupted before the index was written — the audio bytes are there but nothing can decode them. This is the usual cause of ffmpeg's “Invalid data found when processing input”.`,
+      message: `${noMoov.length} file(s) have media data but no “moov” atom: ${noMoov.map((o) => o.basename).join(", ")}. The recording was interrupted before the index was written — the audio bytes are there but nothing can decode them. ffprobe reports “moov atom not found” on these.`,
     });
   }
 
@@ -162,9 +160,8 @@ function buildMp4Findings(objects: GCSObject[]): Finding[] {
 }
 
 /**
- * `stitchAudio` lists the meeting folder with no extension filter and feeds
- * everything it finds to ffmpeg's concat list, so non-audio objects sitting in
- * the folder are a real failure cause rather than a cosmetic oddity.
+ * Transcription looks for exactly one audio file in the folder, skipping
+ * non-audio objects, unless the meeting already has a finalRecordingGCSPath.
  */
 export function buildFindings(
   objects: GCSObject[],
@@ -176,7 +173,7 @@ export function buildFindings(
     findings.push({
       level: "error",
       message:
-        "Folder is empty — the recording never made it off the device. This is the “No audio files found to stitch” failure.",
+        "Folder is empty — the recording never made it off the device. This is the “No audio files found to transcribe” failure.",
     });
     return findings;
   }
@@ -187,7 +184,7 @@ export function buildFindings(
   if (audio.length === 0) {
     findings.push({
       level: "error",
-      message: `No objects with a supported audio extension (${[...AUDIO_EXTENSIONS].join(", ")}).`,
+      message: `No objects with a supported audio extension (${[...AUDIO_EXTENSIONS].join(", ")}). This is the “No audio files found to transcribe” failure.`,
     });
   }
 
@@ -195,49 +192,39 @@ export function buildFindings(
   if (empty.length) {
     findings.push({
       level: "error",
-      message: `${empty.length} zero-byte object(s): ${empty.map((o) => o.basename).join(", ")}. ffmpeg reports “Invalid data found when processing input” on these.`,
+      message: `${empty.length} zero-byte object(s): ${empty.map((o) => o.basename).join(", ")}. ffprobe and the transcription providers cannot read these.`,
     });
+  }
+
+  if (audio.length > 1) {
+    // Upload names are epoch seconds, and transcription picks the latest.
+    const newest = audio.reduce((latest, object) =>
+      parseInt(object.basename) > parseInt(latest.basename) ? object : latest,
+    );
+    const transcribed = finalRecordingGCSPath
+      ? basename(finalRecordingGCSPath)
+      : newest.basename;
+
+    if (new Set(audio.map((object) => object.size)).size === 1) {
+      findings.push({
+        level: "info",
+        message: `${audio.length} audio files of the same size, which are retried uploads of one recording. Transcription uses ${transcribed}.`,
+      });
+    } else {
+      const outcome = finalRecordingGCSPath
+        ? `Transcription uses ${transcribed}.`
+        : "Transcription fails until the pieces are joined in upload order and the result is uploaded from this dashboard.";
+      findings.push({
+        level: "warn",
+        message: `${audio.length} audio files of different sizes: ${audio.map((o) => `${o.basename} (${o.size} bytes)`).join(", ")}. These are probably pieces from an app build older than the recording refactor. ${outcome}`,
+      });
+    }
   }
 
   if (nonAudio.length) {
     findings.push({
-      level: "error",
-      message: `${nonAudio.length} non-audio object(s) in the folder: ${nonAudio.map((o) => o.basename).join(", ")}. stitchAudio does not filter by extension, so these are passed to ffmpeg too.`,
-    });
-  }
-
-  const extensions = new Set(
-    audio.map((object) => extname(object.basename).toLowerCase()),
-  );
-  if (extensions.size > 1) {
-    findings.push({
-      level: "error",
-      message: `Mixed audio extensions (${[...extensions].join(", ")}). Stitching uses “-c copy” with the first file's format, so mismatched codecs fail.`,
-    });
-  }
-
-  const leftoverFinal = objects.filter((object) =>
-    object.basename.startsWith("final."),
-  );
-  if (leftoverFinal.length && !finalRecordingGCSPath) {
-    findings.push({
-      level: "warn",
-      message: `A stitched “${leftoverFinal[0].basename}” exists in GCS but the meeting has no finalRecordingGCSPath — stitching likely failed at the ffprobe duration step, after the upload.`,
-    });
-  } else if (leftoverFinal.length) {
-    findings.push({
       level: "info",
-      message: `Folder contains “${leftoverFinal[0].basename}”. A re-stitch would include it as an input, duplicating the audio.`,
-    });
-  }
-
-  const reuploads = objects.filter((object) =>
-    object.basename.startsWith("reupload-"),
-  );
-  if (reuploads.length) {
-    findings.push({
-      level: "info",
-      message: `${reuploads.length} re-uploaded file(s) from this dashboard. A re-stitch would include them as inputs.`,
+      message: `${nonAudio.length} non-audio object(s) in the folder, which transcription ignores: ${nonAudio.map((o) => o.basename).join(", ")}.`,
     });
   }
 
@@ -246,7 +233,7 @@ export function buildFindings(
   if (findings.length === 0) {
     findings.push({
       level: "info",
-      message: `${audio.length} audio chunk(s) present and nothing obviously wrong. Check the Sentry and Cloud Logging links for the ffmpeg stderr.`,
+      message: `${audio.length} audio file(s) present and nothing obviously wrong. Check the Sentry and Cloud Logging links for the transcription error.`,
     });
   }
 

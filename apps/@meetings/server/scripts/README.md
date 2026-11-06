@@ -3,7 +3,7 @@
 ## Reprocess Meeting with Uploaded Audio
 
 This script allows you to manually trigger processing for a meeting, optionally with an uploaded audio file.
-It can start processing at any step: `stitching`, `transcription`, or `notetaking`. If no step is specified, it is inferred from the meeting's current processing status.
+It can start processing at either step: `transcription` or `notetaking`. If no step is specified, it is inferred from the meeting's current processing status.
 
 ### Prerequisites
 
@@ -66,8 +66,7 @@ nx reprocess-meeting @meetings/server \
 - `--state-code` - State code (e.g., `US_ID`, `US_NE`)
 - `--gcs-path` - (Optional) Path to the uploaded audio file (from bucket root, e.g., `gs://bucket/path/to/file.m4a` is `path/to/file.m4a`). When provided, the server updates `finalRecordingGCSPath` before queuing the task.
 - `--step` - (Optional) Processing step to execute. If omitted, inferred from the meeting's current processing status.
-  - `stitching` - Stitch multiple audio chunks into one file
-  - `transcription` - Transcribe the final audio file (use this when you've uploaded a final file)
+  - `transcription` - Transcribe the meeting's recording (use this when you've uploaded a replacement file)
   - `notetaking` - Generate meeting notes from existing transcription
 
 ---
@@ -120,7 +119,7 @@ When running against staging/production (cloud database and server), the script:
 
 ### Staging/Production Examples
 
-**Skip stitching and start with transcription:**
+**Start transcription with uploaded audio file:**
 
 ```bash
 nx reprocess-meeting @meetings/server \
@@ -129,17 +128,6 @@ nx reprocess-meeting @meetings/server \
   --state-code=US_NE \
   --gcs-path="path/to/final-audio.m4a" \
   --step=transcription
-```
-
-**Re-run stitching** (for debugging):
-
-```bash
-nx reprocess-meeting @meetings/server \
-  --configuration=staging \
-  --meeting-id=abc123 \
-  --state-code=US_NE \
-  --gcs-path="path/to/final-audio.m4a" \
-  --step=stitching
 ```
 
 **Re-run notetaking only:**
@@ -302,7 +290,7 @@ All three filters are also editable in the page itself, so you usually don't nee
 
 ### Reprocessing actions
 
-Each row has three step buttons (`stitching`, `transcription`, `notetaking`) and an
+Each row has two step buttons (`transcription`, `notetaking`) and an
 upload-and-reprocess control. Output from each action appears inline under the buttons.
 
 The step buttons invoke the existing `reprocess-meeting`, so they request the same PAM grant:
@@ -314,9 +302,9 @@ nx reprocess-meeting @meetings/server --configuration=<same> \
 
 **Upload + reprocess** writes the chosen audio file to
 `<recordingsFolderPath>/reupload-<timestamp><ext>` in the meeting's own bucket, then queues
-`transcription` against that path. It writes to a new object rather than overwriting `final.*`, so
-the original stitched audio stays recoverable — but note that the reprocess endpoint does update
-the meeting's `finalRecordingGCSPath` to the new object.
+`transcription` against that path. It writes to a new object rather than overwriting the original
+recording, so that stays recoverable — but note that the reprocess endpoint does update the
+meeting's `finalRecordingGCSPath` to the new object.
 
 ### Delete action
 
@@ -338,24 +326,22 @@ Cloud Run service windowed from 15 minutes before the meeting ended to two hours
 `recordingsFolderPath` with size, content type, and last-modified. Zero-byte objects and
 non-audio objects are highlighted.
 
-This is usually the fastest route to a cause, because **the chunk files survive a failure**: the
-stitching failure path only clears its local temp dir, and the artifact cleanup job skips meetings
-whose `endTime` is null, which is true of anything that never stitched successfully.
+This is usually the fastest route to a cause, because **the recording survives a failure**: it
+stays in the folder until the artifact cleanup job deletes it at the end of the state's audio
+retention window.
 
-The findings map to the failure modes in `stitchAudio`
-(`libs/@meetings/tasks/src/utils.ts`):
+The findings map to the failure modes in `findUploadedRecording`
+(`libs/@meetings/tasks/src/utils.ts`) and the transcription providers:
 
-| Finding                                         | Failure mode                                                                                                                                                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Folder is empty                                 | `No audio files found to stitch for meeting <id>`                                                                                                                  |
-| Zero-byte object                                | ffmpeg `Invalid data found when processing input`                                                                                                                  |
-| Non-audio object present                        | `stitchAudio` lists the folder with no extension filter, so `label-studio-task.json`, an old `final.*`, and `reupload-*` files all get fed to ffmpeg's concat list |
-| Mixed audio extensions                          | stitching runs `-c copy` using the _first_ file's format, so mismatched codecs fail                                                                                |
-| No supported extension                          | `Unexpected file format`                                                                                                                                           |
-| `final.*` in GCS but no `finalRecordingGCSPath` | ffprobe failed _after_ the upload                                                                                                                                  |
-| **No `moov` atom**                              | the recording was interrupted before the index was written — see below                                                                                             |
-| Truncated box structure                         | the upload did not finish                                                                                                                                          |
-| Not readable as MP4                             | wrong container, or a corrupt write                                                                                                                                |
+| Finding                                   | Failure mode                                                                                                                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Folder is empty                           | `No audio files found to transcribe for meeting <id>`                                                                                                                           |
+| No supported extension                    | `No audio files found to transcribe for meeting <id>`, since transcription skips non-audio objects                                                                              |
+| More than one audio file, different sizes | `Manual stitching required for meeting <id>`; these are probably pieces from an app build older than the recording refactor, so join them in upload order and upload the result |
+| Zero-byte object                          | ffprobe or the transcription providers cannot read it                                                                                                                           |
+| **No `moov` atom**                        | the recording was interrupted before the index was written, and ffprobe reports `moov atom not found`                                                                           |
+| Truncated box structure                   | the upload did not finish                                                                                                                                                       |
+| Not readable as MP4                       | wrong container, or a corrupt write                                                                                                                                             |
 
 ### Troubleshooting
 

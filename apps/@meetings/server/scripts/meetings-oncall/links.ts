@@ -55,9 +55,8 @@ export function gcsObjectUrl(bucket: string, path: string): string {
  * Cloud Logging for the meetings-server Cloud Run service, windowed around the
  * meeting.
  *
- * The window matters: the stitching log lines (including ffmpeg's stderr, which
- * is the only place the real error detail lands) do not include the meeting id,
- * so there is nothing to filter on and the time range is what narrows it down.
+ * The window matters: not every pipeline log line includes the meeting id, so
+ * the time range is what narrows it down.
  */
 export function cloudLoggingUrl(options: {
   configuration: string;

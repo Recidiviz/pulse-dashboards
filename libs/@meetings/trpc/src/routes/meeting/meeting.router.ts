@@ -57,7 +57,7 @@ import {
   updateActionItemInputSchema,
   updateNotesInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
-import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
+import { queueTranscriptionTask } from "~@meetings/trpc/routes/meeting/utils";
 
 // Redacted transcripts (text nulled at TTL) are never sent to clients.
 function clientTranscription(meeting: {
@@ -463,7 +463,7 @@ export const meetingRouter = router({
         }
 
         try {
-          await queueStitchingTask(stateCode, meetingId, prisma);
+          await queueTranscriptionTask(stateCode, meetingId, prisma);
         } catch (e) {
           // Don't throw the error because the meeting should still be ended
           captureException(e, { tags: { meetingId } });
@@ -472,7 +472,7 @@ export const meetingRouter = router({
             where: { id: meetingId },
             data: {
               postMeetingProcessingStatus:
-                PostMeetingProcessingStatus.STITCHING_ERROR,
+                PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
             },
           });
         }

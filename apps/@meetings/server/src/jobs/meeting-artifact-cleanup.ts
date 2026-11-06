@@ -235,7 +235,7 @@ async function cleanupMeeting(
     meeting.endTime < transcriptCutoffDate;
 
   if (shouldCleanAudio) {
-    // Delete final stitched recording (usually inside the folder, but explicit just in case)
+    // Delete final recording (usually inside the folder, but explicit just in case)
     if (meeting.finalRecordingGCSPath) {
       const deleted = await deleteGCSFile(
         storage,

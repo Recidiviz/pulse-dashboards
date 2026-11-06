@@ -164,7 +164,7 @@ export function useOfflineEventFactory() {
               return {
                 ...m,
                 endTime,
-                postMeetingProcessingStatus: "STITCHING_QUEUED" as const,
+                postMeetingProcessingStatus: "TRANSCRIPTION_QUEUED" as const,
               };
             }),
           );
@@ -177,7 +177,7 @@ export function useOfflineEventFactory() {
                 return {
                   ...m,
                   endTime,
-                  postMeetingProcessingStatus: "STITCHING_QUEUED" as const,
+                  postMeetingProcessingStatus: "TRANSCRIPTION_QUEUED" as const,
                 };
               }),
           );
@@ -188,7 +188,7 @@ export function useOfflineEventFactory() {
           return {
             ...old,
             endTime,
-            postMeetingProcessingStatus: "STITCHING_QUEUED" as const,
+            postMeetingProcessingStatus: "TRANSCRIPTION_QUEUED" as const,
           };
         });
         break;

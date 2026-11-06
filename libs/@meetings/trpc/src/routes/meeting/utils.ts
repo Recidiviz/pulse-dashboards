@@ -24,12 +24,12 @@ import {
 } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
 
-export async function queueStitchingTaskLocal(
+export async function queueTranscriptionTaskLocal(
   stateCode: string,
   meetingId: string,
 ) {
   // Don't await the fetch to avoid blocking
-  fetch(env.STITCHING_TASK_REQUEST_URL, {
+  fetch(env.TRANSCRIPTION_TASK_REQUEST_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export async function queueStitchingTaskLocal(
   });
 }
 
-export async function queueStitchingTaskCloud(
+export async function queueTranscriptionTaskCloud(
   stateCode: string,
   meetingId: string,
 ) {
@@ -47,7 +47,7 @@ export async function queueStitchingTaskCloud(
   const parent = cloudTaskClient.queuePath(
     env.CLOUD_TASKS_PROJECT,
     env.CLOUD_TASKS_LOCATION,
-    env.STITCHING_TASK_QUEUE_NAME,
+    env.TRANSCRIPTION_TASK_QUEUE_NAME,
   );
 
   const request: protos.google.cloud.tasks.v2.ICreateTaskRequest = {
@@ -60,7 +60,7 @@ export async function queueStitchingTaskCloud(
         },
         body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
         httpMethod: "POST",
-        url: env.STITCHING_TASK_REQUEST_URL,
+        url: env.TRANSCRIPTION_TASK_REQUEST_URL,
         oidcToken: {
           serviceAccountEmail: env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL,
         },
@@ -71,25 +71,26 @@ export async function queueStitchingTaskCloud(
   await cloudTaskClient.createTask(request);
 }
 
-export async function queueStitchingTask(
+export async function queueTranscriptionTask(
   stateCode: string,
   meetingId: string,
   prisma: PrismaClient,
 ) {
-  // Go ahead and set the status to stitching queued so we don't accidentally overwrite it from the other process
+  // Go ahead and set the status to transcription queued so we don't accidentally overwrite it from the other process
   await prisma.meeting.update({
     where: {
       id: meetingId,
     },
     data: {
-      postMeetingProcessingStatus: PostMeetingProcessingStatus.STITCHING_QUEUED,
+      postMeetingProcessingStatus:
+        PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
     },
   });
 
   // If we're on a local environment, there is no way to emulate Cloud Tasks, so we just call endpoint directly
   if (env.NODE_ENV === "development") {
-    await queueStitchingTaskLocal(stateCode, meetingId);
+    await queueTranscriptionTaskLocal(stateCode, meetingId);
   } else {
-    await queueStitchingTaskCloud(stateCode, meetingId);
+    await queueTranscriptionTaskCloud(stateCode, meetingId);
   }
 }

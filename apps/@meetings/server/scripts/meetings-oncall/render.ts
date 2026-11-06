@@ -412,7 +412,7 @@ async function uploadAndReprocess(el) {
     }));
     log.textContent = "Uploaded to " + uploaded.gcsPath + "\\nQueuing transcription…";
     // Reprocessing from an uploaded file always resumes at transcription: the
-    // upload replaces the already-stitched final recording.
+    // upload replaces the meeting's final recording.
     log.textContent += "\\n" + await post("/api/reprocess", JSON.stringify({
       stateCode: state, meetingId: meeting, step: "transcription", gcsPath: uploaded.gcsPath,
     }), { "content-type": "application/json" });

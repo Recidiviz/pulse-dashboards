@@ -136,7 +136,7 @@ type MeetingSlackParams = {
   meetingId: string;
   personType?: "client" | "resident";
   personId?: string;
-  errorStep?: "stitching" | "transcription" | "notetaking";
+  errorStep?: "transcription" | "notetaking";
   additionalInfo?: string;
   recordingSource?: RecordingSource | null;
   isReprocess?: boolean;

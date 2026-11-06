@@ -20,7 +20,7 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 
-import { captureException, withScope } from "@sentry/node";
+import { captureException, captureMessage, withScope } from "@sentry/node";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import {
@@ -44,14 +44,13 @@ import {
   handleTranscriptions,
   queueLlmajEvaluationTask,
   queueNotetakingTask,
-  queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
 import {
   exportLabelStudioTask,
   exportLlmajTriageTask,
+  findUploadedRecording,
   labelStudioMeetingInclude,
   type LlmajGradedOutputs,
-  stitchAudio,
 } from "~@meetings/tasks";
 import { TranscriptValidationError } from "~@meetings/tasks/errors";
 import {
@@ -70,7 +69,7 @@ import {
 } from "~@meetings/tasks/llm/utils";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
-import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
+import { queueTranscriptionTask } from "~@meetings/trpc/routes/meeting/utils";
 import {
   buildMeetingNotificationParams,
   MEETING_NOTIFICATION_SELECT,
@@ -265,7 +264,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
     },
   });
 
-  // TODO(#10219): Remove route-level authentication once this is moved to an internal-only service
+  // Stitching tasks queued before this route stopped stitching still arrive
+  // here, so hand them to transcription. Remove once the stitching queue is
+  // deleted.
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/stitch-audio",
@@ -284,82 +285,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
         scope.setTag("stateCode", stateCode);
 
         const prisma = getPrismaClientForStateCode(stateCode);
-
-        // Try and find the meeting and fail fast if it doesn't exist
-        const existingMeeting = await prisma.meeting.findUniqueOrThrow({
-          where: {
-            id: meetingId,
-          },
-          select: MEETING_NOTIFICATION_SELECT,
-        });
-
-        try {
-          const meeting = await prisma.meeting.update({
-            where: {
-              id: meetingId,
-            },
-            data: {
-              postMeetingProcessingStatus:
-                PostMeetingProcessingStatus.STITCHING_IN_PROGRESS,
-            },
-          });
-
-          const stitchResult = await stitchAudio(
-            meeting.recordingsGCSBucket,
-            meeting.recordingsFolderPath,
-          );
-
-          // No audio means the recording never made it off the device, which is
-          // silent data loss rather than a meeting with nothing to process.
-          // Fail so it alerts instead of being marked completed.
-          if (!stitchResult) {
-            throw new Error(
-              `No audio files found to stitch for meeting ${meetingId}`,
-            );
-          }
-
-          await prisma.meeting.update({
-            where: {
-              id: meetingId,
-            },
-            data: {
-              finalRecordingGCSPath: stitchResult.outputFileName,
-              durationMs: stitchResult.durationMs,
-              ...(!meeting.endTime && {
-                endTime: new Date(
-                  meeting.startTime.getTime() + stitchResult.durationMs,
-                ),
-              }),
-            },
-          });
-        } catch (e) {
-          await prisma.meeting.update({
-            where: {
-              id: meetingId,
-            },
-            data: {
-              postMeetingProcessingStatus:
-                PostMeetingProcessingStatus.STITCHING_ERROR,
-            },
-          });
-
-          postMeetingErrorNotification({
-            ...buildMeetingNotificationParams(existingMeeting, {
-              meetingId,
-              stateCode,
-            }),
-            errorStep: "stitching",
-          }).catch((err) => {
-            captureException(err);
-            console.error("Failed to post Slack error notification", err);
-          });
-
-          captureException(e);
-
-          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
-          throw e;
-        }
-
         try {
           await queueTranscriptionTask(stateCode, meetingId, prisma);
         } catch (e) {
@@ -373,20 +298,16 @@ export function registerTaskRoutes(app: FastifyInstance) {
             },
           });
 
-          // Capture the exception but don't fail the task, since stitching succeeded
           captureException(e);
-          return reply
-            .code(200)
-            .send(
-              "Audio stitching completed successfully; queuing transcription failed.",
-            );
+          return reply.code(200).send("Transcription task queueing failed.");
         }
 
-        return reply.code(200).send("Audio stitching completed successfully");
+        return reply.code(200).send("Transcription task queued successfully.");
       });
     },
   });
 
+  // TODO(#10219): Remove route-level authentication once this is moved to an internal-only service
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/transcribe-audio",
@@ -406,7 +327,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         const prisma = getPrismaClientForStateCode(stateCode);
 
-        // Try and find the meeting and fail fast if it doesn't exist
         const existingMeeting = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
@@ -422,7 +342,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
         }
 
         try {
-          const meeting = await prisma.meeting.update({
+          let meeting = await prisma.meeting.update({
             where: {
               id: meetingId,
             },
@@ -432,6 +352,59 @@ export function registerTaskRoutes(app: FastifyInstance) {
             },
             include: { client: true, resident: true },
           });
+
+          // A reprocess may already have pointed the meeting at a re-uploaded file
+          if (!meeting.finalRecordingGCSPath) {
+            const recording = await findUploadedRecording(
+              meeting.recordingsGCSBucket,
+              meeting.recordingsFolderPath,
+            );
+
+            if (!recording) {
+              throw new Error(
+                `No audio files found to transcribe for meeting ${meetingId}`,
+              );
+            }
+
+            // A retried upload leaves same-sized copies of the recording, so the
+            // newest one is complete. App builds from before the recording
+            // refactor upload a piece on every pause instead, and those pieces
+            // have to be joined by hand.
+            const sizes = new Set(
+              recording.uploadedFiles.map((file) => file.sizeBytes),
+            );
+            if (sizes.size > 1) {
+              throw new Error(
+                `Manual stitching required for meeting ${meetingId}: its folder holds recordings of different sizes`,
+              );
+            }
+
+            if (recording.uploadedFiles.length > 1) {
+              captureMessage(
+                "Meeting folder holds retried uploads of the recording; transcribing the newest",
+                {
+                  level: "warning",
+                  extra: { uploadedFiles: recording.uploadedFiles },
+                },
+              );
+            }
+
+            meeting = await prisma.meeting.update({
+              where: {
+                id: meetingId,
+              },
+              data: {
+                finalRecordingGCSPath: recording.filePath,
+                durationMs: recording.durationMs,
+                ...(!meeting.endTime && {
+                  endTime: new Date(
+                    meeting.startTime.getTime() + recording.durationMs,
+                  ),
+                }),
+              },
+              include: { client: true, resident: true },
+            });
+          }
 
           if (!meeting.finalRecordingGCSPath) {
             throw new Error("Final recording GCS path is not set for meeting");
@@ -935,7 +908,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
       body: z.object({
         stateCode: z.nativeEnum(StateCode),
         meetingId: z.string(),
-        step: z.enum(["stitching", "transcription", "notetaking"]).optional(),
+        step: z.enum(["transcription", "notetaking"]).optional(),
         gcsPath: z.string().optional(),
       }),
     },
@@ -981,31 +954,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             .send(
               "Nothing to queue - meeting is being actively processed or is completed.",
             );
-        } else if (stepToProcess === "STITCHING") {
-          try {
-            await queueStitchingTask(stateCode, meetingId, prisma);
-          } catch (e) {
-            // Don't throw the error because we want to update the status
-            captureException(e);
-
-            await prisma.meeting.update({
-              where: {
-                id: meetingId,
-              },
-              data: {
-                postMeetingProcessingStatus:
-                  PostMeetingProcessingStatus.STITCHING_ERROR,
-              },
-            });
-
-            return reply
-              .code(200)
-              .send("Audio stitching task queueing failed.");
-          }
-
-          return reply
-            .code(200)
-            .send("Audio stitching task queued successfully.");
         } else if (stepToProcess === "TRANSCRIPTION") {
           try {
             await queueTranscriptionTask(stateCode, meetingId, prisma);
@@ -1020,13 +968,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
               },
             });
 
-            // Capture the exception but don't fail the task, since stitching succeeded
             captureException(e);
-            return reply
-              .code(200)
-              .send(
-                "Audio stitching completed successfully; queuing transcription failed.",
-              );
+            return reply.code(200).send("Transcription task queueing failed.");
           }
 
           return reply

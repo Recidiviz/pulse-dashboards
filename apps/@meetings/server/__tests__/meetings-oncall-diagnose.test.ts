@@ -65,21 +65,68 @@ const chunk = (basename: string, size = 1_000_000) =>
 const levels = (findings: { level: string }[]) => findings.map((f) => f.level);
 
 describe("buildFindings", () => {
-  test("an empty folder is the zero-chunk failure", () => {
+  test("an empty folder is the no-audio failure", () => {
     const findings = buildFindings([], null);
 
     expect(levels(findings)).toEqual(["error"]);
     expect(findings[0].message).toContain("never made it off the device");
   });
 
-  test("a healthy folder produces only an informational finding", () => {
+  test("a folder with one recording produces only an informational finding", () => {
+    const findings = buildFindings([chunk("1760832000.m4a")], null);
+
+    expect(levels(findings)).toEqual(["info"]);
+    expect(findings[0].message).toContain("1 audio file(s)");
+  });
+
+  test("treats same-sized files as retried uploads and names the newest", () => {
     const findings = buildFindings(
       [chunk("1760832000.m4a"), chunk("1760832611.m4a")],
-      "US_NE/ck1/final.m4a",
+      null,
     );
 
     expect(levels(findings)).toEqual(["info"]);
-    expect(findings[0].message).toContain("2 audio chunk(s)");
+    expect(findings[0].message).toContain("retried uploads");
+    expect(findings[0].message).toContain("Transcription uses 1760832611.m4a");
+  });
+
+  test("warns that differently sized files are pieces from an older app build", () => {
+    const findings = buildFindings(
+      [chunk("1760832000.m4a", 2_500_000), chunk("1760832611.m4a", 900_000)],
+      null,
+    );
+
+    const warn = findings.find((f) => f.level === "warn");
+    expect(warn?.message).toContain("older than the recording refactor");
+    expect(warn?.message).toContain("Transcription fails until the pieces");
+  });
+
+  test("names the joined upload when differently sized pieces have been re-uploaded", () => {
+    const findings = buildFindings(
+      [
+        chunk("1760832000.m4a", 2_500_000),
+        chunk("1760832611.m4a", 900_000),
+        chunk("reupload-1760900000.m4a", 3_400_000),
+      ],
+      "US_NE/ck1/reupload-1760900000.m4a",
+    );
+
+    const warn = findings.find((f) => f.level === "warn");
+    expect(warn?.message).toContain(
+      "Transcription uses reupload-1760900000.m4a",
+    );
+  });
+
+  test("names the file the meeting already points at, such as a re-upload", () => {
+    const findings = buildFindings(
+      [chunk("1760832000.m4a"), chunk("reupload-1760900000.m4a")],
+      "US_NE/ck1/reupload-1760900000.m4a",
+    );
+
+    expect(levels(findings)).toEqual(["info"]);
+    expect(findings[0].message).toContain(
+      "Transcription uses reupload-1760900000.m4a",
+    );
   });
 
   test("flags a zero-byte chunk and names it", () => {
@@ -93,7 +140,7 @@ describe("buildFindings", () => {
     expect(error?.message).toContain("1760832611.m4a");
   });
 
-  test("flags a non-audio object, since stitching does not filter by extension", () => {
+  test("notes a non-audio object, which transcription ignores", () => {
     const findings = buildFindings(
       [
         chunk("1760832000.m4a"),
@@ -107,22 +154,8 @@ describe("buildFindings", () => {
       null,
     );
 
-    const messages = findings.map((f) => f.message).join("\n");
-    expect(messages).toContain("label-studio-task.json");
-    expect(messages).toContain("does not filter by extension");
-  });
-
-  test("flags mixed audio extensions", () => {
-    const findings = buildFindings(
-      [chunk("1760832000.m4a"), chunk("1760832611.webm")],
-      null,
-    );
-
-    expect(
-      findings.some(
-        (f) => f.level === "error" && f.message.includes("Mixed audio"),
-      ),
-    ).toBe(true);
+    expect(levels(findings)).toEqual(["info"]);
+    expect(findings[0].message).toContain("label-studio-task.json");
   });
 
   test("a folder of only non-audio objects reports no supported extension", () => {
@@ -133,28 +166,6 @@ describe("buildFindings", () => {
 
     expect(
       findings.some((f) => f.message.includes("supported audio extension")),
-    ).toBe(true);
-  });
-
-  test("a stitched final with no DB path points at the post-upload ffprobe step", () => {
-    const findings = buildFindings(
-      [chunk("1760832000.m4a"), chunk("final.m4a")],
-      null,
-    );
-
-    const warn = findings.find((f) => f.level === "warn");
-    expect(warn?.message).toContain("ffprobe");
-  });
-
-  test("a stitched final that matches the DB is only informational", () => {
-    const findings = buildFindings(
-      [chunk("1760832000.m4a"), chunk("final.m4a")],
-      "US_NE/ck1/final.m4a",
-    );
-
-    expect(findings.some((f) => f.level === "warn")).toBe(false);
-    expect(
-      findings.some((f) => f.message.includes("duplicating the audio")),
     ).toBe(true);
   });
 
@@ -182,7 +193,7 @@ describe("buildFindings", () => {
         object({ basename: "1760832000.m4a", size: 2_500_000, mp4: intactMp4 }),
         object({ basename: "1760832611.m4a", size: 1_900_000, mp4: intactMp4 }),
       ],
-      "US_NE/ck1/final.m4a",
+      "US_NE/ck1/1760832000.m4a",
     );
 
     expect(levels(findings)).not.toContain("error");
@@ -228,17 +239,6 @@ describe("buildFindings", () => {
       findings.some(
         (f) => f.level === "error" && f.message.includes("not readable as MP4"),
       ),
-    ).toBe(true);
-  });
-
-  test("notes re-uploaded files, which a re-stitch would also consume", () => {
-    const findings = buildFindings(
-      [chunk("1760832000.m4a"), chunk("reupload-1760900000.m4a")],
-      null,
-    );
-
-    expect(
-      findings.some((f) => f.message.includes("re-uploaded file(s)")),
     ).toBe(true);
   });
 });

@@ -460,7 +460,7 @@ describe("meeting router", () => {
           where: { id: fakeMeetingStaff1.id },
           data: {
             postMeetingProcessingStatus:
-              PostMeetingProcessingStatus.STITCHING_QUEUED,
+              PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
           },
         });
 
@@ -1232,7 +1232,7 @@ describe("meeting router", () => {
       );
     });
 
-    test("Should set meeting end time but queue stitching error if there is a cloud task error", async () => {
+    test("Should set meeting end time but set a transcription error if there is a cloud task error", async () => {
       mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
 
       await testTRPCClient.v1.meeting.endMeeting.mutate({
@@ -1251,7 +1251,7 @@ describe("meeting router", () => {
           endTime: FAKE_DATE,
           userNotepadNotes: "These are some notes",
           postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.STITCHING_ERROR,
+            PostMeetingProcessingStatus.TRANSCRIPTION_ERROR,
         }),
       );
 
@@ -1259,7 +1259,7 @@ describe("meeting router", () => {
       expect(testkit.reports()).toHaveLength(1);
     });
 
-    test("Should set meeting end time and queue stitching", async () => {
+    test("Should set meeting end time and queue transcription", async () => {
       await testTRPCClient.v1.meeting.endMeeting.mutate({
         meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "These are some notes",
@@ -1276,14 +1276,14 @@ describe("meeting router", () => {
           endTime: FAKE_DATE,
           userNotepadNotes: "These are some notes",
           postMeetingProcessingStatus:
-            PostMeetingProcessingStatus.STITCHING_QUEUED,
+            PostMeetingProcessingStatus.TRANSCRIPTION_QUEUED,
         }),
       );
 
       expect(mockCloudTasksClient.createTask).toHaveBeenCalledWith(
         expect.objectContaining({
           parent:
-            "projects/test-project/locations/us-central1/queues/test-stitching-task-queue",
+            "projects/test-project/locations/us-central1/queues/transcription-task-queue",
           task: {
             httpRequest: {
               headers: {
@@ -1298,7 +1298,7 @@ describe("meeting router", () => {
                 }),
               ),
               httpMethod: "POST",
-              url: "https://test-server.app/stitch-audio",
+              url: "https://test-server.app/transcribe-audio",
               oidcToken: {
                 serviceAccountEmail:
                   "test-service-account-email@recidiviz-test.org",
