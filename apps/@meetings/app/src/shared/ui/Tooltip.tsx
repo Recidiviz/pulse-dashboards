@@ -17,6 +17,7 @@
 
 import {
   Arrow as ArrowWeb,
+  Content as ContentWeb,
   Trigger as TriggerWeb,
 } from "@radix-ui/react-tooltip";
 import * as TooltipPrimitive from "@rn-primitives/tooltip";
@@ -28,6 +29,14 @@ import { Platform, StyleSheet, View } from "react-native";
 const ARROW_SIZE = 16;
 /** Keeps the arrow clear of the bubble's rounded corners (`rounded-xl`). */
 const ARROW_INSET = 12;
+/** Minimum gap, in px, between the bubble and the edge of the window. */
+const VIEWPORT_MARGIN = 20;
+const VIEWPORT_INSETS = {
+  top: VIEWPORT_MARGIN,
+  bottom: VIEWPORT_MARGIN,
+  left: VIEWPORT_MARGIN,
+  right: VIEWPORT_MARGIN,
+};
 
 type Props = {
   /** The element that opens the tooltip: hovered on web, pressed on native. */
@@ -125,32 +134,44 @@ export function Tooltip({
         )
       : null;
 
-  const bubble = (
-    <TooltipPrimitive.Content
-      className={clsx(
-        "relative z-50 max-w-xs rounded-xl bg-strong p-4",
-        contentClassName,
-      )}
+  const bubbleClassName = clsx(
+    "relative z-50 max-w-xs rounded-xl bg-strong p-4",
+    contentClassName,
+  );
+
+  const bubble = isWeb ? (
+    // The @rn-primitives web Content doesn't forward collisionPadding to Radix.
+    <ContentWeb
       side={side}
       align={align}
       sideOffset={sideOffset}
+      collisionPadding={VIEWPORT_MARGIN}
+    >
+      <View className={bubbleClassName}>
+        {content}
+        <ArrowWeb className="fill-strong" />
+      </View>
+    </ContentWeb>
+  ) : (
+    <TooltipPrimitive.Content
+      className={bubbleClassName}
+      side={side}
+      align={align}
+      sideOffset={sideOffset}
+      insets={VIEWPORT_INSETS}
       onLayout={(event) => {
         const { x, width } = event.nativeEvent.layout;
         setContentBox({ x, width });
       }}
     >
       {content}
-      {isWeb ? (
-        <ArrowWeb className="fill-strong" />
-      ) : (
-        <View
-          className={clsx(
-            "absolute -z-10 size-4 rotate-45 bg-strong",
-            side === "top" ? "bottom-0" : "top-0",
-          )}
-          style={arrowLeft === null ? undefined : { left: arrowLeft }}
-        />
-      )}
+      <View
+        className={clsx(
+          "absolute -z-10 size-4 rotate-45 bg-strong",
+          side === "top" ? "bottom-0" : "top-0",
+        )}
+        style={arrowLeft === null ? undefined : { left: arrowLeft }}
+      />
     </TooltipPrimitive.Content>
   );
 

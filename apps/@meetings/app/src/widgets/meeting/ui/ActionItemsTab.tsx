@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Arrow as TooltipArrowWeb } from "@radix-ui/react-tooltip";
-import * as TooltipPrimitive from "@rn-primitives/tooltip";
 import clsx from "clsx";
 import { ReactNode, useEffect, useState } from "react";
 import {
@@ -48,6 +46,7 @@ import { EditableTypography } from "~@meetings/app/shared/ui/EditableTypography"
 import { HorizontalDivider } from "~@meetings/app/shared/ui/HorizontalDivider";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
+import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
@@ -240,47 +239,26 @@ function SourceLabel() {
   );
 }
 
-function SourceTooltip({
-  quotes,
-  isMobile,
-}: {
-  quotes: string[];
-  isMobile: boolean;
-}) {
+function SourceTooltip({ quotes }: { quotes: string[] }) {
   return (
-    <TooltipPrimitive.Root
-      delayDuration={0}
-      className="inline-flex items-baseline"
+    <Tooltip
+      content={
+        <ScrollView className="max-h-[240px]">
+          <View className="gap-2">
+            {quotes.map((quote, i) => (
+              <Typography
+                key={`${quote}-${i}`}
+                className="text-sm text-on-brand"
+              >
+                "{quote}"
+              </Typography>
+            ))}
+          </View>
+        </ScrollView>
+      }
     >
-      <TooltipPrimitive.Trigger>
-        <SourceLabel />
-      </TooltipPrimitive.Trigger>
-      <TooltipPrimitive.Portal>
-        <TooltipPrimitive.Content
-          className="relative max-w-xs rounded-xl bg-strong p-4"
-          side="top"
-          sideOffset={8}
-        >
-          <ScrollView className="max-h-[240px]">
-            <View className="gap-2">
-              {quotes.map((quote, i) => (
-                <Typography
-                  key={`${quote}-${i}`}
-                  className="text-sm text-on-brand"
-                >
-                  "{quote}"
-                </Typography>
-              ))}
-            </View>
-          </ScrollView>
-          {isMobile ? (
-            <View className="absolute bottom-0 left-1/2 -z-10 size-4 rotate-45 bg-strong" />
-          ) : (
-            <TooltipArrowWeb className="fill-strong" />
-          )}
-        </TooltipPrimitive.Content>
-      </TooltipPrimitive.Portal>
-    </TooltipPrimitive.Root>
+      <SourceLabel />
+    </Tooltip>
   );
 }
 
@@ -448,10 +426,7 @@ function ActionItemRow({
             />
             {actionItem.evidenceQuotes.length > 0 &&
               !(isMobile && isMobileEditMode) && (
-                <SourceTooltip
-                  quotes={actionItem.evidenceQuotes}
-                  isMobile={isMobile}
-                />
+                <SourceTooltip quotes={actionItem.evidenceQuotes} />
               )}
           </View>
           {!isMobileReviewMode && (
