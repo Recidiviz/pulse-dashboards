@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useAuth0 } from "react-native-auth0";
 
 import {
@@ -35,14 +35,14 @@ export function useOfflineQueueDrainer({ isOnline }: { isOnline: boolean }) {
   const { clearSession } = useAuth0();
   const { showSnackbar } = useSnackbar();
 
-  // Keep a stable ref so the drain closure always calls the latest version
-  // without needing to re-run the effect.
+  // A drain awaits across many renders, so read processEvent through a ref to
+  // use the latest version partway through the loop.
   const processEventRef = useRef(processEvent);
   processEventRef.current = processEvent;
 
   const isDrainingRef = useRef(false);
 
-  const drain = useCallback(async () => {
+  const drain = async () => {
     if (isDrainingRef.current) return;
     isDrainingRef.current = true;
     setIsDraining(true);
@@ -90,7 +90,13 @@ export function useOfflineQueueDrainer({ isOnline }: { isOnline: boolean }) {
 
     isDrainingRef.current = false;
     setIsDraining(false);
-  }, [dequeue, clearSession, head, showSnackbar]);
+  };
+
+  // Calls the latest drain without making it a dependency of the effect below,
+  // so a new drain identity on re-render doesn't start another drain.
+  const startDrain = useEffectEvent(() => {
+    drain();
+  });
 
   // Drains on reconnect, and also for events queued while already online (a
   // failed audio upload queues its end event so it can be retried).
@@ -99,9 +105,9 @@ export function useOfflineQueueDrainer({ isOnline }: { isOnline: boolean }) {
       if (!isOnline || isDrainingRef.current || events.length === 0) {
         return;
       }
-      drain();
+      startDrain();
     },
-    [events.length, isOnline, drain],
+    [events.length, isOnline],
   );
 
   return { drain, isDraining };

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AudioUpload } from "~@meetings/app/features/audio-upload";
@@ -41,20 +40,6 @@ export function AuthenticatedContent() {
     isOnline,
   });
   const { openMessenger } = useIntercom();
-  const [isFirstRender, setIsFirstRender] = useState(true);
-
-  // On fresh login, we want to force-drain the offline event queue in the event
-  // that the user was logged out while the queue was being drained due to
-  // losing auth.
-  useEffect(
-    function onLogin() {
-      if (isOnline && isFirstRender) {
-        forceDrain();
-      }
-      setIsFirstRender(false);
-    },
-    [forceDrain, isOnline, isFirstRender],
-  );
 
   return (
     <NewRecordingProvider>
