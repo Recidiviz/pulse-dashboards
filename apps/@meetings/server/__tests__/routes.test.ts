@@ -203,7 +203,7 @@ describe("tasks", () => {
         expect(JSON.parse(response.body)).toEqual(
           expect.objectContaining({
             error: "Unauthorized",
-            message: "Email not verified",
+            message: "Caller is not the Cloud Tasks service account",
           }),
         );
       });
@@ -229,6 +229,32 @@ describe("tasks", () => {
             error: "Forbidden",
             message: "Caller does not have Cloud Run invoker permission",
           }),
+        );
+      });
+
+      test("Should not leak token verification error details", async () => {
+        setGetPayloadImp(
+          vi.fn().mockImplementation(() => {
+            throw new Error(
+              "Wrong recipient, payload audience != requiredAudience",
+            );
+          }),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/stitch-audio",
+          headers: { authorization: `Bearer token` },
+          body: {
+            stateCode: "US_NE",
+            meetingId: fakeMeeting.id,
+          },
+        });
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body).not.toContain("audience");
+        expect(JSON.parse(response.body)).toEqual(
+          expect.objectContaining({ message: "Invalid token" }),
         );
       });
     });
@@ -1774,6 +1800,33 @@ describe("tasks", () => {
           expect.objectContaining({
             error: "Unauthorized",
             message: "No bearer token was provided",
+          }),
+        );
+      });
+
+      test("Should return authorization error if token is valid but from a different service account", async () => {
+        setGetPayloadImp(
+          vi.fn().mockReturnValue({
+            email_verified: true,
+            email: "someone-else@some-other-project.iam.gserviceaccount.com",
+          }),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: {
+            stateCode: "US_NE",
+            meetingId: fakeMeeting.id,
+          },
+        });
+
+        expect(response.statusCode).toBe(401);
+        expect(JSON.parse(response.body)).toEqual(
+          expect.objectContaining({
+            error: "Unauthorized",
+            message: "Caller is not the Cloud Tasks service account",
           }),
         );
       });

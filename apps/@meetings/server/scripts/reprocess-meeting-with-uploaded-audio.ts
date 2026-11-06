@@ -26,7 +26,10 @@
  */
 
 import { Command, Option } from "@commander-js/extra-typings";
-import { GoogleAuth } from "google-auth-library";
+import { GoogleAuth, IdTokenClient, Impersonated } from "google-auth-library";
+
+// eslint-disable-next-line @nx/enforce-module-boundaries, no-restricted-imports -- shares the deploy PAM helper
+import { requestPamDeployGrant } from "../../../../tools/deploy/pam.mjs";
 
 const VALID_STEPS = ["stitching", "transcription", "notetaking"] as const;
 type Step = (typeof VALID_STEPS)[number];
@@ -69,7 +72,7 @@ function parseArgs(): ScriptArgs {
 }
 
 function isDevelopmentConfiguration(): boolean {
-  return process.env["NX_TASK_TARGET_CONFIGURATION"] === "development";
+  return process.env["NX_TASK_TARGET_CONFIGURATION"] === "dev";
 }
 
 async function triggerReprocessMeeting(
@@ -95,12 +98,25 @@ async function triggerReprocessMeeting(
   };
 
   if (!isDevelopment) {
-    const auth = new GoogleAuth();
-    const idTokenClient = await auth.getIdTokenClient(endpoint);
+    // The server only accepts ID tokens for the Meetings service account.
+    // Impersonating it needs Token Creator, which the PAM deploy grant holds.
+    const projectId = `recidiviz-dashboard-${process.env["NX_TASK_TARGET_CONFIGURATION"]}`;
+    const targetPrincipal = `meetings@${projectId}.iam.gserviceaccount.com`;
+    await requestPamDeployGrant(projectId, {
+      justification:
+        "Reprocessing a meeting via the Meetings reprocess script.",
+    });
+    const idTokenClient = new IdTokenClient({
+      targetAudience: endpoint,
+      idTokenProvider: new Impersonated({
+        sourceClient: await new GoogleAuth().getClient(),
+        targetPrincipal,
+      }),
+    });
     const gcpHeaders = await idTokenClient.getRequestHeaders();
     Object.assign(headers, gcpHeaders);
 
-    console.log(`   Running with user credentials`);
+    console.log(`   Running as ${targetPrincipal}`);
   } else {
     console.log("   Auth: None (development mode)");
   }

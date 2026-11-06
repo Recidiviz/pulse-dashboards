@@ -21,5 +21,5 @@
 // deploy_jobs.mjs) cannot import TypeScript.
 export declare function requestPamDeployGrant(
   projectId: string,
-  options?: { waitForPropagation?: boolean },
+  options?: { waitForPropagation?: boolean; justification?: string },
 ): Promise<void>;

@@ -73,15 +73,16 @@ async function searchOwnGrants(projectId, entitlementId) {
  * real deploy step with a clear error.
  *
  * @param {string} projectId - GCP project the deploy entitlement lives on.
- * @param {{ waitForPropagation?: boolean }} [options] - Set `waitForPropagation: false` (default
- *   true) to return as soon as the grant is ACTIVE, skipping the IAM-propagation pause -- for
- *   callers that request several grants up front and let later steps (e.g. `yarn install`) cover
- *   propagation, so the ~20s delay is paid once, overlapped, rather than per grant.
+ * @param {{ waitForPropagation?: boolean, justification?: string }} [options] - Set
+ *   `waitForPropagation: false` (default true) to return as soon as the grant is ACTIVE, skipping
+ *   the IAM-propagation pause -- for callers that request several grants up front and let later
+ *   steps (e.g. `yarn install`) cover propagation, so the ~20s delay is paid once, overlapped,
+ *   rather than per grant. Non-deploy callers pass their own `justification` for the audit log.
  * @returns {Promise<void>}
  */
 export async function requestPamDeployGrant(
   projectId,
-  { waitForPropagation = true } = {},
+  { waitForPropagation = true, justification = JUSTIFICATION } = {},
 ) {
   // 1. Which entitlement is reachable here? Take the first eligible one.
   // Uses `entitlements search`, not `entitlements describe` to perform the check
@@ -119,7 +120,7 @@ export async function requestPamDeployGrant(
   // 3. Create a short grant.
   console.log(`⏳ Requesting ${label} for ${GRANT_DURATION}...`);
   const created =
-    await $`gcloud pam grants create --entitlement=${entitlementId} --location=${LOCATION} --project=${projectId} --requested-duration=${GRANT_DURATION} --justification=${JUSTIFICATION} --format=json`
+    await $`gcloud pam grants create --entitlement=${entitlementId} --location=${LOCATION} --project=${projectId} --requested-duration=${GRANT_DURATION} --justification=${justification} --format=json`
       .nothrow()
       .quiet();
   if (created.exitCode !== 0) {

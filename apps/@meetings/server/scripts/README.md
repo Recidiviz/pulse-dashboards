@@ -27,9 +27,11 @@ The prerequisites depend on which environment you're running against:
 1. **Authenticate with gcloud**
 
    ```bash
-   gcloud auth login
+   gcloud auth login --update-adc
    gcloud config set project recidiviz-dashboard-staging
    ```
+
+2. **Be eligible for the `pam-engineering` PAM entitlement** (`s-polaris@` or `s-doppler@`). The script requests a just-in-time grant itself; see below.
 
 ### Environment Variables
 
@@ -109,7 +111,8 @@ nx reprocess-meeting @meetings/server \
 
 When running against staging/production (cloud database and server), the script:
 
-- Uses your local `gcloud` credentials (`GoogleAuth`) to get an ID token for the endpoint
+- Requests a just-in-time `pam-engineering` grant on the project (or reuses your active one), the same grant the deploy script requests, which includes Service Account Token Creator
+- Uses your local `gcloud` credentials to impersonate the `meetings@` service account and get an ID token for the endpoint
 - Calls the server endpoint with the token
 - Uses data from the staging/production bucket
 
@@ -163,9 +166,10 @@ The script behavior depends on the configuration:
 #### Staging/Production Mode
 
 1. **Decrypts SOPS environment files** to load staging/production configuration
-2. **Uses `GoogleAuth`** with your local `gcloud` credentials to get an ID token for the endpoint
-3. **Calls the reprocess-meeting endpoint** with the specified step and `gcsPath`
-4. The server updates `finalRecordingGCSPath` (if `--gcs-path` is provided) and queues the task
+2. **Requests a `pam-engineering` PAM grant** on the project, or reuses your active one. A new grant takes about 30 seconds to activate and propagate.
+3. **Impersonates the `meetings@` service account** with your local `gcloud` credentials to get an ID token for the endpoint
+4. **Calls the reprocess-meeting endpoint** with the specified step and `gcsPath`
+5. The server updates `finalRecordingGCSPath` (if `--gcs-path` is provided) and queues the task
 
 ### Expected Output
 
@@ -177,7 +181,7 @@ The script behavior depends on the configuration:
    State Code: US_NE
    Meeting ID: abc123
    Step: transcription
-   Running with user credentials
+   Running as meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com
 ✅ Reprocess triggered successfully!
    Response: "Transcription task queued successfully."
 
@@ -191,9 +195,13 @@ The script behavior depends on the configuration:
 
 Run: `gcloud auth login`
 
+#### "Permission 'iam.serviceAccounts.getOpenIdToken' denied"
+
+The PAM grant didn't take effect, so you can't impersonate `meetings@`. Check the script's PAM output for a warning; you need to be in `s-polaris@` or `s-doppler@`. If the grant just activated, wait a minute and rerun.
+
 #### "Failed to trigger reprocess: 401 Unauthorized"
 
-Your `gcloud` credentials were not accepted. Make sure you're logged in:
+The server only accepts ID tokens for the `meetings@` service account. Make sure your `gcloud` CLI and application default credentials are the same account:
 
 ```bash
 gcloud auth login --update-adc
@@ -297,7 +305,7 @@ All three filters are also editable in the page itself, so you usually don't nee
 Each row has three step buttons (`stitching`, `transcription`, `notetaking`) and an
 upload-and-reprocess control. Output from each action appears inline under the buttons.
 
-The step buttons invoke the existing `reprocess-meeting`:
+The step buttons invoke the existing `reprocess-meeting`, so they request the same PAM grant:
 
 ```bash
 nx reprocess-meeting @meetings/server --configuration=<same> \

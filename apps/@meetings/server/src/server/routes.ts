@@ -104,10 +104,12 @@ async function verifyGoogleIdToken(authorizationHeaders: string | undefined) {
 
   const payload = result.getPayload();
 
-  // Optionally, if "includeEmail" was set in the token options, check if the
-  // email was verified
-  if (!payload || !payload.email_verified || !payload.email) {
-    throw new AuthError("Email not verified", 401);
+  // Any Google identity can mint a valid ID token; require the Cloud Tasks SA.
+  if (
+    !payload?.email_verified ||
+    payload.email !== env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL
+  ) {
+    throw new AuthError("Caller is not the Cloud Tasks service account", 401);
   }
 
   const auth = new GoogleAuth({
@@ -153,7 +155,8 @@ async function authenticateInternalRequestPreHandlerFn<
       return reply.status(err.errorCode).send(err);
     }
 
-    reply.status(403).send(err);
+    request.log.warn({ err }, "Internal request token verification failed");
+    return reply.status(401).send(new AuthError("Invalid token", 401));
   }
 }
 
