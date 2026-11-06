@@ -20,51 +20,61 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/public-pathways",
+export default defineConfig(({ command }) => {
+  // nx passes the build mode ("staging") to Vite as NODE_ENV, and Vite treats
+  // any value but "production" as a development build: the React dev JSX
+  // transform, with each source file's absolute path, ends up in the bundle.
+  // Every build this config produces is a production build.
+  if (command === "build") {
+    process.env["NODE_ENV"] = "production";
+  }
 
-  server: {
-    port: 3050,
-    host: "localhost",
-  },
+  return {
+    root: __dirname,
+    cacheDir: "../../node_modules/.vite/apps/public-pathways",
 
-  preview: {
-    port: 3051,
-    host: "localhost",
-  },
+    server: {
+      port: 3050,
+      host: "localhost",
+    },
 
-  plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+    preview: {
+      port: 3051,
+      host: "localhost",
+    },
+
+    plugins: [
+      react({
+        babel: {
+          plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+        },
+      }),
+      tsconfigPaths(),
+    ],
+
+    build: {
+      outDir: "../../dist/apps/public-pathways",
+      reportCompressedSize: true,
+      commonjsOptions: {
+        transformMixedEsModules: true,
       },
-    }),
-    tsconfigPaths(),
-  ],
-
-  build: {
-    outDir: "../../dist/apps/public-pathways",
-    reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
     },
-  },
 
-  test: {
-    passWithNoTests: true,
-    globals: true,
-    environment: "jsdom",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    setupFiles: ["./src/setupTests.ts"],
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    restoreMocks: true,
-    unstubEnvs: true,
-    unstubGlobals: true,
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/apps/public-pathways",
-      provider: "v8",
+    test: {
+      passWithNoTests: true,
+      globals: true,
+      environment: "jsdom",
+      include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+      setupFiles: ["./src/setupTests.ts"],
+      globalSetup: ["src/setupTestsGlobal.ts"],
+      restoreMocks: true,
+      unstubEnvs: true,
+      unstubGlobals: true,
+      reporters: ["default"],
+      coverage: {
+        reportsDirectory: "../../coverage/apps/public-pathways",
+        provider: "v8",
+      },
     },
-  },
-}));
+  };
+});
