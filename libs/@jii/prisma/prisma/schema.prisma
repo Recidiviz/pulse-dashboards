@@ -61,6 +61,7 @@ enum ResidentFlagId {
     usArFslImprovements
     usArEdovoCredits
     usArMaxCpus
+    usArReBanner
     usNcRNAAutoEnablement
     usMaReentry
     usMaSentenceDatesV1
