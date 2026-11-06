@@ -26,7 +26,9 @@ export type CalendarRulesErrorCode =
   | "INVALID_ENTRY"
   | "INVALID_RULE"
   | "INVALID_SETTINGS"
-  | "INVALID_TIME_ZONE";
+  | "INVALID_TIME_ZONE"
+  /** generateMonthDraft's input, which comes from stored rows, is invalid. */
+  | "INVALID_DRAFT_INPUT";
 
 /** Thrown by every public function in this library when its input is invalid. */
 export class CalendarRulesError extends Error {

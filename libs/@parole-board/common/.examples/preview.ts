@@ -24,7 +24,7 @@ import "@fontsource/public-sans/700.css";
 import "@fontsource/libre-baskerville/index.css";
 
 import type { Decorator, Preview } from "@storybook/react-vite";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createElement, Fragment, ReactNode, useState } from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -43,26 +43,29 @@ const withGlobalStyle: Decorator = (Story) =>
   );
 
 /**
- * A fake host, so containers get a calendarCode and no-op analytics. A data
- * hook an example forgot to inject fails here rather than reaching a server.
+ * Holds one fake host for the story's lifetime, and gives children its
+ * calendar client's QueryClient, which is new and has query retries off, so
+ * no cache leaks between stories.
  */
-const withFakeHost: Decorator = (Story) =>
-  createElement(ParoleBoardHostProvider, {
-    host: createFakeHost(),
-    children: createElement(Story),
+function FakeHost({ children }: { children: ReactNode }) {
+  const [host] = useState(() => createFakeHost());
+  return createElement(ParoleBoardHostProvider, {
+    host,
+    children: createElement(
+      QueryClientProvider,
+      { client: host.calendarTrpc.queryClient },
+      children,
+    ),
   });
-
-/** Holds one QueryClient for the story's lifetime. */
-function FreshQueryClient({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(
-    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
-  );
-  return createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
-/** A new QueryClient per story, so no cache leaks between stories. */
-const withQueryClient: Decorator = (Story) =>
-  createElement(FreshQueryClient, null, createElement(Story));
+/**
+ * A fake host, so containers get no-op analytics and a calendar client that
+ * fails every request. A data hook an example forgot to inject fails here
+ * rather than reaching a server.
+ */
+const withFakeHost: Decorator = (Story) =>
+  createElement(FakeHost, null, createElement(Story));
 
 /** A MemoryRouter at the story's `parameters.route`, or "/" when unset. */
 const withRouter: Decorator = (Story, { parameters }) =>
@@ -74,8 +77,8 @@ const withRouter: Decorator = (Story, { parameters }) =>
 
 const preview: Preview = {
   // Storybook applies the last decorator outermost, so this order wraps each
-  // story as MemoryRouter > QueryClientProvider > ParoleBoardHostProvider.
-  decorators: [withGlobalStyle, withFakeHost, withQueryClient, withRouter],
+  // story as MemoryRouter > ParoleBoardHostProvider > QueryClientProvider.
+  decorators: [withGlobalStyle, withFakeHost, withRouter],
 };
 
 export default preview;

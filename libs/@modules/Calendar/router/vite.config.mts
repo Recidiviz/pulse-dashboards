@@ -17,27 +17,61 @@
 
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../../../node_modules/.vite/libs/@modules/Calendar/router",
-  plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
-  test: {
-    mockReset: true,
-    unstubEnvs: true,
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    setupFiles: ["src/setupTests.ts"],
-    passWithNoTests: true,
-    name: "@modules/Calendar/router",
-    watch: false,
-    globals: true,
-    environment: "jsdom",
-    include: ["{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../../../coverage/libs/@modules/Calendar/router",
-      provider: "v8" as const,
+/**
+ * The Calendar test database from libs/@modules/Calendar/prisma/compose.yml
+ * (nx local-dbs @modules/Calendar/prisma). CALENDAR_TEST_DATABASE_URL
+ * overrides it, so CI can point the tests at its own Postgres. The tests set
+ * CALENDAR__US_CO_DATABASE_URL, the variable getPrismaClient reads, from these
+ * and never from the shell, because they truncate the Calendar tables and a
+ * shell with the dev env loaded points that variable at the dev database.
+ */
+const LOCAL_TEST_DATABASE_URL =
+  "postgresql://postgres:postgres@localhost:6563/module-Calendar-test";
+
+export default defineConfig(({ mode }) => {
+  // "nx test-db" runs vitest in db mode, which runs only the tests that need
+  // a database. Plain "nx test" runs the rest, so CI's general test job,
+  // which has no Postgres, never runs them.
+  const isDbMode = mode === "db";
+
+  return {
+    root: __dirname,
+    cacheDir: "../../../../node_modules/.vite/libs/@modules/Calendar/router",
+    plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
+    test: {
+      mockReset: true,
+      unstubEnvs: true,
+      globalSetup: ["src/setupTestsGlobal.ts"],
+      setupFiles: ["src/setupTests.ts"],
+      passWithNoTests: true,
+      name: "@modules/Calendar/router",
+      watch: false,
+      globals: true,
+      environment: "node",
+      include: isDbMode
+        ? ["__tests__/db/**/*.test.ts"]
+        : [
+            "{src,tests,__tests__}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
+          ],
+      exclude: isDbMode
+        ? configDefaults.exclude
+        : [...configDefaults.exclude, "__tests__/db/**"],
+      // The database tests share one database and reset it before each test.
+      fileParallelism: !isDbMode,
+      env: isDbMode
+        ? {
+            CALENDAR__US_CO_DATABASE_URL:
+              process.env["CALENDAR_TEST_DATABASE_URL"] ??
+              LOCAL_TEST_DATABASE_URL,
+          }
+        : {},
+      reporters: ["default"],
+      coverage: {
+        reportsDirectory: "../../../../coverage/libs/@modules/Calendar/router",
+        provider: "v8" as const,
+      },
     },
-  },
-}));
+  };
+});

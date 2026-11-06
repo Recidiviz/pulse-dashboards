@@ -142,6 +142,8 @@ export function CalendarGrid({
   ariaLabel,
   onEntryClick,
   onEntriesDrop,
+  formatLabel,
+  cancelledTag,
   renderEntry,
   renderHolidayLabel,
 }: CalendarGridProps) {
@@ -166,7 +168,7 @@ export function CalendarGrid({
     () => [
       ...entries.map((entry, order) => ({
         id: entry.id,
-        title: entry.label,
+        title: formatLabel ? formatLabel(entry) : entry.label,
         start: entry.date,
         allDay: true,
         extendedProps: { entry, order },
@@ -180,7 +182,7 @@ export function CalendarGrid({
         extendedProps: { holiday, order: entries.length },
       })),
     ],
-    [entries, holidays, view],
+    [entries, holidays, view, formatLabel],
   );
 
   const handlers = buildHandlers({
@@ -256,13 +258,19 @@ export function CalendarGrid({
       );
     }
     const entry = event.extendedProps["entry"] as CalendarGridEntry;
+    const label = event.title;
     return (
       <EntryTarget
         entry={entry}
+        label={label}
         selected={selectedIds.has(entry.id)}
         onToggle={onEntryClick}
       >
-        {renderEntry ? renderEntry(entry) : <EntryChip entry={entry} />}
+        {renderEntry ? (
+          renderEntry(entry)
+        ) : (
+          <EntryChip entry={entry} label={label} cancelledTag={cancelledTag} />
+        )}
       </EntryTarget>
     );
   };

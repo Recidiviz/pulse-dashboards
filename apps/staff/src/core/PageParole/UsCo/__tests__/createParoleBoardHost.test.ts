@@ -17,7 +17,9 @@
 
 import { captureException } from "@sentry/react";
 
+import { queryClient } from "../../../../reactQuery/client";
 import type { RootStore } from "../../../../RootStore";
+import { Link } from "../../../Link";
 import { createParoleBoardHost } from "../createParoleBoardHost";
 
 vi.mock("@sentry/react", () => ({ captureException: vi.fn() }));
@@ -61,5 +63,51 @@ describe("createParoleBoardHost", () => {
     host.reportError?.(error);
 
     expect(captureException).toHaveBeenCalledWith(error);
+  });
+
+  it("gives the calendar the staff Link, which keeps the tenantId in the URL", () => {
+    const host = createParoleBoardHost({} as RootStore);
+
+    expect(host.Link).toBe(Link);
+  });
+
+  it("builds the calendar client on the staff QueryClient, with the user's current token and tenant", async () => {
+    vi.stubEnv("VITE_MODULE_BACKEND_URL", "https://modules.example.test");
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValue(new Error("stop after the request is built"));
+    const userStore = {
+      getToken: vi.fn(() => Promise.resolve("token-a")),
+    };
+    const rootStore = { userStore, currentTenantId: "US_CO" };
+    const host = createParoleBoardHost(rootStore as unknown as RootStore);
+
+    userStore.getToken.mockResolvedValue("token-b");
+    rootStore.currentTenantId = "US_ID";
+    await host.calendarTrpc.client.admin.config.get
+      .query()
+      .catch(() => undefined);
+
+    expect(host.calendarTrpc.queryClient).toBe(queryClient);
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(String(url)).toMatch(
+      /^https:\/\/modules\.example\.test\/Calendar\.usCo\.paroleBoard\.admin\.config\.get/,
+    );
+    const headers = new Headers(init?.headers);
+    expect(headers.get("Authorization")).toBe("Bearer token-b");
+    expect(headers.get("StateCode")).toBe("US_ID");
+  });
+
+  it("sends no calendar request before Auth0 gives UserStore a getToken", async () => {
+    vi.stubEnv("VITE_MODULE_BACKEND_URL", "https://modules.example.test");
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const host = createParoleBoardHost({
+      userStore: {},
+    } as unknown as RootStore);
+
+    await expect(
+      host.calendarTrpc.client.admin.config.get.query(),
+    ).rejects.toThrow("The calendar needs a signed-in user");
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

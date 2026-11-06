@@ -56,3 +56,17 @@ nx lint @modules/Calendar/rules --fix
 ```
 
 The tests don't pin `TZ`, so `TZ=Pacific/Auckland nx test @modules/Calendar/rules --skip-nx-cache` checks that results don't depend on the host time zone.
+
+## A state's code
+
+A calendar's settings (timezone, week start, week numbering, holiday region and policy, editor route, allowed weekdays) and its entry types' behaviour are its state's code, not database columns. The calendar's code passes the generic engine a `CalendarRules` object holding both, so the engine never looks a calendar up by name. Each state's code lives in a `us_<state>/<calendar>` folder inside this library, imported as `~@modules/Calendar/rules/us_co/parole_board`:
+
+| Export                                                      | What it is                                                                                                                                        |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `US_CO_PAROLE_BOARD`                                        | The Calendar row Colorado's API is fixed to: `US_CO`, `PAROLE_BOARD_PUBLIC`.                                                                      |
+| `US_CO_PAROLE_BOARD_SETTINGS`, `US_CO_PAROLE_BOARD_RULES`   | Its settings (America/Denver, Monday weeks, NTH_WEEKDAY_IN_MONTH, US-CO with WARN, `publicCalendar` route, Monday to Friday only) plus its rules. |
+| `US_CO_PAROLE_BOARD_ENTRY_TYPES`, `UsCoParoleBoardKindCode` | HEARING, FULL_BOARD and BUSINESS_MEETING with their behaviour; a Business Meeting can be cancelled but never deleted.                             |
+| `adjustUsCoParoleBoardDraft`                                | Colorado's changes to a generated draft: the 3rd Thursday is a Full Board day unless a Monday holiday moves hearings onto it.                     |
+| `US_CO_REFERENCE_DATA`                                      | The calendar's initial rows as a typed test fixture: identity, resource types, kind rows, the 37 hearing locations and their patterns.            |
+
+The seed SQL in `libs/@modules/Calendar/prisma/prisma/seeds` owns the database's rows, so `US_CO_REFERENCE_DATA` may drift from them. The Calendar router's database tests (`__tests__/db/us_co/parole_board/usCoSeed.test.ts`, run with `nx test-db @modules/Calendar/router`) apply every Calendar migration and then every seed file, twice, to a fresh database on the Calendar test Postgres, and check that the seeded rows parse with `parseCalendarConfig` and fit Colorado's entry types; they never compare the database with the fixture. Lint stops code outside a `us_co` folder from importing one, so the generic code never depends on a state.

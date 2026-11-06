@@ -26,6 +26,8 @@ import { CalendarRulesError } from "./errors";
 import { Weekday, WEEKDAYS, YearMonth } from "./types";
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+/** "HH:mm" on a 24-hour clock, so two times compare correctly as strings. */
+export const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 /**
  * The years the rules accept. The range is wide enough that no real calendar
  * reaches its end, and still rejects mistyped years such as 202 or 20260 that

@@ -28,12 +28,10 @@
 import { z } from "zod";
 
 import { CalendarRulesError } from "../errors";
+import { TIME_PATTERN } from "../plainDates";
 import { describeZodIssues } from "../zodIssues";
 import { entrySlotKey, isSlotKeyCode } from "./entries";
 import { patternRulesSchema } from "./patternRules";
-
-/** "HH:mm" on a 24-hour clock, so two times compare correctly as strings. */
-const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 /**
  * Every code can be part of a slotKey, e.g. "HEARING:FCF", so it uses the same

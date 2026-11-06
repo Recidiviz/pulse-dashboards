@@ -16,6 +16,7 @@
 // =============================================================================
 
 import type { ParoleBoardAnalytics, ParoleBoardHost } from "../host";
+import { createFakeCalendarTrpc } from "./createFakeCalendarTrpc";
 
 /**
  * Analytics methods that do nothing, so tests and examples can spy on them
@@ -36,8 +37,10 @@ function createFakeAnalytics(): ParoleBoardAnalytics {
 
 /**
  * Builds a ParoleBoardHost for a US_CO tenant with the Parole Board calendar
- * configured. Overrides replace whole top-level fields. Imports nothing from
- * Vitest, so examples can use it too.
+ * configured. Its calendarTrpc fails every request; pass one from
+ * createFakeCalendarTrpc({ procedures }) to answer them. Overrides replace
+ * whole top-level fields. Imports nothing from Vitest, so examples can use it
+ * too.
  */
 export function createFakeHost(
   overrides: Partial<ParoleBoardHost> = {},
@@ -57,6 +60,7 @@ export function createFakeHost(
       },
     },
     analyticsStore: createFakeAnalytics(),
+    calendarTrpc: createFakeCalendarTrpc(),
     ...overrides,
   };
 }

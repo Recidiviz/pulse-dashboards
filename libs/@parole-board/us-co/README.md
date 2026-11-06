@@ -6,7 +6,7 @@ Its top-level export is `<UsCoParoleCalendarAdmin host={host} />`. The host app 
 
 ## What goes here
 
-US_CO-specific screens: the admin root and the admin screens (CO-830 and later). The host app's own header carries the navigation, so this library has no nav of its own. Anything another state could use belongs in `~@parole-board/common` instead, including shared UI primitives, which go in `common/src/components/` by wrapping or composing `~design-system` parts. Components fetch data only through the `common` hooks (CO-869).
+US_CO-specific screens: the admin root and the admin screens (CO-830 and later). The host app's own header carries the navigation, so this library has no nav of its own. Anything another state could use belongs in `~@parole-board/common` instead, including shared UI primitives, which go in `common/src/components/` by wrapping or composing `~design-system` parts. Components fetch data only through the `common` hooks.
 
 ## The admin root
 

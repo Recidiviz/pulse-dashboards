@@ -15,30 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MONTH_ABBREVIATIONS, weekdayName } from "./dateNames";
 import { toPlainDate } from "./plainDates";
 import { uniquePatternRules } from "./rules";
-import { PatternRule, Weekday, WEEKDAYS } from "./types";
+import { PatternRule, WEEKDAYS } from "./types";
 
 type WeekOfMonthRule = Extract<PatternRule, { type: "weekOfMonth" }>;
 
 const ORDINALS = ["1st", "2nd", "3rd", "4th"] as const;
-
-// A fixed table rather than toLocaleString, so the text is the same on every
-// server and browser whatever its locale or ICU data.
-const MONTH_ABBREVIATIONS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-] as const;
 
 function isFullGrid(rules: readonly WeekOfMonthRule[]): boolean {
   if (rules.length === 0) return false;
@@ -55,11 +39,6 @@ function uniqueSorted(values: readonly number[]): number[] {
 
 function ordinal(week: number): string {
   return ORDINALS[week - 1];
-}
-
-/** "MONDAY" becomes "Monday". */
-function weekdayName(weekday: Weekday): string {
-  return weekday.charAt(0) + weekday.slice(1).toLowerCase();
 }
 
 /** "A", "A and B", "A, B and C". */

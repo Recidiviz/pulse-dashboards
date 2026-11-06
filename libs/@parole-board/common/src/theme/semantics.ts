@@ -174,3 +174,9 @@ export const tile = {
 export const space = spacing;
 
 export const type = typography;
+
+// TODO(CO-935): Waiting on ~design-system to export an opacity token for disabled content. Alias it here once it lands.
+export const opacity = {
+  // The DS Checkbox and Radio draw a disabled control at half opacity.
+  disabled: 0.5,
+} as const;

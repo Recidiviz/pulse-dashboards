@@ -147,6 +147,16 @@ export const Chip = styled.div<{ $cancelled: boolean }>`
   overflow: hidden;
 `;
 
+/**
+ * The plain-text "Cancelled" above a cancelled chip's label, uppercase and in
+ * the error colour as in the public design.
+ */
+export const CancelledText = styled.span`
+  ${type.Sans12}
+  color: ${status.error};
+  text-transform: uppercase;
+`;
+
 export const VisuallyHidden = styled.span`
   ${hideVisually()}
 `;

@@ -16,12 +16,13 @@
 // =============================================================================
 
 import { renderHook } from "@testing-library/react";
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
+import { Link as RouterLink, LinkProps } from "react-router-dom";
 
 import { createFakeHost } from "../../testing";
 import {
   ParoleBoardHostProvider,
-  useCalendarCode,
+  useHostLink,
   useParoleBoardHost,
 } from "../ParoleBoardHostContext";
 import { ParoleBoardHost } from "../types";
@@ -55,32 +56,23 @@ describe("useParoleBoardHost", () => {
   });
 });
 
-describe("useCalendarCode", () => {
-  beforeEach(() => {
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
+describe("useHostLink", () => {
+  it("returns the host's Link", () => {
+    const HostLink = forwardRef<HTMLAnchorElement, LinkProps>(
+      function HostLink(props, ref) {
+        return <RouterLink ref={ref} {...props} />;
+      },
+    );
+    const { result } = renderHook(() => useHostLink(), {
+      wrapper: wrapperFor(createFakeHost({ Link: HostLink })),
+    });
+    expect(result.current).toBe(HostLink);
   });
 
-  it("returns the tenant's calendar code", () => {
-    const { result } = renderHook(() => useCalendarCode(), {
+  it("falls back to react-router's Link without one", () => {
+    const { result } = renderHook(() => useHostLink(), {
       wrapper: wrapperFor(createFakeHost()),
     });
-    expect(result.current).toBe("PAROLE_BOARD_PUBLIC");
-  });
-
-  it("throws when the tenant has no calendarConfig", () => {
-    const host = createFakeHost({
-      currentTenantId: "US_XX",
-      tenantStore: { currentTenantConfig: {} },
-    });
-    expect(() =>
-      renderHook(() => useCalendarCode(), { wrapper: wrapperFor(host) }),
-    ).toThrow("Tenant US_XX has no calendarConfig");
-  });
-
-  it("throws when the host has no tenant config at all", () => {
-    const host = createFakeHost({ tenantStore: {} });
-    expect(() =>
-      renderHook(() => useCalendarCode(), { wrapper: wrapperFor(host) }),
-    ).toThrow("has no calendarConfig");
+    expect(result.current).toBe(RouterLink);
   });
 });

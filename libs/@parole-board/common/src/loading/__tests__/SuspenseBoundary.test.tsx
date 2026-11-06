@@ -95,6 +95,67 @@ describe("SuspenseBoundary", () => {
     expect(host.reportError).toHaveBeenCalledWith(error);
   });
 
+  test("passes the caught error to renderError, which replaces LoadError", async () => {
+    const error = new Error("Not allowed");
+    const renderError = vi.fn((caught: unknown) =>
+      caught === error ? <p>You don't have access.</p> : undefined,
+    );
+
+    renderWithHost(
+      <SuspenseBoundary fallback={fallback} renderError={renderError}>
+        <Months queryFn={() => Promise.reject(error)} />
+      </SuspenseBoundary>,
+    );
+
+    expect(
+      await screen.findByText("You don't have access."),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(renderError).toHaveBeenCalledWith(error, expect.any(Function));
+  });
+
+  test("shows LoadError when renderError returns undefined", async () => {
+    renderWithHost(
+      <SuspenseBoundary
+        fallback={fallback}
+        errorTitle="The month didn't load."
+        renderError={() => undefined}
+      >
+        <Months queryFn={() => Promise.reject(new Error("Network error"))} />
+      </SuspenseBoundary>,
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The month didn't load.",
+    );
+  });
+
+  test("renderError's retry refetches", async () => {
+    const queryFn = vi
+      .fn<() => Promise<string[]>>()
+      .mockRejectedValueOnce(new Error("Not allowed"))
+      .mockResolvedValueOnce(["2026-10"]);
+
+    renderWithHost(
+      <SuspenseBoundary
+        fallback={fallback}
+        renderError={(_, retry) => (
+          <button type="button" onClick={retry}>
+            Check again
+          </button>
+        )}
+      >
+        <Months queryFn={queryFn} />
+      </SuspenseBoundary>,
+    );
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Check again" }),
+    );
+
+    expect(await screen.findByText("2026-10")).toBeInTheDocument();
+  });
+
   // These two render without renderWithHost, whose rerender would drop its
   // providers and remount the boundary.
   test("clears the error when a reset key changes", () => {

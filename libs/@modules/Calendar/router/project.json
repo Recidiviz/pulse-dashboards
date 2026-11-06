@@ -7,11 +7,39 @@
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@modules/Calendar/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.lib.json",
           "tsc -p ./tsconfig.spec.json"
         ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "dependsOn": [
+        {
+          "projects": ["@modules/Calendar/prisma"],
+          "target": "prisma-generate"
+        }
+      ]
+    },
+    "test-db": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@modules/Calendar/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "cache": false,
+      "options": {
+        "command": "vitest run --mode db --config ./vite.config.mts",
         "cwd": "{projectRoot}"
       }
     }

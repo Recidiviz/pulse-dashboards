@@ -17,9 +17,11 @@
 
 import { captureException } from "@sentry/react";
 
-import type { ParoleBoardHost } from "~@parole-board/common";
+import { createCalendarTrpc, ParoleBoardHost } from "~@parole-board/common";
 
+import { queryClient } from "../../../reactQuery/client";
 import type { RootStore } from "../../../RootStore";
+import { Link } from "../../Link";
 import { createParoleBoardAnalytics } from "./createParoleBoardAnalytics";
 
 /**
@@ -28,6 +30,14 @@ import { createParoleBoardAnalytics } from "./createParoleBoardAnalytics";
  * tenant the user switches to, and MobX observers inside the library
  * re-render on that change. Errors the calendar catches and recovers from go
  * to Sentry, which the page's own error boundary would otherwise never see.
+ * The calendar's queries live in the staff app's one QueryClient, as for
+ * staff's other tRPC clients, and its requests read the user's token from
+ * UserStore and the StateCode header from currentTenantId when they're sent.
+ * The calendar's links are the staff Link, which keeps the tenantId in the
+ * URL.
+ *
+ * It imports the Parole Board libraries' code, so only the lazily loaded
+ * UsCoParoleCalendarAdminWithHost may import it.
  */
 export function createParoleBoardHost(rootStore: RootStore): ParoleBoardHost {
   return {
@@ -37,8 +47,14 @@ export function createParoleBoardHost(rootStore: RootStore): ParoleBoardHost {
     userStore: rootStore.userStore,
     tenantStore: rootStore.tenantStore,
     analyticsStore: createParoleBoardAnalytics(rootStore.analyticsStore),
+    calendarTrpc: createCalendarTrpc({
+      getToken: () => rootStore.userStore.getToken?.(),
+      getStateCode: () => rootStore.currentTenantId,
+      queryClient,
+    }),
     reportError: (error) => {
       captureException(error);
     },
+    Link,
   };
 }

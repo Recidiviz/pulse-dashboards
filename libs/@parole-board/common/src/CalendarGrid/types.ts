@@ -21,8 +21,8 @@ import type { CalendarWeekday } from "./dates";
 
 /**
  * One item on the grid. The admin page builds it from a calendar entry and
- * the public site from a snapshot entry, which has no id, so the public site
- * builds one such as "2026-09-24-3".
+ * the public site from an entry in the public month read, which has no id,
+ * so the public site builds one such as "2026-09-24-3".
  */
 export interface CalendarGridEntry {
   /** Stable key, unique within the month. */
@@ -91,6 +91,18 @@ export interface CalendarGridProps {
    * back, and the caller moves the entries in its data.
    */
   onEntriesDrop?: (entryIds: string[], date: string) => void;
+  /**
+   * The text a chip shows, in place of entry.label. Only the text changes:
+   * the public site spells out "Business Meeting" where the admin chip keeps
+   * the kind's short label.
+   */
+  formatLabel?: (entry: CalendarGridEntry) => string;
+  /**
+   * How a cancelled chip says so above its label: "badge" (the default) is a
+   * Cancelled badge, "text" is the word as plain small text, as the public
+   * design draws it.
+   */
+  cancelledTag?: "badge" | "text";
   /** Replaces the default chip body. */
   renderEntry?: (entry: CalendarGridEntry) => ReactNode;
   /** Replaces the default holiday label, the holiday's name. */

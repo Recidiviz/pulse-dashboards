@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./api";
 export * from "./CalendarGrid";
 export * from "./components";
 export * from "./host";

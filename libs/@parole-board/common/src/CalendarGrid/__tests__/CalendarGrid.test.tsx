@@ -27,6 +27,20 @@ import { buildHandlers, CalendarGrid } from "../CalendarGrid";
 import styles from "../CalendarGrid.module.css";
 import type { CalendarGridProps } from "../types";
 
+// Marks each Badge with a test id, so a test can tell whether a chip drew one.
+vi.mock("../../components/Badge", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../../components/Badge")>();
+  return {
+    ...actual,
+    Badge: (props: Parameters<typeof actual.Badge>[0]) => (
+      <span data-testid="badge">
+        <actual.Badge {...props} />
+      </span>
+    ),
+  };
+});
+
 const baseProps: CalendarGridProps = {
   month: september2026.month,
   entries: september2026.entries,
@@ -145,6 +159,35 @@ describe("CalendarGrid month view", () => {
     const kept = chip("2026-09-04", "Full Board");
     expect(within(kept).queryByText("Cancelled")).not.toBeInTheDocument();
     expect(kept).not.toHaveTextContent("cancelled");
+  });
+
+  test("draws no badge for a cancelled entry when cancelledTag is text", () => {
+    renderGrid({
+      entries: september2026.entriesWithCancelledMeeting,
+      cancelledTag: "text",
+    });
+    const cancelled = chip("2026-09-11", "Full Board");
+    expect(within(cancelled).getByText("Cancelled")).toBeInTheDocument();
+    expect(cancelled).toHaveTextContent("Full Board, cancelled");
+    expect(within(cancelled).queryByTestId("badge")).not.toBeInTheDocument();
+  });
+
+  test("draws the Cancelled badge by default", () => {
+    renderGrid({ entries: september2026.entriesWithCancelledMeeting });
+    const cancelled = chip("2026-09-11", "Full Board");
+    expect(within(cancelled).getByTestId("badge")).toHaveTextContent(
+      "Cancelled",
+    );
+  });
+
+  test("formatLabel changes only the chip's text", () => {
+    renderGrid({
+      formatLabel: (entry) =>
+        entry.kind === "BUSINESS_MEETING" ? "Board meeting" : entry.label,
+    });
+    expect(chipLabels("2026-09-25")).toEqual(["Full Board", "Board meeting"]);
+    expect(chip("2026-09-25", "Board meeting")).toBeInTheDocument();
+    expect(chipLabels("2026-09-14")).toEqual(["FCF", "DENCOM WTM BDY"]);
   });
 
   test("shows the Business Meeting by its label", () => {

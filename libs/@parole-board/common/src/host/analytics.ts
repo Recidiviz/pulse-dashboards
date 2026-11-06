@@ -31,6 +31,7 @@ export interface PbCalendarMonthAddedMetadata {
   count: number;
 }
 
+/** The month an editor moved back to draft with Edit month. */
 export interface PbCalendarMonthUnpublishedMetadata {
   year: number;
   month: number;
@@ -55,7 +56,8 @@ export interface PbCalendarMovedMetadata extends PbCalendarEntryMetadata {
 /**
  * Counts for a month at the moment it was published.
  *
- * isRepublish is true when the month had been published before.
+ * isRepublish is true when the month had a latestPublication: it was
+ * published before, then an editor clicked Edit month to change it.
  * daysBeforeMonthStart counts days from today, in the calendar's timezone, to
  * the 1st of the month, and is negative once the month has started.
  */

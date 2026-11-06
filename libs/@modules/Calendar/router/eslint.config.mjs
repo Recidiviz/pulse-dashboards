@@ -23,14 +23,61 @@ import baseConfig, {
   designSystemRestrictedImports,
 } from "../../../../eslint.config.mjs";
 
-export default tseslint.config(baseConfig, {
-  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
-  rules: {
-    "no-restricted-imports": [
-      "error",
-      {
-        paths: [designSystemRestrictedImports],
-      },
-    ],
+export default tseslint.config(
+  baseConfig,
+  {
+    files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [designSystemRestrictedImports],
+        },
+      ],
+    },
   },
-});
+  {
+    // Generic Calendar code never imports a state's code: everything
+    // outside a us_co folder must work for any calendar, and only a state's
+    // own folders (src/us_co/<calendar> and their tests) import it. This block
+    // replaces the one above for those files, so it repeats its paths. It uses
+    // the plain rule because the root config's typescript-eslint copy holds
+    // the repo-wide restrictions, which a second copy here would replace.
+    files: ["**/*.{ts,tsx,mts,cts}"],
+    // src/router.ts is the module's router, which serves Colorado's API, so
+    // it's the one generic file that imports a us_co folder.
+    ignores: ["**/us_co/**", "src/router.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [designSystemRestrictedImports],
+          patterns: [
+            {
+              regex: "(^|/)us_co(/|$)",
+              message:
+                "Generic Calendar code must not import a state's code from a us_co folder.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The database tests assert through these helpers from
+    // __tests__/setup/fixtures.ts.
+    files: ["**/*.test.ts"],
+    rules: {
+      "vitest/expect-expect": [
+        "error",
+        {
+          assertFunctionNames: [
+            "expect",
+            "expectConstraintError",
+            "expectUniqueError",
+          ],
+        },
+      ],
+    },
+  },
+);

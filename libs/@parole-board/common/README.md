@@ -1,21 +1,45 @@
 # @parole-board/common
 
-Parole Board calendar code shared by every state: the `ParoleBoardHost` type and its provider, shared UI primitives, and test helpers. `CalendarGrid` (CO-829), the React Query client and data hooks (CO-869) and `PublicCalendarView` (CO-789) land here too.
+Parole Board calendar code shared by every state: the `ParoleBoardHost` type and its provider, the calendar API client and data hooks, shared UI primitives, `CalendarGrid`, and test helpers. `PublicCalendarView` (CO-789) lands here too.
 
 Import it as `~@parole-board/common`. Test helpers live behind their own alias, `~@parole-board/common/testing`, so they never ship in the main barrel.
 
 ## What goes here
 
-- **`src/host/`**: `ParoleBoardHost`, `ParoleBoardHostProvider`, `useParoleBoardHost()` and `useCalendarCode()`.
+- **`src/host/`**: `ParoleBoardHost`, `ParoleBoardHostProvider`, `useParoleBoardHost()` and `useHostLink()`, which returns the host app's `Link` (staff's keeps the `tenantId` in the URL) or react-router's.
+- **`src/api/`**: `createCalendarTrpc`, the data hooks, the error helpers and the API types (below).
 - **`src/components/`**: shared UI primitives. Build each one by wrapping or composing `~design-system` parts (or `@recidiviz/design-system`, only for exports `~design-system` lacks). Never edit `libs/design-system` or `apps/staff` to get one. When a screen needs a staff component, such as `StatusMessage`, copy it here and note the copy in the PR.
 - **`src/theme/`**: `semantics`, the colours, type, spacing and radius every Parole Board component uses. The names follow the Figma System v2 groups (text, icon, surface, border, action, status, radius) and every value aliases a `~design-system` token. Components read only `semantics`, never `palette` or a hex or rgb literal; a missing value becomes one new alias there, mapped to the nearest design-system token. Stand-ins for exports the design system lacks carry a `TODO(CO-935)`.
 - **`src/CalendarGrid/`**: `CalendarGrid`, the month grid built on FullCalendar, with its types and date helpers (`toIsoDate`, `isInMonth`, `monthStartIso`, `weekStartsOnToFirstDay`).
 - **`src/loading/`**: `SuspenseBoundary`, the skeleton primitives (`Skeleton`, `SkeletonText`, `SkeletonGroup`) and `AdminPageSkeleton`. The host app imports it as `~@parole-board/common/loading`, so its lazy page's fallback doesn't pull in the rest of the library.
-- **`src/testing/`**: `createFakeHost()` and `renderWithHost()`.
-- **`src/fixtures/`**: all synthetic fixture data (such as `september2026`), plus `queryResult()`, `suspendedQuery()`, `failedQuery()` and `mutationResult()`, which stand in for React Query hooks. Import them as `~@parole-board/common/fixtures`, from tests and example files only.
+- **`src/testing/`**: `createFakeHost()`, `createFakeCalendarTrpc()` and `renderWithHost()`.
+- **`src/fixtures/`**: all synthetic fixture data (such as `september2026`, `monthDetail()`, `calendarApiConfig` and `calendarApiError()`), plus `queryResult()`, `suspendedQuery()`, `failedQuery()` and `mutationResult()`, which stand in for React Query hooks. Import them as `~@parole-board/common/fixtures`, from tests and example files only.
 - **`.examples/`**: the examples config every Parole Board library shares (below).
 
-Components fetch data only through the hooks in this library (CO-869), never with their own clients.
+Components fetch data only through the hooks in this library, never with their own clients.
+
+## The calendar API
+
+The hooks call Colorado's Public Calendar API, which the Modules server's `Calendar` module serves at `Calendar.usCo.paroleBoard`. The client points at that path, so hooks call `admin.*` and `public.*` directly. It is typed by `UsCoParoleBoardCalendarRouter`, read off `CalendarRouter` from `~@modules-server/trpc-types`, and the API types (`MonthDetail`, `MonthListPage`, `EntryDto`, `CalendarApiConfig` and the rest, in `src/api/types.ts`) are read off its procedures, since this library can't import the server library that declares them. No hook takes a calendar code: the router serves one calendar.
+
+| Hook                                                                                    | Procedure                     | Kind                                                                                                                                           |
+| --------------------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useMonth({ year, month })`                                                             | `admin.months.get`            | Suspense read, refetched on focus and every 30 seconds (Spec D)                                                                                |
+| `useMonthQueryOptions({ year, month })`                                                 | `admin.months.get`            | The same read's options, for `useQuery` where the month mustn't suspend                                                                        |
+| `usePrefetchMonth(yearMonth)`                                                           | `admin.months.get`            | Prefetches a month, such as the next one, unless it was fetched in the last 30 seconds; returns a function to prefetch again on hover or focus |
+| `useMonthsList({ around, search })`                                                     | `admin.months.list`           | Suspense infinite read; `fetchNextPage` and `fetchPreviousPage` send the page's cursors                                                        |
+| `useAddMonthOptions()`                                                                  | `admin.months.addOptions`     | Suspense read                                                                                                                                  |
+| `usePublishPreview({ monthId })`                                                        | `admin.months.publishPreview` | Suspense read                                                                                                                                  |
+| `useCalendarConfig()`                                                                   | `admin.config.get`            | Suspense read, never stale                                                                                                                     |
+| `useCurrentPatterns()`                                                                  | `admin.patterns.listCurrent`  | Suspense read                                                                                                                                  |
+| `useCreateMonths`                                                                       | `admin.months.create`         | Mutation: creates draft months from the facility patterns                                                                                      |
+| `usePublishMonth`                                                                       | `admin.months.publish`        | Mutation: publishes a DRAFT month, which locks it                                                                                              |
+| `useUnpublishMonth`                                                                     | `admin.months.unpublish`      | Mutation behind "Edit month": moves a PUBLISHED month back to DRAFT, off the public site                                                       |
+| `useAddEntry`, `useDeleteEntry`, `useMoveEntries`, `useCancelEntry`, `useUncancelEntry` | `admin.entries.*`             | Mutation                                                                                                                                       |
+
+A PUBLISHED month is locked: the server answers every entry write to it with PRECONDITION_FAILED until an editor clicks Edit month. Every write except create returns the month as it is after the write, and the hook stores it as that month's query data before `mutateAsync` resolves, so nothing refetches after a success. A failure that means the editor's copy is stale (`STALE_CALENDAR_CODES`: CONFLICT, NOT_FOUND and PRECONDITION_FAILED) or an unknown one refetches only that month, and publish's CONFLICT also refetches its preview, so the screen snaps back to the server's state; BAD_REQUEST refetches nothing. Create returns no months, so it refetches the month lists, Add month's choices and the months it created. `editorErrorMessage(error, fallback)` returns the server's message when it was written for editors (CONFLICT, NOT_FOUND, PRECONDITION_FAILED and BAD_REQUEST other than input validation) and `fallback` otherwise, and `getCalendarErrorMessage(error)` falls back to a generic message; mutations send every other error to the host's `reportError`. Queries never retry an error written for editors, since the answer won't change (`calendarRetry`).
+
+`createCalendarTrpc({ getToken, getStateCode, queryClient })` sends requests only to `VITE_MODULE_BACKEND_URL`, with the token `getToken` returns and a `StateCode` header from `getStateCode`, both read at request time. A request fails before it's sent when the URL isn't set or there's no token or state code. The hooks use the `QueryClientProvider` they render under; in the staff app that is its one shared `QueryClient`, as for staff's other tRPC clients, and `createCalendarTrpc` takes that same client.
 
 ## Loading and errors
 
@@ -29,7 +53,7 @@ Wrap each part of a screen that loads in a `SuspenseBoundary`, with a skeleton s
 </SuspenseBoundary>
 ```
 
-It shows the skeleton while its children suspend and an error with "Try again" if they throw. Retrying resets the failed queries, so they refetch. Build skeletons from `Skeleton`, `SkeletonText` and `SkeletonGroup`, in the loaded screen's layout and sizes; they stop pulsing when the user prefers reduced motion. Each component that suspends has a `Loading` example (inject `suspendedQuery`) and tests for its skeleton and error.
+It shows the skeleton while its children suspend and an error with "Try again" if they throw. Retrying resets the failed queries, so they refetch. Pass `renderError` to show an error in the screen's own words, such as the FORBIDDEN message; it gets the caught error and the retry, and returning `undefined` keeps the default error. Build skeletons from `Skeleton`, `SkeletonText` and `SkeletonGroup`, in the loaded screen's layout and sizes; they stop pulsing when the user prefers reduced motion. Each component that suspends has a `Loading` example (inject `suspendedQuery`) and tests for its skeleton and error.
 
 ## Isolation rules
 
@@ -58,13 +82,18 @@ const host: ParoleBoardHost = {
   tenantStore: rootStore.tenantStore,
   // createParoleBoardAnalytics lives in the same staff folder.
   analyticsStore: createParoleBoardAnalytics(rootStore.analyticsStore),
+  calendarTrpc: createCalendarTrpc({
+    getToken: () => rootStore.userStore.getToken?.(),
+    getStateCode: () => rootStore.currentTenantId,
+    queryClient, // the staff app's singleton
+  }),
   reportError: (error) => captureException(error),
 };
 
 <UsCoParoleCalendarAdmin host={host} />;
 ```
 
-`useCalendarCode()` reads `tenantStore.currentTenantConfig.calendarConfig.calendarCode` and throws when the tenant has none, so no component names a calendar code itself. CO-869 adds `calendarTrpc` to the host and the `createCalendarTrpc` step the host app runs to build it. `ParoleBoardAnalytics` declares one method per admin calendar event; the staff adapter `createParoleBoardAnalytics` sends each to `AnalyticsStore.track` under its `frontend.pb_public_calendar_*` name. Event metadata holds months, counts, kind codes and public location codes only, never emails, ids or free text, because it goes to Segment.
+The staff app builds the host in the admin tool's lazily loaded chunk, so the client and the rest of these libraries stay out of its main bundle. `ParoleBoardAnalytics` declares one method per admin calendar event; the staff adapter `createParoleBoardAnalytics` sends each to `AnalyticsStore.track` under its `frontend.pb_public_calendar_*` name. Event metadata holds months, counts, kind codes and public location codes only, never emails, ids or free text, because it goes to Segment.
 
 ## Tests, lint and examples
 
@@ -74,7 +103,7 @@ nx lint @parole-board/common --fix
 nx typecheck @parole-board/common
 ```
 
-Render components in tests with `renderWithHost(ui, { host, route })`. To check an analytics call, build a host with `createFakeHost()` and spy on its methods with `vi.spyOn`.
+Render components in tests with `renderWithHost(ui, { host, route })`, which provides the host's `calendarTrpc.queryClient`. To check an analytics call, build a host with `createFakeHost()` and spy on its methods with `vi.spyOn`. The fake host's calendar client fails every request; to test a hook against answers, pass `createFakeHost({ calendarTrpc: createFakeCalendarTrpc({ procedures }) })`, where `procedures` maps a path such as `"admin.months.get"` to a function of the input.
 
 ## Examples
 
@@ -87,7 +116,7 @@ nx build-examples @parole-board/common [path]  # static build in examples-static
 
 Both targets run Storybook from the library's folder with `--config-dir ../common/.examples`, and `examples` adds `--no-open`, so it doesn't open a browser on every run; open the URL it prints in the terminal. Copy both targets as they are. `main.ts` scans whichever library it runs from, so a library adds the two targets and no config. Story ids are the library's folder name plus the file's path: `us-co/src/AdminRootContent.examples.tsx` → `OfflineOrDemo` is `us-co-src-adminrootcontent--offline-or-demo`. The ui-examples skill has the URL recipe and server discovery.
 
-`preview.ts` wraps each story in a `MemoryRouter` (at `parameters.route` when set), a new `QueryClient` with retries off and a `ParoleBoardHostProvider` with `createFakeHost()`, and loads the `~design-system` global styles and the staff fonts, with nothing from `apps/staff`.
+`preview.ts` wraps each story in a `MemoryRouter` (at `parameters.route` when set), a `ParoleBoardHostProvider` with `createFakeHost()` and a `QueryClientProvider` with the fake host's new `QueryClient`, which has retries off, and loads the `~design-system` global styles and the staff fonts, with nothing from `apps/staff`.
 
 A container that calls a data hook swaps it for fixture data with `react-magnetic-di`. Wrap the component with `withDi` and render the result from the story; files that share injectables keep them in an array and spread it:
 

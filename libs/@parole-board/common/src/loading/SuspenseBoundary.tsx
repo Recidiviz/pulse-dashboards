@@ -56,15 +56,21 @@ export function LoadError({
  * they refetch. A change to any of resetKeys, such as the route, clears the
  * error too. Each error goes to the host's reportError, since the host's own
  * error boundary never sees an error caught here.
+ *
+ * renderError replaces LoadError for the errors a screen explains in its own
+ * words, such as FORBIDDEN. It gets the caught error and the retry, and
+ * returns undefined to fall back to LoadError.
  */
 export function SuspenseBoundary({
   fallback,
   errorTitle,
+  renderError,
   resetKeys,
   children,
 }: {
   fallback: ReactNode;
   errorTitle?: string;
+  renderError?: (error: unknown, retry: () => void) => ReactNode | undefined;
   resetKeys?: readonly unknown[];
   children: ReactNode;
 }) {
@@ -76,9 +82,14 @@ export function SuspenseBoundary({
           onError={reportError}
           onReset={reset}
           resetKeys={resetKeys}
-          renderFallback={(retry) => (
-            <LoadError title={errorTitle} onRetry={retry} />
-          )}
+          renderFallback={(error, retry) => {
+            const custom = renderError?.(error, retry);
+            return custom === undefined ? (
+              <LoadError title={errorTitle} onRetry={retry} />
+            ) : (
+              custom
+            );
+          }}
         >
           <Suspense fallback={fallback}>{children}</Suspense>
         </ErrorBoundary>

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
@@ -24,9 +24,10 @@ import { ParoleBoardHost, ParoleBoardHostProvider } from "../host";
 import { createFakeHost } from "./createFakeHost";
 
 /**
- * Renders ui inside a ParoleBoardHostProvider, a fresh QueryClientProvider
- * with retries off, and a MemoryRouter at route (default "/"). Pass host to
- * spy on its methods; it defaults to createFakeHost().
+ * Renders ui inside a ParoleBoardHostProvider, a QueryClientProvider with
+ * the host's calendarTrpc.queryClient, and a MemoryRouter at route (default
+ * "/"). Pass host to spy on its methods; it defaults to createFakeHost(),
+ * whose QueryClient is new and has query retries off.
  */
 export function renderWithHost(
   ui: ReactElement,
@@ -35,14 +36,11 @@ export function renderWithHost(
     route = "/",
   }: { host?: ParoleBoardHost; route?: string } = {},
 ) {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
   return {
     host,
     ...render(
       <ParoleBoardHostProvider host={host}>
-        <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={host.calendarTrpc.queryClient}>
           <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
         </QueryClientProvider>
       </ParoleBoardHostProvider>,

@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { ComponentType, RefAttributes } from "react";
+import type { LinkProps } from "react-router-dom";
+
+import type { CalendarTrpc } from "../api/client";
 import type { ParoleBoardAnalytics } from "./analytics";
 
 /** The calendar a tenant shows, and the label its nav link uses. */
@@ -45,8 +49,20 @@ export interface ParoleBoardHost {
   };
   analyticsStore: ParoleBoardAnalytics;
   /**
+   * The calendar API client the data hooks read through, built with
+   * createCalendarTrpc on the host app's QueryClient. The host renders the
+   * calendar under a QueryClientProvider with that same client.
+   */
+  calendarTrpc: CalendarTrpc;
+  /**
    * Reports an error the calendar caught and recovered from, such as a failed
    * load behind a retry, which the host's own error boundary never sees.
    */
   reportError?: (error: unknown) => void;
+  /**
+   * The host app's link, which the calendar's links render, such as the
+   * staff Link that keeps the tenantId in the URL. It takes react-router's
+   * LinkProps; without it, the links are react-router's own Link.
+   */
+  Link?: ComponentType<LinkProps & RefAttributes<HTMLAnchorElement>>;
 }

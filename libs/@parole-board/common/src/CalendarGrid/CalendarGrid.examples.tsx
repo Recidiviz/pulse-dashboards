@@ -147,6 +147,30 @@ export const CancelledMeeting = () => (
   </Frame>
 );
 
+// The Business Meeting under its kind's short label, "Business Mtg", as the
+// calendar data carries it.
+const shortLabelEntries = september2026.entriesWithCancelledMeeting.map((e) =>
+  e.kind === "BUSINESS_MEETING" ? { ...e, label: "Business Mtg" } : e,
+);
+
+/**
+ * The chip options the public site uses: "Business Mtg" spelled out as
+ * "Business Meeting" through formatLabel, and "Cancelled" as plain text
+ * rather than a badge.
+ */
+export const PublicChips = () => (
+  <Frame>
+    <CalendarGrid
+      {...base}
+      entries={shortLabelEntries}
+      formatLabel={(entry) =>
+        entry.kind === "BUSINESS_MEETING" ? "Business Meeting" : entry.label
+      }
+      cancelledTag="text"
+    />
+  </Frame>
+);
+
 export const HolidayFlag = () => (
   <Frame>
     <Selectable

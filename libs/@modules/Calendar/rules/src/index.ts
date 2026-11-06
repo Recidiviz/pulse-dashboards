@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type { CalendarEntryType, CalendarRules } from "./calendarRules";
 export {
   addMonths,
   currentYearMonth,
@@ -25,6 +26,20 @@ export {
   weekdayOf,
 } from "./dates";
 export { describePatternRules } from "./describePattern";
+export {
+  generateMonthDraft,
+  sortDraftEntries,
+} from "./draft/generateMonthDraft";
+export type {
+  DraftEntry,
+  DraftKind,
+  DraftNotice,
+  DraftPattern,
+  DraftResource,
+  GenerateMonthDraftInput,
+  MonthDraft,
+  OutsideMonthEntry,
+} from "./draft/types";
 export type { CalendarRulesErrorCode } from "./errors";
 export { CalendarRulesError } from "./errors";
 export { getHolidays } from "./holidays/getHolidays";

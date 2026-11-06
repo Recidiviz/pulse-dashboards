@@ -18,11 +18,18 @@
 import type { KeyboardEvent, ReactNode } from "react";
 
 import { Badge } from "../components/Badge";
-import { Chip, ChipTarget, VisuallyHidden } from "./CalendarGrid.styles";
-import type { CalendarGridEntry } from "./types";
+import {
+  CancelledText,
+  Chip,
+  ChipTarget,
+  VisuallyHidden,
+} from "./CalendarGrid.styles";
+import type { CalendarGridEntry, CalendarGridProps } from "./types";
 
 type EntryTargetProps = {
   entry: CalendarGridEntry;
+  /** The text the chip shows, which is also the hover title without entry.title. */
+  label: string;
   selected: boolean;
   /** Without it, the chip is plain content: not focusable and not pressable. */
   onToggle?: (entryId: string) => void;
@@ -37,11 +44,12 @@ type EntryTargetProps = {
  */
 export function EntryTarget({
   entry,
+  label,
   selected,
   onToggle,
   children,
 }: EntryTargetProps) {
-  const title = entry.title ?? entry.label;
+  const title = entry.title ?? label;
   if (!onToggle) return <ChipTarget title={title}>{children}</ChipTarget>;
 
   // As a native button does: Enter acts on keydown and Space on keyup, and a
@@ -76,22 +84,34 @@ export function EntryTarget({
 }
 
 /**
- * The default chip body: the entry's label for every kind, a "Cancelled"
- * badge above it when cancelled, and its flag, if any, as a badge below.
- * Screen readers hear "Full Board, cancelled" rather than the badge first.
+ * The default chip body: its label for every kind, "Cancelled" above it when
+ * cancelled (a badge, or plain text when cancelledTag is "text"), and its
+ * flag, if any, as a badge below. Screen readers hear "Full Board, cancelled"
+ * rather than the tag first.
  */
-export function EntryChip({ entry }: { entry: CalendarGridEntry }) {
+export function EntryChip({
+  entry,
+  label,
+  cancelledTag = "badge",
+}: {
+  entry: CalendarGridEntry;
+  label: string;
+  cancelledTag?: CalendarGridProps["cancelledTag"];
+}) {
   return (
     <Chip $cancelled={entry.cancelled}>
-      {entry.cancelled && (
-        <span aria-hidden>
-          <Badge tone="error" size="sm">
-            Cancelled
-          </Badge>
-        </span>
-      )}
+      {entry.cancelled &&
+        (cancelledTag === "text" ? (
+          <CancelledText aria-hidden>Cancelled</CancelledText>
+        ) : (
+          <span aria-hidden>
+            <Badge tone="error" size="sm">
+              Cancelled
+            </Badge>
+          </span>
+        ))}
       <span>
-        {entry.label}
+        {label}
         {entry.cancelled && <VisuallyHidden>, cancelled</VisuallyHidden>}
       </span>
       {entry.flag && (

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { createContext, ReactNode, useContext } from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 import { ParoleBoardHost } from "./types";
 
@@ -48,23 +49,6 @@ export function useParoleBoardHost(): ParoleBoardHost {
   return host;
 }
 
-/**
- * Returns the calendar code from the current tenant's calendarConfig, which
- * every calendar request is scoped to. Throws when the tenant has no
- * calendarConfig, so components only render under a configured tenant.
- */
-export function useCalendarCode(): string {
-  const { currentTenantId, tenantStore } = useParoleBoardHost();
-  const calendarCode =
-    tenantStore.currentTenantConfig?.calendarConfig?.calendarCode;
-  if (!calendarCode) {
-    throw new Error(
-      `Tenant ${currentTenantId ?? "(none)"} has no calendarConfig`,
-    );
-  }
-  return calendarCode;
-}
-
 const ignoreError = () => undefined;
 
 /**
@@ -74,4 +58,13 @@ const ignoreError = () => undefined;
  */
 export function useReportError(): (error: unknown) => void {
   return useContext(ParoleBoardHostContext)?.reportError ?? ignoreError;
+}
+
+/**
+ * Returns the link component the calendar's links render: the host's Link,
+ * or react-router's when the host has none or outside a
+ * ParoleBoardHostProvider.
+ */
+export function useHostLink(): NonNullable<ParoleBoardHost["Link"]> {
+  return useContext(ParoleBoardHostContext)?.Link ?? RouterLink;
 }

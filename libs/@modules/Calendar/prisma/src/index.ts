@@ -15,5 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { Prisma } from "./client/client";
 export type { CalendarPrismaClient } from "./getPrismaClient";
 export { getPrismaClient } from "./getPrismaClient";

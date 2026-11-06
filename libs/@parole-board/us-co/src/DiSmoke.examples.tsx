@@ -16,38 +16,33 @@
 // =============================================================================
 
 // Checks that the react-magnetic-di Babel plugin and withDi work in this
-// renderer, including a suspended and a failed query. Delete it once a
-// screen's examples inject a real data hook.
+// renderer with one of common's data hooks, including a suspended and a
+// failed query. Delete it once a screen's examples inject a real data hook.
 
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { injectable, withDi } from "react-magnetic-di";
 
 import {
   SkeletonGroup,
   SkeletonText,
   SuspenseBoundary,
-  useCalendarCode,
+  useAddMonthOptions,
+  useCalendarConfig,
 } from "~@parole-board/common";
 import {
+  calendarApiConfig,
+  calendarApiError,
   failedQuery,
   queryResult,
   suspendedQuery,
 } from "~@parole-board/common/fixtures";
 
-// common has no data hooks until CO-869, so the smoke component calls
-// useSuspenseQuery itself and the examples inject it. The Babel plugin only
-// wraps imported values, so a hook declared in this file couldn't be injected.
 function DiSmoke() {
-  const calendarCode = useCalendarCode();
-  const { data } = useSuspenseQuery<string[]>({
-    queryKey: ["di-smoke"],
-    queryFn: () => {
-      throw new Error("useSuspenseQuery was not injected");
-    },
-  });
+  const { data: config } = useCalendarConfig();
+  const { data: options } = useAddMonthOptions();
   return (
     <p>
-      {calendarCode} has {data.length} months: {data.join(", ")}
+      {config.calendar.name}: Add month offers {options.length} months:{" "}
+      {options.map((m) => `${m.year}-${m.month}`).join(", ")}
     </p>
   );
 }
@@ -66,27 +61,35 @@ function DiSmokeWithBoundary() {
   );
 }
 
-const useCalendarCodeDi = injectable(useCalendarCode, () => "INJECTED_CODE");
-const useQueryDi = injectable(useSuspenseQuery, () =>
-  queryResult(["2026-09", "2026-10"]),
+const useConfigDi = injectable(useCalendarConfig, () =>
+  queryResult(calendarApiConfig),
 );
-const useQueryLoadingDi = injectable(useSuspenseQuery, suspendedQuery);
-const useQueryErrorDi = injectable(useSuspenseQuery, () =>
-  failedQuery(new Error("Network error")),
+const useOptionsDi = injectable(useAddMonthOptions, () =>
+  queryResult([
+    { year: 2026, month: 11 },
+    { year: 2026, month: 12 },
+  ]),
+);
+const useOptionsLoadingDi = injectable(useAddMonthOptions, suspendedQuery);
+const useOptionsErrorDi = injectable(useAddMonthOptions, () =>
+  failedQuery(calendarApiError("INTERNAL_SERVER_ERROR", "Network error")),
 );
 
 // Injectables every story here shares. A story spreads them and adds its own;
 // for the same hook, the later entry wins.
-const defaults = [useCalendarCodeDi];
+const defaults = [useConfigDi];
 
-const InjectedDiSmoke = withDi(DiSmokeWithBoundary, [...defaults, useQueryDi]);
+const InjectedDiSmoke = withDi(DiSmokeWithBoundary, [
+  ...defaults,
+  useOptionsDi,
+]);
 const LoadingDiSmoke = withDi(DiSmokeWithBoundary, [
   ...defaults,
-  useQueryLoadingDi,
+  useOptionsLoadingDi,
 ]);
 const ErrorDiSmoke = withDi(DiSmokeWithBoundary, [
   ...defaults,
-  useQueryErrorDi,
+  useOptionsErrorDi,
 ]);
 
 export default {};
