@@ -18,6 +18,10 @@
 import z from "zod";
 
 import { insightImportSchema } from "~@sentencing/import/models";
+import {
+  chunkForStatement,
+  inBatches,
+} from "~@sentencing/import/utils/batching";
 import { Prisma, PrismaClient, StateCode } from "~@sentencing/prisma/client";
 
 type TransformedRecidivismSeries = {
@@ -83,181 +87,243 @@ function transformDispositions(
   })) satisfies Prisma.DispositionCreateManyInsightInput[];
 }
 
-async function loadInsightData(
+// Insights per batch. Smaller than the shared default because each insight
+// carries dozens of child rows.
+const INSIGHT_BATCH_SIZE = 500;
+
+type InsightImportRow = z.infer<typeof insightImportSchema>;
+
+type InsightData = {
+  data: Prisma.InsightCreateManyInput;
+  dispositions: Prisma.DispositionCreateManyInsightInput[];
+  recidivismSeries: TransformedRecidivismSeries[];
+};
+
+// Matches the Insight @@unique constraint.
+const insightKey = (insight: {
+  gender: string;
+  offenseName: string;
+  assessmentScoreBucketStart: number;
+  assessmentScoreBucketEnd: number;
+}) =>
+  `${insight.gender}|${insight.offenseName}|${insight.assessmentScoreBucketStart}|${insight.assessmentScoreBucketEnd}`;
+
+// Matches the RecidivismSeries @@unique constraint. The bucket values are
+// always numbers, since transformRecidivismSeries fills in the schema defaults.
+const seriesKey = (
+  insightId: string,
+  series: {
+    recommendationType: string | null | undefined;
+    sentenceLengthBucketStart: number;
+    sentenceLengthBucketEnd: number;
+  },
+) =>
+  `${insightId}|${series.recommendationType ?? null}|${series.sentenceLengthBucketStart}|${series.sentenceLengthBucketEnd}`;
+
+function toInsightData(
+  row: InsightImportRow,
+  offenseId: string | undefined,
+): InsightData {
+  // Only show sentence distributions for cohorts with a large enough sample.
+  // When a restricted state's cohort falls below the threshold, drop the
+  // disposition data and report zero records so the frontend shows its empty
+  // state instead. States without the restriction always keep their data.
+  const dispositionNumRecords = row.disposition_num_records ?? 0;
+  const hasSufficientDispositionData =
+    !STATES_WITH_DISPOSITION_MINIMUM.includes(row.state_code) ||
+    dispositionNumRecords >= MIN_DISPOSITION_RECORDS;
+
+  return {
+    data: {
+      stateCode: row.state_code,
+      gender: row.gender,
+      offenseName: row.most_severe_description,
+      offenseId,
+      assessmentScoreBucketStart: row.assessment_score_bucket_start,
+      assessmentScoreBucketEnd: row.assessment_score_bucket_end,
+      rollupStateCode: row.recidivism_rollup.state_code,
+      rollupGender: row.recidivism_rollup.gender,
+      rollupAssessmentScoreBucketStart:
+        row.recidivism_rollup.assessment_score_bucket_start,
+      rollupAssessmentScoreBucketEnd:
+        row.recidivism_rollup.assessment_score_bucket_end,
+      rollupOffenseName: row.recidivism_rollup.most_severe_description,
+      rollupNcicCategory:
+        row.recidivism_rollup.most_severe_ncic_category_uniform,
+      rollupCombinedOffenseCategory:
+        row.recidivism_rollup.combined_offense_category,
+      rollupViolentOffense: row.recidivism_rollup.any_is_violent_uniform,
+      rollupRecidivismNumRecords: row.recidivism_num_records,
+      // Below the minimum sample size, report zero records so the sentence
+      // distribution is not shown.
+      dispositionNumRecords: hasSufficientDispositionData
+        ? dispositionNumRecords
+        : 0,
+      // Time served fields (avgSentenceLengthYears, avgPctServed, timeServedNumRecords)
+      // are populated separately by the time served import — not by the insights import.
+    },
+    // Below-threshold cohorts store no distribution data at all.
+    dispositions: hasSufficientDispositionData
+      ? transformDispositions(row.dispositions)
+      : [],
+    recidivismSeries: transformRecidivismSeries(row.recidivism_series),
+  };
+}
+
+/**
+ * Writes one batch of insights and their child rows, with bulk writes per table
+ * chunked to stay under the statement limits in batching.ts.
+ */
+async function loadInsightBatch(
   prismaClient: PrismaClient,
-  data: AsyncGenerator<z.infer<typeof insightImportSchema>>,
-  { linkToOffense }: { linkToOffense: boolean },
+  batch: Map<string, InsightData>,
 ) {
-  const newInsights = [];
+  const insights = [...batch.values()];
 
-  // Load new insight data.
-  // We do this in a for loop instead of Promise.all to avoid a prisma pool connection error.
-  for await (const insightData of data) {
-    let offenseId: string | undefined;
-    if (linkToOffense) {
-      // Look up the offense by name — offenses are imported before insights,
-      // so they should already exist. If not, skip this insight with a warning.
-      const offense = await prismaClient.offense.findUnique({
-        where: {
-          stateCode: insightData.state_code,
-          name: insightData.most_severe_description,
-        },
-      });
+  // Delete any existing insights for the same gender, offense, and assessment
+  // score bucket so that their stale recidivism and disposition records are
+  // deleted via cascade.
+  await prismaClient.insight.deleteMany({
+    where: {
+      OR: insights.map(({ data }) => ({
+        gender: data.gender,
+        offenseName: data.offenseName,
+        assessmentScoreBucketStart: data.assessmentScoreBucketStart,
+        assessmentScoreBucketEnd: data.assessmentScoreBucketEnd,
+      })),
+    },
+  });
 
-      if (!offense) {
+  const createdInsights = await prismaClient.insight.createManyAndReturn({
+    data: insights.map(({ data }) => data),
+    select: {
+      id: true,
+      gender: true,
+      offenseName: true,
+      assessmentScoreBucketStart: true,
+      assessmentScoreBucketEnd: true,
+    },
+  });
+  // createManyAndReturn does not guarantee return order, so created rows are
+  // matched back to their input by gender, offense, and assessment score bucket
+  // rather than by index position.
+  const loaded = createdInsights.flatMap((insight) => {
+    const match = batch.get(insightKey(insight));
+    return match ? [{ ...match, insightId: insight.id }] : [];
+  });
+
+  const dispositions = loaded.flatMap(({ dispositions, insightId }) =>
+    dispositions.map((d) => ({ ...d, insightId })),
+  );
+  for (const chunk of chunkForStatement(dispositions, 6)) {
+    // eslint-disable-next-line no-await-in-loop -- one statement at a time keeps load on the database low
+    await prismaClient.disposition.createMany({ data: chunk });
+  }
+
+  const seriesToCreate = loaded.flatMap(({ recidivismSeries, insightId }) =>
+    recidivismSeries.map((series) => ({
+      recommendationType: series.recommendationType,
+      sentenceLengthBucketStart: series.sentenceLengthBucketStart,
+      sentenceLengthBucketEnd: series.sentenceLengthBucketEnd,
+      insightId,
+    })),
+  );
+  const createdSeries = [];
+  for (const chunk of chunkForStatement(seriesToCreate, 5)) {
+    createdSeries.push(
+      // eslint-disable-next-line no-await-in-loop -- one statement at a time keeps load on the database low
+      ...(await prismaClient.recidivismSeries.createManyAndReturn({
+        data: chunk,
+      })),
+    );
+  }
+  const seriesIdByKey = new Map(
+    createdSeries.map((s) => [seriesKey(s.insightId, s), s.id]),
+  );
+
+  const dataPoints = loaded.flatMap(({ recidivismSeries, insightId }) =>
+    recidivismSeries.flatMap((series) => {
+      const recidivismSeriesId = seriesIdByKey.get(
+        seriesKey(insightId, series),
+      );
+      if (!recidivismSeriesId) {
         console.warn(
-          `Skipping insight: no matching offense found for "${insightData.most_severe_description}" (state: ${insightData.state_code})`,
+          `Skipping data points: no created series found for key "${seriesKey(insightId, series)}"`,
+        );
+        return [];
+      }
+      return series.dataPoints.map((dp) => ({ ...dp, recidivismSeriesId }));
+    }),
+  );
+  for (const chunk of chunkForStatement(dataPoints, 6)) {
+    // eslint-disable-next-line no-await-in-loop -- one statement at a time keeps load on the database low
+    await prismaClient.recidvismSeriesDataPoint.createMany({ data: chunk });
+  }
+}
+
+/** Exported so tests can pass a small batch size. */
+export async function loadInsightsInBatches(
+  prismaClient: PrismaClient,
+  data: AsyncGenerator<InsightImportRow>,
+  { linkToOffense }: { linkToOffense: boolean },
+  batchSize = INSIGHT_BATCH_SIZE,
+) {
+  // Every insight that exists before this import is either replaced by a batch
+  // below or stale, so all of them are deleted once the import succeeds.
+  const existingInsightIds = (
+    await prismaClient.insight.findMany({ select: { id: true } })
+  ).map(({ id }) => id);
+
+  // PSI imports offenses before insights, so load them all once rather than
+  // looking one up per row.
+  const offenses = linkToOffense
+    ? await prismaClient.offense.findMany({
+        select: { id: true, name: true, stateCode: true },
+      })
+    : [];
+  const offenseIdByStateAndName = new Map(
+    offenses.map((o) => [`${o.stateCode}|${o.name}`, o.id]),
+  );
+
+  for await (const rows of inBatches(data, batchSize)) {
+    // Keyed by gender, offense, and assessment score bucket, so a repeated row
+    // within a batch replaces the earlier one instead of violating the unique
+    // constraint.
+    const batch = new Map<string, InsightData>();
+    for (const row of rows) {
+      // If the offense is missing, skip this insight with a warning.
+      const offenseId = offenseIdByStateAndName.get(
+        `${row.state_code}|${row.most_severe_description}`,
+      );
+      if (linkToOffense && !offenseId) {
+        console.warn(
+          `Skipping insight: no matching offense found for "${row.most_severe_description}" (state: ${row.state_code})`,
         );
         continue;
       }
-      offenseId = offense.id;
+      const insight = toInsightData(row, offenseId);
+      batch.set(insightKey(insight.data), insight);
     }
 
-    // Only show sentence distributions for cohorts with a large enough sample.
-    // When a restricted state's cohort falls below the threshold, drop the
-    // disposition data and report zero records so the frontend shows its empty
-    // state instead. States without the restriction always keep their data.
-    const dispositionNumRecords = insightData.disposition_num_records ?? 0;
-    const hasSufficientDispositionData =
-      !STATES_WITH_DISPOSITION_MINIMUM.includes(insightData.state_code) ||
-      dispositionNumRecords >= MIN_DISPOSITION_RECORDS;
-
-    // Since the data has been validated, delete the existing insight and insert the new one
-    // so that all stale recidivism and disposition records are deleted via cascade.
-    await prismaClient.insight
-      .delete({
-        where: {
-          gender_offenseName_assessmentScoreBucketStart_assessmentScoreBucketEnd:
-            {
-              gender: insightData.gender,
-              offenseName: insightData.most_severe_description,
-              assessmentScoreBucketStart:
-                insightData.assessment_score_bucket_start,
-              assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
-            },
-        },
-      })
-      .catch(() => {
-        // Catch any errors — it's possible the insight doesn't exist yet.
-      });
-
-    // Create the insight without nested data. Prisma wraps nested creates (e.g. createMany
-    // inside create) in an implicit interactive transaction, which times out for large datasets
-    // like ND. By separating the creates, each operation is its own small transaction.
-    const createdInsight = await prismaClient.insight.create({
-      data: {
-        stateCode: insightData.state_code,
-        gender: insightData.gender,
-        offenseName: insightData.most_severe_description,
-        offenseId,
-        assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
-        assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
-        rollupStateCode: insightData.recidivism_rollup.state_code,
-        rollupGender: insightData.recidivism_rollup.gender,
-        rollupAssessmentScoreBucketStart:
-          insightData.recidivism_rollup.assessment_score_bucket_start,
-        rollupAssessmentScoreBucketEnd:
-          insightData.recidivism_rollup.assessment_score_bucket_end,
-        rollupOffenseName:
-          insightData.recidivism_rollup.most_severe_description,
-        rollupNcicCategory:
-          insightData.recidivism_rollup.most_severe_ncic_category_uniform,
-        rollupCombinedOffenseCategory:
-          insightData.recidivism_rollup.combined_offense_category,
-        rollupViolentOffense:
-          insightData.recidivism_rollup.any_is_violent_uniform,
-        rollupRecidivismNumRecords: insightData.recidivism_num_records,
-        // Below the minimum sample size, report zero records so the sentence
-        // distribution is not shown.
-        dispositionNumRecords: hasSufficientDispositionData
-          ? dispositionNumRecords
-          : 0,
-        // Time served fields (avgSentenceLengthYears, avgPctServed, timeServedNumRecords)
-        // are populated separately by the time served import — not by the insights import.
-      },
-    });
-
-    // Create dispositions separately using createMany (no nesting, no implicit transaction).
-    // Skip entirely for below-threshold cohorts so no distribution data is stored.
-    if (hasSufficientDispositionData) {
-      await prismaClient.disposition.createMany({
-        data: transformDispositions(insightData.dispositions).map((d) => ({
-          ...d,
-          insightId: createdInsight.id,
-        })),
-      });
+    if (batch.size > 0) {
+      await loadInsightBatch(prismaClient, batch);
     }
-
-    // Use createManyAndReturn to bulk-insert all series in one query and get back
-    // their IDs, then bulk-insert all data points in one more query. This avoids
-    // the 2-round-trips-per-series pattern that caused connection termination on
-    // large datasets like ND.
-    const recidivismSeries = transformRecidivismSeries(
-      insightData.recidivism_series,
-    );
-
-    const createdSeries =
-      await prismaClient.recidivismSeries.createManyAndReturn({
-        data: recidivismSeries.map((series) => ({
-          recommendationType: series.recommendationType,
-          sentenceLengthBucketStart: series.sentenceLengthBucketStart,
-          sentenceLengthBucketEnd: series.sentenceLengthBucketEnd,
-          insightId: createdInsight.id,
-        })),
-      });
-
-    // createManyAndReturn does not guarantee return order, so match each
-    // created series back to its input by composite natural key rather than
-    // by index position. Both sides are always numbers after transformRecidivismSeries
-    // normalizes missing bucket values to their schema defaults.
-    const seriesKey = (s: {
-      recommendationType: string | null | undefined;
-      sentenceLengthBucketStart: number;
-      sentenceLengthBucketEnd: number;
-    }) =>
-      `${s.recommendationType ?? null}|${s.sentenceLengthBucketStart}|${s.sentenceLengthBucketEnd}`;
-
-    const seriesIdByKey = new Map(
-      createdSeries.map((s) => [seriesKey(s), s.id]),
-    );
-
-    await prismaClient.recidvismSeriesDataPoint.createMany({
-      data: recidivismSeries.flatMap((series) => {
-        const seriesId = seriesIdByKey.get(seriesKey(series));
-        if (!seriesId) {
-          console.warn(
-            `Skipping data points: no created series found for key "${seriesKey(series)}"`,
-          );
-          return [];
-        }
-        return series.dataPoints.map((dp) => ({
-          ...dp,
-          recidivismSeriesId: seriesId,
-        }));
-      }),
-    });
-
-    newInsights.push(createdInsight);
   }
 
-  // Delete all of the old insights that weren't just loaded if we haven't hit any errors
-  await prismaClient.insight.deleteMany({
-    where: {
-      NOT: {
-        id: {
-          in: newInsights.map((insight) => insight.id),
-        },
-      },
-    },
-  });
+  // Delete the old insights now that the new ones loaded without errors. Any a
+  // batch already replaced are gone and simply match nothing.
+  for (const ids of chunkForStatement(existingInsightIds, 1)) {
+    // eslint-disable-next-line no-await-in-loop -- one delete at a time keeps load on the database low
+    await prismaClient.insight.deleteMany({ where: { id: { in: ids } } });
+  }
 }
 
 /** Loads PSI insights, linking each to the Offense with the same name. */
 export async function transformAndLoadInsightData(
   prismaClient: PrismaClient,
-  data: AsyncGenerator<z.infer<typeof insightImportSchema>>,
+  data: AsyncGenerator<InsightImportRow>,
 ) {
-  await loadInsightData(prismaClient, data, { linkToOffense: true });
+  await loadInsightsInBatches(prismaClient, data, { linkToOffense: true });
 }
 
 /**
@@ -266,7 +332,7 @@ export async function transformAndLoadInsightData(
  */
 export async function transformAndLoadSARInsightData(
   prismaClient: PrismaClient,
-  data: AsyncGenerator<z.infer<typeof insightImportSchema>>,
+  data: AsyncGenerator<InsightImportRow>,
 ) {
-  await loadInsightData(prismaClient, data, { linkToOffense: false });
+  await loadInsightsInBatches(prismaClient, data, { linkToOffense: false });
 }

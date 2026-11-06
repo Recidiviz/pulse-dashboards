@@ -326,13 +326,20 @@ describe("import charge data", () => {
     ]);
   });
 
-  test("should create a charge for each row, even when two rows are the same charge", async () => {
+  test("should create one charge when two rows are the same charge, keeping the later row", async () => {
     await importCharges([
-      createChargeImportRow({ offense_external_id: "charge-1" }),
-      createChargeImportRow({ offense_external_id: "charge-1" }),
+      createChargeImportRow({
+        offense_external_id: "charge-1",
+        description: "FIRST ROW",
+      }),
+      createChargeImportRow({
+        offense_external_id: "charge-1",
+        description: "SECOND ROW",
+      }),
     ]);
 
-    expect(await testPrismaClient.charge.count()).toBe(2);
+    const charges = await testPrismaClient.charge.findMany();
+    expect(charges.map(({ offense }) => offense)).toEqual(["SECOND ROW"]);
   });
 
   test("should not create offenses for charge descriptions", async () => {

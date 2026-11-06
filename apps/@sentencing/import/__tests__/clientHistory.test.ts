@@ -121,6 +121,69 @@ describe("import client history data", () => {
 
       expect(await testPrismaClient.dOCTreatmentHistory.count()).toBe(0);
     });
+
+    test("should keep a program's category when it's missing from the import", async () => {
+      await testPrismaClient.dOCTreatmentHistory.create({
+        data: {
+          clientExternalId: fakeClient.externalId,
+          programCategory: TreatmentProgramCategory.Education,
+          programName: completedProgram.program_name,
+          completedOn: COMPLETED_ON,
+        },
+      });
+
+      await importClientHistory([
+        createClientHistoryImportRow({
+          completed_programs: [{ ...completedProgram, category: undefined }],
+        }),
+      ]);
+
+      expect(await testPrismaClient.dOCTreatmentHistory.findMany()).toEqual([
+        expect.objectContaining({
+          programCategory: TreatmentProgramCategory.Education,
+        }),
+      ]);
+    });
+
+    test("should create one program when the same program appears in two rows, keeping the later row", async () => {
+      await importClientHistory([
+        createClientHistoryImportRow({
+          completed_programs: [{ ...completedProgram, category: "EDUCATION" }],
+        }),
+        createClientHistoryImportRow({
+          completed_programs: [completedProgram],
+        }),
+      ]);
+
+      expect(await testPrismaClient.dOCTreatmentHistory.findMany()).toEqual([
+        expect.objectContaining({
+          programCategory: TreatmentProgramCategory.Cognitive,
+        }),
+      ]);
+    });
+
+    test("should update the same program when it repeats in a later batch", async () => {
+      // 1,001 rows splits the file into two batches, with the program in the
+      // first row and the last.
+      const emptyRows = Array.from({ length: 999 }, () =>
+        createClientHistoryImportRow(),
+      );
+      await importClientHistory([
+        createClientHistoryImportRow({
+          completed_programs: [{ ...completedProgram, category: "EDUCATION" }],
+        }),
+        ...emptyRows,
+        createClientHistoryImportRow({
+          completed_programs: [completedProgram],
+        }),
+      ]);
+
+      expect(await testPrismaClient.dOCTreatmentHistory.findMany()).toEqual([
+        expect.objectContaining({
+          programCategory: TreatmentProgramCategory.Cognitive,
+        }),
+      ]);
+    });
   });
 
   describe("employment history", () => {
@@ -168,6 +231,49 @@ describe("import client history data", () => {
       ];
       expect(await findEmploymentHistory(firstSAR.id)).toEqual(newEmployer);
       expect(await findEmploymentHistory(secondSAR.id)).toEqual(newEmployer);
+    });
+
+    test("should give each client's SARs their own employment history", async () => {
+      await testPrismaClient.client.create({
+        data: {
+          ...fakeClient,
+          externalId: "client-ext-2",
+          pseudonymizedId: "client-pid-2",
+        },
+      });
+      const firstSAR = await createSAR(testPrismaClient);
+      const secondSAR = await createSAR(testPrismaClient, {
+        externalId: "sar-ext-2",
+        client: { connect: { externalId: "client-ext-2" } },
+      });
+
+      await importClientHistory([
+        createClientHistoryImportRow({ employment_history: [job] }),
+        createClientHistoryImportRow({
+          client_external_id: "client-ext-2",
+          employment_history: [{ ...job, employer_name: "Other Employer" }],
+        }),
+      ]);
+
+      expect(await findEmploymentHistory(firstSAR.id)).toEqual([
+        expect.objectContaining({ employerName: "New Employer" }),
+      ]);
+      expect(await findEmploymentHistory(secondSAR.id)).toEqual([
+        expect.objectContaining({ employerName: "Other Employer" }),
+      ]);
+    });
+
+    test("should keep a client's employment history when a later row for them has none", async () => {
+      const sar = await createSAR(testPrismaClient);
+
+      await importClientHistory([
+        createClientHistoryImportRow({ employment_history: [job] }),
+        createClientHistoryImportRow({ employment_history: null }),
+      ]);
+
+      expect(await findEmploymentHistory(sar.id)).toEqual([
+        expect.objectContaining({ employerName: "New Employer" }),
+      ]);
     });
 
     test.each([

@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { randomUUID } from "node:crypto";
+
 import { z } from "zod";
 
 import { chargeImportSchema } from "~@sentencing/import/models";
+import { bulkUpsert, lastRowPerKey } from "~@sentencing/import/utils/batching";
 import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient } from "~@sentencing/prisma/client";
 import { getMostSevereCharges } from "~@sentencing/trpc-types";
@@ -82,26 +85,28 @@ export async function transformAndLoadChargeData(
   data: AsyncGenerator<z.infer<typeof chargeImportSchema>>,
 ) {
   // Get existing SAR IDs to check if the referenced SAR exists
-  const sarExternalIds = new Set(
+  const sarIdsByExternalId = new Map(
     (
       await prismaClient.sentencingAssessmentReport.findMany({
-        select: { externalId: true },
+        select: { id: true, externalId: true },
       })
-    ).map(({ externalId }) => externalId),
+    ).map(({ id, externalId }) => [externalId, id]),
   );
+  const sarExternalIds = new Set(sarIdsByExternalId.keys());
 
   if (sarExternalIds.size === 0) {
     return;
   }
 
-  // Collect all charge records so we can iterate over them multiple times:
+  // Charges are loaded all at once, since the delete below needs every charge
+  // in the file.
   const allCharges: z.infer<typeof chargeImportSchema>[] = [];
   for await (const chargeData of data) {
     allCharges.push(chargeData);
   }
 
   // Batch-fetch all existing charges for the relevant SARs to avoid N+1 queries
-  const existingChargesBySarAndExternalId = new Map(
+  const existingChargeIdsBySarAndExternalId = new Map(
     (
       await prismaClient.charge.findMany({
         where: {
@@ -117,73 +122,75 @@ export async function transformAndLoadChargeData(
       })
     ).map((c) => [
       `${c.sentencingAssessmentReport.externalId}|${c.chargeExternalId}`,
-      c,
+      c.id,
     ]),
   );
 
-  // Process sequentially to avoid exhausting the Prisma connection pool
-  for (const chargeData of allCharges) {
-    const sarExternalId = chargeData.case_external_id;
-
+  const chargesToLoad = allCharges.filter((chargeData) => {
     // Skip if SAR doesn't exist
-    if (!sarExternalIds.has(sarExternalId)) {
-      console.warn(`Skipping charge for SAR ${sarExternalId}: SAR not found`);
-      continue;
+    if (!sarExternalIds.has(chargeData.case_external_id)) {
+      console.warn(
+        `Skipping charge for SAR ${chargeData.case_external_id}: SAR not found`,
+      );
+      return false;
     }
+    return true;
+  });
 
-    // Look up existing charge by SAR + chargeExternalId using pre-fetched map
-    // (a case can have multiple charges with the same court case number)
-    // Use the offense_external_id from source to uniquely identify the charge
-    const existingCharge = existingChargesBySarAndExternalId.get(
-      `${sarExternalId}|${chargeData.offense_external_id}`,
-    );
+  // A case can have multiple charges with the same court case number, so each
+  // charge is identified by its SAR and the offense_external_id from the source.
+  const chargeKey = (chargeData: z.infer<typeof chargeImportSchema>) =>
+    `${chargeData.case_external_id}|${chargeData.offense_external_id}`;
 
-    // Transform county abbreviation to full name for MO, or title case for others
-    let countyFullName: string | undefined;
-    if (chargeData.county) {
-      countyFullName =
-        chargeData.state_code === "US_MO"
-          ? getMOCountyFullName(chargeData.county)
-          : chargeData.county
-              .toLocaleLowerCase()
-              .replace(/\b\w/g, (c) => c.toUpperCase());
-    }
+  // Existing charges are matched by id, so this updates them in place and
+  // inserts the new ones with fresh ids.
+  await bulkUpsert(prismaClient, {
+    table: "Charge",
+    rows: lastRowPerKey(chargesToLoad, chargeKey).map((chargeData) => {
+      // Transform county abbreviation to full name for MO, or title case for others
+      let countyFullName: string | undefined;
+      if (chargeData.county) {
+        countyFullName =
+          chargeData.state_code === "US_MO"
+            ? getMOCountyFullName(chargeData.county)
+            : chargeData.county
+                .toLocaleLowerCase()
+                .replace(/\b\w/g, (c) => c.toUpperCase());
+      }
 
-    const chargeFields = {
-      chargeExternalId: chargeData.offense_external_id,
-      offense: chargeData.description,
-      causeNum: chargeData.court_case_number,
-      judgeNames: chargeData.judges ?? [],
-      classificationType: chargeData.classification_type,
-      classificationSubtype: chargeData.classification_subtype,
-      division: chargeData.division,
-      county: countyFullName,
-      moCode: chargeData.charge_code,
-    };
-
-    if (existingCharge) {
-      // eslint-disable-next-line no-await-in-loop
-      await prismaClient.charge.update({
-        where: { id: existingCharge.id },
-        data: chargeFields,
-      });
-    } else {
-      // eslint-disable-next-line no-await-in-loop
-      await prismaClient.charge.create({
-        data: {
-          ...chargeFields,
-          sentencingAssessmentReport: {
-            connect: { externalId: sarExternalId },
-          },
-        },
-      });
-    }
-  }
+      return {
+        id:
+          existingChargeIdsBySarAndExternalId.get(chargeKey(chargeData)) ??
+          randomUUID(),
+        sentencingAssessmentReportId: sarIdsByExternalId.get(
+          chargeData.case_external_id,
+        ),
+        // Prisma sets this automatically, but raw SQL has to set it itself.
+        updatedAt: new Date(),
+        chargeExternalId: chargeData.offense_external_id,
+        offense: chargeData.description,
+        causeNum: chargeData.court_case_number,
+        judgeNames: chargeData.judges ?? [],
+        classificationType: chargeData.classification_type,
+        classificationSubtype: chargeData.classification_subtype,
+        division: chargeData.division,
+        county: countyFullName,
+        moCode: chargeData.charge_code,
+      };
+    }),
+    conflictColumns: ["id"],
+    // Fields missing from the import leave the current value in place.
+    keepExistingWhenNull: [
+      "classificationType",
+      "classificationSubtype",
+      "division",
+      "county",
+      "moCode",
+    ],
+  });
 
   const incomingChargeExternalIds = new Set(
-    allCharges
-      .filter((c) => sarExternalIds.has(c.case_external_id))
-      .map((c) => c.offense_external_id),
+    chargesToLoad.map((c) => c.offense_external_id),
   );
 
   await prismaClient.charge.deleteMany({

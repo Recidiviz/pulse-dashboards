@@ -30,11 +30,16 @@ import {
   TEST_INSIGHTS_FILE_NAME,
   TEST_STATE_CODE,
 } from "~@sentencing/import/test/setup/constants";
-import { fakeOffense } from "~@sentencing/import/test/setup/seed";
+import {
+  fakeInsight,
+  fakeInsightId,
+  fakeOffense,
+} from "~@sentencing/import/test/setup/seed";
 import {
   importFile,
   ImportRowOverrides,
 } from "~@sentencing/import/test/setup/utils";
+import { loadInsightsInBatches } from "~@sentencing/import/utils/insights";
 import { Gender, StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
@@ -67,6 +72,37 @@ async function importMOInsight(
     ],
     StateCode.US_MO,
   );
+}
+
+function createInsightImportRow({
+  gender = Gender.MALE,
+  assessmentScoreBucketStart,
+  assessmentScoreBucketEnd,
+  recidivismNumRecords = faker.number.int({ max: 100 }),
+  sentenceType = "Probation",
+}: {
+  gender?: Gender;
+  assessmentScoreBucketStart: number;
+  assessmentScoreBucketEnd: number;
+  recidivismNumRecords?: number;
+  sentenceType?: string;
+}) {
+  return {
+    state_code: StateCode.US_ID,
+    gender,
+    assessment_score_bucket_start: assessmentScoreBucketStart,
+    assessment_score_bucket_end: assessmentScoreBucketEnd,
+    most_severe_description: fakeOffense.name,
+    recidivism_rollup: JSON.stringify({ state_code: StateCode.US_ID }),
+    recidivism_num_records: recidivismNumRecords,
+    recidivism_series: createFakeRecidivismSeriesForImport([
+      { sentence_type: sentenceType },
+    ]),
+    disposition_num_records: faker.number.int({ max: 100 }),
+    dispositions: createFakeDispositionsForImport([
+      { sentence_type: sentenceType },
+    ]),
+  };
 }
 
 describe("import insight data", () => {
@@ -531,5 +567,119 @@ describe("import insight data", () => {
         }),
       ]),
     );
+  });
+
+  test("should replace an existing insight with the same gender, offense, and assessment score bucket", async () => {
+    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+      createInsightImportRow({
+        gender: fakeInsight.gender,
+        assessmentScoreBucketStart: fakeInsight.assessmentScoreBucketStart,
+        assessmentScoreBucketEnd: fakeInsight.assessmentScoreBucketEnd,
+        recidivismNumRecords: 42,
+        sentenceType: "Term",
+      }),
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+
+    const dbInsights = await testPrismaClient.insight.findMany({
+      include: { rollupRecidivismSeries: true, dispositionData: true },
+    });
+
+    expect(dbInsights).toHaveLength(1);
+    expect(dbInsights[0].id).not.toEqual(fakeInsightId);
+    expect(dbInsights[0].rollupRecidivismNumRecords).toBe(42);
+    expect(dbInsights[0].rollupRecidivismSeries).toEqual([
+      expect.objectContaining({ recommendationType: "Term" }),
+    ]);
+    expect(dbInsights[0].dispositionData).toEqual([
+      expect.objectContaining({ recommendationType: "Term" }),
+    ]);
+
+    // The old insight's series, data points, and dispositions are gone too
+    expect(await testPrismaClient.recidivismSeries.count()).toBe(1);
+    expect(await testPrismaClient.recidvismSeriesDataPoint.count()).toBe(2);
+    expect(await testPrismaClient.disposition.count()).toBe(1);
+  });
+
+  test("should keep the last row when the same insight appears twice in a file", async () => {
+    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+      createInsightImportRow({
+        assessmentScoreBucketStart: 30,
+        assessmentScoreBucketEnd: 40,
+        recidivismNumRecords: 1,
+        sentenceType: "Probation",
+      }),
+      createInsightImportRow({
+        assessmentScoreBucketStart: 30,
+        assessmentScoreBucketEnd: 40,
+        recidivismNumRecords: 2,
+        sentenceType: "Term",
+      }),
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+
+    const dbInsights = await testPrismaClient.insight.findMany({
+      include: { rollupRecidivismSeries: true, dispositionData: true },
+    });
+
+    expect(dbInsights).toHaveLength(1);
+    expect(dbInsights[0].rollupRecidivismNumRecords).toBe(2);
+    expect(dbInsights[0].rollupRecidivismSeries).toEqual([
+      expect.objectContaining({ recommendationType: "Term" }),
+    ]);
+    expect(dbInsights[0].dispositionData).toEqual([
+      expect.objectContaining({ recommendationType: "Term" }),
+    ]);
+  });
+
+  test("should load every insight across multiple batches", async () => {
+    const rows = [0, 1, 2, 3, 4].map((i) =>
+      createInsightImportRow({
+        assessmentScoreBucketStart: i * 10,
+        assessmentScoreBucketEnd: i * 10 + 5,
+        recidivismNumRecords: i,
+      }),
+    );
+    // Repeats the first insight in the last batch, so the later row wins
+    // even across batches.
+    rows.push(
+      createInsightImportRow({
+        assessmentScoreBucketStart: 0,
+        assessmentScoreBucketEnd: 5,
+        recidivismNumRecords: 99,
+      }),
+    );
+
+    async function* toAsyncGenerator() {
+      for (const row of rows) yield insightImportSchema.parse(row);
+    }
+
+    // A batch size of 2 splits the six rows into three batches
+    await loadInsightsInBatches(
+      testPrismaClient,
+      toAsyncGenerator(),
+      { linkToOffense: true },
+      2,
+    );
+
+    const dbInsights = await testPrismaClient.insight.findMany({
+      include: {
+        rollupRecidivismSeries: { include: { dataPoints: true } },
+        dispositionData: true,
+      },
+      orderBy: { assessmentScoreBucketStart: "asc" },
+    });
+
+    // The seeded insight is deleted, leaving just the five imported ones
+    expect(dbInsights.map((i) => i.rollupRecidivismNumRecords)).toEqual([
+      99, 1, 2, 3, 4,
+    ]);
+    for (const insight of dbInsights) {
+      expect(insight.rollupRecidivismSeries).toHaveLength(1);
+      expect(insight.rollupRecidivismSeries[0].dataPoints).toHaveLength(2);
+      expect(insight.dispositionData).toHaveLength(1);
+    }
   });
 });

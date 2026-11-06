@@ -15,9 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { randomUUID } from "node:crypto";
+
 import { z } from "zod";
 
 import { caseImportSchema } from "~@sentencing/import/models";
+import {
+  bulkUpsert,
+  getOrCreateIdsByName,
+  inBatches,
+  lastRowPerKey,
+} from "~@sentencing/import/utils/batching";
 import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient, ReportType } from "~@sentencing/prisma/client";
 
@@ -33,9 +41,6 @@ export async function transformAndLoadCaseData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof caseImportSchema>>,
 ) {
-  // Load new case data
-  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
-
   const staffExternalIds = new Set(
     (
       await prismaClient.staff.findMany({
@@ -52,158 +57,92 @@ export async function transformAndLoadCaseData(
     ).map(({ externalId }) => externalId),
   );
 
-  for await (const caseData of data) {
-    // Check if the staff and clients exist in the db - if not, we'll link
-    // them later
-    const staffExists = staffExternalIds.has(caseData.staff_id);
-    const clientExists = clientExternalIds.has(caseData.client_id);
+  const countyIdsByName = new Map<string, string>();
+  const districtIdsByName = new Map<string, string>();
 
-    const newCase = {
-      externalId: caseData.external_id,
-      stateCode: caseData.state_code,
-      dueDate: caseData.due_date,
-      lsirScore: caseData.lsir_score,
-      lsirLevel: caseData.lsir_level,
-      reportType: caseData.report_type
-        ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type]
-        : undefined,
-      isLsirScoreLocked: caseData.lsir_score !== undefined,
-      isReportTypeLocked: caseData.report_type !== undefined,
-      isCountyLocked: Boolean(caseData.county),
-      isCancelled: caseData.investigation_status === CANCELLED_STATUS,
-    };
+  for await (const batch of inBatches(data)) {
+    const cases = lastRowPerKey(batch, (caseData) => caseData.external_id);
 
-    const createStaffConnection = staffExists
-      ? {
-          connect: {
-            externalId: caseData.staff_id,
-          },
-        }
-      : undefined;
-    const createClientConnection = clientExists
-      ? {
-          connect: {
-            externalId: caseData.client_id,
-          },
-        }
-      : undefined;
     // Transform county abbreviation to full name for MO
-    const countyName =
+    const countyName = (caseData: (typeof cases)[number]) =>
       caseData.county && caseData.state_code === "US_MO"
         ? getMOCountyFullName(caseData.county)
         : caseData.county;
 
-    const createCountyConnection = countyName
-      ? {
-          connectOrCreate: {
-            where: {
-              stateCode: caseData.state_code,
-              name: countyName,
-            },
-            create: {
-              stateCode: caseData.state_code,
-              name: countyName,
-            },
-          },
-        }
-      : undefined;
-    const createDistrictConnection =
-      !caseData.county && caseData.district
-        ? {
-            connectOrCreate: {
-              where: {
-                stateCode: caseData.state_code,
-                name: caseData.district,
-              },
-              create: {
-                stateCode: caseData.state_code,
-                name: caseData.district,
-              },
-            },
-          }
-        : undefined;
+    await getOrCreateIdsByName(
+      prismaClient,
+      "county",
+      cases.flatMap((caseData) => {
+        const name = countyName(caseData);
+        return name ? [{ stateCode: caseData.state_code, name }] : [];
+      }),
+      countyIdsByName,
+    );
+    await getOrCreateIdsByName(
+      prismaClient,
+      "district",
+      cases.flatMap((caseData) =>
+        caseData.district
+          ? [{ stateCode: caseData.state_code, name: caseData.district }]
+          : [],
+      ),
+      districtIdsByName,
+    );
 
-    // For staff and client, since the incoming data is the source of truth, we can disconnect if there is no associated staffId or clientId
-    const updateStaffConnection = staffExists
-      ? {
-          connect: {
-            externalId: caseData.staff_id,
-          },
-        }
-      : {
-          disconnect: true,
-        };
-    const updateClientConnection = clientExists
-      ? {
-          connect: {
-            externalId: caseData.client_id,
-          },
-        }
-      : {
-          disconnect: true,
-        };
-    // If we don't ingest a county, do nothing so we don't override the county the user sets
-    const updateCountyConnection = countyName
-      ? {
-          connectOrCreate: {
-            where: {
-              stateCode: caseData.state_code,
-              name: countyName,
-            },
-            create: {
-              stateCode: caseData.state_code,
-              name: countyName,
-            },
-          },
-        }
-      : undefined;
-
-    const existingCase = await prismaClient.case.findUnique({
-      where: {
+    await bulkUpsert(prismaClient, {
+      table: "Case",
+      rows: cases.map((caseData) => ({
         externalId: caseData.external_id,
-      },
-      include: {
-        county: true,
-      },
-    });
-
-    // Disconnect the district if we have a county, since the district connected to the county will be the source of truth
-    // If we don't ingest a district, we can disconnect it too because we'll create a county or the user will set a county at which point,
-    // we'll use the district connected to the county as the source of truth
-    const updateDistrictConnection =
-      existingCase?.county || caseData.county || !caseData.district
-        ? { disconnect: true }
-        : {
-            connectOrCreate: {
-              where: {
-                stateCode: caseData.state_code,
-                name: caseData.district,
-              },
-              create: {
-                stateCode: caseData.state_code,
-                name: caseData.district,
-              },
-            },
-          };
-
-    // Load data
-    await prismaClient.case.upsert({
-      where: {
-        externalId: newCase.externalId,
-      },
-      create: {
-        ...newCase,
-        staff: createStaffConnection,
-        client: createClientConnection,
-        county: createCountyConnection,
-        district: createDistrictConnection,
-      },
-      update: {
-        ...newCase,
-        staff: updateStaffConnection,
-        client: updateClientConnection,
-        county: updateCountyConnection,
-        district: updateDistrictConnection,
+        // Prisma generates this id, not the database, so new rows need one.
+        id: randomUUID(),
+        stateCode: caseData.state_code,
+        dueDate: caseData.due_date,
+        lsirScore: caseData.lsir_score,
+        lsirLevel: caseData.lsir_level,
+        reportType: caseData.report_type
+          ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type]
+          : undefined,
+        isLsirScoreLocked: caseData.lsir_score !== undefined,
+        isReportTypeLocked: caseData.report_type !== undefined,
+        isCountyLocked: Boolean(caseData.county),
+        isCancelled: caseData.investigation_status === CANCELLED_STATUS,
+        // The incoming data is the source of truth for staff and client, so a
+        // case whose staff or client isn't in the database is unlinked. Ones
+        // that haven't been imported yet are linked during their own import.
+        staffId: staffExternalIds.has(caseData.staff_id)
+          ? caseData.staff_id
+          : null,
+        clientId: clientExternalIds.has(caseData.client_id)
+          ? caseData.client_id
+          : null,
+        countyId: countyIdsByName.get(
+          countyName(caseData)?.toLowerCase() ?? "",
+        ),
+        // Only link a district when the case has no county, since the county's
+        // district is the source of truth. Without a county or district from
+        // the import, the district is cleared: the user will set a county, and
+        // its district is used from then on.
+        districtId:
+          caseData.county || !caseData.district
+            ? null
+            : districtIdsByName.get(caseData.district.toLowerCase()),
+      })),
+      conflictColumns: ["externalId"],
+      insertOnlyColumns: ["id"],
+      // Fields missing from the import leave the current value in place, so a
+      // county the user set isn't overridden.
+      keepExistingWhenNull: [
+        "dueDate",
+        "lsirScore",
+        "lsirLevel",
+        "reportType",
+        "countyId",
+      ],
+      updateExpressions: {
+        // A case that already has a county gets no district, even when the
+        // import has one. Checked in the same statement, so a county set while
+        // the import runs is respected.
+        districtId: `CASE WHEN "Case"."countyId" IS NOT NULL THEN NULL ELSE EXCLUDED."districtId" END`,
       },
     });
   }

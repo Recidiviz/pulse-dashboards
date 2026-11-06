@@ -18,6 +18,13 @@
 import { z } from "zod";
 
 import { clientImportSchema } from "~@sentencing/import/models";
+import {
+  bulkUpdateText,
+  bulkUpsert,
+  getOrCreateIdsByName,
+  inBatches,
+  lastRowPerKey,
+} from "~@sentencing/import/utils/batching";
 import { getMOCountyFullName } from "~@sentencing/import/utils/helpers";
 import { Gender, PrismaClient } from "~@sentencing/prisma/client";
 
@@ -25,99 +32,101 @@ export async function transformAndLoadClientData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof clientImportSchema>>,
 ) {
-  const existingCases = await prismaClient.case.findMany({
-    select: { externalId: true },
-  });
+  const existingCaseExternalIds = new Set(
+    (
+      await prismaClient.case.findMany({
+        select: { externalId: true },
+      })
+    ).map(({ externalId }) => externalId),
+  );
+  const countyIdsByName = new Map<string, string>();
+  const districtIdsByName = new Map<string, string>();
 
-  // Load new client data
-  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
-  for await (const clientData of data) {
-    // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
-    const existingCasesForClient = existingCases.filter(({ externalId }) =>
-      clientData.case_ids.includes(externalId),
+  for await (const batch of inBatches(data)) {
+    const clients = lastRowPerKey(
+      batch,
+      (clientData) => clientData.external_id,
     );
 
-    const hasKnownGender =
-      clientData.gender !== Gender.INTERNAL_UNKNOWN &&
-      clientData.gender !== Gender.EXTERNAL_UNKNOWN;
-    const isCountyLocked = Boolean(clientData.county);
-
-    // Race is already transformed to an array by the schema
-    const filteredRaceList = clientData.race.filter(
-      (race) => race !== "EXTERNAL_UNKNOWN",
-    );
-    const newClient = {
-      externalId: clientData.external_id,
-      pseudonymizedId: clientData.pseudonymized_id,
-      stateCode: clientData.state_code,
-      fullName: clientData.full_name,
-      birthDate: clientData.birth_date,
-      raceOrEthnicity: filteredRaceList,
-      isGenderLocked: hasKnownGender,
-      isCountyLocked,
-      cases: {
-        connect: existingCasesForClient,
-      },
-    };
-
-    // County connection - both create and update use the same logic
     // Transform county abbreviation to full name for MO
-    const countyName =
+    const countyName = (clientData: (typeof clients)[number]) =>
       clientData.county && clientData.state_code === "US_MO"
         ? getMOCountyFullName(clientData.county)
         : clientData.county;
 
-    const countyConnection = countyName
-      ? {
-          connectOrCreate: {
-            where: {
-              stateCode: clientData.state_code,
-              name: countyName,
-            },
-            create: {
-              stateCode: clientData.state_code,
-              name: countyName,
-            },
-          },
-        }
-      : undefined;
-
-    // District connection - both create and update use the same logic
     // Both county and district can be set simultaneously (e.g., US_ID has both)
-    const districtConnection = clientData.district
-      ? {
-          connectOrCreate: {
-            where: {
-              stateCode: clientData.state_code,
-              name: clientData.district,
-            },
-            create: {
-              stateCode: clientData.state_code,
-              name: clientData.district,
-            },
-          },
-        }
-      : undefined;
+    await getOrCreateIdsByName(
+      prismaClient,
+      "county",
+      clients.flatMap((clientData) => {
+        const name = countyName(clientData);
+        return name ? [{ stateCode: clientData.state_code, name }] : [];
+      }),
+      countyIdsByName,
+    );
+    await getOrCreateIdsByName(
+      prismaClient,
+      "district",
+      clients.flatMap((clientData) =>
+        clientData.district
+          ? [{ stateCode: clientData.state_code, name: clientData.district }]
+          : [],
+      ),
+      districtIdsByName,
+    );
 
-    // Load data
-    await prismaClient.client.upsert({
-      where: {
-        externalId: newClient.externalId,
+    await bulkUpsert(prismaClient, {
+      table: "Client",
+      rows: clients.map((clientData) => {
+        const hasKnownGender =
+          clientData.gender !== Gender.INTERNAL_UNKNOWN &&
+          clientData.gender !== Gender.EXTERNAL_UNKNOWN;
+        return {
+          externalId: clientData.external_id,
+          pseudonymizedId: clientData.pseudonymized_id,
+          stateCode: clientData.state_code,
+          fullName: clientData.full_name,
+          birthDate: clientData.birth_date,
+          // Race is already transformed to an array by the schema
+          raceOrEthnicity: clientData.race.filter(
+            (race) => race !== "EXTERNAL_UNKNOWN",
+          ),
+          gender: clientData.gender,
+          isGenderLocked: hasKnownGender,
+          isCountyLocked: Boolean(clientData.county),
+          countyId: countyIdsByName.get(
+            countyName(clientData)?.toLowerCase() ?? "",
+          ),
+          districtId: districtIdsByName.get(
+            clientData.district?.toLowerCase() ?? "",
+          ),
+        };
+      }),
+      conflictColumns: ["externalId"],
+      // A missing county or district leaves the current one in place.
+      keepExistingWhenNull: ["countyId", "districtId"],
+      updateExpressions: {
+        // When updating, only change the gender if it's known
+        gender: `CASE WHEN EXCLUDED."isGenderLocked" THEN EXCLUDED."gender" ELSE "Client"."gender" END`,
       },
-      create: {
-        ...newClient,
-        county: countyConnection,
-        district: districtConnection,
-        // When creating, always set the gender
-        gender: clientData.gender,
-      },
-      update: {
-        ...newClient,
-        county: countyConnection,
-        district: districtConnection,
-        // When updating, only change the gender if it's defined
-        gender: hasKnownGender ? clientData.gender : undefined,
-      },
+    });
+
+    // Link each client to their cases that are already in the database. Cases
+    // that haven't been imported yet are linked during the case import.
+    await bulkUpdateText(prismaClient, {
+      table: "Case",
+      keyColumn: "externalId",
+      rows: lastRowPerKey(
+        clients.flatMap((clientData) =>
+          clientData.case_ids
+            .filter((externalId) => existingCaseExternalIds.has(externalId))
+            .map((externalId) => ({
+              externalId,
+              clientId: clientData.external_id,
+            })),
+        ),
+        ({ externalId }) => externalId,
+      ),
     });
   }
 }

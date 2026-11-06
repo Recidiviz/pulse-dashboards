@@ -18,6 +18,13 @@
 import z from "zod";
 
 import { staffImportSchema } from "~@sentencing/import/models";
+import {
+  bulkUpdateText,
+  bulkUpsert,
+  getOrCreateIdsByName,
+  inBatches,
+  lastRowPerKey,
+} from "~@sentencing/import/utils/batching";
 import { getMODistrictFullName } from "~@sentencing/import/utils/helpers";
 import { PrismaClient } from "~@sentencing/prisma/client";
 
@@ -32,6 +39,7 @@ export async function transformAndLoadStaffData(
       })
     ).map(({ externalId }) => externalId),
   );
+  const districtIdsByName = new Map<string, string>();
 
   const supervisorUpdates: {
     externalId: string;
@@ -41,81 +49,119 @@ export async function transformAndLoadStaffData(
   // First pass: upsert all staff without supervisor connections so that all
   // records exist before we attempt to link them (supervisors may appear after
   // their direct reports in the source data).
-  for await (const staffData of data) {
-    if (!staffData.full_name) {
-      console.warn(
-        `Skipping staff record ${staffData.external_id}: missing full_name.`,
-      );
-      continue;
-    }
+  for await (const batch of inBatches(data)) {
+    const staffBatch = lastRowPerKey(
+      batch.filter((staffData) => {
+        if (!staffData.full_name) {
+          console.warn(
+            `Skipping staff record ${staffData.external_id}: missing full_name.`,
+          );
+          return false;
+        }
+        return true;
+      }),
+      (staffData) => staffData.external_id,
+    );
 
-    const existingCasesForStaff = staffData.case_ids
-      .filter((externalId) => existingCaseExternalIds.has(externalId))
-      .map((externalId) => ({ externalId }));
-
-    const districtConnection =
+    const districtName = (staffData: (typeof staffBatch)[number]) =>
       staffData.state_code === "US_MO" && staffData.district
-        ? {
-            connectOrCreate: {
-              where: {
-                name: getMODistrictFullName(staffData.district),
-              },
-              create: {
-                stateCode: staffData.state_code,
-                name: getMODistrictFullName(staffData.district),
-              },
-            },
-          }
+        ? getMODistrictFullName(staffData.district)
         : undefined;
 
-    const newStaff = {
-      externalId: staffData.external_id,
-      pseudonymizedId: staffData.pseudonymized_id,
-      stateCode: staffData.state_code,
-      fullName: staffData.full_name,
-      email: staffData.email,
-      cases: {
-        connect: existingCasesForStaff,
-      },
-      supervisesAll: !!staffData.supervises_all,
-      officeAddress: staffData.officeAddress,
-      officePhoneNumber: staffData.officePhoneNumber,
-      district: districtConnection,
-    };
+    await getOrCreateIdsByName(
+      prismaClient,
+      "district",
+      staffBatch.flatMap((staffData) => {
+        const name = districtName(staffData);
+        return name ? [{ stateCode: staffData.state_code, name }] : [];
+      }),
+      districtIdsByName,
+    );
 
-    await prismaClient.staff.upsert({
-      where: { externalId: newStaff.externalId },
-      create: newStaff,
-      update: newStaff,
+    await bulkUpsert(prismaClient, {
+      table: "Staff",
+      rows: staffBatch.map((staffData) => ({
+        externalId: staffData.external_id,
+        pseudonymizedId: staffData.pseudonymized_id,
+        stateCode: staffData.state_code,
+        fullName: staffData.full_name,
+        email: staffData.email,
+        supervisesAll: !!staffData.supervises_all,
+        officeAddress: staffData.officeAddress,
+        officePhoneNumber: staffData.officePhoneNumber,
+        districtId: districtIdsByName.get(
+          districtName(staffData)?.toLowerCase() ?? "",
+        ),
+      })),
+      conflictColumns: ["externalId"],
+      // A missing email, address, or district leaves the current one in place.
+      keepExistingWhenNull: ["email", "officeAddress", "districtId"],
     });
 
-    supervisorUpdates.push({
-      externalId: staffData.external_id,
-      supervisorId: staffData.supervisor_id ?? null,
+    // Link each staff member to their cases that are already in the database.
+    // Cases that haven't been imported yet are linked during the case import.
+    await bulkUpdateText(prismaClient, {
+      table: "Case",
+      keyColumn: "externalId",
+      rows: lastRowPerKey(
+        staffBatch.flatMap((staffData) =>
+          staffData.case_ids
+            .filter((externalId) => existingCaseExternalIds.has(externalId))
+            .map((externalId) => ({
+              externalId,
+              staffId: staffData.external_id,
+            })),
+        ),
+        ({ externalId }) => externalId,
+      ),
     });
+
+    supervisorUpdates.push(
+      ...staffBatch.map((staffData) => ({
+        externalId: staffData.external_id,
+        supervisorId: staffData.supervisor_id ?? null,
+      })),
+    );
   }
 
   // Second pass: now that all staff records exist, wire up (or clear) supervisor
-  // links. We do this in a for loop instead of Promise.all to avoid a prisma
-  // pool connection error (same reasoning as transformAndLoadCaseData). Each
-  // update is wrapped in a try/catch so one bad reference doesn't abort the
-  // remaining updates.
-  for (const { externalId, supervisorId } of supervisorUpdates) {
-    try {
-      // eslint-disable-next-line no-await-in-loop -- sequential to avoid exhausting the Prisma connection pool
-      await prismaClient.staff.update({
-        where: { externalId },
-        data: {
-          supervisor: supervisorId
-            ? { connect: { externalId: supervisorId } }
-            : { disconnect: true },
-        },
-      });
-    } catch (error) {
+  // links. A supervisor who isn't in the database leaves the current link in
+  // place, so one bad reference doesn't affect anyone else.
+  const supervisorIds = [
+    ...new Set(
+      supervisorUpdates.flatMap(({ supervisorId }) =>
+        supervisorId ? [supervisorId] : [],
+      ),
+    ),
+  ];
+  const existingSupervisorIds = new Set(
+    (
+      await prismaClient.staff.findMany({
+        where: { externalId: { in: supervisorIds } },
+        select: { externalId: true },
+      })
+    ).map(({ externalId }) => externalId),
+  );
+  supervisorUpdates
+    .filter(
+      ({ supervisorId }) =>
+        supervisorId && !existingSupervisorIds.has(supervisorId),
+    )
+    .forEach(({ externalId, supervisorId }) =>
       console.error(
-        `Failed to update supervisor link for staff ${externalId}:`,
-        error,
-      );
-    }
-  }
+        `Failed to update supervisor link for staff ${externalId}: supervisor ${supervisorId} not found`,
+      ),
+    );
+
+  await bulkUpdateText(prismaClient, {
+    table: "Staff",
+    keyColumn: "externalId",
+    rows: lastRowPerKey(
+      supervisorUpdates.filter(
+        ({ supervisorId }) =>
+          !supervisorId || existingSupervisorIds.has(supervisorId),
+      ),
+      ({ externalId }) => externalId,
+    ),
+  });
 }

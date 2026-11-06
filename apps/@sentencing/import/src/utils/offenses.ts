@@ -15,64 +15,75 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { randomUUID } from "node:crypto";
+
 import { z } from "zod";
 
 import { offenseImportSchema } from "~@sentencing/import/models";
+import {
+  bulkUpsert,
+  chunkForStatement,
+  inBatches,
+  lastRowPerKey,
+} from "~@sentencing/import/utils/batching";
 import { PLACEHOLDER_SIGNIFIER } from "~@sentencing/prisma";
-import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
+import { PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadOffenseData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof offenseImportSchema>>,
 ) {
-  const newOffenseNames = [];
+  const newOffenseNames: string[] = [];
 
-  for await (const offenseData of data) {
-    const newOffense = {
-      stateCode: offenseData.state_code,
-      name: offenseData.charge,
-      category: offenseData.recidiviz_offense_category,
-      // If the data doesn't specify the value, make sure to set it to be explicitly
-      // null (passing an undefined value to Prisma will just leave the field as is)
-      isSexOffense:
-        offenseData.is_sex_offense === undefined
-          ? null
-          : offenseData.is_sex_offense,
-      isViolentOffense:
-        offenseData.is_violent === undefined ? null : offenseData.is_violent,
-      frequency: offenseData.frequency,
-    } satisfies Prisma.OffenseCreateInput | Prisma.OffenseUpdateInput;
+  for await (const batch of inBatches(data)) {
+    const offenses = lastRowPerKey(batch, (offenseData) => offenseData.charge);
+    newOffenseNames.push(...offenses.map((offenseData) => offenseData.charge));
 
-    newOffenseNames.push(newOffense.name);
-
-    // Load data
-    const upsertedOffense = await prismaClient.offense.upsert({
-      where: {
-        name: newOffense.name,
+    const upsertedOffenses = await bulkUpsert<{ id: string; name: string }>(
+      prismaClient,
+      {
+        table: "Offense",
+        rows: offenses.map((offenseData) => ({
+          // Prisma generates this id, not the database, so new rows need one.
+          id: randomUUID(),
+          stateCode: offenseData.state_code,
+          name: offenseData.charge,
+          category: offenseData.recidiviz_offense_category,
+          // If the data doesn't specify the value, it's explicitly set to null.
+          isSexOffense: offenseData.is_sex_offense ?? null,
+          isViolentOffense: offenseData.is_violent ?? null,
+          frequency: offenseData.frequency,
+        })),
+        conflictColumns: ["name"],
+        insertOnlyColumns: ["id"],
+        // A missing category leaves the current one in place.
+        keepExistingWhenNull: ["category"],
+        returning: ["id", "name"],
       },
-      create: newOffense,
-      update: {
-        ...newOffense,
-        // delete all of the existing mandatory minimums because we are replacing them
-        //  with the new ones
-        mandatoryMinimums: {
-          deleteMany: {},
-        },
-      },
+    );
+    const offenseIdsByName = new Map(
+      upsertedOffenses.map(({ id, name }) => [name, id]),
+    );
+
+    // Replace all of the mandatory minimums for these offenses with the new ones
+    await prismaClient.mandatoryMinimum.deleteMany({
+      where: { offenseId: { in: [...offenseIdsByName.values()] } },
     });
-
-    // Recreate all of the mandatory minimums
-    await prismaClient.mandatoryMinimum.createMany({
-      data:
+    const mandatoryMinimums = offenses.flatMap(
+      (offenseData) =>
         offenseData.mandatory_minimums?.map((m) => ({
-          offenseId: upsertedOffense.id,
+          offenseId: offenseIdsByName.get(offenseData.charge) ?? "",
           sentenceType: m.SentenceType,
           minimumSentenceLength: m.MinimumSentenceLength,
           maximumSentenceLength: m.MaximumSentenceLength,
           statuteNumber: m.StatuteNumber,
           statuteLink: m.StatuteLink,
         })) ?? [],
-    });
+    );
+    for (const chunk of chunkForStatement(mandatoryMinimums, 7)) {
+      // eslint-disable-next-line no-await-in-loop -- one statement at a time keeps load on the database low
+      await prismaClient.mandatoryMinimum.createMany({ data: chunk });
+    }
   }
 
   const missingExistingOffenses = await prismaClient.offense.findMany({
