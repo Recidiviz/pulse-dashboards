@@ -83,7 +83,12 @@ const notFlagged = {
   reopened: null,
 };
 
-const noVotes = { llm: false, labelStudio: false, vote: false };
+const noVotes = {
+  llm: false,
+  labelStudio: false,
+  triageReview: false,
+  vote: false,
+};
 
 const meeting = {
   meetingId: "m-123",
@@ -263,7 +268,7 @@ describe("FlaggedMeetingsScreen", () => {
     expect(screen.getByText("m-456")).toBeTruthy();
   });
 
-  it("shows a count only on Needs review", () => {
+  it("shows counts on the backlog tabs but not Reviewed or All flagged", () => {
     mockResult({ data: { sources: okSources, meetings: [meeting] } });
     render(<FlaggedMeetingsScreen />);
 
@@ -320,7 +325,9 @@ describe("FlaggedMeetingsScreen", () => {
     render(<FlaggedMeetingsScreen />);
 
     expect(screen.getByText("Flagged meetings couldn't load")).toBeTruthy();
-    expect(screen.getByText(/Label Studio didn't respond/)).toBeTruthy();
+    expect(
+      screen.getByText(/Label Studio full review didn't respond/),
+    ).toBeTruthy();
     expect(screen.getByText("IAP returned 401")).toBeTruthy();
     expect(screen.queryByText("m-123")).toBeNull();
 

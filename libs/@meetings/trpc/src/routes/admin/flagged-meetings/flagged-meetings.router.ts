@@ -78,6 +78,7 @@ import {
   flaggedMeetingDetailInclude,
   isAnySectionFlagged,
   type LlmajResult,
+  llmajTriageState,
   type OutputVoteRow,
   resolveActionItems,
   resolveAudioLinks,
@@ -188,6 +189,7 @@ function triageReviewCombinedGrades(
 function triageReviewSummary(
   snapshot: LlmajTriageSnapshot | null,
   meetingId: string,
+  stale: boolean,
 ): TriageReviewSummary | null {
   if (!snapshot) return null;
   const entry = snapshot.byMeetingId.get(meetingId);
@@ -202,7 +204,7 @@ function triageReviewSummary(
   const taskId = snapshot.taskIdByMeetingId.get(meetingId);
   return taskId === undefined
     ? { status: "not_sent" }
-    : { status: "not_rated", taskId };
+    : { status: "not_rated", taskId, stale };
 }
 
 function llmGrades(
@@ -367,6 +369,13 @@ async function findFlaggedMeetingsForState({
   return meetings.flatMap((meeting) => {
     const llm = llmajByMeeting.get(meeting.id);
     const votes = votesByMeeting.get(meeting.id) ?? [];
+    const llmajTriageStatus = triageSnapshot
+      ? llmajTriageState({
+          triageSent: triageSnapshot.taskIdByMeetingId.has(meeting.id),
+          triageSubmitted: triageSnapshot.byMeetingId.has(meeting.id),
+          evaluatedAt: llm?.createdAt,
+        })
+      : null;
     const sections = computeSectionFlags({
       llmDimensions: llm?.dimensions,
       labelStudio: snapshot?.byMeetingId.get(meeting.id),
@@ -374,7 +383,10 @@ async function findFlaggedMeetingsForState({
       votes,
     });
     const outcomes = outcomesByMeeting.get(meeting.id) ?? {};
-    if (!isAnySectionFlagged(sections) && Object.keys(outcomes).length === 0) {
+    if (
+      !isAnySectionFlagged(sections, llmajTriageStatus) &&
+      Object.keys(outcomes).length === 0
+    ) {
       return [];
     }
     const reviews = computeSectionReviews({
@@ -400,7 +412,12 @@ async function findFlaggedMeetingsForState({
             }
           : null,
         labelStudio: labelStudioSummary(snapshot, meeting.id),
-        triageReview: triageReviewSummary(triageSnapshot, meeting.id),
+        triageReview: triageReviewSummary(
+          triageSnapshot,
+          meeting.id,
+          llmajTriageStatus === "stale" &&
+            Object.values(sections).some((flag) => flag.llm),
+        ),
         votes: votes.map(({ tab, vote }) => ({ tab, vote })),
         sections,
         reviews,

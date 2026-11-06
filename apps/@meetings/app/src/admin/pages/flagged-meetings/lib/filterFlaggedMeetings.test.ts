@@ -91,6 +91,64 @@ describe("filterFlaggedMeetings", () => {
     });
     expect(filterFlaggedMeetings([mixed], "llm", "OVERALL")).toEqual([]);
   });
+
+  describe("QA flagged", () => {
+    const triageCaseNote = meeting("t", {
+      CASE_NOTE: { ...none, triageReview: true },
+    });
+    const withTriage = [...all, triageCaseNote];
+
+    it("matches a full-review or triage BAD, not the LLM judge or a thumbs down", () => {
+      expect(ids(filterFlaggedMeetings(withTriage, "qa", "any"))).toEqual([
+        "b",
+        "t",
+      ]);
+    });
+
+    it("requires a QA flag on the chosen dimension", () => {
+      expect(ids(filterFlaggedMeetings(withTriage, "qa", "CASE_NOTE"))).toEqual(
+        ["t"],
+      );
+      expect(filterFlaggedMeetings(withTriage, "qa", "OVERALL")).toEqual([]);
+    });
+  });
+
+  describe("Stale triage", () => {
+    const withTriageReview = (
+      row: FlaggedMeetingSummary,
+      triageReview: FlaggedMeetingSummary["triageReview"],
+    ) => ({ ...row, triageReview });
+
+    const judgeCaseNote = { CASE_NOTE: { ...none, llm: true } };
+    const stale = withTriageReview(meeting("s", judgeCaseNote), {
+      status: "not_rated",
+      taskId: 1,
+      stale: true,
+    });
+    const fresh = withTriageReview(meeting("f", judgeCaseNote), {
+      status: "not_rated",
+      taskId: 2,
+      stale: false,
+    });
+    const staleWithoutJudgeFlag = withTriageReview(
+      meeting("v", { CASE_NOTE: { ...none, vote: true } }),
+      { status: "not_rated", taskId: 3, stale: true },
+    );
+    const rows = [stale, fresh, staleWithoutJudgeFlag];
+
+    it("matches a judge flag on a meeting whose triage review went stale", () => {
+      expect(ids(filterFlaggedMeetings(rows, "triageStale", "any"))).toEqual([
+        "s",
+      ]);
+    });
+
+    it("requires the judge flag on the chosen dimension", () => {
+      expect(
+        ids(filterFlaggedMeetings(rows, "triageStale", "CASE_NOTE")),
+      ).toEqual(["s"]);
+      expect(filterFlaggedMeetings(rows, "triageStale", "OVERALL")).toEqual([]);
+    });
+  });
 });
 
 describe("filterByPromptFollowUp", () => {

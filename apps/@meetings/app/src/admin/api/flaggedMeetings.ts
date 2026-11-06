@@ -38,6 +38,8 @@ export type FlaggedMeetingDetails = Awaited<
 /** The parts of a meeting a flag can point at. */
 export type FlagSection = keyof FlaggedMeetingSummary["sections"];
 
+export type SectionFlag = FlaggedMeetingSummary["sections"][FlagSection];
+
 export type SectionReviews = FlaggedMeetingSummary["reviews"];
 
 export type SectionReview = SectionReviews[FlagSection];

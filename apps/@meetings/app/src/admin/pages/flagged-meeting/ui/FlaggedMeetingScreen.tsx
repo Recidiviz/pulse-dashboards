@@ -35,7 +35,12 @@ import { buildRatingsTable } from "../lib/ratings";
 import { GradingScaleLink } from "./GradingScale";
 import { MetadataGrid } from "./MetadataGrid";
 import { NotesPanel } from "./NotesPanel";
-import { LlmJudgeCard, RaterCard, VotesCard } from "./RaterOutput";
+import {
+  LlmJudgeCard,
+  RaterCard,
+  TriageReviewCard,
+  VotesCard,
+} from "./RaterOutput";
 import { RatingsTableView } from "./RatingsTable";
 import { ReviewRail } from "./ReviewRail";
 import { TranscriptPanel } from "./TranscriptPanel";
@@ -121,7 +126,7 @@ export function FlaggedMeetingScreen() {
   ]
     .filter(Boolean)
     .join(" · ");
-  const { llm, labelStudio, votes } = data;
+  const { llm, labelStudio, triageReview, votes } = data;
 
   return (
     <AdminLayout active="AdminFlaggedMeetings">
@@ -159,6 +164,9 @@ export function FlaggedMeetingScreen() {
                 {llm && <LlmJudgeCard llm={llm} />}
                 {labelStudio?.raters.map((rater) => (
                   <RaterCard key={rater.raterEmail} rater={rater} />
+                ))}
+                {triageReview?.raters.map((rater) => (
+                  <TriageReviewCard key={rater.raterEmail} rater={rater} />
                 ))}
                 {votes.length > 0 && <VotesCard votes={votes} />}
               </View>

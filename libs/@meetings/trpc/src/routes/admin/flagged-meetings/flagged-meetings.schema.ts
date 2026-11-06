@@ -269,9 +269,14 @@ export type LabelStudioSummary =
       combined: GradesByDimension;
     };
 
+/**
+ * stale marks a meeting the judge flagged whose triage task has gone
+ * TRIAGE_STALE_AFTER_DAYS without being submitted, so its judge flags count
+ * without one.
+ */
 export type TriageReviewSummary =
   | { status: "not_sent" }
-  | { status: "not_rated"; taskId: number }
+  | { status: "not_rated"; taskId: number; stale: boolean }
   | {
       status: "rated";
       taskId: number;

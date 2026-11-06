@@ -24,6 +24,8 @@ const GRADES: Record<string, GradeDisplay> = {
   PARTIAL: { label: "Partial", tone: "partial" },
   BAD: { label: "Bad", tone: "bad" },
   "N/A": { label: "N/A", tone: "neutral" },
+  /** A triage rater's "Can't grade", the LLMAJ triage grade vocabulary's equivalent of N/A. */
+  OTHER: { label: "Can't grade", tone: "neutral" },
 };
 
 export const NO_GRADE: GradeDisplay = { label: "—", tone: "neutral" };

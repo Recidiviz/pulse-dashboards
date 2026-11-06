@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeDetails, makeRater, withRaters } from "./detailsFixture";
+import {
+  makeDetails,
+  makeRater,
+  makeTriageRater,
+  withRaters,
+  withTriageReview,
+} from "./detailsFixture";
 import { gradeDisplay } from "./grades";
 import { buildRatingsTable } from "./ratings";
 
@@ -31,8 +37,14 @@ describe("gradeDisplay", () => {
 describe("buildRatingsTable", () => {
   it("says Not sent without a Label Studio task", () => {
     const table = buildRatingsTable(makeDetails());
-    expect(table.headers).toEqual(["Dimension", "LLM judge", "Label Studio"]);
+    expect(table.headers).toEqual([
+      "Dimension",
+      "LLM judge",
+      "Label Studio full review",
+      "Triage review",
+    ]);
     expect(table.rows[0].cells[1]).toEqual({ kind: "text", label: "Not sent" });
+    expect(table.rows[0].cells[2]).toEqual({ kind: "text", label: "Not sent" });
     expect(table.showCombineNote).toBe(false);
   });
 
@@ -85,7 +97,8 @@ describe("buildRatingsTable", () => {
     expect(table.headers).toEqual([
       "Dimension",
       "LLM judge",
-      "Label Studio",
+      "Label Studio full review",
+      "Triage review",
       "alex",
       "admin (authoritative)",
     ]);
@@ -106,5 +119,32 @@ describe("buildRatingsTable", () => {
       label: "Good",
       sub: "Deepgram preferred",
     });
+  });
+
+  it("shows the triage review grade and findings accuracy on a graded section", () => {
+    const table = buildRatingsTable(
+      makeDetails({ triageReview: withTriageReview([makeTriageRater()]) }),
+    );
+    expect(table.rows[1].cells[2]).toMatchObject({
+      label: "Bad",
+      sub: "Findings: all accurate",
+    });
+  });
+
+  it("says Not rated yet for a triage review task with no raters", () => {
+    const table = buildRatingsTable(
+      makeDetails({ triageReview: withTriageReview([], {}) }),
+    );
+    expect(table.rows[1].cells[2]).toEqual({
+      kind: "text",
+      label: "Not rated yet",
+    });
+  });
+
+  it("shows a dash for triage review on the transcript row, which it never grades", () => {
+    const table = buildRatingsTable(
+      makeDetails({ triageReview: withTriageReview([makeTriageRater()]) }),
+    );
+    expect(table.rows[3].cells[2]).toEqual({ kind: "text", label: "—" });
   });
 });

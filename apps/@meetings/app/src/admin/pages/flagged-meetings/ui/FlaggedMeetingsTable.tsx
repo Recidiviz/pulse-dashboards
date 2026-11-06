@@ -37,6 +37,7 @@ import {
   feedbackBadges,
   labelStudioBadges,
   llmBadges,
+  triageReviewBadges,
 } from "../lib/flaggedMeetingBadges";
 
 const HEADERS = [
@@ -45,7 +46,8 @@ const HEADERS = [
   "Date",
   "Staff",
   "LLM judge",
-  "Label Studio",
+  "Label Studio full review",
+  "Triage review",
   "In-app feedback",
   "Outcome",
 ];
@@ -119,6 +121,9 @@ export const FlaggedMeetingsTable = ({
           </TableCell>
           <TableCell>
             <Badges badges={labelStudioBadges(meeting.labelStudio)} />
+          </TableCell>
+          <TableCell>
+            <Badges badges={triageReviewBadges(meeting.triageReview)} />
           </TableCell>
           <TableCell>
             <Badges badges={feedbackBadges(meeting.votes)} />

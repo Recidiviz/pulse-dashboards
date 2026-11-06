@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import {
   OutputVoteTab,
@@ -35,8 +35,10 @@ import {
   computeSectionFlags,
   computeSectionReviews,
   isAnySectionFlagged,
+  llmajTriageState,
   resolveRequestedStates,
   type ReviewOutcomeRow,
+  TRIAGE_STALE_AFTER_DAYS,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/utils";
 
 function dimension(key: LlmajDimension["key"], bad: boolean): LlmajDimension {
@@ -259,6 +261,26 @@ describe("computeSectionFlags", () => {
     expect(flags.ACTION_ITEMS.triageReview).toBe(true);
   });
 
+  test("a pending triage review ignores the judge's flags but not other sources'", () => {
+    const judgeOnly = computeSectionFlags({
+      llmDimensions: [dimension("caseNote", true)],
+      labelStudio: undefined,
+      triageReview: undefined,
+      votes: [],
+    });
+    expect(isAnySectionFlagged(judgeOnly, null)).toBe(true);
+    expect(isAnySectionFlagged(judgeOnly, "pending")).toBe(false);
+    expect(isAnySectionFlagged(judgeOnly, "stale")).toBe(true);
+
+    const judgeAndVote = computeSectionFlags({
+      llmDimensions: [dimension("caseNote", true)],
+      labelStudio: undefined,
+      triageReview: undefined,
+      votes: [{ tab: OutputVoteTab.ACTION_ITEMS, vote: OutputVoteValue.DOWN }],
+    });
+    expect(isAnySectionFlagged(judgeAndVote, "pending")).toBe(true);
+  });
+
   test("a BAD transcript comparison never flags anything", () => {
     const flags = computeSectionFlags({
       llmDimensions: [dimension("transcriptComparison", true)],
@@ -267,7 +289,7 @@ describe("computeSectionFlags", () => {
       votes: [],
     });
 
-    expect(isAnySectionFlagged(flags)).toBe(false);
+    expect(isAnySectionFlagged(flags, null)).toBe(false);
   });
 
   test("agrees with the Label Studio flagging rule", () => {
@@ -289,9 +311,62 @@ describe("computeSectionFlags", () => {
         triageReview: undefined,
         votes: [],
       });
-      expect(isAnySectionFlagged(flags)).toBe(
+      expect(isAnySectionFlagged(flags, null)).toBe(
         isFlaggedByLabelStudio(collapsed, uncovered),
       );
+    }
+  });
+});
+
+describe("llmajTriageState", () => {
+  const NOW = new Date("2026-09-30T12:00:00Z");
+  const daysAgo = (days: number) =>
+    new Date(NOW.getTime() - days * 24 * 60 * 60 * 1000);
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"], now: NOW });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("a submitted triage review counts however recent the judge's grade", () => {
+    expect(
+      llmajTriageState({
+        triageSent: true,
+        triageSubmitted: true,
+        evaluatedAt: daysAgo(1),
+      }),
+    ).toBe("submitted");
+  });
+
+  test("an unsubmitted task is pending until the grade is TRIAGE_STALE_AFTER_DAYS old", () => {
+    expect(
+      llmajTriageState({
+        triageSent: true,
+        triageSubmitted: false,
+        evaluatedAt: daysAgo(TRIAGE_STALE_AFTER_DAYS - 1),
+      }),
+    ).toBe("pending");
+    expect(
+      llmajTriageState({
+        triageSent: true,
+        triageSubmitted: false,
+        evaluatedAt: daysAgo(TRIAGE_STALE_AFTER_DAYS),
+      }),
+    ).toBe("stale");
+  });
+
+  test("a meeting never sent to triage is neither pending nor stale", () => {
+    for (const days of [1, TRIAGE_STALE_AFTER_DAYS + 5]) {
+      expect(
+        llmajTriageState({
+          triageSent: false,
+          triageSubmitted: false,
+          evaluatedAt: daysAgo(days),
+        }),
+      ).toBe("not_sent");
     }
   });
 });

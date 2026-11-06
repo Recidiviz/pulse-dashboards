@@ -194,6 +194,48 @@ export async function findBadEvaluationMeetingIds(
 }
 
 // =============================================================================
+// LLMAJ triage gate
+// =============================================================================
+
+/** How long the judge's flags wait for a triage review before counting without one. */
+export const TRIAGE_STALE_AFTER_DAYS = 10;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * Whether the judge's flags can put a meeting on the list yet. Only a triage
+ * task sent to QA and not yet submitted holds them back ("pending"), and only
+ * until the judge's grade is TRIAGE_STALE_AFTER_DAYS old ("stale"). A meeting
+ * with no triage task ("not_sent") or a submitted one ("submitted") is never
+ * held. While pending, the meeting is listed only if another source flags it
+ * (e.g. a thumbs down).
+ */
+export type LlmajTriageState = "not_sent" | "pending" | "stale" | "submitted";
+
+export function llmajTriageState({
+  triageSent,
+  triageSubmitted,
+  evaluatedAt,
+}: {
+  triageSent: boolean;
+  triageSubmitted: boolean;
+  /** When the judge graded the meeting; undefined for a meeting with no evaluation. */
+  evaluatedAt: Date | undefined;
+}): LlmajTriageState {
+  const now = new Date();
+  if (triageSubmitted) return "submitted";
+  if (!triageSent) return "not_sent";
+  if (
+    evaluatedAt &&
+    now.getTime() - evaluatedAt.getTime() >=
+      TRIAGE_STALE_AFTER_DAYS * MS_PER_DAY
+  ) {
+    return "stale";
+  }
+  return "pending";
+}
+
+// =============================================================================
 // Staff thumbs up/down
 // =============================================================================
 
@@ -374,9 +416,20 @@ export function computeSectionFlags({
   return flags;
 }
 
-export function isAnySectionFlagged(flags: SectionFlags): boolean {
+/**
+ * Whether any source flags any section. The judge's flags are left out while
+ * llmajTriageStatus is "pending".
+ */
+export function isAnySectionFlagged(
+  flags: SectionFlags,
+  llmajTriageStatus: LlmajTriageState | null,
+): boolean {
   return Object.values(flags).some(
-    (f) => f.llm || f.labelStudio || f.triageReview || f.vote,
+    (f) =>
+      (f.llm && llmajTriageStatus !== "pending") ||
+      f.labelStudio ||
+      f.triageReview ||
+      f.vote,
   );
 }
 

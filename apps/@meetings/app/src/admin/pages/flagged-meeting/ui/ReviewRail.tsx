@@ -64,7 +64,7 @@ const LABEL_STUDIO_RATER = "admin@recidiviz.org";
 
 const SOURCE_NAME: Record<OverrideSource, string> = {
   LLM_JUDGE: "LLM judge",
-  LABEL_STUDIO: "Label Studio",
+  LABEL_STUDIO: "Label Studio full review",
 };
 
 const FOLLOW_UP_OPTIONS: { value: FollowUp; label: string }[] = [
@@ -203,7 +203,7 @@ function problemText(
   if (section === "OVERALL") {
     const who = [
       flag.llm && "The LLM judge",
-      flag.labelStudio && "Label Studio",
+      flag.labelStudio && "Label Studio full review",
       flag.triageReview && "Triage review",
     ].filter(Boolean);
     return `${who.join(" and ") || "Nobody"} rated Overall Bad without flagging the case note or action items. Read both, then record which section it applies to.`;
@@ -211,7 +211,7 @@ function problemText(
   const by = [
     flag.llm && "the LLM judge",
     flag.labelStudio &&
-      `Label Studio (${raters} rater${raters === 1 ? "" : "s"})`,
+      `Label Studio full review (${raters} rater${raters === 1 ? "" : "s"})`,
     flag.triageReview && "Triage review",
     flag.vote && "in-app feedback",
   ].filter(Boolean);

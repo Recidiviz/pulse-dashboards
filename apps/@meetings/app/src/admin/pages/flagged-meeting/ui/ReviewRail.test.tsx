@@ -119,7 +119,7 @@ describe("ReviewRail", () => {
     expect(screen.getByText("Needs review")).toBeTruthy();
     expect(
       screen.getByText(
-        "Case note flagged by the LLM judge, Label Studio (0 raters).",
+        "Case note flagged by the LLM judge, Label Studio full review (0 raters).",
       ),
     ).toBeTruthy();
   });
@@ -176,13 +176,17 @@ describe("ReviewRail", () => {
     fireEvent.press(screen.getByRole("radio", { name: /Not BAD/ }));
 
     expect(screen.getByRole("checkbox", { name: "LLM judge" })).toBeTruthy();
-    expect(screen.getByRole("checkbox", { name: "Label Studio" })).toBeTruthy();
+    expect(
+      screen.getByRole("checkbox", { name: "Label Studio full review" }),
+    ).toBeTruthy();
     expect(
       screen.getByText(/also records a Good rating in Label Studio as admin@/),
     ).toBeTruthy();
 
     // Deselecting Label Studio sends only the judge override.
-    fireEvent.press(screen.getByRole("checkbox", { name: "Label Studio" }));
+    fireEvent.press(
+      screen.getByRole("checkbox", { name: "Label Studio full review" }),
+    );
     expect(screen.queryByText(/also records a Good rating/)).toBeNull();
     fireEvent.press(screen.getByText("Partial"));
     fireEvent.press(screen.getByText("Record outcome"));
@@ -237,7 +241,9 @@ describe("ReviewRail", () => {
     // Only the judge flagged it, so only the judge starts selected.
     expect(screen.queryByText(/also records a Good rating/)).toBeNull();
 
-    fireEvent.press(screen.getByRole("checkbox", { name: "Label Studio" }));
+    fireEvent.press(
+      screen.getByRole("checkbox", { name: "Label Studio full review" }),
+    );
     expect(screen.getByText(/also records a Good rating/)).toBeTruthy();
     fireEvent.press(screen.getByText("Record outcome"));
 

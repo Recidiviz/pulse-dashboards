@@ -18,7 +18,10 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 
-import type { FlaggedMeetingDetails } from "~@meetings/app/admin/api/flaggedMeetings";
+import type {
+  FlaggedMeetingDetails,
+  SectionFlag,
+} from "~@meetings/app/admin/api/flaggedMeetings";
 import { SegmentedControl } from "~@meetings/app/admin/ui/SegmentedControl";
 import { StatusBadge } from "~@meetings/app/admin/ui/StatusBadge";
 import { Tabs } from "~@meetings/app/admin/ui/Tabs";
@@ -30,12 +33,8 @@ import { CaseNoteDiff } from "./CaseNoteDiff";
 type NoteTab = "caseNote" | "actionItems" | "notepad";
 type CaseNoteView = "generated" | "final" | "changes";
 
-const isFlagged = (flag: {
-  llm: boolean;
-  labelStudio: boolean;
-  triageReview: boolean;
-  vote: boolean;
-}) => flag.llm || flag.labelStudio || flag.triageReview || flag.vote;
+const isFlagged = (flag: SectionFlag) =>
+  flag.llm || flag.labelStudio || flag.triageReview || flag.vote;
 
 function ApprovalRow({
   approvedAt,

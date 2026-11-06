@@ -21,6 +21,10 @@ type Rater = NonNullable<
   FlaggedMeetingDetails["labelStudio"]
 >["raters"][number];
 
+type TriageRater = NonNullable<
+  FlaggedMeetingDetails["triageReview"]
+>["raters"][number];
+
 const NO_FLAG = {
   llm: false,
   labelStudio: false,
@@ -89,7 +93,12 @@ export function makeDetails(
     triageReview: null,
     votes: [],
     sections: {
-      CASE_NOTE: { ...NO_FLAG, llm: true },
+      CASE_NOTE: {
+        llm: true,
+        labelStudio: false,
+        triageReview: false,
+        vote: false,
+      },
       ACTION_ITEMS: NO_FLAG,
       OVERALL: NO_FLAG,
     },
@@ -148,6 +157,50 @@ export function withRaters(
         grade: "GOOD",
         worst: "GOOD",
         overriddenByAuthoritative: false,
+      },
+    },
+  };
+}
+
+export function makeTriageRater(
+  overrides: Partial<TriageRater> = {},
+): TriageRater {
+  return {
+    raterEmail: "qa@example.com",
+    annotatedAt: new Date("2026-09-03T12:00:00Z"),
+    updatedAt: new Date("2026-09-03T12:00:00Z"),
+    sections: [
+      {
+        section: "CASE_NOTE",
+        flagged: true,
+        grade: "BAD",
+        findingsAccuracy: "ALL_ACCURATE",
+        notes: null,
+        appliesTo: null,
+        verdict: { section: "CASE_NOTE", outcome: "CONFIRMED_BAD" },
+      },
+    ],
+    ...overrides,
+  };
+}
+
+export function withTriageReview(
+  raters: TriageRater[],
+  combined?: NonNullable<FlaggedMeetingDetails["triageReview"]>["combined"],
+): NonNullable<FlaggedMeetingDetails["triageReview"]> {
+  return {
+    taskId: 88,
+    taskUrl: "https://ls.example/task/88",
+    raters,
+    combined: combined ?? {
+      CASE_NOTE: {
+        section: "CASE_NOTE",
+        flagged: true,
+        grade: "BAD",
+        findingsAccuracy: "ALL_ACCURATE",
+        notes: null,
+        appliesTo: null,
+        verdict: { section: "CASE_NOTE", outcome: "CONFIRMED_BAD" },
       },
     },
   };

@@ -790,16 +790,120 @@ describe("flaggedMeetings router", () => {
       });
     });
 
-    test("a judge BAD with no human rating yet needs review", async () => {
-      await createMeeting("meeting-judge-only");
-      await evaluate("meeting-judge-only", { caseNote: "BAD" });
+    test("holds a judge BAD while its triage review is pending", async () => {
+      await createMeeting("meeting-awaiting-triage");
+      await evaluate(
+        "meeting-awaiting-triage",
+        { caseNote: "BAD" },
+        { createdAt: new Date("2026-09-25T00:00:00Z") },
+      );
       useLabelStudio([]);
+      useTriageReview(
+        [],
+        [{ meetingId: "meeting-awaiting-triage", taskId: 902 }],
+      );
+
+      expect((await list()).meetings).toEqual([]);
+    });
+
+    test("a meeting another source flags keeps its judge flags while triage is pending", async () => {
+      await createMeeting("meeting-voted-awaiting-triage", {
+        outputsPipelineRunId: "run-voted",
+      });
+      await evaluate(
+        "meeting-voted-awaiting-triage",
+        { caseNote: "BAD" },
+        {
+          pipelineRunId: "run-voted",
+          createdAt: new Date("2026-09-25T00:00:00Z"),
+        },
+      );
+      await vote(
+        "meeting-voted-awaiting-triage",
+        "run-voted",
+        OutputVoteValue.DOWN,
+        { tab: OutputVoteTab.ACTION_ITEMS },
+      );
+      useLabelStudio([]);
+      useTriageReview(
+        [],
+        [{ meetingId: "meeting-voted-awaiting-triage", taskId: 904 }],
+      );
+
+      const { meetings } = await list();
+
+      expect(meetings).toHaveLength(1);
+      expect(meetings[0].sections.CASE_NOTE.llm).toBe(true);
+      expect(meetings[0].sections.ACTION_ITEMS.vote).toBe(true);
+    });
+
+    test("a judge BAD needs review once triage is submitted, even when QA disagrees", async () => {
+      await createMeeting("meeting-triaged");
+      await evaluate(
+        "meeting-triaged",
+        { caseNote: "BAD" },
+        { createdAt: new Date("2026-09-25T00:00:00Z") },
+      );
+      useLabelStudio([]);
+      useTriageReview([
+        llmajTriageEntry("meeting-triaged", {
+          collapsed: {
+            CASE_NOTE: {
+              section: "CASE_NOTE",
+              flagged: true,
+              grade: "PARTIAL",
+              findingsAccuracy: "SOME_INACCURATE",
+              notes: null,
+              appliesTo: null,
+              verdict: null,
+            },
+          },
+        }),
+      ]);
+
+      const { meetings } = await list();
+
+      expect(meetings).toHaveLength(1);
+      expect(meetings[0].sections.CASE_NOTE).toMatchObject({
+        llm: true,
+        triageReview: false,
+      });
+      expect(meetings[0].reviews.CASE_NOTE.status).toBe("needs_review");
+    });
+
+    test("a judge BAD whose triage task is unrated after TRIAGE_STALE_AFTER_DAYS needs review, marked stale", async () => {
+      // evaluate's default date is 14 days before NOW.
+      await createMeeting("meeting-stale-triage");
+      await evaluate("meeting-stale-triage", { caseNote: "BAD" });
+      useLabelStudio([]);
+      useTriageReview([], [{ meetingId: "meeting-stale-triage", taskId: 903 }]);
 
       const { meetings } = await list();
 
       expect(meetings).toHaveLength(1);
       expect(meetings[0].sections.CASE_NOTE.llm).toBe(true);
       expect(meetings[0].reviews.CASE_NOTE.status).toBe("needs_review");
+      expect(meetings[0].triageReview).toEqual({
+        status: "not_rated",
+        taskId: 903,
+        stale: true,
+      });
+    });
+
+    test("a recent judge BAD never sent to triage needs review right away", async () => {
+      await createMeeting("meeting-no-triage-task");
+      await evaluate(
+        "meeting-no-triage-task",
+        { caseNote: "BAD" },
+        { createdAt: new Date("2026-09-25T00:00:00Z") },
+      );
+      useLabelStudio([]);
+
+      const { meetings } = await list();
+
+      expect(meetings).toHaveLength(1);
+      expect(meetings[0].sections.CASE_NOTE.llm).toBe(true);
+      expect(meetings[0].triageReview).toEqual({ status: "not_sent" });
     });
 
     test("a triage BAD on a section the judge didn't flag needs review", async () => {

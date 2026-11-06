@@ -20,13 +20,29 @@ import type {
   FlagSection,
 } from "~@meetings/app/admin/api/flaggedMeetings";
 
-export type FlaggedBy = "any" | "llm" | "labelStudio" | "vote";
+export type FlaggedBy =
+  | "any"
+  | "qa"
+  | "llm"
+  | "labelStudio"
+  | "triageReview"
+  | "triageStale"
+  | "vote";
 export type DimensionFilter = "any" | FlagSection;
 export type PromptFollowUpFilter = "any" | "either" | "notetaking" | "judge";
+
+function isTriageStale(
+  triageReview: FlaggedMeetingSummary["triageReview"],
+): boolean {
+  return triageReview?.status === "not_rated" && triageReview.stale;
+}
 
 /**
  * Narrows already-fetched rows. Dimension alone matches a section flagged by
  * any source; with a source too, that source must have flagged that section.
+ * The qa source matches a BAD in either the full-review Label Studio project
+ * or the LLMAJ triage project. The triageStale source matches a judge flag on
+ * a meeting whose triage review went stale.
  */
 export function filterFlaggedMeetings(
   meetings: FlaggedMeetingSummary[],
@@ -40,14 +56,21 @@ export function filterFlaggedMeetings(
       dimension === "any"
         ? Object.values(meeting.sections)
         : [meeting.sections[dimension]];
-    return sections.some((section) =>
-      flaggedBy === "any"
-        ? section.llm ||
+    return sections.some((section) => {
+      if (flaggedBy === "any") {
+        return (
+          section.llm ||
           section.labelStudio ||
           section.triageReview ||
           section.vote
-        : section[flaggedBy],
-    );
+        );
+      }
+      if (flaggedBy === "qa")
+        return section.labelStudio || section.triageReview;
+      if (flaggedBy === "triageStale")
+        return section.llm && isTriageStale(meeting.triageReview);
+      return section[flaggedBy];
+    });
   });
 }
 

@@ -69,7 +69,12 @@ const FLAGGED_BY_OPTIONS: FilterOption<FlaggedBy>[] = [
   {
     value: "any",
     label: "Any source",
-    subtitle: "LLM judge, Label Studio or staff",
+    subtitle: "LLM judge, Label Studio full review, triage review or staff",
+  },
+  {
+    value: "qa",
+    label: "QA flagged",
+    subtitle: "Flagged by Label Studio QA (full review or triage review)",
   },
   {
     value: "llm",
@@ -78,8 +83,18 @@ const FLAGGED_BY_OPTIONS: FilterOption<FlaggedBy>[] = [
   },
   {
     value: "labelStudio",
-    label: "Label Studio",
+    label: "Label Studio full review",
     subtitle: "BAD after combining raters",
+  },
+  {
+    value: "triageReview",
+    label: "Triage review",
+    subtitle: "Graded BAD by an LLMAJ triage rater",
+  },
+  {
+    value: "triageStale",
+    label: "Stale triage",
+    subtitle: "LLM judge BAD with a triage task still unrated after 10 days",
   },
   {
     value: "vote",
@@ -285,8 +300,8 @@ export const FlaggedMeetingsScreen = () => {
             Flagged meetings
           </Typography>
           <Typography variant="body-s-regular">
-            Meetings rated BAD by the LLM judge or in Label Studio, or given a
-            thumbs down in the app.
+            Meetings rated BAD by the LLM judge, in Label Studio or by QA
+            review, or given a thumbs down in the app.
           </Typography>
         </View>
         {/* Counts from a failed or partial load would mislead. */}

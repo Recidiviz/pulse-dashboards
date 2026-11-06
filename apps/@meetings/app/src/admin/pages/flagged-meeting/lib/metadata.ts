@@ -72,11 +72,11 @@ export function buildMetaItems(details: FlaggedMeetingDetails): MetaItem[] {
 
   let labelStudioItem: MetaItem;
   if (!labelStudio) {
-    labelStudioItem = { label: "Label Studio", value: "Not sent" };
+    labelStudioItem = { label: "Label Studio full review", value: "Not sent" };
   } else {
     const rated = labelStudio.raters.length > 0;
     labelStudioItem = {
-      label: "Label Studio",
+      label: "Label Studio full review",
       value: rated
         ? `Task ${labelStudio.taskId}`
         : `Task ${labelStudio.taskId} · not rated yet`,

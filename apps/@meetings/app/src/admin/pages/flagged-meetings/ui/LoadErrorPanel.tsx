@@ -25,7 +25,7 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 const SOURCE_LABEL: Record<FlaggedMeetingSourceStatus["name"], string> = {
   database: "Meetings database",
   evaluations: "LLM evaluations",
-  labelStudio: "Label Studio",
+  labelStudio: "Label Studio full review",
   triageReview: "Triage review",
   inAppFeedback: "In-app feedback",
 };

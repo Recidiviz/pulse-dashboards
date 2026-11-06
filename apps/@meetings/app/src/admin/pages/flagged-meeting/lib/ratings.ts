@@ -20,6 +20,10 @@ import type { StatusTone } from "~@meetings/app/admin/ui/StatusBadge";
 
 import { gradeDisplay } from "./grades";
 
+type TriageReview = NonNullable<FlaggedMeetingDetails["triageReview"]>;
+type TriageSectionResult = NonNullable<TriageReview["combined"]["OVERALL"]>;
+type FindingsAccuracy = NonNullable<TriageSectionResult["findingsAccuracy"]>;
+
 export type RatingCell =
   | { kind: "badge"; label: string; tone: StatusTone; sub?: string }
   | { kind: "text"; label: string };
@@ -40,6 +44,15 @@ const DIMENSIONS = [
 
 type DimensionKey = (typeof DIMENSIONS)[number]["key"];
 
+/** The LLMAJ triage section each dimension maps to; transcript has no triage equivalent. */
+const DIMENSION_TO_TRIAGE_SECTION: Partial<
+  Record<DimensionKey, "OVERALL" | "CASE_NOTE" | "ACTION_ITEMS">
+> = {
+  overall: "OVERALL",
+  caseNote: "CASE_NOTE",
+  actionItems: "ACTION_ITEMS",
+};
+
 export const COMBINE_NOTE =
   "Combined grade: admin@recidiviz.org overrides other raters on any dimension they graded. Otherwise the worst grade wins.";
 
@@ -55,6 +68,12 @@ const PROVIDER_NAMES = {
 } as const;
 
 const GRADE_SEVERITY: Record<string, number> = { BAD: 3, PARTIAL: 2, GOOD: 1 };
+
+const FINDINGS_ACCURACY_LABEL: Record<FindingsAccuracy, string> = {
+  ALL_ACCURATE: "all accurate",
+  SOME_INACCURATE: "some inaccurate",
+  ALL_INACCURATE: "all inaccurate",
+};
 
 function worstOf(a: string, b: string): string {
   return (GRADE_SEVERITY[a] ?? 0) >= (GRADE_SEVERITY[b] ?? 0) ? a : b;
@@ -92,6 +111,27 @@ function llmCell(
     : badge(dimension.gradeOrWinner);
 }
 
+function triageReviewCell(
+  details: FlaggedMeetingDetails,
+  key: DimensionKey,
+): RatingCell {
+  const section = DIMENSION_TO_TRIAGE_SECTION[key];
+  if (!section) return { kind: "text", label: "—" };
+  const { triageReview } = details;
+  if (!triageReview) return { kind: "text", label: "Not sent" };
+  if (triageReview.raters.length === 0) {
+    return { kind: "text", label: "Not rated yet" };
+  }
+  const result = triageReview.combined[section];
+  if (!result?.grade) return { kind: "text", label: "—" };
+  return badge(
+    result.grade,
+    result.findingsAccuracy
+      ? `Findings: ${FINDINGS_ACCURACY_LABEL[result.findingsAccuracy]}`
+      : undefined,
+  );
+}
+
 export function raterHeader(
   rater: { raterEmail: string; isAuthoritative: boolean },
   emailCounts: Map<string, number> = new Map(),
@@ -107,7 +147,12 @@ export function buildRatingsTable(
 ): RatingsTable {
   const { labelStudio } = details;
   const raters = labelStudio?.raters ?? [];
-  const headers = ["Dimension", "LLM judge", "Label Studio"];
+  const headers = [
+    "Dimension",
+    "LLM judge",
+    "Label Studio full review",
+    "Triage review",
+  ];
 
   const emailCounts = new Map<string, number>();
   for (const rater of raters) {
@@ -139,6 +184,9 @@ export function buildRatingsTable(
           ),
         );
       }
+    }
+    cells.push(triageReviewCell(details, key));
+    if (labelStudio) {
       for (const rater of raters) {
         cells.push(
           badge(

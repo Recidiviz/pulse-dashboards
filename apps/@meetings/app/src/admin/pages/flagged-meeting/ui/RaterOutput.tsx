@@ -28,9 +28,33 @@ import { buildRaterItems } from "../lib/raterNotes";
 
 type Llm = NonNullable<FlaggedMeetingDetails["llm"]>;
 type Dimension = Llm["dimensions"][number];
-type Rater = NonNullable<
+type FullReviewRater = NonNullable<
   FlaggedMeetingDetails["labelStudio"]
 >["raters"][number];
+type TriageRater = NonNullable<
+  FlaggedMeetingDetails["triageReview"]
+>["raters"][number];
+type TriageSectionResult = TriageRater["sections"][number];
+
+const TRIAGE_SECTION_LABEL: Record<TriageSectionResult["section"], string> = {
+  CASE_NOTE: "Case note",
+  ACTION_ITEMS: "Action items",
+  OVERALL: "Overall",
+};
+const TRIAGE_SECTION_ORDER: TriageSectionResult["section"][] = [
+  "CASE_NOTE",
+  "ACTION_ITEMS",
+  "OVERALL",
+];
+
+const FINDINGS_ACCURACY_LABEL: Record<
+  NonNullable<TriageSectionResult["findingsAccuracy"]>,
+  string
+> = {
+  ALL_ACCURATE: "All accurate",
+  SOME_INACCURATE: "Some inaccurate",
+  ALL_INACCURATE: "All inaccurate",
+};
 
 const LLM_ORDER = [
   "overall",
@@ -203,15 +227,22 @@ export function LlmJudgeCard({ llm }: { llm: Llm }) {
   );
 }
 
-export function RaterCard({ rater }: { rater: Rater }) {
+function annotatedSubtitle(rater: {
+  raterEmail: string;
+  annotatedAt: Date;
+  updatedAt: Date;
+}) {
   const edited = rater.updatedAt.getTime() !== rater.annotatedAt.getTime();
-  const sub = `Annotated ${formatDate(rater.annotatedAt)}${
+  return `Annotated ${formatDate(rater.annotatedAt)} by ${rater.raterEmail}${
     edited ? ` · edited ${formatDate(rater.updatedAt)}` : ""
   }`;
+}
+
+export function RaterCard({ rater }: { rater: FullReviewRater }) {
   return (
     <Card
-      title={rater.raterEmail}
-      sub={sub}
+      title="Full review"
+      sub={annotatedSubtitle(rater)}
       tag={
         rater.isAuthoritative ? (
           <StatusBadge tone="info">Authoritative</StatusBadge>
@@ -239,6 +270,51 @@ export function RaterCard({ rater }: { rater: Rater }) {
           </Typography>
         </View>
       )}
+    </Card>
+  );
+}
+
+/** One LLMAJ triage rater's findings-accuracy answer, grade and notes per section. */
+export function TriageReviewCard({ rater }: { rater: TriageRater }) {
+  // Sections the rater left ungraded and the judge didn't flag have nothing to show.
+  const sections = rater.sections
+    .filter((s) => s.flagged || s.grade !== null)
+    .sort(
+      (a, b) =>
+        TRIAGE_SECTION_ORDER.indexOf(a.section) -
+        TRIAGE_SECTION_ORDER.indexOf(b.section),
+    );
+  return (
+    <Card title="Triage review" sub={annotatedSubtitle(rater)}>
+      {sections.map((section) => (
+        <Item
+          key={section.section}
+          label={TRIAGE_SECTION_LABEL[section.section]}
+          badges={
+            section.grade ? <GradeBadge grade={section.grade} /> : undefined
+          }
+        >
+          {section.findingsAccuracy && (
+            <Typography variant="caption-s-regular" className="!text-tertiary">
+              {`Judge's findings: ${FINDINGS_ACCURACY_LABEL[section.findingsAccuracy]}`}
+            </Typography>
+          )}
+          {section.notes && (
+            <Typography variant="body-s-regular">{section.notes}</Typography>
+          )}
+          {section.appliesTo && (
+            <Typography variant="caption-s-regular" className="!text-tertiary">
+              {`Applies to: ${
+                section.appliesTo.length === 0
+                  ? "neither section"
+                  : section.appliesTo
+                      .map((s) => TRIAGE_SECTION_LABEL[s].toLowerCase())
+                      .join(" + ")
+              }`}
+            </Typography>
+          )}
+        </Item>
+      ))}
     </Card>
   );
 }
