@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { writeBatch } from "firebase/firestore";
+import { serverTimestamp, writeBatch } from "firebase/firestore";
 import { configure } from "mobx";
 import { expect } from "vitest";
 
@@ -193,6 +193,58 @@ describe("form update", () => {
       form.formId,
     );
     expect(rootStore.firestoreStore.updateOpportunity).not.toHaveBeenCalled();
+  });
+
+  test("records the editor and the field author", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateForm");
+    vi.spyOn(form, "currentUserEmail", "get").mockReturnValue(
+      "officer@example.com",
+    );
+    vi.spyOn(form, "currentUserId", "get").mockReturnValue("OFFICER1");
+    vi.mocked(serverTimestamp).mockReturnValue("TIMESTAMP" as any);
+    await form.updateDraftData("testField", "testValue");
+    expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
+      client.recordId,
+      {
+        opportunity: form.type,
+        updated: {
+          by: "officer@example.com",
+          date: "TIMESTAMP",
+          updateById: "OFFICER1",
+        },
+        data: { testField: "testValue" },
+        fieldAuthors: { testField: "OFFICER1" },
+      },
+      form.formId,
+    );
+  });
+
+  test("omits the field author when the user has no id", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateForm");
+    vi.spyOn(form, "currentUserId", "get").mockReturnValue(undefined);
+    await form.updateDraftData("testField", "testValue");
+    expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
+      client.recordId,
+      expect.not.objectContaining({ fieldAuthors: expect.anything() }),
+      form.formId,
+    );
+  });
+
+  test("saves several fields in one write and one edit", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateForm");
+    vi.spyOn(form, "currentUserId", "get").mockReturnValue("OFFICER1");
+    vi.spyOn(form, "recordEdit");
+    await form.updateDraftDataFields({ fieldA: true, fieldB: false });
+    expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledTimes(1);
+    expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
+      client.recordId,
+      expect.objectContaining({
+        data: { fieldA: true, fieldB: false },
+        fieldAuthors: { fieldA: "OFFICER1", fieldB: "OFFICER1" },
+      }),
+      form.formId,
+    );
+    expect(form.recordEdit).toHaveBeenCalledTimes(1);
   });
 
   test("tracks first edit", async () => {

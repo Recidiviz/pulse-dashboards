@@ -38,12 +38,19 @@ export const StepLabel = styled(DetailsHeading).attrs({ as: "div" })`
   margin-bottom: ${rem(spacing.xs)};
 `;
 
+export const StepHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: ${rem(spacing.md)};
+  padding-bottom: ${rem(spacing.md)};
+  border-bottom: 1px solid ${palette.slate10};
+`;
+
 export const StepTitle = styled.h2`
   ${typography.Sans18}
   color: ${palette.pine1};
   margin: 0;
-  padding-bottom: ${rem(spacing.md)};
-  border-bottom: 1px solid ${palette.slate10};
 `;
 
 export const StepHelpText = styled.p`

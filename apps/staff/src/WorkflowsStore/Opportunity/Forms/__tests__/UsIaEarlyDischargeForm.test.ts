@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { deleteField } from "firebase/firestore";
 import { configure } from "mobx";
 
 import { isDemoMode, isTestEnv } from "~client-env-utils";
+import { UsIaEarlyDischargeCharge } from "~datatypes";
 
 import { RootStore } from "../../../../RootStore";
 import { ActiveFeatureVariantRecord } from "../../../../RootStore/types";
@@ -28,7 +30,11 @@ import {
   usIaEarlyDischargeRecordFixture,
   usIaEdAndSldEligibleClientRecord,
 } from "../../UsIa/UsIaSupervisionLevelDowngradeOpportunity/__fixtures__";
-import { UsIaEarlyDischargeForm } from "../UsIaEarlyDischargeForm";
+import {
+  DeselectedChargeKey,
+  deselectedChargeKey,
+  UsIaEarlyDischargeForm,
+} from "../UsIaEarlyDischargeForm";
 
 vi.mock("~client-env-utils");
 
@@ -192,5 +198,123 @@ describe("formContents", () => {
   ])("with variants %o, returns %s", (featureVariants, expected) => {
     createTestUnit(undefined, { featureVariants });
     expect(form.formContents).toBe(expected);
+  });
+});
+
+describe("charge selection", () => {
+  test("starts every charge selected", () => {
+    expect(form.isChargeSelected("CHARGE-001")).toBe(true);
+  });
+
+  test("treats a deselected charge as unselected", () => {
+    vi.spyOn(form, "draftData", "get").mockReturnValue({
+      "deselected-CHARGE-001": true,
+    });
+    expect(form.isChargeSelected("CHARGE-001")).toBe(false);
+  });
+
+  test("treats a charge with no draft field as selected", () => {
+    vi.spyOn(form, "draftData", "get").mockReturnValue({});
+    expect(form.isChargeSelected("CHARGE-001")).toBe(true);
+  });
+
+  test.each([
+    [false, true],
+    [true, deleteField()],
+  ])(
+    "setChargesSelected(%s) saves every deselection field as %s in one update",
+    async (selected, fieldValue) => {
+      vi.spyOn(form, "updateDraftDataFields").mockResolvedValue(undefined);
+      await form.setChargesSelected(["CHARGE-001", "CHARGE-002"], selected);
+      expect(form.updateDraftDataFields).toHaveBeenCalledTimes(1);
+      expect(form.updateDraftDataFields).toHaveBeenCalledWith({
+        "deselected-CHARGE-001": fieldValue,
+        "deselected-CHARGE-002": fieldValue,
+      });
+    },
+  );
+});
+
+describe("selectedChargesByJurisdiction", () => {
+  let polk1: UsIaEarlyDischargeCharge;
+  let polk2: UsIaEarlyDischargeCharge;
+  let linn1: UsIaEarlyDischargeCharge;
+
+  beforeEach(() => {
+    const [baseCharge] = form.opportunity.record.formInformation.charges;
+    const charge = (chargeExternalId: string, jurisdiction: string) => ({
+      ...baseCharge,
+      chargeExternalId,
+      jurisdiction,
+    });
+    polk1 = charge("CHARGE-001", "POLK");
+    polk2 = charge("CHARGE-002", "POLK");
+    linn1 = charge("CHARGE-003", "LINN");
+
+    vi.spyOn(form.opportunity, "chargesByJurisdiction", "get").mockReturnValue(
+      new Map([
+        ["POLK", [polk1, polk2]],
+        ["LINN", [linn1]],
+      ]),
+    );
+  });
+
+  function deselect(...chargeExternalIds: string[]) {
+    const draftData: Record<DeselectedChargeKey, boolean> = {};
+    chargeExternalIds.forEach((id) => {
+      draftData[deselectedChargeKey(id)] = true;
+    });
+    vi.spyOn(form, "draftData", "get").mockReturnValue(draftData);
+  }
+
+  test("includes every charge when nothing is deselected", () => {
+    expect([...form.selectedChargesByJurisdiction]).toEqual([
+      ["POLK", [polk1, polk2]],
+      ["LINN", [linn1]],
+    ]);
+  });
+
+  test("keeps a jurisdiction when only some of its charges are deselected", () => {
+    deselect("CHARGE-001");
+    expect([...form.selectedChargesByJurisdiction]).toEqual([
+      ["POLK", [polk2]],
+      ["LINN", [linn1]],
+    ]);
+  });
+
+  test("drops a jurisdiction when all of its charges are deselected", () => {
+    deselect("CHARGE-003");
+    expect([...form.selectedChargesByJurisdiction]).toEqual([
+      ["POLK", [polk1, polk2]],
+    ]);
+  });
+
+  test("is empty when every charge is deselected", () => {
+    deselect("CHARGE-001", "CHARGE-002", "CHARGE-003");
+    expect(form.selectedChargesByJurisdiction.size).toBe(0);
+  });
+
+  test("ignores deselections for charges no longer on the record", () => {
+    deselect("CHARGE-999");
+    expect([...form.selectedChargesByJurisdiction]).toEqual([
+      ["POLK", [polk1, polk2]],
+      ["LINN", [linn1]],
+    ]);
+  });
+
+  test("leaves a charge deselected if it leaves the record and returns", () => {
+    deselect("CHARGE-003");
+    vi.spyOn(form.opportunity, "chargesByJurisdiction", "get").mockReturnValue(
+      new Map([["POLK", [polk1, polk2]]]),
+    );
+    expect(form.selectedChargesByJurisdiction.has("LINN")).toBe(false);
+
+    vi.spyOn(form.opportunity, "chargesByJurisdiction", "get").mockReturnValue(
+      new Map([
+        ["POLK", [polk1, polk2]],
+        ["LINN", [linn1]],
+      ]),
+    );
+    expect(form.selectedChargesByJurisdiction.has("LINN")).toBe(false);
   });
 });

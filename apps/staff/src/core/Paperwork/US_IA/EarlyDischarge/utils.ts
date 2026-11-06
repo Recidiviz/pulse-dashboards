@@ -30,3 +30,11 @@ export function chargeMetaLine(
 ): string {
   return `${charge.jurisdiction} · ${charge.causeNumber} · Count ${charge.counts}`;
 }
+
+/**
+ * Returns the jurisdiction with its spaces removed, such as "BLACKHAWK" for
+ * "BLACK HAWK", for building element ids.
+ */
+export function jurisdictionSlug(jurisdiction: string): string {
+  return jurisdiction.replace(/\s+/g, "");
+}

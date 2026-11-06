@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { deleteField } from "firebase/firestore";
+
 import { isDemoMode } from "~client-env-utils";
+import { UsIaEarlyDischargeCharge } from "~datatypes";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import {
@@ -106,7 +109,8 @@ export type UsIaEarlyDischargeDraftData = {
   otherProbationDischargeOrderDetails: string;
 } & PenaltyRecords &
   ChargeRecords &
-  Record<NarrativeKey, string>;
+  Record<NarrativeKey, string> &
+  Record<DeselectedChargeKey, boolean>;
 
 // One narrative per jurisdiction, such as "narrative-BLACK HAWK", because each
 // jurisdiction becomes its own ICON discharge order.
@@ -114,6 +118,16 @@ export type NarrativeKey = `narrative-${string}`;
 
 export function narrativeKey(jurisdiction: string): NarrativeKey {
   return `narrative-${jurisdiction}`;
+}
+
+// Charges start selected, so the draft records only the ones an officer
+// deselects, such as "deselected-CHARGE-001": true.
+export type DeselectedChargeKey = `deselected-${string}`;
+
+export function deselectedChargeKey(
+  chargeExternalId: string,
+): DeselectedChargeKey {
+  return `deselected-${chargeExternalId}`;
 }
 
 export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
@@ -235,6 +249,38 @@ export class UsIaEarlyDischargeForm extends FormBase<
     );
 
     return staff;
+  }
+
+  isChargeSelected(chargeExternalId: string): boolean {
+    return this.draftData[deselectedChargeKey(chargeExternalId)] !== true;
+  }
+
+  async setChargesSelected(chargeExternalIds: string[], selected: boolean) {
+    return this.updateDraftDataFields(
+      Object.fromEntries(
+        chargeExternalIds.map((id) => [
+          deselectedChargeKey(id),
+          selected ? deleteField() : true,
+        ]),
+      ),
+    );
+  }
+
+  /**
+   * Returns the opportunity's charges grouped by jurisdiction, keeping only
+   * selected charges and dropping jurisdictions with none left.
+   */
+  get selectedChargesByJurisdiction(): Map<string, UsIaEarlyDischargeCharge[]> {
+    const selected = new Map<string, UsIaEarlyDischargeCharge[]>();
+    this.opportunity.chargesByJurisdiction.forEach((charges, jurisdiction) => {
+      const selectedCharges = charges.filter((charge) =>
+        this.isChargeSelected(charge.chargeExternalId),
+      );
+      if (selectedCharges.length > 0) {
+        selected.set(jurisdiction, selectedCharges);
+      }
+    });
+    return selected;
   }
 
   get currentUserIsSupervisingOfficer(): boolean {

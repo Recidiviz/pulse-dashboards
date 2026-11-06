@@ -29,6 +29,8 @@ import {
   SectionHeader,
   SectionLabel,
   StepCard,
+  StepHeader,
+  StepHelpText,
   StepLabel,
   StepTitle,
 } from "./styles";
@@ -37,8 +39,9 @@ import {
 const MAX_COUNTY_BLOCKS = 1;
 
 export const FormOrderStep = observer(function FormOrderStep() {
-  const { opportunity } = useOpportunityFormContext() as UsIaEarlyDischargeForm;
-  const { person, chargesByJurisdiction } = opportunity;
+  const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
+  const { person, chargesByJurisdiction } = form.opportunity;
+  const { selectedChargesByJurisdiction } = form;
 
   const headerFields = [
     { label: "Date", value: formatWorkflowsDate(new Date()) },
@@ -48,29 +51,43 @@ export const FormOrderStep = observer(function FormOrderStep() {
 
   return (
     <StepCard aria-labelledby="us-ia-ed-order-step-title">
-      <StepLabel>Step 2</StepLabel>
-      <StepTitle id="us-ia-ed-order-step-title">
-        Discharge Order Report
-      </StepTitle>
-      <SectionHeader>
-        <SectionLabel>Shared header</SectionLabel>
-        <WorkflowsBadgePill text="Auto-filled" palette="GREEN" />
-      </SectionHeader>
-      {headerFields.map(({ label, value }) => (
-        <FieldRow key={label}>
-          <FieldLabel>{label}</FieldLabel>
-          <FieldValue>{value}</FieldValue>
-        </FieldRow>
-      ))}
-      {[...chargesByJurisdiction]
-        .slice(0, MAX_COUNTY_BLOCKS)
-        .map(([jurisdiction, charges]) => (
-          <FormCountyBlock
-            key={jurisdiction}
-            jurisdiction={jurisdiction}
-            charges={charges}
-          />
-        ))}
+      <StepHeader>
+        <div>
+          <StepLabel>Step 2</StepLabel>
+          <StepTitle id="us-ia-ed-order-step-title">
+            Discharge Order Report
+          </StepTitle>
+        </div>
+      </StepHeader>
+      {selectedChargesByJurisdiction.size === 0 ? (
+        <StepHelpText>
+          {chargesByJurisdiction.size === 0
+            ? "No eligible charges for this client."
+            : "No charges selected — select charges above to generate the report."}
+        </StepHelpText>
+      ) : (
+        <>
+          <SectionHeader>
+            <SectionLabel>Shared header</SectionLabel>
+            <WorkflowsBadgePill text="Auto-filled" palette="GREEN" />
+          </SectionHeader>
+          {headerFields.map(({ label, value }) => (
+            <FieldRow key={label}>
+              <FieldLabel>{label}</FieldLabel>
+              <FieldValue>{value}</FieldValue>
+            </FieldRow>
+          ))}
+          {[...selectedChargesByJurisdiction]
+            .slice(0, MAX_COUNTY_BLOCKS)
+            .map(([jurisdiction, charges]) => (
+              <FormCountyBlock
+                key={jurisdiction}
+                jurisdiction={jurisdiction}
+                charges={charges}
+              />
+            ))}
+        </>
+      )}
     </StepCard>
   );
 });

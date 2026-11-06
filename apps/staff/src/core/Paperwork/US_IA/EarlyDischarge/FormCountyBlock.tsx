@@ -47,7 +47,7 @@ import {
   SectionHeader,
   SectionLabel,
 } from "./styles";
-import { chargeMetaLine } from "./utils";
+import { chargeMetaLine, jurisdictionSlug } from "./utils";
 
 const Block = styled.section`
   border: 1px solid ${palette.slate10};
@@ -170,10 +170,10 @@ export const FormCountyBlock = observer(function FormCountyBlock({
       ? chargeMetaLine(charges[0])
       : `${jurisdiction} · ${pluralize(charges.length, "charge")}`;
 
-  const jurisdictionSlug = jurisdiction.replace(/\s+/g, "");
+  const slug = jurisdictionSlug(jurisdiction);
 
   return (
-    <Block id={`county-${jurisdictionSlug}`}>
+    <Block id={`county-${slug}`}>
       <BlockHeader>
         <StatusDot />
         <SecureDetailsContent as="div">{headerLabel}</SecureDetailsContent>
@@ -204,7 +204,7 @@ export const FormCountyBlock = observer(function FormCountyBlock({
           </tbody>
         </ChargeTable>
         <NarrativeField
-          id={`narrative-${jurisdictionSlug}`}
+          id={`narrative-${slug}`}
           label="Progress of Supervision / Restitution Status / Recommendations"
           value={String(narrative ?? "")}
           onChange={setNarrative}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { chargeMetaLine } from "../utils";
+import { chargeMetaLine, jurisdictionSlug } from "../utils";
 
 describe("chargeMetaLine", () => {
   it("joins jurisdiction, cause number and count without a county suffix", () => {
@@ -26,5 +26,12 @@ describe("chargeMetaLine", () => {
         counts: 2,
       }),
     ).toBe("BLACK HAWK · FECR002891 · Count 2");
+  });
+});
+
+describe("jurisdictionSlug", () => {
+  it("removes every space from a jurisdiction", () => {
+    expect(jurisdictionSlug("BLACK HAWK")).toBe("BLACKHAWK");
+    expect(jurisdictionSlug("DISTRICT OF COLUMBIA")).toBe("DISTRICTOFCOLUMBIA");
   });
 });

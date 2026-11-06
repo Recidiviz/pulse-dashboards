@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { UsIaEarlyDischargeCharge } from "~datatypes";
 
@@ -42,26 +43,66 @@ function charge(
   };
 }
 
-function renderStep(charges: UsIaEarlyDischargeCharge[]) {
+function renderStep(
+  charges: UsIaEarlyDischargeCharge[],
+  deselectedIds: string[] = [],
+) {
   const chargesByJurisdiction = new Map<string, UsIaEarlyDischargeCharge[]>();
-  charges.forEach((c) =>
-    chargesByJurisdiction.set(c.jurisdiction, [
-      ...(chargesByJurisdiction.get(c.jurisdiction) ?? []),
-      c,
+  charges.forEach((charge) =>
+    chargesByJurisdiction.set(charge.jurisdiction, [
+      ...(chargesByJurisdiction.get(charge.jurisdiction) ?? []),
+      charge,
     ]),
+  );
+  const isChargeSelected = (id: string) => !deselectedIds.includes(id);
+  const selectedChargesByJurisdiction = new Map(
+    [...chargesByJurisdiction]
+      .map(
+        ([jurisdiction, jurisdictionCharges]) =>
+          [
+            jurisdiction,
+            jurisdictionCharges.filter((charge) =>
+              isChargeSelected(charge.chargeExternalId),
+            ),
+          ] as const,
+      )
+      .filter(([, jurisdictionCharges]) => jurisdictionCharges.length > 0),
   );
   const form = {
     opportunity: { chargesByJurisdiction },
+    isChargeSelected,
+    setChargesSelected: vi.fn(),
+    selectedChargesByJurisdiction,
   } as unknown as UsIaEarlyDischargeForm;
 
-  return render(
+  render(
     <OpportunityFormProvider value={form}>
       <FormChargesStep />
     </OpportunityFormProvider>,
   );
+  return form;
 }
 
 describe("FormChargesStep", () => {
+  it("names each county's group by its visible label when there are several counties", () => {
+    renderStep([
+      charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
+      charge("MONROE", "FECR003", "CRIMINAL MISCHIEF"),
+    ]);
+
+    expect(
+      screen.getByRole("group", { name: "POLK · 1 charge" }),
+    ).toBeInTheDocument();
+  });
+
+  it("names the group by its county when the label is hidden", () => {
+    renderStep([charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE")]);
+
+    expect(
+      screen.getByRole("group", { name: "POLK charges" }),
+    ).toBeInTheDocument();
+  });
+
   it("lists charges from every jurisdiction under a label for each", () => {
     renderStep([
       charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
@@ -82,4 +123,117 @@ describe("FormChargesStep", () => {
 
     expect(screen.queryByText(/· 2 charges/)).not.toBeInTheDocument();
   });
+
+  it("starts every charge checked and counts them", () => {
+    renderStep([
+      charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
+      charge("POLK", "FECR002", "BURGLARY IN THE THIRD DEGREE"),
+    ]);
+
+    expect(screen.getByLabelText(/THEFT IN THE THIRD DEGREE/)).toBeChecked();
+    expect(screen.getByLabelText(/BURGLARY IN THE THIRD DEGREE/)).toBeChecked();
+    expect(screen.getByRole("status")).toHaveTextContent("2 selected");
+  });
+
+  it("shows a deselected charge unchecked and leaves it out of the count", () => {
+    renderStep(
+      [
+        charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
+        charge("POLK", "FECR002", "BURGLARY IN THE THIRD DEGREE"),
+      ],
+      ["FECR002"],
+    );
+
+    expect(screen.getByLabelText(/THEFT IN THE THIRD DEGREE/)).toBeChecked();
+    expect(
+      screen.getByLabelText(/BURGLARY IN THE THIRD DEGREE/),
+    ).not.toBeChecked();
+    expect(screen.getByRole("status")).toHaveTextContent("1 selected");
+  });
+
+  it("saves the change when a charge is unchecked or checked", async () => {
+    const form = renderStep(
+      [
+        charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
+        charge("POLK", "FECR002", "BURGLARY IN THE THIRD DEGREE"),
+      ],
+      ["FECR002"],
+    );
+
+    await userEvent.click(screen.getByLabelText(/THEFT IN THE THIRD DEGREE/));
+    expect(form.setChargesSelected).toHaveBeenCalledWith(["FECR001"], false);
+
+    await userEvent.click(
+      screen.getByLabelText(/BURGLARY IN THE THIRD DEGREE/),
+    );
+    expect(form.setChargesSelected).toHaveBeenCalledWith(["FECR002"], true);
+    expect(form.setChargesSelected).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("Select all", () => {
+  const polkCharges = [
+    charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
+    charge("POLK", "FECR002", "BURGLARY IN THE THIRD DEGREE"),
+  ];
+
+  it("shows for a county with several charges, even as the only county", () => {
+    renderStep(polkCharges);
+
+    expect(screen.getByLabelText("Select all")).toBeInTheDocument();
+  });
+
+  it("shows only on counties with several charges", () => {
+    renderStep([
+      ...polkCharges,
+      charge("MONROE", "FECR003", "CRIMINAL MISCHIEF"),
+    ]);
+
+    expect(screen.getAllByLabelText("Select all")).toHaveLength(1);
+  });
+
+  it("hides for a county with one charge", () => {
+    renderStep([charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE")]);
+
+    expect(screen.queryByLabelText("Select all")).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["every charge is selected", true, false, []],
+    ["some charges are selected", false, true, ["FECR002"]],
+    ["no charges are selected", false, false, ["FECR001", "FECR002"]],
+  ])(
+    "when %s, is checked: %s and indeterminate: %s",
+    (_, checked, indeterminate, deselectedIds) => {
+      renderStep(polkCharges, deselectedIds);
+
+      const selectAll = screen.getByLabelText("Select all") as HTMLInputElement;
+      expect(selectAll.checked).toBe(checked);
+      expect(selectAll.indeterminate).toBe(indeterminate);
+    },
+  );
+
+  it.each([
+    ["every charge is selected", [], ["FECR001", "FECR002"], false],
+    ["some charges are selected", ["FECR002"], ["FECR002"], true],
+    [
+      "no charges are selected",
+      ["FECR001", "FECR002"],
+      ["FECR001", "FECR002"],
+      true,
+    ],
+  ])(
+    "when %s, a click sets only the charges that change",
+    async (_, deselectedIds, changedIds, selected) => {
+      const form = renderStep(polkCharges, deselectedIds);
+
+      await userEvent.click(screen.getByLabelText("Select all"));
+
+      expect(form.setChargesSelected).toHaveBeenCalledTimes(1);
+      expect(form.setChargesSelected).toHaveBeenCalledWith(
+        changedIds,
+        selected,
+      );
+    },
+  );
 });

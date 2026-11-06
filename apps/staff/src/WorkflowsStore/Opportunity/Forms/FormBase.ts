@@ -254,18 +254,31 @@ export class FormBase<
     name: string,
     value: FieldValue | string | number | boolean,
   ) {
+    return this.updateDraftDataFields({ [name]: value });
+  }
+
+  /**
+   * Updates several drafted fields in one Firestore write, recorded as a
+   * single edit.
+   */
+  async updateDraftDataFields(
+    fields: Record<string, FieldValue | string | number | boolean>,
+  ) {
     const { person } = this.opportunity;
+    const { currentUserId } = this;
 
     const update = {
       opportunity: this.type,
       updated: {
         by: this.currentUserEmail,
         date: serverTimestamp(),
-        updateById: this.currentUserId,
+        updateById: currentUserId,
       },
-      data: { [name]: value },
-      ...(this.currentUserId && {
-        fieldAuthors: { [name]: this.currentUserId },
+      data: fields,
+      ...(currentUserId && {
+        fieldAuthors: Object.fromEntries(
+          Object.keys(fields).map((name) => [name, currentUserId]),
+        ),
       }),
     };
     const isFirstEdit = !this.formLastUpdated;
