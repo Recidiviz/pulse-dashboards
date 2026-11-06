@@ -25,10 +25,11 @@ const isWeb = Platform.OS === "web";
 
 const sectionId = (tab: Tab) => `meeting-section-${tab.replace(/\s+/g, "-")}`;
 
-export const scrollToSection = (tab: Tab) => {
+export const scrollToSection = (tab: Tab, scrollView: ScrollView | null) => {
   if (!isWeb) return;
-  document
-    .getElementById(sectionId(tab))
+  scrollView
+    ?.getScrollableNode()
+    .querySelector(`#${sectionId(tab)}`)
     ?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 

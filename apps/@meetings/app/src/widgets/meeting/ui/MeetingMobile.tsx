@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigation } from "@react-navigation/native";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
@@ -326,6 +326,10 @@ const MeetingMobile = ({
     durationMs: meetingDetails.durationMs,
   });
 
+  const profileScreen =
+    personType === "client" ? "ClientProfile" : "ResidentProfile";
+  const profileParams = { personId: person.personId.toString() };
+
   return (
     <View className="flex-1 grow">
       <KeyboardAwareScrollView
@@ -414,10 +418,9 @@ const MeetingMobile = ({
           style={{ height: HEADER_HEIGHT }}
         >
           <BlockLink
-            screen={
-              personType === "client" ? "ClientProfile" : "ResidentProfile"
-            }
-            params={{ personId: person.personId.toString() }}
+            screen={profileScreen}
+            params={profileParams}
+            action={StackActions.popTo(profileScreen, profileParams)}
           >
             <ChevronLeftIcon className="text-muted" />
           </BlockLink>

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StackActions } from "@react-navigation/native";
 import React, { ReactNode, useRef, useState } from "react";
 import { ImageBackground, ScrollView, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
@@ -143,7 +144,7 @@ const MeetingDesktop = ({
   const handleTabPress = (tab: Tab) => {
     setActiveTab(tab);
     ignoreVisibleUntilRef.current = Date.now() + TAB_SCROLL_MS;
-    scrollToSection(tab);
+    scrollToSection(tab, scrollView);
   };
 
   const handleSectionVisible = (tab: Tab) => {
@@ -159,6 +160,10 @@ const MeetingDesktop = ({
     printMeetingDetails();
   };
 
+  const profileScreen =
+    personType === "client" ? "ClientProfile" : "ResidentProfile";
+  const profileParams = { personId: person.personId.toString() };
+
   return (
     <View className="flex-1 grow">
       {header}
@@ -166,10 +171,9 @@ const MeetingDesktop = ({
         <View className="w-52 shrink-0 pl-6 pt-12">
           <BlockLink
             className="flex flex-row items-center gap-2"
-            screen={
-              personType === "client" ? "ClientProfile" : "ResidentProfile"
-            }
-            params={{ personId: person.personId.toString() }}
+            screen={profileScreen}
+            params={profileParams}
+            action={StackActions.popTo(profileScreen, profileParams)}
           >
             <ChevronLeftIcon className="size-3 stroke-tertiary stroke-[3px]" />
             <Typography variant="body-s-medium">Back</Typography>
