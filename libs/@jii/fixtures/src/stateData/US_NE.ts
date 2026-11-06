@@ -52,6 +52,7 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
     criticalDocuments: [],
     tentativeReleaseDate: relativeFixtureDate({ years: 2, months: 3 }),
     goodTimeRestorationTodos: [],
+    successPlan: null,
   },
   {
     ...usNeResidentCommonDataFixtures[1],
@@ -82,6 +83,7 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
     criticalDocuments: [],
     tentativeReleaseDate: relativeFixtureDate({ years: 1, months: 6 }),
     goodTimeRestorationTodos: [],
+    successPlan: null,
   },
   {
     ...usNeResidentCommonDataFixtures[2],
@@ -112,6 +114,7 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
     criticalDocuments: [],
     tentativeReleaseDate: relativeFixtureDate({ years: 3, months: 8 }),
     goodTimeRestorationTodos: [],
+    successPlan: null,
   },
   {
     ...usNeResidentCommonDataFixtures[3],
@@ -142,6 +145,7 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
     criticalDocuments: [],
     tentativeReleaseDate: relativeFixtureDate({ years: 2, months: 9 }),
     goodTimeRestorationTodos: [],
+    successPlan: null,
   },
   {
     ...usNeResidentCommonDataFixtures[4],
@@ -179,6 +183,7 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
         },
       },
     ],
+    successPlan: null,
   },
   {
     ...usNeResidentCommonDataFixtures[5],
@@ -209,6 +214,7 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
     criticalDocuments: [],
     tentativeReleaseDate: relativeFixtureDate({ years: 2, months: 7 }),
     goodTimeRestorationTodos: [],
+    successPlan: null,
   },
   {
     ...usNeResidentCommonDataFixtures[6],
@@ -239,5 +245,6 @@ export const usNeResidentJiiDataFixtures: RawUsNeResidentJiiData[] = [
     criticalDocuments: [],
     tentativeReleaseDate: relativeFixtureDate({ years: 1, months: 8 }),
     goodTimeRestorationTodos: [],
+    successPlan: null,
   },
 ];

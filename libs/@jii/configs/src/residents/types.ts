@@ -43,7 +43,8 @@ type ResidentFlag =
   | "usMaReentry"
   | "usMaSentenceDatesV1"
   | "usNeCheckInTool"
-  | "usNycSentenceDatesV1";
+  | "usNycSentenceDatesV1"
+  | "usNeSuccessPlan";
 
 // this type must stay in sync with the UserFlagId enum
 // defined in the prisma schema.

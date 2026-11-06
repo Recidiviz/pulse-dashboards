@@ -49,6 +49,7 @@ enum ResidentFlagId {
     usNeGoodTimeAlerts
     usNeChecklistDocuments
     usNeCheckInTool
+    usNeSuccessPlan
     usAzClassification
     usAzFslImprovements
     usAzIonReferral

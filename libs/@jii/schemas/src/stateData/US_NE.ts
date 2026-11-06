@@ -31,6 +31,25 @@ const usNeCriticalDocumentSchema = z.object({
   documentType: z.string().nullable(),
 });
 
+const usNeActionStepSchema = z.object({
+  description: z.string().nullable(),
+  targetDate: dateStringSchema.nullable(),
+  completedDate: dateStringSchema.nullable(),
+});
+
+const usNeFocusAreaSchema = z.object({
+  description: z.string().nullable(),
+  benefit: z.string().nullable(),
+  goal: z.string().nullable(),
+  actionSteps: z.array(usNeActionStepSchema),
+});
+
+const usNeSuccessPlanSchema = z.object({
+  focusAreas: z.array(usNeFocusAreaSchema),
+  skills: z.array(z.string()),
+  strengths: z.array(z.string()),
+});
+
 // there are other criterion values in the underlying TES/Opportunity
 // but these are the only ones we expect to make it into the todos-specific field
 export const usNeGoodTimeRestorationTodosCriterionEnum = z.enum([
@@ -90,6 +109,8 @@ export const usNeStateDataSchema = usNeResidentCommonSchema.extend({
   lb191Credits: z.number().nullable().default(0),
 
   criticalDocuments: z.array(usNeCriticalDocumentSchema),
+
+  successPlan: usNeSuccessPlanSchema.nullable(),
 });
 export type UsNeResidentJiiData = z.output<typeof usNeStateDataSchema>;
 export type RawUsNeResidentJiiData = z.input<typeof usNeStateDataSchema>;

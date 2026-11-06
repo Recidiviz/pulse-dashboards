@@ -24,6 +24,7 @@ import {
   UsNeCheckInTool,
   UsNeMoreInformation,
   UsNeReentryChecklist,
+  UsNeSuccessPlan,
 } from "~@jii/paths";
 
 import { UsNeCheckInPage } from "./CheckInTool/UsNeCheckInPage";
@@ -31,6 +32,7 @@ import { Definition } from "./Definition/Definition";
 import UsNeSingleResidentHome from "./Home/UsNeSingleResidentHome";
 import { UsNeReentryAssessmentPage } from "./ReentryAssessment/UsNeReentryAssessmentPage";
 import UsNeReentryChecklistPage from "./ReentryChecklist/UsNeReentryChecklistPage";
+import { UsNeSuccessPlanPage } from "./SuccessPlan/PageUsNeSuccessPlan";
 import { UsNeLayout } from "./UsNeLayout/UsNeLayout";
 
 export const UsNeRouter = () => {
@@ -49,6 +51,12 @@ export const UsNeRouter = () => {
           path={ReentryAssessment.path}
           element={<UsNeReentryAssessmentPage />}
         />
+        {residentFlags.usNeSuccessPlan && (
+          <Route
+            path={UsNeSuccessPlan.path}
+            element={<UsNeSuccessPlanPage />}
+          />
+        )}
       </Route>
 
       {/* Check-In Tool screens take over the entire layout and 

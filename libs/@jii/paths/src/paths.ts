@@ -134,8 +134,8 @@ export const UsNeMoreInformation = route("more-information/:pageSlug", {
 });
 
 export const UsNeReentryChecklist = route("reentry-checklist");
-
 export const UsNeCheckInTool = route("check-in-tool");
+export const UsNeSuccessPlan = route("success-plan");
 
 export const ReentryAssessment = route("reentry-assessment");
 
