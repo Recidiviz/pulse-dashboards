@@ -30,95 +30,107 @@ import {
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { JII_BACKEND_PATH } from "../../libs/@jii/data/src/apis/constants";
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/jii",
+export default defineConfig(({ command }) => {
+  // The @nx/vite build executor hands Vite the build mode ("staging", "demo")
+  // as NODE_ENV, the reverse of what Vite's own docs describe for mode and
+  // NODE_ENV. Vite then treats any value but "production" as a development
+  // build, and the React dev JSX transform, with each source file's absolute
+  // path, ends up in the bundle. Every build this config produces is a
+  // production build.
+  if (command === "build") {
+    process.env["NODE_ENV"] = "production";
+  }
 
-  server: {
-    port: 4200,
-    host: "localhost",
-    proxy: {
-      [JII_BACKEND_PATH]: {
-        target: process.env["JII_BACKEND_PROXY_TARGET"],
-        // to match Firebase Hosting proxy behavior, we don't rewrite this path as we do with others
-      },
-      // result here should be equivalent to that in apps/jii-reverse-proxy
-      [REENTRY_BACKEND_PATH]: {
-        target: process.env["CASE_PLANNING_PROXY_TARGET"],
-        ws: true,
-        changeOrigin: true,
-        rewrite: (path) => {
-          return path.replace(REENTRY_BACKEND_PATH, "");
-        },
-        configure(proxy) {
-          // not all environments need this necessarily, but use it if configured
-          const proxyOrigin = process.env["CASE_PLANNING_PROXY_ORIGIN"];
-          if (!proxyOrigin) return;
+  return {
+    root: __dirname,
+    cacheDir: "../../node_modules/.vite/apps/jii",
 
-          proxy.on("proxyReqWs", (req) => {
-            // this overrides CORS restrictions for development
-            req.setHeader("Origin", proxyOrigin);
-          });
+    server: {
+      port: 4200,
+      host: "localhost",
+      proxy: {
+        [JII_BACKEND_PATH]: {
+          target: process.env["JII_BACKEND_PROXY_TARGET"],
+          // to match Firebase Hosting proxy behavior, we don't rewrite this path as we do with others
         },
-      },
-      [REENTRY_DEV_BACKEND_PATH]: {
-        target: process.env["CASE_PLANNING_DEV_PROXY_TARGET"],
-        ws: true,
-        changeOrigin: true,
-        rewrite: (path) => {
-          return path.replace(REENTRY_DEV_BACKEND_PATH, "");
-        },
-        configure(proxy) {
-          // not all environments need this necessarily, but use it if configured
-          const proxyOrigin = process.env["CASE_PLANNING_DEV_PROXY_ORIGIN"];
-          if (!proxyOrigin) return;
+        // result here should be equivalent to that in apps/jii-reverse-proxy
+        [REENTRY_BACKEND_PATH]: {
+          target: process.env["CASE_PLANNING_PROXY_TARGET"],
+          ws: true,
+          changeOrigin: true,
+          rewrite: (path) => {
+            return path.replace(REENTRY_BACKEND_PATH, "");
+          },
+          configure(proxy) {
+            // not all environments need this necessarily, but use it if configured
+            const proxyOrigin = process.env["CASE_PLANNING_PROXY_ORIGIN"];
+            if (!proxyOrigin) return;
 
-          proxy.on("proxyReqWs", (req) => {
-            // this overrides CORS restrictions for development
-            req.setHeader("Origin", proxyOrigin);
-          });
+            proxy.on("proxyReqWs", (req) => {
+              // this overrides CORS restrictions for development
+              req.setHeader("Origin", proxyOrigin);
+            });
+          },
+        },
+        [REENTRY_DEV_BACKEND_PATH]: {
+          target: process.env["CASE_PLANNING_DEV_PROXY_TARGET"],
+          ws: true,
+          changeOrigin: true,
+          rewrite: (path) => {
+            return path.replace(REENTRY_DEV_BACKEND_PATH, "");
+          },
+          configure(proxy) {
+            // not all environments need this necessarily, but use it if configured
+            const proxyOrigin = process.env["CASE_PLANNING_DEV_PROXY_ORIGIN"];
+            if (!proxyOrigin) return;
+
+            proxy.on("proxyReqWs", (req) => {
+              // this overrides CORS restrictions for development
+              req.setHeader("Origin", proxyOrigin);
+            });
+          },
         },
       },
     },
-  },
 
-  preview: {
-    port: 4300,
-    host: "localhost",
-  },
+    preview: {
+      port: 4300,
+      host: "localhost",
+    },
 
-  plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+    plugins: [
+      react({
+        babel: {
+          plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
+        },
+      }),
+      tsconfigPaths(),
+    ],
+
+    build: {
+      outDir: "../../dist/apps/jii",
+      sourcemap: true,
+      reportCompressedSize: true,
+      commonjsOptions: {
+        transformMixedEsModules: true,
       },
-    }),
-    tsconfigPaths(),
-  ],
-
-  build: {
-    outDir: "../../dist/apps/jii",
-    sourcemap: true,
-    reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
     },
-  },
 
-  test: {
-    passWithNoTests: true,
-    globals: true,
-    environment: "jsdom",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    setupFiles: ["./src/setupTests.ts"],
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    restoreMocks: true,
-    unstubEnvs: true,
-    unstubGlobals: true,
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/apps/jii",
-      provider: "v8",
+    test: {
+      passWithNoTests: true,
+      globals: true,
+      environment: "jsdom",
+      include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+      setupFiles: ["./src/setupTests.ts"],
+      globalSetup: ["src/setupTestsGlobal.ts"],
+      restoreMocks: true,
+      unstubEnvs: true,
+      unstubGlobals: true,
+      reporters: ["default"],
+      coverage: {
+        reportsDirectory: "../../coverage/apps/jii",
+        provider: "v8",
+      },
     },
-  },
-}));
+  };
+});
