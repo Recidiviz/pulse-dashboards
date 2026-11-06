@@ -71,4 +71,11 @@ export type BuildServerOptions<TRouter extends AnyRouter> = {
   auth0Options?: Auth0Config;
   jwtOptions?: JwtConfig;
   firebaseAuthOptions?: FirebaseAuthConfig;
+  /**
+   * Browser origins allowed to call this server cross-origin, in the forms
+   * @fastify/cors accepts: exact origins ("https://opportunities.app") or
+   * RegExps. A server that omits this answers every origin; see
+   * buildCommonServer for what that does and does not expose.
+   */
+  corsOrigins?: (string | RegExp)[];
 };

@@ -118,8 +118,17 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     );
   }
 
+  // Browsers ignore Access-Control-Allow-Credentials when the allowed origin
+  // is the wildcard, so the fallback never lets another site read a
+  // credentialed response; it exists for servers that have not yet listed
+  // the origins that call them. Scanners flag the wildcard regardless.
+  if (!options.corsOrigins) {
+    server.log.warn(
+      "corsOrigins not set; answering cross-origin requests from any origin",
+    );
+  }
   server.register(cors, {
-    origin: "*",
+    origin: options.corsOrigins ?? "*",
     methods: ["POST", "GET", "OPTIONS", "PUT"],
     credentials: true,
   });

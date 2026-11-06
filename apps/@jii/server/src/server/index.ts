@@ -19,6 +19,7 @@ import { appRouter, createContext, firebaseApp } from "~@jii/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
 import { registerNoStoreHook } from "./cacheControl";
+import { corsOriginsFromEnv } from "./corsOrigins";
 import { registerAuthRoutes } from "./routes";
 
 export function buildServer() {
@@ -43,6 +44,7 @@ export function buildServer() {
     // the extra path segment lets us namespace the server in the frontend proxy config
     trpcPrefix: "/api/trpc",
     firebaseAuthOptions,
+    corsOrigins: corsOriginsFromEnv(),
   });
 
   registerNoStoreHook(server);
