@@ -20,6 +20,7 @@ import nxPlugin from "@nx/eslint-plugin";
 import eslintPluginJsxA11y from "eslint-plugin-jsx-a11y";
 import eslintPluginMobx from "eslint-plugin-mobx";
 import eslintPluginNotice from "eslint-plugin-notice";
+import eslintPluginReactHooks from "eslint-plugin-react-hooks";
 import eslintPluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import eslintPluginVitest from "eslint-plugin-vitest";
 import eslintPluginYml from "eslint-plugin-yml";
@@ -268,6 +269,13 @@ const getWorkingReactConfig = () => {
           }
         }
       }
+    }
+    // Nx reads the react-hooks rules from configs.recommended.rules, but
+    // eslint-plugin-react-hooks 6+ made configs.recommended a flat config
+    // array, which leaves rules undefined and fails config validation.
+    if (singleConfig?.plugins?.["react-hooks"]) {
+      singleConfig.rules =
+        eslintPluginReactHooks.configs["recommended-legacy"].rules;
     }
   }
   return config;
