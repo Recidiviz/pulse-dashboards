@@ -53889,14 +53889,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.3":
-  version: 19.2.3
-  resolution: "react-dom@npm:19.2.3"
+"react-dom@npm:19.2.9":
+  version: 19.2.9
+  resolution: "react-dom@npm:19.2.9"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.3
-  checksum: 10c0/dc43f7ede06f46f3acc16ee83107c925530de9b91d1d0b3824583814746ff4c498ea64fd65cd83aba363205268adff52e2827c582634ae7b15069deaeabc4892
+    react: ^19.2.9
+  checksum: 10c0/798031e6f5bbc12f5ff10dc3a92d6ec50d73a5b0acdbf1075a1d3fc949c48410784a1e5eb8d2096e6b86067acbc9353048da0ccbe4adbc48e247bf68f2cb1a24
   languageName: node
   linkType: hard
 
@@ -54080,10 +54080,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^19.2.3":
-  version: 19.3.0
-  resolution: "react-is@npm:19.3.0"
-  checksum: 10c0/99b16fc1009222ec0bbe05286566c865908430778ea6ba90dd418c7a11594c6cbb8db58432735b9203e3c6463e3eef5a399df1317ee2d75fd96b3a88cfaa662e
+"react-is@npm:^19.2.9":
+  version: 19.3.1
+  resolution: "react-is@npm:19.3.1"
+  checksum: 10c0/428e02d986d56f1859c57756084489f6d2900fd686905003c405b32f1168738b78772bfa4bb6c706f5ac821199171522c28bf6434281f524f901459390a19606
   languageName: node
   linkType: hard
 
@@ -54787,15 +54787,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-test-renderer@npm:19.2.3":
-  version: 19.2.3
-  resolution: "react-test-renderer@npm:19.2.3"
+"react-test-renderer@npm:19.2.9":
+  version: 19.2.9
+  resolution: "react-test-renderer@npm:19.2.9"
   dependencies:
-    react-is: "npm:^19.2.3"
+    react-is: "npm:^19.2.9"
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.3
-  checksum: 10c0/842b82239dbddbc536083a6260c3e1b0507c02a3400bd05879fc19160468fd0f8ab79fec5dceffa6113b131835cc7621212f8415b46ea5156ab66bbfd7e24297
+    react: ^19.2.9
+  checksum: 10c0/432e905c01bfba7ad1dda931b6b55ccc63aaf190c0f042a344d9f7d9af4fe53224add7938c4310ac74fe1d0b5fbf32987f508681eb719244406a158369e42d2c
   languageName: node
   linkType: hard
 
@@ -54966,10 +54966,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.3":
-  version: 19.2.3
-  resolution: "react@npm:19.2.3"
-  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
+"react@npm:19.2.9":
+  version: 19.2.9
+  resolution: "react@npm:19.2.9"
+  checksum: 10c0/2177cc3206824d0d18fa2c40bbbfd64f5716d5f932917d1be6863ce2f14555e6df60fa4621a69780f8986f27d5e0d696b0d8d6cac941f45b3bacf1bea2e0f732
   languageName: node
   linkType: hard
 
@@ -55545,7 +55545,7 @@ __metadata:
     puppeteer: "npm:^24.32.0"
     qs: "npm:^6.9.7"
     query-string: "npm:^7.0.1"
-    react: "npm:19.2.3"
+    react: "npm:19.2.9"
     react-accessible-accordion: "npm:^4.0.0"
     react-anchor-navigation: "npm:^0.2.7"
     react-aspect-ratio: "npm:^1.1.6"
@@ -55555,7 +55555,7 @@ __metadata:
     react-data-table-component: "npm:^7.6.2"
     react-datepicker: "npm:^8.8.0"
     react-diff-viewer-continued: "npm:^3.4.0"
-    react-dom: "npm:19.2.3"
+    react-dom: "npm:19.2.9"
     react-google-recaptcha: "npm:^3.1.0"
     react-helmet: "npm:^6.1.0"
     react-hot-toast: "npm:^2.4.1"
@@ -55580,7 +55580,7 @@ __metadata:
     react-spinners: "npm:^0.8.1"
     react-sticky-fill: "npm:^0.8.4"
     react-table: "npm:^7.6.3"
-    react-test-renderer: "npm:19.2.3"
+    react-test-renderer: "npm:19.2.9"
     react-textarea-autosize: "npm:^8.3.4"
     react-to-pdf: "npm:^1.0.1"
     react-to-print: "npm:^3.0.2"
