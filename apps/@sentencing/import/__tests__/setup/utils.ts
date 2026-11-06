@@ -18,9 +18,11 @@
 import { faker } from "@faker-js/faker";
 import { z } from "zod";
 
-import { TEST_STATE_CODE } from "~@sentencing/import/test/setup/constants";
 import { Prisma, PrismaClient, StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
+
+/** The state whose database the tests run against. */
+export const TEST_STATE_CODE = StateCode.US_ID;
 
 const PRISMA_TABLES = Object.values(Prisma.ModelName);
 

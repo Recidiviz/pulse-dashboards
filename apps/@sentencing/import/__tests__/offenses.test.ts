@@ -16,28 +16,17 @@
 // =============================================================================
 
 import { OFFENSES_FILE_NAME } from "~@sentencing/import/constants";
-import { getImportHandler } from "~@sentencing/import/handler";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
-import {
-  TEST_OFFENSES_FILE_NAME,
-  TEST_STATE_CODE,
-} from "~@sentencing/import/test/setup/constants";
 import {
   fakeMandatoryMinimum,
   fakeOffense,
 } from "~@sentencing/import/test/setup/seed";
+import { importFile } from "~@sentencing/import/test/setup/utils";
 import { StateCode } from "~@sentencing/prisma/client";
-import { dataProviderSingleton } from "~data-import-plugin/testkit";
-
-let importHandler: ReturnType<typeof getImportHandler>;
 
 describe("import offense data", () => {
-  beforeAll(async () => {
-    importHandler = getImportHandler();
-  });
-
   test("should import new offenses", async () => {
-    dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
+    await importFile(OFFENSES_FILE_NAME, [
       // Old offense
       {
         state_code: StateCode.US_ID,
@@ -69,8 +58,6 @@ describe("import offense data", () => {
         ],
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
 
     // Check that the new offense was created
     const dbOffenses = await testPrismaClient.offense.findMany({
@@ -116,7 +103,7 @@ describe("import offense data", () => {
   });
 
   test("should keep existing offense if missing from the import", async () => {
-    dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
+    await importFile(OFFENSES_FILE_NAME, [
       // New offense
       {
         state_code: StateCode.US_ID,
@@ -124,8 +111,6 @@ describe("import offense data", () => {
         frequency: 10,
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
 
     const dbOffenses = await testPrismaClient.offense.findMany();
 
@@ -147,7 +132,7 @@ describe("import offense data", () => {
     });
 
     // Missing the placeholder offense
-    dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
+    await importFile(OFFENSES_FILE_NAME, [
       // Old offense
       {
         state_code: StateCode.US_ID,
@@ -163,8 +148,6 @@ describe("import offense data", () => {
         frequency: 10,
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
 
     // Check that the new offense was created
     const dbOffenses = await testPrismaClient.offense.findMany();
@@ -195,7 +178,7 @@ describe("import offense data", () => {
   });
 
   test("should override provided mandatory minimums", async () => {
-    dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
+    await importFile(OFFENSES_FILE_NAME, [
       // Old offense
       {
         state_code: StateCode.US_ID,
@@ -213,8 +196,6 @@ describe("import offense data", () => {
         ],
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
 
     // Check that the new offense was created
     const dbOffenses = await testPrismaClient.offense.findMany({
@@ -242,7 +223,7 @@ describe("import offense data", () => {
   });
 
   test("should import offense category for existing and new offenses", async () => {
-    dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
+    await importFile(OFFENSES_FILE_NAME, [
       // Existing (seed) offense with category update
       {
         state_code: StateCode.US_ID,
@@ -259,8 +240,6 @@ describe("import offense data", () => {
         frequency: 50,
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
 
     const dbOffenses = await testPrismaClient.offense.findMany({
       where: {

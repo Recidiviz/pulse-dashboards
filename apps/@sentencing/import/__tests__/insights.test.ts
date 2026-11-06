@@ -19,17 +19,12 @@ import { faker } from "@faker-js/faker";
 import { describe, expect, test } from "vitest";
 
 import { INSIGHTS_FILE_NAME } from "~@sentencing/import/constants";
-import { getImportHandler } from "~@sentencing/import/handler";
 import { insightImportSchema } from "~@sentencing/import/models";
 import {
   createFakeDispositionsForImport,
   createFakeRecidivismSeriesForImport,
 } from "~@sentencing/import/test/common/utils";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
-import {
-  TEST_INSIGHTS_FILE_NAME,
-  TEST_STATE_CODE,
-} from "~@sentencing/import/test/setup/constants";
 import {
   fakeInsight,
   fakeInsightId,
@@ -41,9 +36,6 @@ import {
 } from "~@sentencing/import/test/setup/utils";
 import { loadInsightsInBatches } from "~@sentencing/import/utils/insights";
 import { Gender, StateCode } from "~@sentencing/prisma/client";
-import { dataProviderSingleton } from "~data-import-plugin/testkit";
-
-let importHandler: ReturnType<typeof getImportHandler>;
 
 /** Imports one US_MO insight for "mo-offense" through the SAR loaders. */
 async function importMOInsight(
@@ -106,10 +98,6 @@ function createInsightImportRow({
 }
 
 describe("import insight data", () => {
-  beforeAll(async () => {
-    importHandler = getImportHandler();
-  });
-
   test("should import new insights and delete old data", async () => {
     // Create the second offense so insights can link to it
     await testPrismaClient.offense.create({
@@ -119,7 +107,7 @@ describe("import insight data", () => {
       },
     });
 
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       // New insights
       {
         state_code: StateCode.US_ID,
@@ -172,8 +160,6 @@ describe("import insight data", () => {
         ]),
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
 
     // Check that the new Insights were created
     const dbInsights = await testPrismaClient.insight.findMany({
@@ -270,7 +256,7 @@ describe("import insight data", () => {
   });
 
   test("should keep non-US_MO sentence distributions below the minimum sample size", async () => {
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       {
         state_code: StateCode.US_ID,
         gender: Gender.MALE,
@@ -292,8 +278,6 @@ describe("import insight data", () => {
       },
     ]);
 
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
-
     const dbInsights = await testPrismaClient.insight.findMany({
       include: { dispositionData: true },
     });
@@ -304,7 +288,7 @@ describe("import insight data", () => {
   });
 
   test("should skip insights with no matching offense", async () => {
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       {
         state_code: StateCode.US_ID,
         gender: Gender.MALE,
@@ -324,8 +308,6 @@ describe("import insight data", () => {
         ]),
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
 
     const dbInsights = await testPrismaClient.insight.findMany();
     // The seeded insight should be deleted and the new one skipped (no matching offense)
@@ -354,7 +336,7 @@ describe("import insight data", () => {
   });
 
   test("should handle data without sentence lengths", async () => {
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       // New insights
       {
         state_code: StateCode.US_ID,
@@ -396,8 +378,6 @@ describe("import insight data", () => {
         ]),
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
 
     // Check that the new Insights were created
     const dbInsights = await testPrismaClient.insight.findMany({
@@ -453,7 +433,7 @@ describe("import insight data", () => {
   });
 
   test("should handle recidivism series without sentence type", async () => {
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       // New insights
       {
         state_code: StateCode.US_ID,
@@ -501,8 +481,6 @@ describe("import insight data", () => {
         ]),
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
 
     // Check that the new Insights were created
     const dbInsights = await testPrismaClient.insight.findMany({
@@ -570,7 +548,7 @@ describe("import insight data", () => {
   });
 
   test("should replace an existing insight with the same gender, offense, and assessment score bucket", async () => {
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       createInsightImportRow({
         gender: fakeInsight.gender,
         assessmentScoreBucketStart: fakeInsight.assessmentScoreBucketStart,
@@ -579,8 +557,6 @@ describe("import insight data", () => {
         sentenceType: "Term",
       }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
 
     const dbInsights = await testPrismaClient.insight.findMany({
       include: { rollupRecidivismSeries: true, dispositionData: true },
@@ -603,7 +579,7 @@ describe("import insight data", () => {
   });
 
   test("should keep the last row when the same insight appears twice in a file", async () => {
-    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+    await importFile(INSIGHTS_FILE_NAME, [
       createInsightImportRow({
         assessmentScoreBucketStart: 30,
         assessmentScoreBucketEnd: 40,
@@ -617,8 +593,6 @@ describe("import insight data", () => {
         sentenceType: "Term",
       }),
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
 
     const dbInsights = await testPrismaClient.insight.findMany({
       include: { rollupRecidivismSeries: true, dispositionData: true },

@@ -16,34 +16,19 @@
 // =============================================================================
 
 import { COUNTIES_AND_DISTRICTS_FILES_NAME } from "~@sentencing/import/constants";
-import { getImportHandler } from "~@sentencing/import/handler";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
-import {
-  TEST_COUNTIES_AND_DISTRICTS_FILES_NAME,
-  TEST_STATE_CODE,
-} from "~@sentencing/import/test/setup/constants";
+import { importFile } from "~@sentencing/import/test/setup/utils";
 import { StateCode } from "~@sentencing/prisma/client";
-import { dataProviderSingleton } from "~data-import-plugin/testkit";
-
-let importHandler: ReturnType<typeof getImportHandler>;
 
 describe("import county and district data", () => {
-  beforeAll(async () => {
-    importHandler = getImportHandler();
-  });
-
   test("should import new counties and districts and delete old ones", async () => {
-    dataProviderSingleton.setData(TEST_COUNTIES_AND_DISTRICTS_FILES_NAME, [
+    await importFile(COUNTIES_AND_DISTRICTS_FILES_NAME, [
       // New county + district data
       {
         state_code: StateCode.US_ID,
         county: "Plout",
         district: "District 2",
       },
-    ]);
-
-    await importHandler.import(TEST_STATE_CODE, [
-      COUNTIES_AND_DISTRICTS_FILES_NAME,
     ]);
 
     const dbDistricts = await testPrismaClient.district.findMany({

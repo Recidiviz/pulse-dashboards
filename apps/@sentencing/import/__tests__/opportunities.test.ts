@@ -19,13 +19,9 @@ import { faker } from "@faker-js/faker";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITIES_FILE_NAME } from "~@sentencing/import/constants";
-import { getImportHandler } from "~@sentencing/import/handler";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
-import {
-  TEST_OPPORTUNITIES_FILE_NAME,
-  TEST_STATE_CODE,
-} from "~@sentencing/import/test/setup/constants";
 import { fakeOpportunity } from "~@sentencing/import/test/setup/seed";
+import { importFile } from "~@sentencing/import/test/setup/utils";
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
 import {
   AsamLevelOfCareRecommendationCriterion,
@@ -33,19 +29,12 @@ import {
   Gender,
   PriorCriminalHistoryCriterion,
 } from "~@sentencing/prisma/client";
-import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 const lastUpdatedDate = new Date(1, 1, 1);
 
-let importHandler: ReturnType<typeof getImportHandler>;
-
 describe("import opportunity data", () => {
-  beforeAll(async () => {
-    importHandler = getImportHandler();
-  });
-
   test("should import new opportunity and delete old data", async () => {
-    dataProviderSingleton.setData(TEST_OPPORTUNITIES_FILE_NAME, [
+    await importFile(OPPORTUNITIES_FILE_NAME, [
       // New opportunity
       {
         OpportunityName: "new-opportunity-name",
@@ -79,8 +68,6 @@ describe("import opportunity data", () => {
         status: "Active",
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OPPORTUNITIES_FILE_NAME]);
 
     // Check that the new opportunity was created
     const dbOpportunities = await testPrismaClient.opportunity.findMany({});
@@ -128,7 +115,7 @@ describe("import opportunity data", () => {
   });
 
   test("should upsert existing opportunity", async () => {
-    dataProviderSingleton.setData(TEST_OPPORTUNITIES_FILE_NAME, [
+    await importFile(OPPORTUNITIES_FILE_NAME, [
       // existing opportunity
       {
         OpportunityName: fakeOpportunity.opportunityName,
@@ -170,8 +157,6 @@ describe("import opportunity data", () => {
         status: "Active",
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OPPORTUNITIES_FILE_NAME]);
 
     // Check that the new opportunity was created
     const dbOpportunities = await testPrismaClient.opportunity.findMany({});
@@ -231,7 +216,7 @@ describe("import opportunity data", () => {
       ],
     });
 
-    dataProviderSingleton.setData(TEST_OPPORTUNITIES_FILE_NAME, [
+    await importFile(OPPORTUNITIES_FILE_NAME, [
       // original existing opportunity
       {
         OpportunityName: fakeOpportunity.opportunityName,
@@ -253,8 +238,6 @@ describe("import opportunity data", () => {
         status: "Active",
       },
     ]);
-
-    await importHandler.import(TEST_STATE_CODE, [OPPORTUNITIES_FILE_NAME]);
 
     // Check that the new opportunity was created
     const dbOpportunities = await testPrismaClient.opportunity.findMany({});
