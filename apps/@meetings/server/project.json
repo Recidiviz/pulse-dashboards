@@ -279,7 +279,8 @@
           "LABEL_STUDIO_URL": "$LABEL_STUDIO_URL",
           "LABEL_STUDIO_API_TOKEN": "$LABEL_STUDIO_API_TOKEN",
           "LABEL_STUDIO_IAP_AUDIENCE": "$LABEL_STUDIO_IAP_AUDIENCE",
-          "LABEL_STUDIO_PROJECT_ID": "$LABEL_STUDIO_PROJECT_ID"
+          "LABEL_STUDIO_PROJECT_ID": "$LABEL_STUDIO_PROJECT_ID",
+          "LABEL_STUDIO_LLMAJ_TRIAGE_PROJECT_ID": "$LABEL_STUDIO_LLMAJ_TRIAGE_PROJECT_ID"
         },
         "serviceAccount": "meetings@recidiviz-dashboard-staging.iam.gserviceaccount.com"
       }

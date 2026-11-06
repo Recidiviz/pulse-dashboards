@@ -233,6 +233,7 @@ function useLabelStudio(
     client: {} as never,
     baseUrl: "https://label-studio.example.com/",
     projectId: 7,
+    llmajTriageProjectId: 8,
   });
   const snapshot: LabelStudioSnapshot = {
     fetchedAt: NOW,

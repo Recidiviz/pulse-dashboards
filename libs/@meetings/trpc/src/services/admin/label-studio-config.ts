@@ -26,6 +26,8 @@ export interface LabelStudioConfig {
   /** Where Label Studio is served, for building links to its UI. */
   baseUrl: string;
   projectId: number;
+  /** The "Meetings - LLMAJ Triage" project, where QAers triage judge BADs. */
+  llmajTriageProjectId: number;
 }
 
 /**
@@ -41,6 +43,7 @@ export function labelStudioConfig(): LabelStudioConfig | null {
     refreshToken: env.LABEL_STUDIO_API_TOKEN,
     iapAudience: env.LABEL_STUDIO_IAP_AUDIENCE,
     projectId: env.LABEL_STUDIO_PROJECT_ID,
+    llmajTriageProjectId: env.LABEL_STUDIO_LLMAJ_TRIAGE_PROJECT_ID,
   };
 
   const present = Object.entries(values).filter(([, v]) => v !== undefined);
@@ -63,5 +66,6 @@ export function labelStudioConfig(): LabelStudioConfig | null {
       keyFile: env.SA_KEY_FILE,
     }),
     projectId: values.projectId as number,
+    llmajTriageProjectId: values.llmajTriageProjectId as number,
   };
 }

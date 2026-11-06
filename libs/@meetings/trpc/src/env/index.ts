@@ -51,6 +51,11 @@ const envSchema = z.object({
   LABEL_STUDIO_API_TOKEN: z.string().min(1).optional(),
   LABEL_STUDIO_IAP_AUDIENCE: z.string().min(1).optional(),
   LABEL_STUDIO_PROJECT_ID: z.coerce.number().int().positive().optional(),
+  LABEL_STUDIO_LLMAJ_TRIAGE_PROJECT_ID: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional(),
   /** Only set outside GCP; on Cloud Run the IAP token comes from ADC. */
   SA_KEY_FILE: z.string().min(1).optional(),
 });
