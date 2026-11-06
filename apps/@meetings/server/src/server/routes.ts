@@ -27,8 +27,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
-import { GoogleAuth, OAuth2Client } from "google-auth-library";
-import { run_v2 } from "googleapis";
+import { OAuth2Client } from "google-auth-library";
 import { z } from "zod";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
@@ -110,30 +109,6 @@ async function verifyGoogleIdToken(authorizationHeaders: string | undefined) {
     payload.email !== env.CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL
   ) {
     throw new AuthError("Caller is not the Cloud Tasks service account", 401);
-  }
-
-  const auth = new GoogleAuth({
-    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
-  });
-
-  const runClient = new run_v2.Run({ auth });
-  // technically the cloud tasks project/location could be different from the cloud run one,
-  // but in practice they are the same so we can reuse the env vars
-  const resource = `projects/${env.CLOUD_TASKS_PROJECT}/locations/${env.CLOUD_TASKS_LOCATION}/services/${process.env["K_SERVICE"]}`;
-  const runInvokerPermission = "run.routes.invoke";
-  const iamResponse =
-    await runClient.projects.locations.services.testIamPermissions({
-      resource,
-      requestBody: {
-        permissions: [runInvokerPermission],
-      },
-    });
-
-  if (!iamResponse.data.permissions?.includes(runInvokerPermission)) {
-    throw new AuthError(
-      "Caller does not have Cloud Run invoker permission",
-      403,
-    );
   }
 
   console.log(`Email verified: ${payload.email}`);

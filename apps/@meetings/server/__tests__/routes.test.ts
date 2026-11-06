@@ -26,7 +26,6 @@ import env from "~@meetings/server/env";
 import {
   mockCloudTasksClient,
   setGetPayloadImp,
-  setTestIamPermissionsImp,
   testAndGetSentryReports,
   testPrismaClient,
   testServer,
@@ -204,30 +203,6 @@ describe("tasks", () => {
           expect.objectContaining({
             error: "Unauthorized",
             message: "Caller is not the Cloud Tasks service account",
-          }),
-        );
-      });
-
-      test("Should return authorization error if caller lacks Cloud Run invoker permission", async () => {
-        setTestIamPermissionsImp(
-          vi.fn().mockResolvedValue({ data: { permissions: [] } }),
-        );
-
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/stitch-audio",
-          headers: { authorization: `Bearer token` },
-          body: {
-            stateCode: "US_NE",
-            meetingId: fakeMeeting.id,
-          },
-        });
-
-        expect(response.statusCode).toBe(403);
-        expect(JSON.parse(response.body)).toEqual(
-          expect.objectContaining({
-            error: "Forbidden",
-            message: "Caller does not have Cloud Run invoker permission",
           }),
         );
       });
