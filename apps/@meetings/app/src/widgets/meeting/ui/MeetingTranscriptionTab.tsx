@@ -140,11 +140,11 @@ const MeetingsTranscriptionTab = ({
           key={`${u.startTimeMs}-${index}`}
           className="mt-3 flex flex-col gap-1"
         >
-          <View className="flex flex-row gap-2">
-            <Typography variant="body-s-regular">
+          <View className="flex flex-row items-baseline gap-2">
+            <Typography variant="body-s-regular" className="!text-tertiary">
               {formatSpeakerStartTime(u.startTimeMs)}
             </Typography>
-            <Typography variant="button-m" className="text-secondary">
+            <Typography variant="button-m" className="!text-tertiary">
               {formatSpeakerLabel({
                 baseLabel: u.speaker,
                 meetingStaffEmail,
