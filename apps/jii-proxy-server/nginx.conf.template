@@ -1,5 +1,16 @@
+# Third-party upstreams such as Segment's CDN send no HSTS. Fill it in only
+# when the upstream left it out: nginx skips a header whose value is empty,
+# and a second HSTS header on responses that already carry one would be
+# ignored by browsers but read as a misconfiguration.
+map $upstream_http_strict_transport_security $hsts_if_missing {
+    ""      "max-age=31536000; includeSubDomains";
+    default "";
+}
+
 server {
     listen 8080;
+
+    add_header Strict-Transport-Security $hsts_if_missing always;
 
     location /segment-cdn/ {
         proxy_pass https://cdn.segment.com/;
