@@ -77,7 +77,12 @@ jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
   useSnackbar: () => ({ showSnackbar: mockShowSnackbar }),
 }));
 
-const flag = { llm: false, labelStudio: false, vote: false };
+const flag = {
+  llm: false,
+  labelStudio: false,
+  triageReview: false,
+  vote: false,
+};
 
 const outcome: ReviewOutcomeSummary = {
   id: "outcome-1",

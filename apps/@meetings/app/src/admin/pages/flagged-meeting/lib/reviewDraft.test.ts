@@ -35,7 +35,12 @@ const draft = (overrides: Partial<ReviewDraft>): ReviewDraft => ({
 });
 
 describe("overridableSources", () => {
-  const noFlag = { llm: false, labelStudio: false, vote: false };
+  const noFlag = {
+    llm: false,
+    labelStudio: false,
+    triageReview: false,
+    vote: false,
+  };
   const sections = {
     CASE_NOTE: { ...noFlag, llm: true },
     ACTION_ITEMS: noFlag,

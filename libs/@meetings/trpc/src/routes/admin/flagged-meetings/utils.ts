@@ -43,6 +43,10 @@ import {
   LLMAJ_TRIGGER_KEYS,
   type LlmajDimension,
 } from "~@meetings/tasks/admin/llmaj-grades";
+import {
+  isLlmajTriageGradedBad,
+  type LlmajTriageSectionResult,
+} from "~@meetings/tasks/admin/llmaj-triage-grades";
 import type { EvaluationScores } from "~@meetings/tasks/llm/evaluators";
 import { DraftingOutputSchema } from "~@meetings/tasks/llm/schemas";
 import {
@@ -309,15 +313,20 @@ export interface LabelStudioFlagInput {
  * would otherwise be the only place to find the problem: an Overall BAD that
  * sits on top of a BAD case note or BAD action items adds nothing a reviewer
  * has to look at separately. The same holds for a Label Studio field outside
- * the three graded dimensions.
+ * the three graded dimensions, and for an LLMAJ triage Overall BAD.
  */
 export function computeSectionFlags({
   llmDimensions,
   labelStudio,
+  triageReview,
   votes,
 }: {
   llmDimensions: LlmajDimension[] | undefined;
   labelStudio: LabelStudioFlagInput | undefined;
+  /** This meeting's collapsed triage grade per section, keyed the same way SectionFlags is. */
+  triageReview:
+    | Partial<Record<FlagSection, LlmajTriageSectionResult>>
+    | undefined;
   votes: Pick<OutputVoteRow, "tab" | "vote">[];
 }): SectionFlags {
   const llmBad = (key: "caseNote" | "actionItems" | "overall") =>
@@ -325,19 +334,26 @@ export function computeSectionFlags({
     (llmDimensions ?? []).some((d) => d.key === key && d.bad);
   const lsBad = (key: GradedDimensionKey) =>
     labelStudio?.collapsed[key] === "BAD";
+  const triageBad = (section: FlagSection) => {
+    const result = triageReview?.[section];
+    return result !== undefined && isLlmajTriageGradedBad(result);
+  };
 
   const llmSectionsBad = llmBad("caseNote") || llmBad("actionItems");
   const lsSectionsBad = lsBad("caseNote") || lsBad("actionItems");
+  const triageSectionsBad = triageBad("CASE_NOTE") || triageBad("ACTION_ITEMS");
 
   const flags: SectionFlags = {
     CASE_NOTE: {
       llm: llmBad("caseNote"),
       labelStudio: lsBad("caseNote"),
+      triageReview: triageBad("CASE_NOTE"),
       vote: false,
     },
     ACTION_ITEMS: {
       llm: llmBad("actionItems"),
       labelStudio: lsBad("actionItems"),
+      triageReview: triageBad("ACTION_ITEMS"),
       vote: false,
     },
     OVERALL: {
@@ -345,6 +361,7 @@ export function computeSectionFlags({
       labelStudio:
         !lsSectionsBad &&
         (lsBad("overall") || labelStudio?.hasUncoveredBadGrade === true),
+      triageReview: !triageSectionsBad && triageBad("OVERALL"),
       vote: false,
     },
   };
@@ -358,7 +375,9 @@ export function computeSectionFlags({
 }
 
 export function isAnySectionFlagged(flags: SectionFlags): boolean {
-  return Object.values(flags).some((f) => f.llm || f.labelStudio || f.vote);
+  return Object.values(flags).some(
+    (f) => f.llm || f.labelStudio || f.triageReview || f.vote,
+  );
 }
 
 /**
@@ -558,7 +577,10 @@ export function computeSectionReviews({
   for (const section of FLAG_SECTIONS) {
     const outcome = outcomes[section] ?? null;
     const flagged =
-      flags[section].llm || flags[section].labelStudio || flags[section].vote;
+      flags[section].llm ||
+      flags[section].labelStudio ||
+      flags[section].triageReview ||
+      flags[section].vote;
 
     if (!outcome) {
       reviews[section] = {

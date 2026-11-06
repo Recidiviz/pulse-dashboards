@@ -26,6 +26,7 @@ const SOURCE_LABEL: Record<FlaggedMeetingSourceStatus["name"], string> = {
   database: "Meetings database",
   evaluations: "LLM evaluations",
   labelStudio: "Label Studio",
+  triageReview: "Triage review",
   inAppFeedback: "In-app feedback",
 };
 

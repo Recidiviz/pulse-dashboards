@@ -32,6 +32,8 @@ import * as flaggedMeetingsUtils from "~@meetings/trpc/routes/admin/flagged-meet
 import type {
   LabelStudioSnapshot,
   LabelStudioTaskAnnotations,
+  LlmajTriageSnapshot,
+  LlmajTriageTaskResult,
 } from "~@meetings/trpc/services/admin/label-studio-cache";
 import * as labelStudioCache from "~@meetings/trpc/services/admin/label-studio-cache";
 import * as labelStudioConfigModule from "~@meetings/trpc/services/admin/label-studio-config";
@@ -225,6 +227,31 @@ function labelStudioEntry(
   };
 }
 
+const EMPTY_TRIAGE_REVIEW_SNAPSHOT: LlmajTriageSnapshot = {
+  fetchedAt: NOW,
+  byMeetingId: new Map(),
+  taskIdByMeetingId: new Map(),
+  taskCount: 0,
+  annotatedTaskCount: 0,
+  perTaskFailures: 0,
+  unusableTaskCount: 0,
+};
+
+function llmajTriageEntry(
+  meetingId: string,
+  overrides: Partial<LlmajTriageTaskResult> = {},
+): LlmajTriageTaskResult {
+  return {
+    taskId: 901,
+    meetingId,
+    stateCode: STATE,
+    raters: [],
+    collapsed: {},
+    latestAnnotationAt: new Date("2026-09-17T00:00:00Z"),
+    ...overrides,
+  };
+}
+
 function useLabelStudio(
   entries: LabelStudioTaskAnnotations[],
   unratedTasks: { meetingId: string; taskId: number }[] = [],
@@ -250,6 +277,34 @@ function useLabelStudio(
   vi.mocked(labelStudioCache.getLabelStudioSnapshot).mockResolvedValue(
     snapshot,
   );
+  // Tests that only care about full review leave triage review empty, rather
+  // than unconfigured, so they don't also have to reason about a second
+  // "not_configured" source.
+  vi.mocked(labelStudioCache.getLlmajTriageSnapshot).mockResolvedValue(
+    EMPTY_TRIAGE_REVIEW_SNAPSHOT,
+  );
+}
+
+/** Overrides the default empty triage review snapshot `useLabelStudio` sets up. */
+function useTriageReview(
+  entries: LlmajTriageTaskResult[],
+  unratedTasks: { meetingId: string; taskId: number }[] = [],
+) {
+  const snapshot: LlmajTriageSnapshot = {
+    fetchedAt: NOW,
+    byMeetingId: new Map(entries.map((e) => [e.meetingId, e])),
+    taskIdByMeetingId: new Map([
+      ...entries.map((e): [string, number] => [e.meetingId, e.taskId]),
+      ...unratedTasks.map((t): [string, number] => [t.meetingId, t.taskId]),
+    ]),
+    taskCount: entries.length + unratedTasks.length,
+    annotatedTaskCount: entries.length,
+    perTaskFailures: 0,
+    unusableTaskCount: 0,
+  };
+  vi.mocked(labelStudioCache.getLlmajTriageSnapshot).mockResolvedValue(
+    snapshot,
+  );
 }
 
 describe("flaggedMeetings router", () => {
@@ -259,6 +314,7 @@ describe("flaggedMeetings router", () => {
       null,
     );
     vi.spyOn(labelStudioCache, "getLabelStudioSnapshot").mockReset();
+    vi.spyOn(labelStudioCache, "getLlmajTriageSnapshot").mockReset();
     vi.spyOn(flaggedMeetingsUtils, "findBadEvaluationMeetingIds");
   });
 
@@ -615,6 +671,7 @@ describe("flaggedMeetings router", () => {
         { name: "database", status: "ok" },
         { name: "evaluations", status: "ok" },
         { name: "labelStudio", status: "not_configured" },
+        { name: "triageReview", status: "not_configured" },
         { name: "inAppFeedback", status: "ok" },
       ]);
     });
@@ -732,6 +789,77 @@ describe("flaggedMeetings router", () => {
         error: "Error",
       });
     });
+
+    test("a judge BAD with no human rating yet needs review", async () => {
+      await createMeeting("meeting-judge-only");
+      await evaluate("meeting-judge-only", { caseNote: "BAD" });
+      useLabelStudio([]);
+
+      const { meetings } = await list();
+
+      expect(meetings).toHaveLength(1);
+      expect(meetings[0].sections.CASE_NOTE.llm).toBe(true);
+      expect(meetings[0].reviews.CASE_NOTE.status).toBe("needs_review");
+    });
+
+    test("a triage BAD on a section the judge didn't flag needs review", async () => {
+      // The judge graded every section GOOD, so only a triage review BAD makes
+      // this meeting a candidate at all — not a BAD judge score.
+      await createMeeting("meeting-triage-found-it");
+      await evaluate("meeting-triage-found-it", {
+        caseNote: "GOOD",
+        actionItems: "GOOD",
+        overall: "GOOD",
+      });
+      useLabelStudio([]);
+      useTriageReview([
+        llmajTriageEntry("meeting-triage-found-it", {
+          collapsed: {
+            ACTION_ITEMS: {
+              section: "ACTION_ITEMS",
+              flagged: false,
+              grade: "BAD",
+              findingsAccuracy: null,
+              notes: "Missed a wrongly assigned action item.",
+              appliesTo: null,
+              verdict: null,
+            },
+          },
+        }),
+      ]);
+
+      const { meetings } = await list();
+
+      expect(meetings).toHaveLength(1);
+      expect(meetings[0].triageReview).toMatchObject({
+        status: "rated",
+        taskId: 901,
+        combined: { actionItems: "BAD" },
+      });
+      expect(meetings[0].sections.ACTION_ITEMS).toMatchObject({
+        llm: false,
+        triageReview: true,
+      });
+      expect(meetings[0].reviews.ACTION_ITEMS.status).toBe("needs_review");
+    });
+
+    test("hides the list and names triageReview when the triage crawl fails", async () => {
+      await createMeeting("meeting-triage-down");
+      await evaluate("meeting-triage-down", { caseNote: "BAD" });
+      useLabelStudio([]);
+      vi.mocked(labelStudioCache.getLlmajTriageSnapshot).mockRejectedValue(
+        new Error("IAP returned 401"),
+      );
+
+      const result = await list();
+
+      expect(result.meetings).toEqual([]);
+      expect(result.sources.find((s) => s.name === "triageReview")).toEqual({
+        name: "triageReview",
+        status: "failed",
+        error: "Error",
+      });
+    });
   });
 
   describe("getDetails", () => {
@@ -761,6 +889,7 @@ describe("flaggedMeetings router", () => {
       expect(result.sections.CASE_NOTE).toEqual({
         llm: true,
         labelStudio: false,
+        triageReview: false,
         vote: true,
       });
     });
@@ -1366,6 +1495,7 @@ describe("flaggedMeetings router", () => {
         expect(meetings[0].sections.CASE_NOTE).toEqual({
           llm: false,
           labelStudio: false,
+          triageReview: false,
           vote: false,
         });
       });

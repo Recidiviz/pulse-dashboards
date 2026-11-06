@@ -24,17 +24,23 @@ import {
   Prisma,
   ReviewFollowUp,
   ReviewOutcomeKind,
+  type ReviewSection,
   ReviewSource,
   StateCode,
 } from "~@meetings/prisma/client";
 import type { StructuredActionItem } from "~@meetings/tasks";
 import { formatStructuredActionItem } from "~@meetings/tasks";
 import {
+  type GradedDimensionKey,
   isFlaggedByLabelStudio,
   LS_AUTHORITATIVE_RATER_EMAIL,
   LS_TRANSCRIPT_QUALITY_FIELD_NAME,
 } from "~@meetings/tasks/admin/label-studio-grades";
 import type { OverrideGrade } from "~@meetings/tasks/admin/label-studio-override";
+import {
+  isLlmajTriageTaskGradedBad,
+  type LlmajTriageGrade,
+} from "~@meetings/tasks/admin/llmaj-triage-grades";
 import { adminProcedure, router } from "~@meetings/trpc/init";
 import {
   type FlaggedMeetingDetails,
@@ -52,6 +58,8 @@ import {
   type SourceName,
   type SourceStatus,
   type StaffEmailTask,
+  type TriageReviewDetail,
+  type TriageReviewSummary,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/flagged-meetings.schema";
 import {
   type BadEvaluationEvent,
@@ -80,8 +88,11 @@ import {
 } from "~@meetings/trpc/routes/admin/flagged-meetings/utils";
 import {
   getLabelStudioSnapshot,
+  getLlmajTriageSnapshot,
   type LabelStudioSnapshot,
   type LabelStudioTaskAnnotations,
+  type LlmajTriageSnapshot,
+  type LlmajTriageTaskResult,
 } from "~@meetings/trpc/services/admin/label-studio-cache";
 import { labelStudioConfig } from "~@meetings/trpc/services/admin/label-studio-config";
 import { overrideLabelStudioGrade } from "~@meetings/trpc/services/admin/label-studio-override";
@@ -125,12 +136,16 @@ class SourceTracker {
       "database",
       "evaluations",
       "labelStudio",
+      "triageReview",
       "inAppFeedback",
     ];
     return names.map((name): SourceStatus => {
       const error = this.failures.get(name);
       if (error !== undefined) return { name, status: "failed", error };
-      if (name === "labelStudio" && !labelStudioConfigured) {
+      if (
+        (name === "labelStudio" || name === "triageReview") &&
+        !labelStudioConfigured
+      ) {
         return { name, status: "not_configured" };
       }
       return { name, status: "ok" };
@@ -150,6 +165,38 @@ function labelStudioSummary(
       taskId: entry.taskId,
       raterCount: entry.annotations.length,
       combined: entry.collapsed,
+    };
+  }
+  const taskId = snapshot.taskIdByMeetingId.get(meetingId);
+  return taskId === undefined
+    ? { status: "not_sent" }
+    : { status: "not_rated", taskId };
+}
+
+function triageReviewCombinedGrades(
+  collapsed: LlmajTriageTaskResult["collapsed"],
+): Partial<Record<GradedDimensionKey, LlmajTriageGrade>> {
+  const combined: Partial<Record<GradedDimensionKey, LlmajTriageGrade>> = {};
+  for (const [section, result] of Object.entries(collapsed)) {
+    if (result?.grade) {
+      combined[SECTION_TO_DIMENSION[section as ReviewSection]] = result.grade;
+    }
+  }
+  return combined;
+}
+
+function triageReviewSummary(
+  snapshot: LlmajTriageSnapshot | null,
+  meetingId: string,
+): TriageReviewSummary | null {
+  if (!snapshot) return null;
+  const entry = snapshot.byMeetingId.get(meetingId);
+  if (entry) {
+    return {
+      status: "rated",
+      taskId: entry.taskId,
+      raterCount: entry.raters.length,
+      combined: triageReviewCombinedGrades(entry.collapsed),
     };
   }
   const taskId = snapshot.taskIdByMeetingId.get(meetingId);
@@ -178,6 +225,10 @@ function isFlaggedInLabelStudio(entry: LabelStudioTaskAnnotations): boolean {
   return isFlaggedByLabelStudio(entry.collapsed, entry.hasUncoveredBadGrade);
 }
 
+function isFlaggedInLlmajTriage(entry: LlmajTriageTaskResult): boolean {
+  return isLlmajTriageTaskGradedBad(entry.collapsed);
+}
+
 /** The flagged meetings for one state, recording any source failure on the tracker. */
 async function findFlaggedMeetingsForState({
   stateCode,
@@ -185,6 +236,7 @@ async function findFlaggedMeetingsForState({
   until,
   search,
   snapshot,
+  triageSnapshot,
   tracker,
 }: {
   stateCode: StateCode;
@@ -192,6 +244,7 @@ async function findFlaggedMeetingsForState({
   until: Date;
   search: string | undefined;
   snapshot: LabelStudioSnapshot | null;
+  triageSnapshot: LlmajTriageSnapshot | null;
   tracker: SourceTracker;
 }): Promise<FlaggedMeetingSummary[]> {
   const prisma = getPrismaClientForStateCode(stateCode);
@@ -223,6 +276,10 @@ async function findFlaggedMeetingsForState({
     .filter((entry) => entry.stateCode === stateCode)
     .filter(isFlaggedInLabelStudio)
     .map((entry) => entry.meetingId);
+  const triageReviewIds = [...(triageSnapshot?.byMeetingId.values() ?? [])]
+    .filter((entry) => entry.stateCode === stateCode)
+    .filter(isFlaggedInLlmajTriage)
+    .map((entry) => entry.meetingId);
 
   const candidateIds = [
     ...new Set([
@@ -230,6 +287,7 @@ async function findFlaggedMeetingsForState({
       ...voteIds,
       ...reviewedIds,
       ...labelStudioIds,
+      ...triageReviewIds,
     ]),
   ];
   if (candidateIds.length === 0) return [];
@@ -312,6 +370,7 @@ async function findFlaggedMeetingsForState({
     const sections = computeSectionFlags({
       llmDimensions: llm?.dimensions,
       labelStudio: snapshot?.byMeetingId.get(meeting.id),
+      triageReview: triageSnapshot?.byMeetingId.get(meeting.id)?.collapsed,
       votes,
     });
     const outcomes = outcomesByMeeting.get(meeting.id) ?? {};
@@ -341,6 +400,7 @@ async function findFlaggedMeetingsForState({
             }
           : null,
         labelStudio: labelStudioSummary(snapshot, meeting.id),
+        triageReview: triageReviewSummary(triageSnapshot, meeting.id),
         votes: votes.map(({ tab, vote }) => ({ tab, vote })),
         sections,
         reviews,
@@ -379,6 +439,26 @@ function labelStudioDetail(
   };
 }
 
+function triageReviewDetail(
+  entry: LlmajTriageTaskResult | undefined,
+  taskId: number | undefined,
+  taskUrl: (taskId: number) => string,
+): TriageReviewDetail | null {
+  if (taskId === undefined) return null;
+  const raters = (entry?.raters ?? []).map((rater) => ({
+    raterEmail: rater.raterEmail,
+    annotatedAt: rater.annotatedAt,
+    updatedAt: rater.updatedAt,
+    sections: rater.sections,
+  }));
+  return {
+    taskId,
+    taskUrl: taskUrl(taskId),
+    raters,
+    combined: entry?.collapsed ?? {},
+  };
+}
+
 export const flaggedMeetingsRouter = router({
   list: adminProcedure
     .input(listFlaggedMeetingsInput)
@@ -392,13 +472,26 @@ export const flaggedMeetingsRouter = router({
 
       const tracker = new SourceTracker();
       const config = labelStudioConfig();
-      const snapshot = config
-        ? await tracker.run(
-            "labelStudio",
-            () => getLabelStudioSnapshot(config.client, config.projectId),
-            null,
-          )
-        : null;
+      const [snapshot, triageSnapshot] = await Promise.all([
+        config
+          ? tracker.run(
+              "labelStudio",
+              () => getLabelStudioSnapshot(config.client, config.projectId),
+              null,
+            )
+          : Promise.resolve(null),
+        config
+          ? tracker.run(
+              "triageReview",
+              () =>
+                getLlmajTriageSnapshot(
+                  config.client,
+                  config.llmajTriageProjectId,
+                ),
+              null,
+            )
+          : Promise.resolve(null),
+      ]);
 
       const perState = await Promise.all(
         stateCodes.map((stateCode) =>
@@ -408,6 +501,7 @@ export const flaggedMeetingsRouter = router({
             until,
             search: input.search,
             snapshot,
+            triageSnapshot,
             tracker,
           }),
         ),
@@ -452,6 +546,9 @@ export const flaggedMeetingsRouter = router({
       const snapshotPromise = config
         ? getLabelStudioSnapshot(config.client, config.projectId)
         : Promise.resolve(null);
+      const triageSnapshotPromise = config
+        ? getLlmajTriageSnapshot(config.client, config.llmajTriageProjectId)
+        : Promise.resolve(null);
 
       const [
         llmajByMeeting,
@@ -459,6 +556,7 @@ export const flaggedMeetingsRouter = router({
         caseNoteOriginal,
         approvals,
         snapshot,
+        triageSnapshot,
         outcomesByMeeting,
       ] = await Promise.all([
         findLlmajResultsByMeeting(prisma, [meeting.id]),
@@ -466,6 +564,7 @@ export const flaggedMeetingsRouter = router({
         resolveOriginalCaseNote(prisma, meeting),
         findSectionApprovals(prisma, meeting),
         snapshotPromise,
+        triageSnapshotPromise,
         findLatestReviewOutcomes(prisma, [meeting.id]),
       ]);
       const outcomes = outcomesByMeeting.get(meeting.id) ?? {};
@@ -482,10 +581,12 @@ export const flaggedMeetingsRouter = router({
       const llm = llmajByMeeting.get(meeting.id);
       const votes = votesByMeeting.get(meeting.id) ?? [];
       const lsEntry = snapshot?.byMeetingId.get(meeting.id);
+      const triageEntry = triageSnapshot?.byMeetingId.get(meeting.id);
 
       const sections = computeSectionFlags({
         llmDimensions: llm?.dimensions,
         labelStudio: lsEntry,
+        triageReview: triageEntry?.collapsed,
         votes,
       });
 
@@ -533,6 +634,15 @@ export const flaggedMeetingsRouter = router({
                 snapshot.taskIdByMeetingId.get(meeting.id),
                 (taskId) =>
                   `${config.baseUrl.replace(/\/+$/, "")}/projects/${config.projectId}/data?task=${taskId}`,
+              )
+            : null,
+        triageReview:
+          config && triageSnapshot
+            ? triageReviewDetail(
+                triageEntry,
+                triageSnapshot.taskIdByMeetingId.get(meeting.id),
+                (taskId) =>
+                  `${config.baseUrl.replace(/\/+$/, "")}/projects/${config.llmajTriageProjectId}/data?task=${taskId}`,
               )
             : null,
         votes: votes.map((vote) => ({

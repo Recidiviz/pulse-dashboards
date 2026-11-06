@@ -204,6 +204,7 @@ function problemText(
     const who = [
       flag.llm && "The LLM judge",
       flag.labelStudio && "Label Studio",
+      flag.triageReview && "Triage review",
     ].filter(Boolean);
     return `${who.join(" and ") || "Nobody"} rated Overall Bad without flagging the case note or action items. Read both, then record which section it applies to.`;
   }
@@ -211,6 +212,7 @@ function problemText(
     flag.llm && "the LLM judge",
     flag.labelStudio &&
       `Label Studio (${raters} rater${raters === 1 ? "" : "s"})`,
+    flag.triageReview && "Triage review",
     flag.vote && "in-app feedback",
   ].filter(Boolean);
   const flagged =

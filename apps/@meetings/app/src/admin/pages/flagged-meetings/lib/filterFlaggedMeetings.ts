@@ -42,7 +42,10 @@ export function filterFlaggedMeetings(
         : [meeting.sections[dimension]];
     return sections.some((section) =>
       flaggedBy === "any"
-        ? section.llm || section.labelStudio || section.vote
+        ? section.llm ||
+          section.labelStudio ||
+          section.triageReview ||
+          section.vote
         : section[flaggedBy],
     );
   });

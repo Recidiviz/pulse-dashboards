@@ -34,6 +34,10 @@ import type {
   HumanGrade,
 } from "~@meetings/tasks/admin/label-studio-grades";
 import type { LlmajDimension } from "~@meetings/tasks/admin/llmaj-grades";
+import type {
+  LlmajTriageGrade,
+  LlmajTriageSectionResult,
+} from "~@meetings/tasks/admin/llmaj-triage-grades";
 
 /** Hard ceiling on how far back the meeting-date window reaches, and its default. */
 export const MAX_LOOKBACK_DAYS = 365;
@@ -52,6 +56,8 @@ export type FlagSection = (typeof FLAG_SECTIONS)[number];
 export interface SectionFlag {
   llm: boolean;
   labelStudio: boolean;
+  /** An LLMAJ triage rater graded this section BAD, whether or not the judge flagged it. */
+  triageReview: boolean;
   vote: boolean;
 }
 
@@ -240,6 +246,7 @@ export type SourceName =
   | "database"
   | "evaluations"
   | "labelStudio"
+  | "triageReview"
   | "inAppFeedback";
 
 export interface SourceStatus {
@@ -262,6 +269,16 @@ export type LabelStudioSummary =
       combined: GradesByDimension;
     };
 
+export type TriageReviewSummary =
+  | { status: "not_sent" }
+  | { status: "not_rated"; taskId: number }
+  | {
+      status: "rated";
+      taskId: number;
+      raterCount: number;
+      combined: Partial<Record<GradedDimensionKey, LlmajTriageGrade>>;
+    };
+
 export interface FlaggedMeetingSummary {
   meetingId: string;
   stateCode: StateCode;
@@ -276,6 +293,8 @@ export interface FlaggedMeetingSummary {
   } | null;
   /** Null when this environment has no Label Studio. */
   labelStudio: LabelStudioSummary | null;
+  /** Null when this environment has no Label Studio (one config gates both projects). */
+  triageReview: TriageReviewSummary | null;
   /** The staff thumbs up and down that apply to the meeting's current outputs. */
   votes: { tab: OutputVoteTab; vote: OutputVoteValue }[];
   sections: SectionFlags;
@@ -317,6 +336,22 @@ export interface LabelStudioDetail {
   taskUrl: string;
   raters: LabelStudioRaterDetail[];
   combined: Record<GradedDimensionKey, CombinedGrade>;
+}
+
+export interface TriageReviewRaterDetail {
+  raterEmail: string;
+  annotatedAt: Date;
+  updatedAt: Date;
+  /** Every section this rater saw: findings accuracy, grade, notes and (Overall) appliesTo. */
+  sections: LlmajTriageSectionResult[];
+}
+
+export interface TriageReviewDetail {
+  taskId: number;
+  taskUrl: string;
+  raters: TriageReviewRaterDetail[];
+  /** One result per section across raters, authoritative rater winning. */
+  combined: Partial<Record<ReviewSection, LlmajTriageSectionResult>>;
 }
 
 export interface OutputVoteDetail {
@@ -366,6 +401,8 @@ export interface FlaggedMeetingDetails {
   } | null;
   /** Null when the meeting has no Label Studio task, or this environment has no Label Studio. */
   labelStudio: LabelStudioDetail | null;
+  /** Null when the meeting has no LLMAJ triage task, or this environment has no Label Studio. */
+  triageReview: TriageReviewDetail | null;
   votes: OutputVoteDetail[];
   sections: SectionFlags;
   reviews: SectionReviews;

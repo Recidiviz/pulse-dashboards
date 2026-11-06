@@ -84,7 +84,7 @@ export function isInAppOnlyFlag(
   section: FlagSection,
 ): boolean {
   const flag = details.sections[section];
-  return flag.vote && !flag.llm && !flag.labelStudio;
+  return flag.vote && !flag.llm && !flag.labelStudio && !flag.triageReview;
 }
 
 export function emptyDraft(sources: OverrideSource[]): ReviewDraft {

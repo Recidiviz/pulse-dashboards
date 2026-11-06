@@ -24,7 +24,12 @@ import {
 
 type Sections = FlaggedMeetingSummary["sections"];
 
-const none = { llm: false, labelStudio: false, vote: false };
+const none = {
+  llm: false,
+  labelStudio: false,
+  triageReview: false,
+  vote: false,
+};
 
 function meeting(id: string, sections: Partial<Sections>) {
   return {
@@ -63,6 +68,15 @@ describe("filterFlaggedMeetings", () => {
   it("filters by dimension across all sources", () => {
     expect(ids(filterFlaggedMeetings(all, "any", "CASE_NOTE"))).toEqual(["a"]);
     expect(ids(filterFlaggedMeetings(all, "any", "OVERALL"))).toEqual(["c"]);
+  });
+
+  it("counts a triage review flag as any source", () => {
+    const triageCaseNote = meeting("t", {
+      CASE_NOTE: { ...none, triageReview: true },
+    });
+    expect(
+      ids(filterFlaggedMeetings([triageCaseNote], "any", "CASE_NOTE")),
+    ).toEqual(["t"]);
   });
 
   it("requires that source to have flagged that section when both are set", () => {

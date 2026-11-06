@@ -17,6 +17,7 @@
 
 import { captureException } from "@sentry/node";
 
+import type { ReviewSection } from "~@meetings/prisma/client";
 import {
   decodeAnnotationResults,
   type DecodedField,
@@ -28,20 +29,26 @@ import {
   decodedFieldsToGrades,
   type GradesByDimension,
   isUncoveredBadGrade,
+  LS_AUTHORITATIVE_RATER_EMAIL,
   stripBlindActionItemsGrading,
   wasActionItemsGradedBlind,
 } from "~@meetings/tasks/admin/label-studio-grades";
+import {
+  collapseLlmajTriageGrades,
+  decodeLlmajTriageAnnotation,
+  type LlmajTriageSectionResult,
+} from "~@meetings/tasks/admin/llmaj-triage-grades";
 import type {
   LabelStudioClient,
   LabelStudioTask,
 } from "~@meetings/tasks/label-studio-client";
 
 // =============================================================================
-// Cached snapshots of Label Studio projects' annotations. Every project is
+// Cached snapshots of Label Studio projects' annotations: one for the
+// full-review project, one for the LLMAJ triage project. Both projects are
 // crawled the same way (list tasks, skip unannotated ones, fetch each
 // annotated task's annotations) and cached the same way; only how a task's
-// annotations decode into a per-meeting result differs between kinds of
-// project.
+// annotations decode into a per-meeting result differs.
 //
 // The crawl is slow: the task list pages 100 at a time and every annotated
 // task needs its own request. Skipping tasks that report zero annotations
@@ -97,6 +104,25 @@ export interface LabelStudioTaskAnnotations {
   latestAnnotationAt: Date | null;
 }
 
+export interface LlmajTriageRaterResult {
+  raterEmail: string;
+  annotatedAt: Date;
+  updatedAt: Date;
+  /** Every section this rater graded or saw, flagged or not. */
+  sections: LlmajTriageSectionResult[];
+}
+
+export interface LlmajTriageTaskResult {
+  taskId: number;
+  meetingId: string;
+  stateCode: string;
+  raters: LlmajTriageRaterResult[];
+  /** One result per section across raters, authoritative rater winning. */
+  collapsed: Partial<Record<ReviewSection, LlmajTriageSectionResult>>;
+  /** Most recent rater activity on the task, for the "recently reviewed" sort. */
+  latestAnnotationAt: Date | null;
+}
+
 interface CrawlSnapshot<TTaskResult> {
   fetchedAt: Date;
   /** Annotated tasks only; a task nobody has rated yet has no entry here. */
@@ -116,10 +142,15 @@ interface CrawlSnapshot<TTaskResult> {
 }
 
 export type LabelStudioSnapshot = CrawlSnapshot<LabelStudioTaskAnnotations>;
+export type LlmajTriageSnapshot = CrawlSnapshot<LlmajTriageTaskResult>;
 
 function taskString(task: LabelStudioTask, key: string): string | undefined {
   const value = task.data[key];
   return typeof value === "string" && value ? value : undefined;
+}
+
+function taskBoolean(task: LabelStudioTask, key: string): boolean {
+  return task.data[key] === true;
 }
 
 async function mapWithConcurrency<T, R>(
@@ -203,6 +234,50 @@ function buildTaskAnnotations(
     annotations,
     collapsed: collapseTaskGrades(graded),
     hasUncoveredBadGrade,
+    latestAnnotationAt,
+  };
+}
+
+function buildLlmajTriageTaskResult(
+  task: LabelStudioTask,
+  meetingId: string,
+  stateCode: string,
+  config: LabelConfig,
+  rawAnnotations: RawAnnotation[],
+  emailById: Map<number, string>,
+): LlmajTriageTaskResult | null {
+  if (rawAnnotations.length === 0) return null;
+
+  const taskFlags = {
+    case_note_flagged: taskBoolean(task, "case_note_flagged"),
+    action_items_flagged: taskBoolean(task, "action_items_flagged"),
+    overall_flagged: taskBoolean(task, "overall_flagged"),
+  };
+
+  const raters: LlmajTriageRaterResult[] = [];
+  let latestAnnotationAt: Date | null = null;
+
+  for (const raw of rawAnnotations) {
+    const raterEmail =
+      emailById.get(raw.completed_by) ?? `user-${raw.completed_by}`;
+    const annotatedAt = new Date(raw.created_at);
+    const updatedAt = new Date(raw.updated_at);
+    const decodedFields = decodeAnnotationResults(config, raw.result);
+    const sections = decodeLlmajTriageAnnotation(decodedFields, taskFlags);
+    raters.push({ raterEmail, annotatedAt, updatedAt, sections });
+
+    for (const at of [annotatedAt, updatedAt]) {
+      if (!latestAnnotationAt || at > latestAnnotationAt)
+        latestAnnotationAt = at;
+    }
+  }
+
+  return {
+    taskId: task.id,
+    meetingId,
+    stateCode,
+    raters,
+    collapsed: collapseLlmajTriageGrades(raters, LS_AUTHORITATIVE_RATER_EMAIL),
     latestAnnotationAt,
   };
 }
@@ -387,6 +462,9 @@ class SnapshotCache<TSnapshot extends { fetchedAt: Date }> {
 const fullReviewCache = new SnapshotCache((client, projectId) =>
   crawlProject(client, projectId, buildTaskAnnotations),
 );
+const llmajTriageCache = new SnapshotCache((client, projectId) =>
+  crawlProject(client, projectId, buildLlmajTriageTaskResult),
+);
 
 export function getLabelStudioSnapshot(
   client: LabelStudioClient,
@@ -403,4 +481,17 @@ export function invalidateLabelStudioSnapshot(): void {
 /** Empties the full-review cache. Only tests call this, to start each test fresh. */
 export function resetLabelStudioSnapshotCache(): void {
   fullReviewCache.reset();
+}
+
+export function getLlmajTriageSnapshot(
+  client: LabelStudioClient,
+  projectId: number,
+  { now = Date.now() }: { now?: number } = {},
+): Promise<LlmajTriageSnapshot> {
+  return llmajTriageCache.get(client, projectId, now);
+}
+
+/** Empties the LLMAJ triage cache. Only tests call this, to start each test fresh. */
+export function resetLlmajTriageSnapshotCache(): void {
+  llmajTriageCache.reset();
 }

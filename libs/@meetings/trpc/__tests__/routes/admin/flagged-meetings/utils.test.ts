@@ -21,6 +21,7 @@ import {
   OutputVoteTab,
   OutputVoteValue,
   ReviewOutcomeKind,
+  type ReviewSection,
   StateCode,
 } from "~@meetings/prisma/client";
 import {
@@ -28,6 +29,7 @@ import {
   LS_AUTHORITATIVE_RATER_EMAIL,
 } from "~@meetings/tasks/admin/label-studio-grades";
 import type { LlmajDimension } from "~@meetings/tasks/admin/llmaj-grades";
+import type { LlmajTriageSectionResult } from "~@meetings/tasks/admin/llmaj-triage-grades";
 import {
   combineRaterGrades,
   computeSectionFlags,
@@ -107,7 +109,12 @@ describe("resolveRequestedStates", () => {
 });
 
 describe("computeSectionFlags", () => {
-  const none = { llm: false, labelStudio: false, vote: false };
+  const none = {
+    llm: false,
+    labelStudio: false,
+    triageReview: false,
+    vote: false,
+  };
 
   test("case note and action items map straight from each source", () => {
     const flags = computeSectionFlags({
@@ -119,6 +126,7 @@ describe("computeSectionFlags", () => {
         collapsed: { actionItems: "BAD" },
         hasUncoveredBadGrade: false,
       },
+      triageReview: undefined,
       votes: [
         { tab: OutputVoteTab.DRAFT_CASE_NOTES, vote: OutputVoteValue.DOWN },
       ],
@@ -127,11 +135,13 @@ describe("computeSectionFlags", () => {
     expect(flags.CASE_NOTE).toEqual({
       llm: true,
       labelStudio: false,
+      triageReview: false,
       vote: true,
     });
     expect(flags.ACTION_ITEMS).toEqual({
       llm: false,
       labelStudio: true,
+      triageReview: false,
       vote: false,
     });
     expect(flags.OVERALL).toEqual(none);
@@ -148,12 +158,14 @@ describe("computeSectionFlags", () => {
         collapsed: { overall: "BAD" },
         hasUncoveredBadGrade: false,
       },
+      triageReview: undefined,
       votes: [],
     });
 
     expect(flags.OVERALL).toEqual({
       llm: true,
       labelStudio: true,
+      triageReview: false,
       vote: false,
     });
   });
@@ -168,6 +180,7 @@ describe("computeSectionFlags", () => {
         collapsed: { caseNote: "BAD", overall: "BAD" },
         hasUncoveredBadGrade: false,
       },
+      triageReview: undefined,
       votes: [],
     });
 
@@ -180,6 +193,7 @@ describe("computeSectionFlags", () => {
     const flags = computeSectionFlags({
       llmDimensions: undefined,
       labelStudio: { collapsed: {}, hasUncoveredBadGrade: true },
+      triageReview: undefined,
       votes: [],
     });
 
@@ -193,6 +207,7 @@ describe("computeSectionFlags", () => {
         collapsed: { caseNote: "BAD" },
         hasUncoveredBadGrade: true,
       },
+      triageReview: undefined,
       votes: [],
     });
 
@@ -204,6 +219,7 @@ describe("computeSectionFlags", () => {
     const flags = computeSectionFlags({
       llmDimensions: undefined,
       labelStudio: undefined,
+      triageReview: undefined,
       votes: [
         { tab: OutputVoteTab.ACTION_ITEMS, vote: OutputVoteValue.DOWN },
         { tab: OutputVoteTab.STAFF_FEEDBACK, vote: OutputVoteValue.DOWN },
@@ -216,10 +232,38 @@ describe("computeSectionFlags", () => {
     expect(flags.CASE_NOTE.vote).toBe(false);
   });
 
+  test("a triage BAD flags its section whether or not the judge flagged it", () => {
+    const triage = (
+      section: ReviewSection,
+      flagged: boolean,
+    ): LlmajTriageSectionResult => ({
+      section,
+      flagged,
+      grade: "BAD",
+      findingsAccuracy: null,
+      notes: null,
+      appliesTo: null,
+      verdict: null,
+    });
+    const flags = computeSectionFlags({
+      llmDimensions: undefined,
+      labelStudio: undefined,
+      triageReview: {
+        CASE_NOTE: triage("CASE_NOTE", true),
+        ACTION_ITEMS: triage("ACTION_ITEMS", false),
+      },
+      votes: [],
+    });
+
+    expect(flags.CASE_NOTE.triageReview).toBe(true);
+    expect(flags.ACTION_ITEMS.triageReview).toBe(true);
+  });
+
   test("a BAD transcript comparison never flags anything", () => {
     const flags = computeSectionFlags({
       llmDimensions: [dimension("transcriptComparison", true)],
       labelStudio: undefined,
+      triageReview: undefined,
       votes: [],
     });
 
@@ -242,6 +286,7 @@ describe("computeSectionFlags", () => {
       const flags = computeSectionFlags({
         llmDimensions: undefined,
         labelStudio: { collapsed, hasUncoveredBadGrade: uncovered },
+        triageReview: undefined,
         votes: [],
       });
       expect(isAnySectionFlagged(flags)).toBe(
@@ -300,11 +345,17 @@ describe("computeSectionReviews", () => {
   const noFlags = computeSectionFlags({
     llmDimensions: undefined,
     labelStudio: undefined,
+    triageReview: undefined,
     votes: [],
   });
   const caseNoteFlagged = {
     ...noFlags,
-    CASE_NOTE: { llm: true, labelStudio: false, vote: false },
+    CASE_NOTE: {
+      llm: true,
+      labelStudio: false,
+      triageReview: false,
+      vote: false,
+    },
   };
 
   function outcome(

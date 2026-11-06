@@ -21,7 +21,12 @@ type Rater = NonNullable<
   FlaggedMeetingDetails["labelStudio"]
 >["raters"][number];
 
-const NO_FLAG = { llm: false, labelStudio: false, vote: false };
+const NO_FLAG = {
+  llm: false,
+  labelStudio: false,
+  triageReview: false,
+  vote: false,
+};
 
 type Reviews = FlaggedMeetingDetails["reviews"];
 
@@ -81,9 +86,10 @@ export function makeDetails(
       ],
     },
     labelStudio: null,
+    triageReview: null,
     votes: [],
     sections: {
-      CASE_NOTE: { llm: true, labelStudio: false, vote: false },
+      CASE_NOTE: { ...NO_FLAG, llm: true },
       ACTION_ITEMS: NO_FLAG,
       OVERALL: NO_FLAG,
     },

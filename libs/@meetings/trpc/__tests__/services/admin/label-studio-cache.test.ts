@@ -17,13 +17,17 @@
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { isLlmajTriageTaskGradedBad } from "~@meetings/tasks/admin/llmaj-triage-grades";
 import type { LabelStudioClient } from "~@meetings/tasks/label-studio-client";
 import {
   getLabelStudioSnapshot,
+  getLlmajTriageSnapshot,
   resetLabelStudioSnapshotCache,
+  resetLlmajTriageSnapshotCache,
 } from "~@meetings/trpc/services/admin/label-studio-cache";
 
 const PROJECT_ID = 1;
+const TRIAGE_PROJECT_ID = 2;
 
 const CONFIG_XML = `
 <View>
@@ -103,6 +107,137 @@ function stubClient(tasks: StubTask[], annotations: StubAnnotation[]) {
     listTasksForProject,
     listUsers: vi.fn(async () => [
       { id: 1, email: "rater@recidiviz.org" },
+      { id: 2, email: "admin@recidiviz.org" },
+    ]),
+    listAnnotationsForTask,
+  } as unknown as LabelStudioClient;
+
+  return { client, listAnnotationsForTask, listTasksForProject };
+}
+
+const TRIAGE_CONFIG_XML = `
+<View>
+  <Text name="judge_case_note_rationale_text" value="$judge_case_note_rationale"/>
+  <Choices name="case_note_findings_accuracy" toName="judge_case_note_rationale_text">
+    <Choice value="All accurate" alias="ALL_ACCURATE"/>
+    <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
+    <Choice value="All inaccurate" alias="ALL_INACCURATE"/>
+  </Choices>
+  <Choices name="case_note_rater_grade" toName="judge_case_note_rationale_text">
+    <Choice value="BAD" alias="BAD"/><Choice value="PARTIAL" alias="PARTIAL"/>
+    <Choice value="GOOD" alias="GOOD"/><Choice value="Can't grade" alias="OTHER"/>
+  </Choices>
+  <TextArea name="case_note_notes" toName="judge_case_note_rationale_text" />
+
+  <Text name="judge_action_items_rationale_text" value="$judge_action_items_rationale"/>
+  <Choices name="action_items_findings_accuracy" toName="judge_action_items_rationale_text">
+    <Choice value="All accurate" alias="ALL_ACCURATE"/>
+    <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
+    <Choice value="All inaccurate" alias="ALL_INACCURATE"/>
+  </Choices>
+  <Choices name="action_items_rater_grade" toName="judge_action_items_rationale_text">
+    <Choice value="BAD" alias="BAD"/><Choice value="PARTIAL" alias="PARTIAL"/>
+    <Choice value="GOOD" alias="GOOD"/><Choice value="Can't grade" alias="OTHER"/>
+  </Choices>
+  <TextArea name="action_items_notes" toName="judge_action_items_rationale_text" />
+
+  <Text name="judge_overall_rationale_text" value="$judge_overall_rationale"/>
+  <Choices name="overall_findings_accuracy" toName="judge_overall_rationale_text">
+    <Choice value="All accurate" alias="ALL_ACCURATE"/>
+    <Choice value="Some inaccurate" alias="SOME_INACCURATE"/>
+    <Choice value="All inaccurate" alias="ALL_INACCURATE"/>
+  </Choices>
+  <Choices name="overall_rater_grade" toName="judge_overall_rationale_text">
+    <Choice value="BAD" alias="BAD"/><Choice value="PARTIAL" alias="PARTIAL"/>
+    <Choice value="GOOD" alias="GOOD"/><Choice value="Can't grade" alias="OTHER"/>
+  </Choices>
+  <Choices name="overall_applies_to" toName="judge_overall_rationale_text" choice="multiple">
+    <Choice value="Case note" alias="CASE_NOTE"/>
+    <Choice value="Action items" alias="ACTION_ITEMS"/>
+    <Choice value="Neither" alias="NEITHER"/>
+  </Choices>
+  <TextArea name="overall_notes" toName="judge_overall_rationale_text" />
+</View>
+`;
+
+interface StubTriageTask {
+  id: number;
+  meetingId: string;
+  stateCode: string;
+  caseNoteFlagged?: boolean;
+  actionItemsFlagged?: boolean;
+  overallFlagged?: boolean;
+  totalAnnotations: number;
+}
+
+interface StubTriageAnnotation {
+  taskId: number;
+  completedBy: number;
+  createdAt: string;
+  grades?: Record<string, string>;
+  /** Raw values for overall_applies_to, the one multi-select field. */
+  appliesTo?: string[];
+  notes?: Record<string, string>;
+}
+
+function stubTriageClient(
+  tasks: StubTriageTask[],
+  annotations: StubTriageAnnotation[],
+) {
+  const listAnnotationsForTask = vi.fn(async (taskId: number) =>
+    annotations
+      .filter((a) => a.taskId === taskId)
+      .map((a) => ({
+        id: a.taskId * 100,
+        completed_by: a.completedBy,
+        created_at: a.createdAt,
+        updated_at: a.createdAt,
+        lead_time: null,
+        was_cancelled: false,
+        ground_truth: false,
+        result: [
+          ...Object.entries(a.grades ?? {}).map(([from_name, value]) => ({
+            from_name,
+            type: "choices",
+            value: { choices: [value] },
+          })),
+          ...(a.appliesTo
+            ? [
+                {
+                  from_name: "overall_applies_to",
+                  type: "choices",
+                  value: { choices: a.appliesTo },
+                },
+              ]
+            : []),
+          ...Object.entries(a.notes ?? {}).map(([from_name, value]) => ({
+            from_name,
+            type: "textarea",
+            value: { text: [value] },
+          })),
+        ],
+      })),
+  );
+
+  const listTasksForProject = vi.fn(async () =>
+    tasks.map((t) => ({
+      id: t.id,
+      total_annotations: t.totalAnnotations,
+      data: {
+        meeting_id: t.meetingId,
+        state_code: t.stateCode,
+        case_note_flagged: t.caseNoteFlagged ?? false,
+        action_items_flagged: t.actionItemsFlagged ?? false,
+        overall_flagged: t.overallFlagged ?? false,
+      },
+    })),
+  );
+
+  const client = {
+    getProjectLabelConfig: vi.fn(async () => TRIAGE_CONFIG_XML),
+    listTasksForProject,
+    listUsers: vi.fn(async () => [
+      { id: 1, email: "qa@recidiviz.org" },
       { id: 2, email: "admin@recidiviz.org" },
     ]),
     listAnnotationsForTask,
@@ -475,5 +610,220 @@ describe("getLabelStudioSnapshot", () => {
       expect(snapshot.perTaskFailures).toBe(1);
       expect(snapshot.byMeetingId.has("meeting-2")).toBe(true);
     });
+  });
+});
+
+describe("getLlmajTriageSnapshot", () => {
+  beforeEach(() => {
+    resetLabelStudioSnapshotCache();
+    resetLlmajTriageSnapshotCache();
+  });
+
+  test("decodes a flagged section's grade into a verdict", async () => {
+    const { client } = stubTriageClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-1",
+          stateCode: "US_NE",
+          caseNoteFlagged: true,
+          totalAnnotations: 1,
+        },
+      ],
+      [
+        {
+          taskId: 1,
+          completedBy: 1,
+          createdAt: "2026-09-10T00:00:00Z",
+          grades: {
+            case_note_rater_grade: "BAD",
+            case_note_findings_accuracy: "ALL_ACCURATE",
+          },
+          notes: { case_note_notes: "invented a home visit" },
+        },
+      ],
+    );
+
+    const snapshot = await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+    const entry = snapshot.byMeetingId.get("meeting-1");
+
+    expect(entry?.raters[0].raterEmail).toBe("qa@recidiviz.org");
+    expect(entry?.collapsed.CASE_NOTE).toMatchObject({
+      grade: "BAD",
+      findingsAccuracy: "ALL_ACCURATE",
+      verdict: {
+        section: "CASE_NOTE",
+        outcome: "CONFIRMED_BAD",
+        notes: "invented a home visit",
+      },
+    });
+  });
+
+  test("decodes Overall's multi-select appliesTo", async () => {
+    const { client } = stubTriageClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-overall",
+          stateCode: "US_NE",
+          overallFlagged: true,
+          totalAnnotations: 1,
+        },
+      ],
+      [
+        {
+          taskId: 1,
+          completedBy: 1,
+          createdAt: "2026-09-10T00:00:00Z",
+          grades: { overall_rater_grade: "BAD" },
+          appliesTo: ["CASE_NOTE", "ACTION_ITEMS"],
+        },
+      ],
+    );
+
+    const snapshot = await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+    const entry = snapshot.byMeetingId.get("meeting-overall");
+
+    expect(entry?.collapsed.OVERALL?.appliesTo).toEqual([
+      "CASE_NOTE",
+      "ACTION_ITEMS",
+    ]);
+  });
+
+  test("flags a meeting whose only triage BAD is on a section the judge didn't flag", async () => {
+    const { client } = stubTriageClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-unflagged-bad",
+          stateCode: "US_NE",
+          caseNoteFlagged: true,
+          totalAnnotations: 1,
+        },
+      ],
+      [
+        {
+          taskId: 1,
+          completedBy: 1,
+          createdAt: "2026-09-10T00:00:00Z",
+          grades: {
+            case_note_rater_grade: "GOOD",
+            action_items_rater_grade: "BAD",
+          },
+        },
+      ],
+    );
+
+    const snapshot = await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+    const entry = snapshot.byMeetingId.get("meeting-unflagged-bad");
+
+    expect(entry?.collapsed.ACTION_ITEMS?.grade).toBe("BAD");
+    expect(entry?.collapsed.ACTION_ITEMS?.verdict).toBeNull();
+    expect(isLlmajTriageTaskGradedBad(entry?.collapsed ?? {})).toBe(true);
+  });
+
+  test("never fetches annotations for tasks that report none", async () => {
+    const { client, listAnnotationsForTask } = stubTriageClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-1",
+          stateCode: "US_NE",
+          totalAnnotations: 0,
+        },
+        {
+          id: 2,
+          meetingId: "meeting-2",
+          stateCode: "US_NE",
+          caseNoteFlagged: true,
+          totalAnnotations: 1,
+        },
+      ],
+      [
+        {
+          taskId: 2,
+          completedBy: 1,
+          createdAt: "2026-09-10T00:00:00Z",
+          grades: { case_note_rater_grade: "GOOD" },
+        },
+      ],
+    );
+
+    const snapshot = await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+
+    expect(listAnnotationsForTask).toHaveBeenCalledTimes(1);
+    expect(listAnnotationsForTask).toHaveBeenCalledWith(2);
+    expect(snapshot.taskCount).toBe(2);
+  });
+
+  test("remembers tasks nobody has rated yet", async () => {
+    const { client } = stubTriageClient(
+      [
+        {
+          id: 5,
+          meetingId: "meeting-unrated",
+          stateCode: "US_NE",
+          totalAnnotations: 0,
+        },
+      ],
+      [],
+    );
+
+    const snapshot = await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+
+    expect(snapshot.byMeetingId.size).toBe(0);
+    expect(snapshot.taskIdByMeetingId.get("meeting-unrated")).toBe(5);
+  });
+
+  test("caches a second call", async () => {
+    const { client, listTasksForProject } = stubTriageClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-1",
+          stateCode: "US_NE",
+          totalAnnotations: 0,
+        },
+      ],
+      [],
+    );
+
+    await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+    await getLlmajTriageSnapshot(client, TRIAGE_PROJECT_ID);
+
+    expect(listTasksForProject).toHaveBeenCalledTimes(1);
+  });
+
+  test("the full-review and triage project caches don't evict each other", async () => {
+    const fullReview = stubClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-1",
+          stateCode: "US_NE",
+          totalAnnotations: 0,
+        },
+      ],
+      [],
+    );
+    const triage = stubTriageClient(
+      [
+        {
+          id: 1,
+          meetingId: "meeting-1",
+          stateCode: "US_NE",
+          totalAnnotations: 0,
+        },
+      ],
+      [],
+    );
+
+    await getLabelStudioSnapshot(fullReview.client, PROJECT_ID);
+    await getLlmajTriageSnapshot(triage.client, TRIAGE_PROJECT_ID);
+    await getLabelStudioSnapshot(fullReview.client, PROJECT_ID);
+    await getLlmajTriageSnapshot(triage.client, TRIAGE_PROJECT_ID);
+
+    expect(fullReview.listTasksForProject).toHaveBeenCalledTimes(1);
+    expect(triage.listTasksForProject).toHaveBeenCalledTimes(1);
   });
 });

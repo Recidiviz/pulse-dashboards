@@ -33,8 +33,9 @@ type CaseNoteView = "generated" | "final" | "changes";
 const isFlagged = (flag: {
   llm: boolean;
   labelStudio: boolean;
+  triageReview: boolean;
   vote: boolean;
-}) => flag.llm || flag.labelStudio || flag.vote;
+}) => flag.llm || flag.labelStudio || flag.triageReview || flag.vote;
 
 function ApprovalRow({
   approvedAt,
