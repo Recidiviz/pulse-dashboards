@@ -133,10 +133,18 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     credentials: true,
   });
 
+  // These servers only return JSON, so a browser that lands on an API URL
+  // directly must render nothing and request nothing from it.
   server.addHook("onSend", (_request, reply, _payload, done) => {
     reply.header(
       "Strict-Transport-Security",
       "max-age=31536000; includeSubDomains",
+    );
+    reply.header("X-Content-Type-Options", "nosniff");
+    reply.header("Referrer-Policy", "strict-origin-when-cross-origin");
+    reply.header(
+      "Content-Security-Policy",
+      "default-src 'none'; frame-ancestors 'none'",
     );
     done();
   });
