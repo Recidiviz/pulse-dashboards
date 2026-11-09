@@ -1,6 +1,6 @@
 # @jii/auth
 
-This library contains Auth0 configuration for the JII app (`/apps/jii`). The Auth0 integration (found in `src/auth0`) is generally managed via the Auth0 Console (https://manage.auth0.com) rather than any tooling in this library, but any custom code we create should be stored here to support easy reference and code reviews.
+This library contains Auth0 configuration for the JII app (`/apps/jii`). The Auth0 integration (found in `src/auth0`) is generally managed via the Auth0 Console (https://manage.auth0.com) rather than any tooling in this library, but any custom code and secrets we create should be stored here to support easy reference and code reviews.
 
 ## Tenants
 
