@@ -18,20 +18,23 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { HIDDEN_HEADER_OFFSET, STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
-import { palette, spacing } from "~design-system";
+import { palette, spacing, typography } from "~design-system";
 
-export const NavBar = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: ${STICKY_HEADER_ZINDEX};
+export const TriggerButton = styled.button`
+  ${typography.Sans16}
+
   display: flex;
+  flex-shrink: 0;
   align-items: center;
-  justify-content: space-between;
-  height: ${rem(HIDDEN_HEADER_OFFSET)};
-  padding: 0 ${rem(spacing.lg)};
-  background: ${palette.white};
-  border-bottom: 1px solid ${palette.slate20};
+  gap: ${rem(spacing.sm)};
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${palette.pine4};
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
 `;

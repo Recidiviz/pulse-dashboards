@@ -15,32 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext, ReactNode, useState } from "react";
+import { rem } from "polished";
+import styled from "styled-components";
 
-import { useRequiredContext } from "~utils";
+import { PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
+import { palette, spacing, typography } from "~design-system";
 
-export type BackTargetContextValue = {
-  backTarget: string | null;
-  setBackTarget: (path: string | null) => void;
-};
+export const Row = styled.div`
+  min-height: ${rem(spacing.xl)};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.lg - PAGE_LAYOUT_HEADER_GAP)};
+`;
 
-const BackTargetContext = createContext<BackTargetContextValue | undefined>(
-  undefined,
-);
-
-export function BackTargetProvider({ children }: { children: ReactNode }) {
-  const [backTarget, setBackTarget] = useState<string | null>(null);
-
-  return (
-    <BackTargetContext.Provider value={{ backTarget, setBackTarget }}>
-      {children}
-    </BackTargetContext.Provider>
-  );
-}
-
-export function useBackTargetContext(): BackTargetContextValue {
-  return useRequiredContext(
-    BackTargetContext,
-    "useBackTarget must be used within a BackTargetProvider",
-  );
-}
+export const Title = styled.h1`
+  ${typography.Serif24}
+  color: ${palette.pine1};
+  margin: 0;
+`;

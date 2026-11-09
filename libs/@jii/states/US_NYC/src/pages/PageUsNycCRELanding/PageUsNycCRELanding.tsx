@@ -22,19 +22,21 @@ import { State } from "~@jii/paths";
 
 import { Banner } from "../../components/Banner/Banner";
 import { CategoryTile } from "../../components/CategoryTile/CategoryTile";
+import { SearchHeader } from "../../components/SearchHeader/SearchHeader";
 import { useResources } from "../../hooks/useResources";
 import {
   EmptyState,
   GridSection,
+  IntroHeading,
   PageContainer,
   PageHeader,
   PageSubtitle,
-  PageTitle,
   SectionHeading,
   TileGrid,
 } from "./PageUsNycCRELanding.styles";
 
 const COPY = {
+  pageTitle: "Resource Explorer",
   title: "Find community resources",
   subtitle:
     "Browse organizations in NYC that help with housing, jobs, food, health care, and more. Look up addresses and contact information so you can reach the support you need.",
@@ -58,9 +60,10 @@ export function PageUsNycCRELanding() {
 
   return (
     <PageContainer>
+      <SearchHeader title={COPY.pageTitle} />
       <Banner />
       <PageHeader>
-        <PageTitle>{COPY.title}</PageTitle>
+        <IntroHeading>{COPY.title}</IntroHeading>
         <PageSubtitle>{COPY.subtitle}</PageSubtitle>
       </PageHeader>
 

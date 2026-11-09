@@ -25,6 +25,7 @@ export const PageContainer = styled(BasePageContainer)`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.lg)};
+  padding: 0;
 `;
 
 export const PageHeader = styled.div`

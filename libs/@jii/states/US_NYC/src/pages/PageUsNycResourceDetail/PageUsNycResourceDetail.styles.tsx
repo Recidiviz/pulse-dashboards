@@ -25,6 +25,11 @@ export const PageContainer = styled(BasePageContainer)`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.lg)};
+  padding: 0;
+`;
+
+export const SearchHeaderContainer = styled(BasePageContainer)`
+  padding: 0 0 ${rem(spacing.lg)};
 `;
 
 export const PageHeader = styled.div`

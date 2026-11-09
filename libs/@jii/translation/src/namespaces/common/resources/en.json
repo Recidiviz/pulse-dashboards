@@ -4,7 +4,8 @@
     "programsLink": "Programs",
     "aboutLink": "About",
     "reentryLink": "Reentry",
-    "myClassificationLink": "My Classification"
+    "myClassificationLink": "My Classification",
+    "resourceExplorerLink": "Resource Explorer"
   },
   "unknownUser": {
     "heading": "Login failed",

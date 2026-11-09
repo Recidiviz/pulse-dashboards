@@ -20,15 +20,15 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { ResourceExplorer, State } from "~@jii/paths";
 
-import { useBackTarget } from "../../components/BackTarget/useBackTarget";
 import { resolveResourceDetailBackTarget } from "../../components/BackTarget/utils";
 import { QueryBoundary } from "../../components/QueryBoundary";
+import { SearchHeader } from "../../components/SearchHeader/SearchHeader";
+import { SearchHeaderContainer } from "./PageUsNycResourceDetail.styles";
 import { ResourceDetailContent } from "./ResourceDetailContent";
 
 /**
- * Split from ResourceDetailContent so useBackTarget() fires immediately on mount instead
- * of waiting on the resource fetch. The content fetch keeps its own nested boundary
- * so it can't block this shell - otherwise BackButton flashes to the logo while data loads.
+ * Split from ResourceDetailContent so Back and Search render right away instead of
+ * waiting on the resource fetch, which keeps its own nested boundary.
  */
 export function PageUsNycResourceDetail() {
   const [searchParams] = useSearchParams();
@@ -53,16 +53,20 @@ export function PageUsNycResourceDetail() {
       categoryResultsPath,
     },
   );
-  useBackTarget(backPath);
 
   return (
-    <QueryBoundary>
-      <ResourceDetailContent
-        resourceId={resourceId}
-        category={category}
-        categoryResultsPath={categoryResultsPath}
-        similarResourcePath={similarResourcePath}
-      />
-    </QueryBoundary>
+    <>
+      <SearchHeaderContainer>
+        <SearchHeader backTo={backPath} />
+      </SearchHeaderContainer>
+      <QueryBoundary>
+        <ResourceDetailContent
+          resourceId={resourceId}
+          category={category}
+          categoryResultsPath={categoryResultsPath}
+          similarResourcePath={similarResourcePath}
+        />
+      </QueryBoundary>
+    </>
   );
 }

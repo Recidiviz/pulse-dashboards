@@ -4,7 +4,8 @@
     "programsLink": "[common]nav.programsLink",
     "aboutLink": "[common]nav.aboutLink",
     "reentryLink": "[common]nav.reentryLink",
-    "myClassificationLink": "[common]nav.myClassificationLink"
+    "myClassificationLink": "[common]nav.myClassificationLink",
+    "resourceExplorerLink": "[common]nav.resourceExplorerLink"
   },
   "unknownUser": {
     "heading": "[common]unknownUser.heading",

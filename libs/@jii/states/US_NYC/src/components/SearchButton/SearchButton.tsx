@@ -19,23 +19,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { useRootStore } from "~@jii/data";
-import { Wordmark } from "~@jii/layout";
-import { Button } from "~design-system";
+import { Icon } from "~design-system";
 
 import { ONE_HOUR_MS } from "../../hooks/useResources";
-import { BackButton } from "../BackButton/BackButton";
-import { useBackTarget } from "../BackTarget/useBackTarget";
 import { SearchOverlay } from "../SearchOverlay/SearchOverlay";
-import { NavBar } from "./CRENavBar.styles";
+import { TriggerButton } from "./SearchButton.styles";
 
-const CRE_NAV_BAR_COPY = {
-  ariaLabel: "Community Resources Navigation Bar",
-  searchTrigger: "Search",
+const SEARCH_BUTTON_COPY = {
+  trigger: "Search",
 };
 
-export function CRENavBar() {
+export function SearchButton() {
   const [isSearchOpen, setSearchOpen] = useState(false);
-  const hasBackTarget = useBackTarget() !== null;
 
   const {
     apiClient: { trpcQuerier },
@@ -47,27 +42,19 @@ export function CRENavBar() {
     staleTime: ONE_HOUR_MS,
   });
 
+  if (!resources) return null;
+
   return (
-    <NavBar aria-label={CRE_NAV_BAR_COPY.ariaLabel}>
-      {hasBackTarget ? <BackButton /> : <Wordmark />}
-
-      {resources && (
-        <>
-          <Button
-            kind="secondary"
-            shape="block"
-            onClick={() => setSearchOpen(true)}
-          >
-            {CRE_NAV_BAR_COPY.searchTrigger}
-          </Button>
-
-          <SearchOverlay
-            resources={resources}
-            isOpen={isSearchOpen}
-            onRequestClose={() => setSearchOpen(false)}
-          />
-        </>
-      )}
-    </NavBar>
+    <>
+      <TriggerButton type="button" onClick={() => setSearchOpen(true)}>
+        <Icon kind="Search" size={16} />
+        {SEARCH_BUTTON_COPY.trigger}
+      </TriggerButton>
+      <SearchOverlay
+        resources={resources}
+        isOpen={isSearchOpen}
+        onRequestClose={() => setSearchOpen(false)}
+      />
+    </>
   );
 }

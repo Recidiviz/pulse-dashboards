@@ -15,25 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useLayoutEffect } from "react";
+import { BackButton } from "../BackButton/BackButton";
+import { SearchButton } from "../SearchButton/SearchButton";
+import { Row, Title } from "./SearchHeader.styles";
 
-import { useBackTargetContext } from "./BackTargetContext";
+type SearchHeaderProps =
+  | { backTo: string; title?: never }
+  | { title: string; backTo?: never };
 
 /**
- * Pass a path to declare it as the current CRE page's back target. Call with
- * no arguments to read whatever's currently declared. `null` means no CRE page
- * has declared a target (e.g. landing page/any page that doesn't require a back button)
+ * The row at the top of every Resource Explorer page, with Search on the right
+ * and either a Back link to `backTo` or the page `title` on the left.
  */
-export function useBackTarget(path?: string): string | null {
-  const { backTarget, setBackTarget } = useBackTargetContext();
+export function SearchHeader({ backTo, title }: SearchHeaderProps) {
+  const pageTitle = title && <Title>{title}</Title>;
 
-  // useLayoutEffect so the back button/logo swap and any target change happen before
-  // paint, instead of flashing the old state.
-  useLayoutEffect(() => {
-    if (path === undefined) return;
-    setBackTarget(path);
-    return () => setBackTarget(null);
-  }, [path, setBackTarget]);
-
-  return backTarget;
+  return (
+    <Row>
+      {backTo ? <BackButton to={backTo} /> : pageTitle}
+      <SearchButton />
+    </Row>
+  );
 }

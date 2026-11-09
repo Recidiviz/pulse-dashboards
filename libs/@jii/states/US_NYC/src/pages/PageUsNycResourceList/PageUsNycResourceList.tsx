@@ -25,11 +25,11 @@ import { ResourceExplorer, State } from "~@jii/paths";
 import { Button } from "~design-system";
 import { pluralize } from "~utils";
 
-import { useBackTarget } from "../../components/BackTarget/useBackTarget";
 import { Chip } from "../../components/Chip/Chip";
 import { CollapsibleSection } from "../../components/CollapsibleSection/CollapsibleSection";
 import { EmptyFilterState } from "../../components/EmptyFilterState/EmptyFilterState";
 import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
+import { SearchHeader } from "../../components/SearchHeader/SearchHeader";
 import { useResourceFilters } from "../../hooks/useResourceFilters";
 import { useResources } from "../../hooks/useResources";
 import { buildCategoryLinks } from "../../hooks/utils";
@@ -84,7 +84,6 @@ export function PageUsNycResourceList() {
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
 
   const landingPath = State.Resident.ResourceExplorer.buildPath(residentParams);
-  useBackTarget(landingPath);
 
   const { data, helpCategories, demographicCategories } = useResources();
 
@@ -136,6 +135,7 @@ export function PageUsNycResourceList() {
 
   return (
     <PageContainer>
+      <SearchHeader backTo={landingPath} />
       <PageHeader>
         <PageTitle>{COPY.pageTitle(category)}</PageTitle>
         <PageSubtitle>{COPY.pageSubtitle(category)}</PageSubtitle>
@@ -192,7 +192,6 @@ export function PageUsNycResourceList() {
               <CollapsibleSection
                 title={subcategory}
                 badgeLabel={COPY.badgeLabel(resources.length)}
-                stickyHeader
                 headerBorder
                 onToggle={(isOpen) =>
                   trackEvent("frontend_cre_subcategory_selected", {

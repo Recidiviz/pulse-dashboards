@@ -67,6 +67,16 @@ export class ResidentNavBarPresenter {
       ];
     }
 
+    if (this.routeParams.stateSlug === "new-york-city") {
+      return [
+        {
+          navKey: "resourceExplorerLink",
+          to: State.Resident.ResourceExplorer.buildPath(this.routeParams),
+          activeOnSubroutes: true,
+        },
+      ];
+    }
+
     if (this.routeParams.stateSlug === "arizona") {
       const links: Array<AdditionalTopBarLink> = [
         {

@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useBackTarget } from "../BackTarget/useBackTarget";
 import { BackLink, Chevron } from "./BackButton.styles";
 
-export function BackButton() {
-  const to = useBackTarget();
-
-  if (!to) return null;
-
+export function BackButton({ to }: { to: string }) {
   return (
     <BackLink to={to}>
       <Chevron size={16} rotate={180} aria-hidden />

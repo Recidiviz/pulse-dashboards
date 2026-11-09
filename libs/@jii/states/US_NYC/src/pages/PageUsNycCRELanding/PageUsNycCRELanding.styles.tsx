@@ -25,6 +25,7 @@ export const PageContainer = styled(BasePageContainer)`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.lg)};
+  padding: 0;
 `;
 
 export const PageHeader = styled.div`
@@ -33,7 +34,7 @@ export const PageHeader = styled.div`
   gap: ${rem(spacing.md)};
 `;
 
-export const PageTitle = styled.h1`
+export const IntroHeading = styled.h2`
   ${typography.Sans24}
   color: ${palette.pine1};
   margin: 0;
@@ -51,7 +52,7 @@ export const GridSection = styled.section`
   gap: ${rem(spacing.md)};
 `;
 
-export const SectionHeading = styled.h2`
+export const SectionHeading = styled.h3`
   ${typography.Sans16}
   color: ${palette.pine1};
   margin: 0;
