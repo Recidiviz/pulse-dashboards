@@ -533,7 +533,7 @@ describe("getLabelStudioSnapshot", () => {
 
       const first = await getLabelStudioSnapshot(client, PROJECT_ID);
       await getLabelStudioSnapshot(client, PROJECT_ID, {
-        now: first.fetchedAt.getTime() + 16 * 60 * 1000,
+        now: first.fetchedAt.getTime() + 61 * 60 * 1000,
       });
 
       expect(listTasksForProject).toHaveBeenCalledTimes(2);

@@ -37,10 +37,7 @@ import {
   LS_TRANSCRIPT_QUALITY_FIELD_NAME,
 } from "~@meetings/tasks/admin/label-studio-grades";
 import type { OverrideGrade } from "~@meetings/tasks/admin/label-studio-override";
-import {
-  isLlmajTriageTaskGradedBad,
-  type LlmajTriageGrade,
-} from "~@meetings/tasks/admin/llmaj-triage-grades";
+import type { LlmajTriageGrade } from "~@meetings/tasks/admin/llmaj-triage-grades";
 import { adminProcedure, router } from "~@meetings/trpc/init";
 import {
   type FlaggedMeetingDetails,
@@ -227,10 +224,6 @@ function isFlaggedInLabelStudio(entry: LabelStudioTaskAnnotations): boolean {
   return isFlaggedByLabelStudio(entry.collapsed, entry.hasUncoveredBadGrade);
 }
 
-function isFlaggedInLlmajTriage(entry: LlmajTriageTaskResult): boolean {
-  return isLlmajTriageTaskGradedBad(entry.collapsed);
-}
-
 /** The flagged meetings for one state, recording any source failure on the tracker. */
 async function findFlaggedMeetingsForState({
   stateCode,
@@ -278,10 +271,12 @@ async function findFlaggedMeetingsForState({
     .filter((entry) => entry.stateCode === stateCode)
     .filter(isFlaggedInLabelStudio)
     .map((entry) => entry.meetingId);
-  const triageReviewIds = [...(triageSnapshot?.byMeetingId.values() ?? [])]
-    .filter((entry) => entry.stateCode === stateCode)
-    .filter(isFlaggedInLlmajTriage)
-    .map((entry) => entry.meetingId);
+
+  // For now, every meeting with a submitted or stale triage task is listed,
+  // regardless of the triage results.
+  //
+  // We can filter these results later, if we end up only wanting to flag BAD grades.
+  const triageReviewIds = [...(triageSnapshot?.taskIdByMeetingId.keys() ?? [])];
 
   const candidateIds = [
     ...new Set([
@@ -380,11 +375,17 @@ async function findFlaggedMeetingsForState({
       llmDimensions: llm?.dimensions,
       labelStudio: snapshot?.byMeetingId.get(meeting.id),
       triageReview: triageSnapshot?.byMeetingId.get(meeting.id)?.collapsed,
+      triageSectionsFlagged: triageSnapshot?.sectionsFlaggedByMeetingId.get(
+        meeting.id,
+      ),
       votes,
     });
     const outcomes = outcomesByMeeting.get(meeting.id) ?? {};
+    const triageListed =
+      llmajTriageStatus === "submitted" || llmajTriageStatus === "stale";
     if (
       !isAnySectionFlagged(sections, llmajTriageStatus) &&
+      !triageListed &&
       Object.keys(outcomes).length === 0
     ) {
       return [];
@@ -604,6 +605,9 @@ export const flaggedMeetingsRouter = router({
         llmDimensions: llm?.dimensions,
         labelStudio: lsEntry,
         triageReview: triageEntry?.collapsed,
+        triageSectionsFlagged: triageSnapshot?.sectionsFlaggedByMeetingId.get(
+          meeting.id,
+        ),
         votes,
       });
 

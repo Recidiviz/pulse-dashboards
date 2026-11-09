@@ -42,6 +42,7 @@ import type {
   LabelStudioClient,
   LabelStudioTask,
 } from "~@meetings/tasks/label-studio-client";
+import { LLMAJ_TRIAGE_SECTIONS } from "~@meetings/tasks/label-studio-llmaj-triage";
 
 // =============================================================================
 // Cached snapshots of Label Studio projects' annotations: one for the
@@ -66,7 +67,7 @@ import type {
 // unchanged by moving snapshots into the global database.
 // =============================================================================
 
-const TTL_MS = 15 * 60 * 1000;
+const TTL_MS = 60 * 60 * 1000;
 
 /** How many per-task annotation requests are in flight at once. */
 const ANNOTATION_FETCH_CONCURRENCY = 20;
@@ -142,7 +143,19 @@ interface CrawlSnapshot<TTaskResult> {
 }
 
 export type LabelStudioSnapshot = CrawlSnapshot<LabelStudioTaskAnnotations>;
-export type LlmajTriageSnapshot = CrawlSnapshot<LlmajTriageTaskResult>;
+export type LlmajTriageSnapshot = CrawlSnapshot<LlmajTriageTaskResult> & {
+  /**
+   * Describes which sections were flagged by the judge at the time the triage task was
+   * created.
+   *
+   * Once we return to only flagging BAD meetings (i.e. after the gemini 3.8 upgrade
+   * resolves) this field can be removed.
+   */
+  sectionsFlaggedByMeetingId: Map<
+    string,
+    Partial<Record<ReviewSection, boolean>>
+  >;
+};
 
 function taskString(task: LabelStudioTask, key: string): string | undefined {
   const value = task.data[key];
@@ -151,6 +164,38 @@ function taskString(task: LabelStudioTask, key: string): string | undefined {
 
 function taskBoolean(task: LabelStudioTask, key: string): boolean {
   return task.data[key] === true;
+}
+
+/**
+ * Returns which sections were flagged by the judge at the time the triage task was
+ * created. read from the task's case_note_flagged, action_items_flagged and
+ * overall_flagged fields.
+ *
+ * Once we return to only flagging BAD meetings (i.e. after the gemini 3.8 upgrade
+ * resolves) this logic can be removed.
+ */
+function buildSectionsFlaggedByMeetingId(
+  tasks: LabelStudioTask[],
+  taskIdByMeetingId: Map<string, number>,
+): Map<string, Partial<Record<ReviewSection, boolean>>> {
+  const sectionsFlaggedByMeetingId = new Map<
+    string,
+    Partial<Record<ReviewSection, boolean>>
+  >();
+  for (const task of tasks) {
+    const meetingId = taskString(task, "meeting_id");
+    if (!meetingId || taskIdByMeetingId.get(meetingId) !== task.id) continue;
+    sectionsFlaggedByMeetingId.set(
+      meetingId,
+      Object.fromEntries(
+        LLMAJ_TRIAGE_SECTIONS.map(({ section, prefix }) => [
+          section,
+          taskBoolean(task, `${prefix}_flagged`),
+        ]),
+      ),
+    );
+  }
+  return sectionsFlaggedByMeetingId;
 }
 
 async function mapWithConcurrency<T, R>(
@@ -300,7 +345,10 @@ async function crawlProject<
     rawAnnotations: RawAnnotation[],
     emailById: Map<number, string>,
   ) => TTaskResult | null,
-): Promise<CrawlSnapshot<TTaskResult>> {
+): Promise<{
+  snapshot: CrawlSnapshot<TTaskResult>;
+  tasks: LabelStudioTask[];
+}> {
   const [labelConfigXml, tasks, users] = await Promise.all([
     client.getProjectLabelConfig(projectId),
     // The full field set costs a larger listing payload but reports
@@ -375,18 +423,21 @@ async function crawlProject<
   }
 
   return {
-    fetchedAt: new Date(),
-    byMeetingId,
-    taskIdByMeetingId,
-    taskCount: tasks.length,
-    annotatedTaskCount: annotatedTasks.length,
-    perTaskFailures,
-    unusableTaskCount,
+    snapshot: {
+      fetchedAt: new Date(),
+      byMeetingId,
+      taskIdByMeetingId,
+      taskCount: tasks.length,
+      annotatedTaskCount: annotatedTasks.length,
+      perTaskFailures,
+      unusableTaskCount,
+    },
+    tasks,
   };
 }
 
 // =============================================================================
-// Caching. Each cache keeps one snapshot, reused for 15 minutes (TTL_MS), and
+// Caching. Each cache keeps one snapshot, reused for 60 minutes (TTL_MS), and
 // concurrent reads share one crawl instead of starting several.
 // =============================================================================
 
@@ -459,11 +510,26 @@ class SnapshotCache<TSnapshot extends { fetchedAt: Date }> {
   }
 }
 
-const fullReviewCache = new SnapshotCache((client, projectId) =>
-  crawlProject(client, projectId, buildTaskAnnotations),
+const fullReviewCache = new SnapshotCache(
+  async (client, projectId): Promise<LabelStudioSnapshot> =>
+    (await crawlProject(client, projectId, buildTaskAnnotations)).snapshot,
 );
-const llmajTriageCache = new SnapshotCache((client, projectId) =>
-  crawlProject(client, projectId, buildLlmajTriageTaskResult),
+
+const llmajTriageCache = new SnapshotCache(
+  async (client, projectId): Promise<LlmajTriageSnapshot> => {
+    const { snapshot, tasks } = await crawlProject(
+      client,
+      projectId,
+      buildLlmajTriageTaskResult,
+    );
+    return {
+      ...snapshot,
+      sectionsFlaggedByMeetingId: buildSectionsFlaggedByMeetingId(
+        tasks,
+        snapshot.taskIdByMeetingId,
+      ),
+    };
+  },
 );
 
 export function getLabelStudioSnapshot(

@@ -348,6 +348,13 @@ export interface LabelStudioFlagInput {
   hasUncoveredBadGrade: boolean;
 }
 
+/** The dimension key each section's grades are filed under, on both the judge and Label Studio sides. */
+export const SECTION_TO_DIMENSION = {
+  CASE_NOTE: "caseNote",
+  ACTION_ITEMS: "actionItems",
+  OVERALL: "overall",
+} as const satisfies Record<FlagSection, GradedDimensionKey>;
+
 /**
  * Which sources flag which section.
  *
@@ -356,11 +363,17 @@ export interface LabelStudioFlagInput {
  * sits on top of a BAD case note or BAD action items adds nothing a reviewer
  * has to look at separately. The same holds for a Label Studio field outside
  * the three graded dimensions, and for an LLMAJ triage Overall BAD.
+ *
+ * The judge flags a section it graded BAD. It also flags a section it graded
+ * PARTIAL when the meeting's LLMAJ triage task flagged that section, which
+ * happens only when the agency's config sent PARTIAL grades to triage at the
+ * time the task was created.
  */
 export function computeSectionFlags({
   llmDimensions,
   labelStudio,
   triageReview,
+  triageSectionsFlagged,
   votes,
 }: {
   llmDimensions: LlmajDimension[] | undefined;
@@ -369,11 +382,28 @@ export function computeSectionFlags({
   triageReview:
     | Partial<Record<FlagSection, LlmajTriageSectionResult>>
     | undefined;
+  /* Which sections of the meeting were flagged by the judge at the time the meeting's
+   * triage task was created.
+   *
+   * Once we return to only flagging BAD meetings (i.e. after the gemini 3.8 upgrade
+   * resolves) this logic can be removed.
+   */
+  triageSectionsFlagged?: Partial<Record<FlagSection, boolean>>;
   votes: Pick<OutputVoteRow, "tab" | "vote">[];
 }): SectionFlags {
-  const llmBad = (key: "caseNote" | "actionItems" | "overall") =>
-    LLMAJ_TRIGGER_KEYS.has(key) &&
-    (llmDimensions ?? []).some((d) => d.key === key && d.bad);
+  const llmFlagged = (section: FlagSection) => {
+    const key = SECTION_TO_DIMENSION[section];
+    return (
+      LLMAJ_TRIGGER_KEYS.has(key) &&
+      (llmDimensions ?? []).some(
+        (d) =>
+          d.key === key &&
+          (d.bad ||
+            (d.gradeOrWinner === "PARTIAL" &&
+              triageSectionsFlagged?.[section] === true)),
+      )
+    );
+  };
   const lsBad = (key: GradedDimensionKey) =>
     labelStudio?.collapsed[key] === "BAD";
   const triageBad = (section: FlagSection) => {
@@ -381,25 +411,26 @@ export function computeSectionFlags({
     return result !== undefined && isLlmajTriageGradedBad(result);
   };
 
-  const llmSectionsBad = llmBad("caseNote") || llmBad("actionItems");
+  const llmSectionsFlagged =
+    llmFlagged("CASE_NOTE") || llmFlagged("ACTION_ITEMS");
   const lsSectionsBad = lsBad("caseNote") || lsBad("actionItems");
   const triageSectionsBad = triageBad("CASE_NOTE") || triageBad("ACTION_ITEMS");
 
   const flags: SectionFlags = {
     CASE_NOTE: {
-      llm: llmBad("caseNote"),
+      llm: llmFlagged("CASE_NOTE"),
       labelStudio: lsBad("caseNote"),
       triageReview: triageBad("CASE_NOTE"),
       vote: false,
     },
     ACTION_ITEMS: {
-      llm: llmBad("actionItems"),
+      llm: llmFlagged("ACTION_ITEMS"),
       labelStudio: lsBad("actionItems"),
       triageReview: triageBad("ACTION_ITEMS"),
       vote: false,
     },
     OVERALL: {
-      llm: llmBad("overall") && !llmSectionsBad,
+      llm: llmFlagged("OVERALL") && !llmSectionsFlagged,
       labelStudio:
         !lsSectionsBad &&
         (lsBad("overall") || labelStudio?.hasUncoveredBadGrade === true),
@@ -464,13 +495,6 @@ export function combineRaterGrades(
 // =============================================================================
 // Review outcomes
 // =============================================================================
-
-/** The dimension key each section's grades are filed under, on both the judge and Label Studio sides. */
-export const SECTION_TO_DIMENSION = {
-  CASE_NOTE: "caseNote",
-  ACTION_ITEMS: "actionItems",
-  OVERALL: "overall",
-} as const satisfies Record<FlagSection, GradedDimensionKey>;
 
 export type ReviewOutcomeRow = ReviewOutcomeSummary & {
   meetingId: string;

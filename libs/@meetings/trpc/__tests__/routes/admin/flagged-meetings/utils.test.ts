@@ -261,6 +261,49 @@ describe("computeSectionFlags", () => {
     expect(flags.ACTION_ITEMS.triageReview).toBe(true);
   });
 
+  test("a judge PARTIAL flags its section only when the triage task flagged it", () => {
+    const partial = (key: LlmajDimension["key"]): LlmajDimension => ({
+      ...dimension(key, false),
+      gradeOrWinner: "PARTIAL",
+    });
+    const llmDimensions = [partial("caseNote"), partial("actionItems")];
+
+    const flagged = computeSectionFlags({
+      llmDimensions,
+      labelStudio: undefined,
+      triageReview: undefined,
+      triageSectionsFlagged: { CASE_NOTE: true, ACTION_ITEMS: false },
+      votes: [],
+    });
+    expect(flagged.CASE_NOTE.llm).toBe(true);
+    expect(flagged.ACTION_ITEMS.llm).toBe(false);
+
+    const noTriageTask = computeSectionFlags({
+      llmDimensions,
+      labelStudio: undefined,
+      triageReview: undefined,
+      votes: [],
+    });
+    expect(noTriageTask.CASE_NOTE.llm).toBe(false);
+    expect(noTriageTask.ACTION_ITEMS.llm).toBe(false);
+  });
+
+  test("a judge Overall PARTIAL the triage task flagged is set aside when a section is flagged", () => {
+    const partial = (key: LlmajDimension["key"]): LlmajDimension => ({
+      ...dimension(key, false),
+      gradeOrWinner: "PARTIAL",
+    });
+    const flags = computeSectionFlags({
+      llmDimensions: [dimension("caseNote", true), partial("overall")],
+      labelStudio: undefined,
+      triageReview: undefined,
+      triageSectionsFlagged: { CASE_NOTE: true, OVERALL: true },
+      votes: [],
+    });
+    expect(flags.CASE_NOTE.llm).toBe(true);
+    expect(flags.OVERALL.llm).toBe(false);
+  });
+
   test("a pending triage review ignores the judge's flags but not other sources'", () => {
     const judgeOnly = computeSectionFlags({
       llmDimensions: [dimension("caseNote", true)],
