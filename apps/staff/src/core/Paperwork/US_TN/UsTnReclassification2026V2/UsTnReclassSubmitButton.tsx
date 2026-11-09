@@ -15,17 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMutation } from "@tanstack/react-query";
+
+import { useModuleTrpcQuerier } from "~trpc-client-utils";
+
 import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { UsTnReclassification2026FormV2 } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026FormV2";
 import { StyledFormButton } from "../../FormContainer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
 
 export function UsTnReclassSubmitButton() {
-  const trpcUtils = trpc.useUtils();
-  const trpcClient = trpcUtils.client;
   const { usTnCafSubmissionButton } = useFeatureVariants();
   const form = useOpportunityFormContext() as UsTnReclassification2026FormV2;
+  const trpcQuerier = useModuleTrpcQuerier("UsTnReclassification");
+  const mutation = useMutation(
+    trpcQuerier.saveForm.mutationOptions({
+      onSuccess: (data) => {
+        // eslint-disable-next-line no-console
+        console.log("wrote", data);
+      },
+    }),
+  );
 
   if (!usTnCafSubmissionButton) return;
 
@@ -34,14 +44,15 @@ export function UsTnReclassSubmitButton() {
 
     if (!formData.omsId) return;
 
-    const res = await trpcClient.saveForm.mutate({
+    mutation.mutate({
       residentId: formData.omsId,
       editor: "name@example.com",
     });
-
-    // eslint-disable-next-line no-console
-    console.info(res);
   };
 
-  return <StyledFormButton onClick={onClick}>Submit</StyledFormButton>;
+  return (
+    <StyledFormButton onClick={onClick} disabled={mutation.isPending}>
+      Submit
+    </StyledFormButton>
+  );
 }

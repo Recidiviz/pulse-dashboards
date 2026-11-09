@@ -54,7 +54,6 @@ import {
   TrusteeChecklist,
 } from "../common/Classification2026/TrusteeChecklist";
 import { useTrusteeChecklistState } from "../common/Classification2026/useTrusteeChecklistState";
-import UsTnReclassTrpcProvider from "../common/Classification2026/UsTnReclassTrpcProvider";
 import {
   RCAF_V2_CUTOFF_DATE,
   reclassificationBlockedDownloadTooltip,
@@ -132,127 +131,125 @@ export const FormUsTnReclassification2026V2 = observer(
     });
 
     return (
-      <UsTnReclassTrpcProvider>
-        <FormContainer
-          heading="RCAF"
-          agencyName="TDOC"
-          onClickDownload={() => onClickDownload()}
-          opportunity={opportunity}
-          isMissingContent={downloadTooltip !== undefined}
-          downloadTooltip={downloadTooltip}
-          downloadButtonLabel="Download as .DOCX"
-          headerBanner={<ClassificationResourceLinksBanner />}
-          additionalHeaderButtons={<UsTnReclassSubmitButton />}
-        >
-          <PreworkModal />
-          <FormViewer formRef={formRef}>
-            <CoverSheet />
-            <PrintablePage stretchable>
-              <ClassificationFormPage>
-                <Header>
-                  TENNESSEE CLASSIFICATION INSTRUMENT: RECLASSIFICATION
-                </Header>
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[0]}
-                  questionNumber={1}
-                  supportingText={Q1_SUPPORTING_TEXT}
-                >
-                  <DoubleNotes>
-                    <TextboxWithHeader
-                      header={
-                        "List prior violent/assaultive felony convictions (TDOC) in Last 60 Months (imposed date, charge):"
-                      }
-                      name={"q1aNotes"}
-                    />
-                    <TextboxWithHeader
-                      header={
-                        "List prior ISC or Diversion convictions in  the Last 60 Months - Please confirm if they are violent/assaultive felony convictions (imposed date, charge):"
-                      }
-                      name={"q1bNotes"}
-                    />
-                  </DoubleNotes>
-                </ScoredAssessmentQuestion>
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[1]}
-                  questionNumber={2}
-                  supportingText={Q2_SUPPORTING_TEXT}
-                >
+      <FormContainer
+        heading="RCAF"
+        agencyName="TDOC"
+        onClickDownload={() => onClickDownload()}
+        opportunity={opportunity}
+        isMissingContent={downloadTooltip !== undefined}
+        downloadTooltip={downloadTooltip}
+        downloadButtonLabel="Download as .DOCX"
+        headerBanner={<ClassificationResourceLinksBanner />}
+        additionalHeaderButtons={<UsTnReclassSubmitButton />}
+      >
+        <PreworkModal />
+        <FormViewer formRef={formRef}>
+          <CoverSheet />
+          <PrintablePage stretchable>
+            <ClassificationFormPage>
+              <Header>
+                TENNESSEE CLASSIFICATION INSTRUMENT: RECLASSIFICATION
+              </Header>
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[0]}
+                questionNumber={1}
+                supportingText={Q1_SUPPORTING_TEXT}
+              >
+                <DoubleNotes>
                   <TextboxWithHeader
-                    header={"List current offenses:"}
-                    name={"q2Notes"}
+                    header={
+                      "List prior violent/assaultive felony convictions (TDOC) in Last 60 Months (imposed date, charge):"
+                    }
+                    name={"q1aNotes"}
                   />
-                </ScoredAssessmentQuestion>
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[2]}
-                  scoreSubtext="(Capped at 6)"
-                  questionNumber={3}
-                  supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
-                >
                   <TextboxWithHeader
-                    header={"List disciplinaries:"}
-                    name={"q3NotesFormatted"}
+                    header={
+                      "List prior ISC or Diversion convictions in  the Last 60 Months - Please confirm if they are violent/assaultive felony convictions (imposed date, charge):"
+                    }
+                    name={"q1bNotes"}
                   />
-                </ScoredAssessmentQuestion>
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[3]}
-                  questionNumber={4}
-                  scoreSubtext="(Capped at 9)"
-                  supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
-                >
-                  <TextboxWithHeader
-                    header={"List disciplinaries:"}
-                    name={"q4NotesFormatted"}
-                  />
-                </ScoredAssessmentQuestion>
-              </ClassificationFormPage>
-            </PrintablePage>
-            <PrintablePage stretchable>
-              <ClassificationFormPage>
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[4]}
-                  scoreSubtext="(Capped at 33)"
-                  questionNumber={5}
-                  supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
-                >
-                  <TextboxWithHeader
-                    header={"List disciplinaries:"}
-                    name={"q5NotesFormatted"}
-                  />
-                </ScoredAssessmentQuestion>
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[5]}
-                  questionNumber={6}
-                  supportingText={AGE_SUPPORTING_TEXT}
+                </DoubleNotes>
+              </ScoredAssessmentQuestion>
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[1]}
+                questionNumber={2}
+                supportingText={Q2_SUPPORTING_TEXT}
+              >
+                <TextboxWithHeader
+                  header={"List current offenses:"}
+                  name={"q2Notes"}
                 />
-                <ScoredAssessmentQuestion
-                  questionSpec={rcafAssessmentQuestionsV2[6]}
-                  questionNumber={7}
-                  supportingText={PROGRAM_COMPLETION_SUPPORTING_TEXT}
-                >
-                  <TextboxWithHeader
-                    header={"List completed programs:"}
-                    name={"q7Notes"}
-                  />
-                </ScoredAssessmentQuestion>
-                <TotalScore
-                  score={derivedData.totalScore}
-                  lowUpper={RCAF_LOW_UPPER_THRESHOLD_V2}
-                  mediumUpper={RCAF_MEDIUM_UPPER_THRESHOLD_V2}
-                  trusteeAssessmentRequired={trusteeAssessmentRequired}
-                  reworkEnabled={reworkEnabled}
-                  custodyLevel={derivedData.totalText}
+              </ScoredAssessmentQuestion>
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[2]}
+                scoreSubtext="(Capped at 6)"
+                questionNumber={3}
+                supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
+              >
+                <TextboxWithHeader
+                  header={"List disciplinaries:"}
+                  name={"q3NotesFormatted"}
                 />
-              </ClassificationFormPage>
-            </PrintablePage>
-            <TrusteeChecklist display={includeTrusteeChecklist} />
-            <HearingNotice pilotVersion />
-          </FormViewer>
-          <PostDownloadModal
-            isOpen={postDownloadModalIsOpen}
-            onClose={() => setPostDownloadModalIsOpen(false)}
-          />
-        </FormContainer>
-      </UsTnReclassTrpcProvider>
+              </ScoredAssessmentQuestion>
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[3]}
+                questionNumber={4}
+                scoreSubtext="(Capped at 9)"
+                supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
+              >
+                <TextboxWithHeader
+                  header={"List disciplinaries:"}
+                  name={"q4NotesFormatted"}
+                />
+              </ScoredAssessmentQuestion>
+            </ClassificationFormPage>
+          </PrintablePage>
+          <PrintablePage stretchable>
+            <ClassificationFormPage>
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[4]}
+                scoreSubtext="(Capped at 33)"
+                questionNumber={5}
+                supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
+              >
+                <TextboxWithHeader
+                  header={"List disciplinaries:"}
+                  name={"q5NotesFormatted"}
+                />
+              </ScoredAssessmentQuestion>
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[5]}
+                questionNumber={6}
+                supportingText={AGE_SUPPORTING_TEXT}
+              />
+              <ScoredAssessmentQuestion
+                questionSpec={rcafAssessmentQuestionsV2[6]}
+                questionNumber={7}
+                supportingText={PROGRAM_COMPLETION_SUPPORTING_TEXT}
+              >
+                <TextboxWithHeader
+                  header={"List completed programs:"}
+                  name={"q7Notes"}
+                />
+              </ScoredAssessmentQuestion>
+              <TotalScore
+                score={derivedData.totalScore}
+                lowUpper={RCAF_LOW_UPPER_THRESHOLD_V2}
+                mediumUpper={RCAF_MEDIUM_UPPER_THRESHOLD_V2}
+                trusteeAssessmentRequired={trusteeAssessmentRequired}
+                reworkEnabled={reworkEnabled}
+                custodyLevel={derivedData.totalText}
+              />
+            </ClassificationFormPage>
+          </PrintablePage>
+          <TrusteeChecklist display={includeTrusteeChecklist} />
+          <HearingNotice pilotVersion />
+        </FormViewer>
+        <PostDownloadModal
+          isOpen={postDownloadModalIsOpen}
+          onClose={() => setPostDownloadModalIsOpen(false)}
+        />
+      </FormContainer>
     );
   },
 );

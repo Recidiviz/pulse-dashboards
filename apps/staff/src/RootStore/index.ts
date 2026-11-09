@@ -30,12 +30,14 @@ import {
 import { isTestEnv } from "~client-env-utils";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { SentencingStore } from "~sentencing-client";
+import { initModuleTrpcClients } from "~trpc-client-utils";
 
 import OpportunitiesFilterStore from "../FilterStore/OpportunitiesFilterStore";
 import TasksFilterStore from "../FilterStore/TasksFilterStore";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { ParoleStore } from "../ParoleStore/ParoleStore";
+import { queryClient } from "../reactQuery/client";
 import { TENANT_CONFIGS } from "../tenants";
 import { createJiiTrpcClient } from "../trpc/jii";
 import { getFirestoreProjectId } from "../utils/getFirestoreProjectId";
@@ -196,6 +198,12 @@ export class RootStore {
     this.jiiTrpc = createJiiTrpcClient({
       firebaseAuthClient: this.firebaseAuthClient,
       currentTenantId: () => this.currentTenantId,
+    });
+
+    initModuleTrpcClients({
+      url: import.meta.env.VITE_MODULE_BACKEND_URL,
+      tokenStore: this.userStore,
+      queryClient: queryClient,
     });
   }
 
