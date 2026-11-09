@@ -132,9 +132,14 @@ curl -fsS "https://typesense-staging.recidiviz.org/keys" \
   -d '{
     "description": "typesense write key (staging)",
     "actions": ["documents:*", "collections:*"],
-    "collections": ["clients", "residents", "supervisionStaff", "incarcerationStaff", "locations"]
+    "collections": ["clients", "residents", "supervisionStaff", "incarcerationStaff", "locations", "opportunities", "opportunityUpdates"]
   }' | jq
 ```
+
+That list must cover every collection in
+[`schemas/index.ts`](../../../../../@typesense/client/src/schemas/index.ts).
+A collection left out does not fail at deploy; its writes 403 at runtime, and
+only for that collection.
 
 The response holds the **only** copy of the key in `value`. Capture it before it
 disappears — later reads of `/keys` return `value_prefix` only.

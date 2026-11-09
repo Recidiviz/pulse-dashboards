@@ -1,36 +1,38 @@
 # apps/typesense-sync
 
-Firestore-triggered Cloud Functions (v2) that patch user-written updates onto the
-Typesense record they update, in realtime.
+Firestore-triggered Cloud Functions (v2) that mirror user-written updates into
+Typesense in realtime.
 
-| Firestore path                                                | Typesense collection     | Doc id               | Fields patched                                                       |
-| ------------------------------------------------------------- | ------------------------ | -------------------- | -------------------------------------------------------------------- |
-| `clientUpdatesV2/{recordId}`                                  | `clients` or `residents` | `{recordId}`         | `preferredName`                                                      |
-| `clientUpdatesV2/{recordId}/clientOpportunityUpdates/{docId}` | `opportunities`          | `{recordId}_{docId}` | `denial`, `manualSnooze`, `autoSnooze`, `submitted`, `actionHistory` |
+| Firestore path                                                | Typesense collection     | Doc id               | Write mode                       |
+| ------------------------------------------------------------- | ------------------------ | -------------------- | -------------------------------- |
+| `clientUpdatesV2/{recordId}`                                  | `clients` or `residents` | `{recordId}`         | **patch** — `preferredName` only |
+| `clientUpdatesV2/{recordId}/clientOpportunityUpdates/{docId}` | `opportunityUpdates`     | `{recordId}_{docId}` | **own** — the whole document     |
+
+**The two modes are not interchangeable.** A person's `preferredName` sits
+alongside ETL-owned fields on a record `backfill-fn` owns, so that write has to
+be a partial update or the ETL data is destroyed on every officer action. An
+`opportunityUpdates` document has no other writer, so sync-fn replaces it whole,
+carrying `OPPORTUNITY_UPDATE_FIELDS` (`denial`, `manualSnooze`, `autoSnooze`,
+`omsSnooze`, `submitted`, `actionHistory`, `lastViewed`, `completed`,
+`adjudicationStatus`) plus `stateCode`, and the fields `deriveUpdateFields`
+computes from them.
+
+A deleted Firestore document clears the person field, but **deletes** the
+`opportunityUpdates` document — that document is the officer action.
 
 Source lives at [`apps/@typesense/sync-fn`](../../../../../../apps/@typesense/sync-fn/).
-
-## Why this exists instead of the extension
-
-Realtime sync used to run through the upstream `firestore-typesense-search`
-Firebase extension, installed by an `apps/firestore-typesense-search` component.
-That component is retired (OBT-51845). The extension **could not** do what this
-component does, for two reasons:
-
-- It set the Typesense document id to `snapshot.id` verbatim. A subcollection
-  doc's id is just the opportunity type, so every client's `usTnExpiration`
-  update would map to one Typesense document.
-- It wrote whole documents. These fields live alongside ETL-owned fields on
-  `opportunities` and `clients`/`residents`, so the write has to be a partial
-  update or the ETL data is destroyed on every officer action.
 
 ## Relationship to the backfill
 
 [`apps/typesense-backfill`](../typesense-backfill/) is the **authoritative**
-writer for these fields — its `mergeSources` config reconciles them from
-Firestore on every run. These functions are a latency optimization on top. A
-patch that 404s because the batch side hasn't indexed the record yet is logged
-and dropped; the next backfill picks it up.
+writer for both targets — its `mergeSources` config reconciles `preferredName`,
+and its `opportunityUpdates` config rebuilds those documents from the same
+subcollection. These functions are a latency optimization on top.
+
+A person patch that 404s because the batch side hasn't indexed the record yet is
+logged as `ABSENT` and dropped; the next backfill picks it up. The
+`opportunityUpdates` upsert creates rather than 404ing, so an officer's action
+shows up even before the batch side has seen that record.
 
 The two writers must compose identical document ids. sync-fn joins the
 document-id segments of the Firestore path; backfill-fn's `mergeDocIdFromPath`
@@ -55,9 +57,11 @@ gcloud functions logs read typesense-sync-client-opportunity-update \
   --gen2 --region=us-east1 --project=recidiviz-dashboard-staging --limit=50
 ```
 
-Each invocation logs a `FIRE` line, a `PATCH` / `ABSENT` / `SKIP` outcome naming
-the collection, doc id and which fields were set or cleared, and a `DONE` line
-with the elapsed time. Field names only — never values.
+Each invocation logs a `FIRE` line, one outcome line, and a `DONE` line with the
+elapsed time. The outcome is `PATCH`, `UPSERT`, `DELETE`, `ABSENT` (target not
+indexed yet), `NOOP` (the write touched no owned field) or `SKIP` (path not
+synced), naming the collection, doc id and which fields were set or cleared.
+Field names only — never values.
 
 ## Gotchas
 

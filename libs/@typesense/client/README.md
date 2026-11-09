@@ -22,17 +22,22 @@ import {
 - [`src/client.ts`](src/client.ts) — `createTypesenseClient` factory plus a
   localhost-defaulting variant for offline use.
 - [`src/schemas/index.ts`](src/schemas/index.ts) — canonical Typesense
-  collection schemas. Single source of truth for all consumers (extension,
-  backfill function, provision, migrate, search bar).
+  collection schemas. Single source of truth for all consumers: backfill-fn,
+  sync-fn, provision, migrate-schemas and the search bar.
 - [`src/scope/`](src/scope/) — FE caseload-visibility scope resolution and
   compilation to Typesense `filter_by` clauses.
 - [`src/export-collections.ts`](src/export-collections.ts) — emits
   collection→fields JSON to stdout for consumption by the atmos stack files
   (`!exec` tag).
 - [`src/inspect.ts`](src/inspect.ts) — read-only introspection of a remote
-  cluster. Today reads `TYPESENSE_API_INSPECT_KEY`; the follow-up is to mint a
-  dedicated `collections:list,get` ops key so inspect doesn't need the admin
-  key.
+  cluster, via `TYPESENSE_API_INSPECT_KEY`.
+
+  **That key is not yet least-privilege.** A dedicated `collections:list,get`
+  ops key has still to be minted. Until it is, confirm what the current value
+  actually carries before assuming it is read-only — `GET /keys` lists each
+  key's actions and `value_prefix` without exposing any value. The same value is
+  deployed to `staff-server`, which reads it for the Profile admin panel, so its
+  scope is the panel's blast radius.
 
 ## Remote cluster introspection
 
@@ -112,13 +117,13 @@ This file is **not** the one a deployed server reads. `additional-sops-env-files
 wires it into the local `nx dev staff` target only. Every deployed environment
 reads its own GAE env file:
 
-| Reads it                               | File                                                       |
-| -------------------------------------- | ---------------------------------------------------------- |
-| local `nx dev staff`                   | `libs/@typesense/client/env.staging.enc.yaml`              |
-| ops tooling, probes, `migrate-schemas` | `libs/@typesense/client/env.{staging,production}.enc.yaml` |
-| deployed staging                       | `apps/staff-server/gae-staging.enc.yaml`                   |
-| deployed staging-demo                  | `apps/staff-server/gae-staging-demo.enc.yaml`              |
-| deployed production                    | `apps/staff-server/gae-production.enc.yaml`                |
+| Reads it                         | File                                                       |
+| -------------------------------- | ---------------------------------------------------------- |
+| local `nx dev staff`             | `libs/@typesense/client/env.staging.enc.yaml`              |
+| ops tooling and inspect commands | `libs/@typesense/client/env.{staging,production}.enc.yaml` |
+| deployed staging                 | `apps/staff-server/gae-staging.enc.yaml`                   |
+| deployed staging-demo            | `apps/staff-server/gae-staging-demo.enc.yaml`              |
+| deployed production              | `apps/staff-server/gae-production.enc.yaml`                |
 
 **Rotating the key means writing the new value into every file for that
 environment.** A copy that drifts does not fail at deploy. It fails for users,

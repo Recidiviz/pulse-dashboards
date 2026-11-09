@@ -70,7 +70,9 @@ For schema CHANGES on an existing cluster, use [`migrate-schemas`](#evolving-a-s
 
 ## Evolving a schema (deploy-safe)
 
-After the initial provision, schema changes (add/drop fields) should land via `migrate-schemas`, which uses Typesense's `PATCH /collections/<n>` to mutate existing collections in place — no data loss, no downtime. This is the path the deploy pipeline takes.
+After the initial provision, schema changes (add/drop fields) should land via `migrate-schemas`, which uses Typesense's `PATCH /collections/<n>` to mutate existing collections in place — no data loss, no downtime.
+
+**Nothing runs this for you.** `provision` and `migrate-schemas` are both manual, so a schema change does not ship with the code that needs it. Run the migration by hand, staging first, before deploying that code.
 
 ```bash
 nx migrate-schemas '@typesense/tools' -c staging                  # apply
@@ -110,7 +112,7 @@ nx migrate-schemas '@typesense/tools' -c staging -- --dry-run                 # 
 nx migrate-schemas '@typesense/tools' -c staging -- --allow-field-modify      # apply
 ```
 
-Without the flag the script lists the modifies and exits non-zero, so a routine deploy can never silently rewrite a field.
+Without the flag the script lists the modifies and exits non-zero, so a run that was meant to add a field can never silently rewrite one instead.
 
 **Before making a field non-optional**, confirm every live document actually has it. Typesense validates existing docs against the re-added field, and the whole alter fails if any document is missing it.
 
@@ -143,9 +145,10 @@ operations. See [`.sops.yaml`](../../../.sops.yaml) for the rule.
 renaming a KMS key requires re-encrypting every file that uses it, and the
 key name doesn't need to match the lib name.)
 
-Decryption of `env.production.enc.yaml` behaves similarly, gated on
-`pulse-dashboards-sops-typesense-admin` KMS key (in
-`recidiviz-dashboard-production`),
+Decryption of `env.production.enc.yaml` behaves the same way, gated on the
+`pulse-dashboards-sops-typesense-admin` KMS key in
+`recidiviz-dashboard-production`. The two keys are separate, so staging access
+does not grant production access.
 
 ## Running unit tests
 
