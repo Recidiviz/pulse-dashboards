@@ -20,6 +20,7 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components";
 
+import type { ParoleBoardAnalytics } from "~@parole-board/common";
 import { ParoleCase } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
@@ -58,9 +59,11 @@ const OLDER_DISCIPLINARIES_ID = "conduct-history-older-disciplinaries";
 export function UsCoOlderDisciplinariesSection({
   caseDetail,
   config,
+  analytics,
 }: {
   caseDetail: ParoleCase;
   config: ParoleConfig;
+  analytics: ParoleBoardAnalytics;
 }) {
   const [showOlder, setShowOlder] = useState(false);
   // Same window the section itself uses, so the records it hides are
@@ -78,7 +81,14 @@ export function UsCoOlderDisciplinariesSection({
         type="button"
         aria-expanded={showOlder}
         aria-controls={OLDER_DISCIPLINARIES_ID}
-        onClick={() => setShowOlder((prev) => !prev)}
+        onClick={() => {
+          analytics.trackPbDisciplinariesToggled({
+            pseudonymizedId: caseDetail.pseudonymizedId,
+            disciplinaryCount: olderRecords.length,
+            isExpanded: !showOlder,
+          });
+          setShowOlder(!showOlder);
+        }}
       >
         <Icon kind={IconSVG.Caret} width={10} aria-hidden="true" />
         See Older Disciplinaries ({olderRecords.length})

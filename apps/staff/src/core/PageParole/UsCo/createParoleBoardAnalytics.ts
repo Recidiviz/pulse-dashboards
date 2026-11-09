@@ -20,14 +20,13 @@ import type { ParoleBoardAnalytics } from "~@parole-board/common";
 import type AnalyticsStore from "../../../RootStore/AnalyticsStore";
 
 /**
- * Sends the Parole Board admin calendar's events through the staff
- * AnalyticsStore, which adds sessionId and decides whether to write to
+ * Sends the Parole Board admin calendar and case profile events through the
+ * staff AnalyticsStore, which adds sessionId and decides whether to write to
  * Segment.
  *
  * Each method copies only the fields its metadata type declares. A caller can
  * pass an object with extra fields, and TypeScript allows it, so copying keeps
- * anything outside the declared months, counts and codes from reaching
- * Segment.
+ * anything outside the declared fields from reaching Segment.
  */
 export function createParoleBoardAnalytics(
   analyticsStore: Pick<AnalyticsStore, "track">,
@@ -97,6 +96,68 @@ export function createParoleBoardAnalytics(
       analyticsStore.track("frontend.pb_public_calendar_pattern_edited", {
         kindCode,
         resourceCode,
+      }),
+    trackPbAssessmentClicked: ({
+      pseudonymizedId,
+      tool,
+      score,
+      maxScore,
+      riskLevel,
+      date,
+    }) =>
+      analyticsStore.track("frontend.pb_assessment_clicked", {
+        pseudonymizedId,
+        tool,
+        score,
+        maxScore,
+        riskLevel,
+        date,
+      }),
+    trackPbAssessmentAggregateClicked: ({
+      pseudonymizedId,
+      tools,
+      scores,
+      maxScores,
+      riskLevels,
+      dates,
+    }) =>
+      analyticsStore.track("frontend.pb_assessment_aggregate_clicked", {
+        pseudonymizedId,
+        tools: [...tools],
+        scores: [...scores],
+        maxScores: [...maxScores],
+        riskLevels: [...riskLevels],
+        dates: [...dates],
+      }),
+    trackPbCompletedProgramsToggled: ({
+      pseudonymizedId,
+      programCount,
+      isExpanded,
+    }) =>
+      analyticsStore.track("frontend.pb_completed_programs_toggled", {
+        pseudonymizedId,
+        programCount,
+        isExpanded,
+      }),
+    trackPbEdovoProgramsToggled: ({
+      pseudonymizedId,
+      programCount,
+      isExpanded,
+    }) =>
+      analyticsStore.track("frontend.pb_edovo_programs_toggled", {
+        pseudonymizedId,
+        programCount,
+        isExpanded,
+      }),
+    trackPbDisciplinariesToggled: ({
+      pseudonymizedId,
+      disciplinaryCount,
+      isExpanded,
+    }) =>
+      analyticsStore.track("frontend.pb_disciplinaries_toggled", {
+        pseudonymizedId,
+        disciplinaryCount,
+        isExpanded,
       }),
   };
 }

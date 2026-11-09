@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { createFakeHost } from "~@parole-board/common/testing";
 import { ParoleRiskAssessment } from "~datatypes";
 
 import type { ParoleRiskAssessmentConfig } from "../../../../models/types";
@@ -62,6 +63,11 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   },
 ];
 
+const TRACKING_PROPS = {
+  pseudonymizedId: "pseudo-123",
+  analytics: createFakeHost().analyticsStore,
+};
+
 describe("UsCoRiskAssessmentSection", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -72,7 +78,12 @@ describe("UsCoRiskAssessmentSection", () => {
   });
 
   it("defaults to the 'All' view with a trajectory chart of all assessments", () => {
-    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(
+      <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
+        riskAssessments={RISK_ASSESSMENTS}
+      />,
+    );
 
     expect(screen.getByText("Risk Score Trajectory")).toBeInTheDocument();
     expect(
@@ -87,7 +98,12 @@ describe("UsCoRiskAssessmentSection", () => {
 
   it("only allows a single assessment tool to be selected at a time", async () => {
     const user = userEvent.setup();
-    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(
+      <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
+        riskAssessments={RISK_ASSESSMENTS}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
     expect(screen.getByText("10 / 100")).toBeInTheDocument();
@@ -99,7 +115,12 @@ describe("UsCoRiskAssessmentSection", () => {
 
   it("shows the score, assessment date, a risk pill, and a subcategory breakdown chart for a selected tool", async () => {
     const user = userEvent.setup();
-    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(
+      <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
+        riskAssessments={RISK_ASSESSMENTS}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
 
@@ -113,7 +134,12 @@ describe("UsCoRiskAssessmentSection", () => {
 
   it("labels the risk level as the source recorded it, for every tool", async () => {
     const user = userEvent.setup();
-    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(
+      <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
+        riskAssessments={RISK_ASSESSMENTS}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: /^PIT/ }));
     expect(screen.getByText("Moderate Risk — 45%")).toBeInTheDocument();
@@ -129,7 +155,12 @@ describe("UsCoRiskAssessmentSection", () => {
 
   it("warns when the selected assessment is over 12 months stale", async () => {
     const user = userEvent.setup();
-    render(<UsCoRiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
+    render(
+      <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
+        riskAssessments={RISK_ASSESSMENTS}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: /^SRT/ }));
     expect(
@@ -143,7 +174,9 @@ describe("UsCoRiskAssessmentSection", () => {
   });
 
   it("shows an empty state when there are no risk assessments", () => {
-    render(<UsCoRiskAssessmentSection riskAssessments={[]} />);
+    render(
+      <UsCoRiskAssessmentSection {...TRACKING_PROPS} riskAssessments={[]} />,
+    );
 
     expect(screen.getByText("Risk Score Trajectory")).toBeInTheDocument();
     expect(
@@ -170,7 +203,10 @@ describe("UsCoRiskAssessmentSection", () => {
     ];
 
     render(
-      <UsCoRiskAssessmentSection riskAssessments={mismatchedAssessments} />,
+      <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
+        riskAssessments={mismatchedAssessments}
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
@@ -181,6 +217,7 @@ describe("UsCoRiskAssessmentSection", () => {
     const user = userEvent.setup();
     render(
       <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
         riskAssessments={[
           { tool: "LSIR", score: 10, maxScore: 100, date: "2026-06-01" },
         ]}
@@ -219,6 +256,7 @@ describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
     const user = userEvent.setup();
     render(
       <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -235,6 +273,7 @@ describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
   it("renders the configured aggregate view label and tool subset", () => {
     render(
       <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -248,6 +287,7 @@ describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
     const user = userEvent.setup();
     render(
       <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -263,6 +303,7 @@ describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
     const user = userEvent.setup();
     render(
       <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={CUSTOM_CONFIG}
       />,
@@ -286,6 +327,7 @@ describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
 
     render(
       <UsCoRiskAssessmentSection
+        {...TRACKING_PROPS}
         riskAssessments={RISK_ASSESSMENTS}
         riskAssessmentConfig={narrowConfig}
       />,
@@ -298,5 +340,84 @@ describe("UsCoRiskAssessmentSection with a custom riskAssessmentConfig", () => {
     expect(
       screen.queryByRole("button", { name: /^CARAS/ }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("UsCoRiskAssessmentSection analytics", () => {
+  const CTAP_CONFIG: ParoleRiskAssessmentConfig = {
+    tools: ["LSIR", "PIT", "CARAS", "SRT"],
+    aggregateView: { label: "Entire CTAP Suite", tools: ["PIT", "SRT"] },
+  };
+
+  function setup(riskAssessmentConfig?: ParoleRiskAssessmentConfig) {
+    const analytics = createFakeHost().analyticsStore;
+    const toolSpy = vi.spyOn(analytics, "trackPbAssessmentClicked");
+    const aggregateSpy = vi.spyOn(
+      analytics,
+      "trackPbAssessmentAggregateClicked",
+    );
+    render(
+      <UsCoRiskAssessmentSection
+        pseudonymizedId="pseudo-123"
+        riskAssessments={[
+          ...RISK_ASSESSMENTS,
+          { tool: "LSIR", score: 20, maxScore: 100, date: "2026-06-02" },
+        ]}
+        riskAssessmentConfig={riskAssessmentConfig}
+        analytics={analytics}
+      />,
+    );
+    return { toolSpy, aggregateSpy };
+  }
+
+  it("reports the latest assessment of the clicked tool", async () => {
+    const { toolSpy, aggregateSpy } = setup();
+
+    await userEvent.click(screen.getByRole("button", { name: /^LSI/ }));
+
+    expect(toolSpy).toHaveBeenCalledExactlyOnceWith({
+      pseudonymizedId: "pseudo-123",
+      tool: "LSIR",
+      score: 20,
+      maxScore: 100,
+      riskLevel: null,
+      date: "2026-06-02",
+    });
+    expect(aggregateSpy).not.toHaveBeenCalled();
+  });
+
+  it("reports the risk level label when the assessment has one", async () => {
+    const { toolSpy } = setup();
+
+    await userEvent.click(screen.getByRole("button", { name: /^PIT/ }));
+
+    expect(toolSpy).toHaveBeenCalledExactlyOnceWith({
+      pseudonymizedId: "pseudo-123",
+      tool: "PIT",
+      score: 45,
+      maxScore: 100,
+      riskLevel: "Moderate",
+      date: "2026-06-01",
+    });
+  });
+
+  it("reports the aggregate assessments as parallel arrays when the aggregate view is selected", async () => {
+    const { toolSpy, aggregateSpy } = setup(CTAP_CONFIG);
+
+    await userEvent.click(screen.getByRole("button", { name: /^LSI/ }));
+    toolSpy.mockClear();
+    await userEvent.click(
+      screen.getByRole("button", { name: /^Entire CTAP Suite/ }),
+    );
+
+    expect(aggregateSpy).toHaveBeenCalledExactlyOnceWith({
+      pseudonymizedId: "pseudo-123",
+      tools: ["PIT", "SRT"],
+      scores: [45, 70],
+      maxScores: [100, 100],
+      riskLevels: ["Moderate", "High"],
+      dates: ["2026-06-01", "2024-01-01"],
+    });
+    expect(toolSpy).not.toHaveBeenCalled();
   });
 });

@@ -17,6 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { useRef } from "react";
 import {
   Accordion,
   AccordionItem,
@@ -26,6 +27,7 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components";
 
+import type { ParoleBoardAnalytics } from "~@parole-board/common";
 import {
   PAROLE_COMPLETED_PROGRAM_STATUSES,
   ParoleDocProgram,
@@ -106,13 +108,21 @@ const EmptyState = styled.div`
   padding: ${rem(spacing.sm)} 0;
 `;
 
+const DOC_ITEM_ID = "doc";
+const EDOVO_ITEM_ID = "edovo";
+
 export function UsCoProgramParticipationSection({
+  pseudonymizedId,
   docPrograms,
   edovoPrograms,
+  analytics,
 }: {
+  pseudonymizedId: string;
   docPrograms: Array<ParoleDocProgram>;
   edovoPrograms: Array<ParoleEdovoProgram>;
+  analytics: ParoleBoardAnalytics;
 }) {
+  const expandedItemIds = useRef<Array<string>>([]);
   const completedDocPrograms = docPrograms.filter((program) =>
     PAROLE_COMPLETED_PROGRAM_STATUSES.has(program.status),
   );
@@ -122,11 +132,43 @@ export function UsCoProgramParticipationSection({
     (program) => program.status === "completed",
   );
 
+  // The accordion reports the full expanded list on every change, so the
+  // toggled item is the one whose membership differs from the previous list.
+  const handleAccordionChange = (nowExpandedIds: Array<string>) => {
+    const previousIds = expandedItemIds.current;
+    expandedItemIds.current = nowExpandedIds;
+
+    const toggledId = [...previousIds, ...nowExpandedIds].find(
+      (id) => previousIds.includes(id) !== nowExpandedIds.includes(id),
+    );
+    const isExpanded =
+      toggledId !== undefined && nowExpandedIds.includes(toggledId);
+
+    if (toggledId === DOC_ITEM_ID) {
+      analytics.trackPbCompletedProgramsToggled({
+        pseudonymizedId,
+        programCount: completedDocPrograms.length,
+        isExpanded,
+      });
+    }
+    if (toggledId === EDOVO_ITEM_ID) {
+      analytics.trackPbEdovoProgramsToggled({
+        pseudonymizedId,
+        programCount: completedEdovoPrograms.length,
+        isExpanded,
+      });
+    }
+  };
+
   return (
     <ParoleSectionCard>
       <ParoleSectionTitle>Program Participation</ParoleSectionTitle>
-      <StyledAccordion allowMultipleExpanded allowZeroExpanded>
-        <StyledAccordionItem uuid="doc">
+      <StyledAccordion
+        allowMultipleExpanded
+        allowZeroExpanded
+        onChange={handleAccordionChange}
+      >
+        <StyledAccordionItem uuid={DOC_ITEM_ID}>
           <AccordionItemHeading>
             <AccordionButton>
               Completed Programs ({completedDocPrograms.length})
@@ -153,7 +195,7 @@ export function UsCoProgramParticipationSection({
           </AccordionBody>
         </StyledAccordionItem>
 
-        <StyledAccordionItem uuid="edovo">
+        <StyledAccordionItem uuid={EDOVO_ITEM_ID}>
           <AccordionItemHeading>
             <AccordionButton>
               Edovo Credit Programs ({completedEdovoPrograms.length})

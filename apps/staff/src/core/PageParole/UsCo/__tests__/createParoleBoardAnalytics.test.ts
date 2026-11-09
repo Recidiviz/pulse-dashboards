@@ -149,6 +149,82 @@ describe("createParoleBoardAnalytics", () => {
     },
   );
 
+  it("sends an assessment click with its scores and risk level", () => {
+    const { track, analytics } = setup();
+    const metadata = {
+      pseudonymizedId: "pseudo-123",
+      tool: "PIT",
+      score: 45,
+      maxScore: null,
+      riskLevel: "Moderate",
+      date: "2026-06-01",
+    };
+
+    analytics.trackPbAssessmentClicked(metadata);
+
+    expect(track).toHaveBeenCalledWith(
+      "frontend.pb_assessment_clicked",
+      metadata,
+    );
+  });
+
+  it("sends an aggregate assessment click with parallel arrays", () => {
+    const { track, analytics } = setup();
+    const metadata = {
+      pseudonymizedId: "pseudo-123",
+      tools: ["RT", "SRT", "PIT"],
+      scores: [12, 30, 45],
+      maxScores: [20, null, 100],
+      riskLevels: ["Low", null, "Moderate"],
+      dates: ["2026-06-01", "2026-05-12", "2026-06-02"],
+    };
+
+    analytics.trackPbAssessmentAggregateClicked(metadata);
+
+    expect(track).toHaveBeenCalledWith(
+      "frontend.pb_assessment_aggregate_clicked",
+      metadata,
+    );
+  });
+
+  it.each([
+    [
+      "trackPbCompletedProgramsToggled",
+      "frontend.pb_completed_programs_toggled",
+    ],
+    ["trackPbEdovoProgramsToggled", "frontend.pb_edovo_programs_toggled"],
+  ] as const)(
+    "sends %s with the program count and state",
+    (method, eventName) => {
+      const { track, analytics } = setup();
+      const metadata = {
+        pseudonymizedId: "pseudo-123",
+        programCount: 4,
+        isExpanded: true,
+      };
+
+      analytics[method](metadata);
+
+      expect(track).toHaveBeenCalledWith(eventName, metadata);
+    },
+  );
+
+  it("sends a disciplinaries toggle with the record count and state", () => {
+    const { track, analytics } = setup();
+    const metadata = {
+      pseudonymizedId: "pseudo-123",
+      disciplinaryCount: 3,
+      isExpanded: false,
+    };
+
+    analytics.trackPbDisciplinariesToggled(metadata);
+
+    expect(track).toHaveBeenCalledWith(
+      "frontend.pb_disciplinaries_toggled",
+      metadata,
+    );
+  });
+
   const extras = {
     email: "editor@example.com",
     entryId: "entry-1",
@@ -238,6 +314,62 @@ describe("createParoleBoardAnalytics", () => {
         a.trackPbPublicCalendarPatternEdited({
           kindCode: "HEARING",
           resourceCode: "FACILITY_A",
+          ...extras,
+        }),
+    ],
+    [
+      "trackPbAssessmentClicked",
+      (a) =>
+        a.trackPbAssessmentClicked({
+          pseudonymizedId: "pseudo-123",
+          tool: "LSIR",
+          score: 20,
+          maxScore: 100,
+          riskLevel: "Low",
+          date: "2026-06-01",
+          ...extras,
+        }),
+    ],
+    [
+      "trackPbAssessmentAggregateClicked",
+      (a) =>
+        a.trackPbAssessmentAggregateClicked({
+          pseudonymizedId: "pseudo-123",
+          tools: ["PIT"],
+          scores: [45],
+          maxScores: [100],
+          riskLevels: ["Moderate"],
+          dates: ["2026-06-01"],
+          ...extras,
+        }),
+    ],
+    [
+      "trackPbCompletedProgramsToggled",
+      (a) =>
+        a.trackPbCompletedProgramsToggled({
+          pseudonymizedId: "pseudo-123",
+          programCount: 2,
+          isExpanded: true,
+          ...extras,
+        }),
+    ],
+    [
+      "trackPbEdovoProgramsToggled",
+      (a) =>
+        a.trackPbEdovoProgramsToggled({
+          pseudonymizedId: "pseudo-123",
+          programCount: 2,
+          isExpanded: true,
+          ...extras,
+        }),
+    ],
+    [
+      "trackPbDisciplinariesToggled",
+      (a) =>
+        a.trackPbDisciplinariesToggled({
+          pseudonymizedId: "pseudo-123",
+          disciplinaryCount: 2,
+          isExpanded: true,
           ...extras,
         }),
     ],

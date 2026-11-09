@@ -32,6 +32,11 @@ function createFakeAnalytics(): ParoleBoardAnalytics {
     trackPbPublicCalendarMonthPublished: () => undefined,
     trackPbPublicCalendarMonthUnpublished: () => undefined,
     trackPbPublicCalendarPatternEdited: () => undefined,
+    trackPbAssessmentClicked: () => undefined,
+    trackPbAssessmentAggregateClicked: () => undefined,
+    trackPbCompletedProgramsToggled: () => undefined,
+    trackPbEdovoProgramsToggled: () => undefined,
+    trackPbDisciplinariesToggled: () => undefined,
   };
 }
 

@@ -21,9 +21,12 @@ import { MemoryRouter } from "react-router-dom";
 
 import { paroleCasesFixtureByState } from "~datatypes";
 
+import * as StoreProvider from "../../../../components/StoreProvider";
 import US_CO_CONFIG from "../../../../tenants/US_CO";
 import { PAROLE_REPORT_CAPTURE_ID } from "../../components/shared";
 import { UsCoParoleCaseProfile } from "../UsCoParoleCaseProfile";
+
+vi.mock("../../../../components/StoreProvider");
 
 const CASE = paroleCasesFixtureByState.US_CO["45821"];
 
@@ -46,6 +49,9 @@ describe("UsCoParoleCaseProfile", () => {
   beforeEach(() => {
     scrollIntoViewMock.mockClear();
     Element.prototype.scrollIntoView = scrollIntoViewMock;
+    vi.mocked(StoreProvider.useRootStore).mockReturnValue({
+      analyticsStore: { track: vi.fn() },
+    } as never);
     render(
       <MemoryRouter>
         <UsCoParoleCaseProfile

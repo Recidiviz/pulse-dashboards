@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Every metadata field is a month, a count, a kind or a public location code.
-// Never add emails, entry ids, month ids or free text: these go to Segment.
+// Every metadata field is a month, a count, a kind, a public location code, a
+// pseudonymizedId or an assessment value. Never add emails, DOC ids, entry ids,
+// month ids or free text: these go to Segment.
 
 /** The month an admin is viewing. NONE means the month hasn't been created. */
 export interface PbCalendarMonthMetadata {
@@ -78,8 +79,52 @@ export interface PbCalendarPatternEditedMetadata {
 }
 
 /**
- * Analytics events the admin calendar reports through its host. Callers fire
- * each mutation's event only after the server confirms it.
+ * A risk assessment the user selected in the case profile. Fires per tool;
+ * the aggregate selection sends PbAssessmentAggregateClickedMetadata instead.
+ * maxScore and riskLevel are null when the source has none. date is the
+ * assessment date as "YYYY-MM-DD".
+ */
+export interface PbAssessmentClickedMetadata {
+  pseudonymizedId: string;
+  tool: string;
+  score: number;
+  maxScore: number | null;
+  riskLevel: string | null;
+  date: string;
+}
+
+/**
+ * The assessments the user selected as a group, such as the CTAP suite. Each
+ * array has one entry per assessment, in the same order, so tools[i] pairs
+ * with scores[i], maxScores[i], riskLevels[i] and dates[i].
+ */
+export interface PbAssessmentAggregateClickedMetadata {
+  pseudonymizedId: string;
+  tools: string[];
+  scores: number[];
+  maxScores: (number | null)[];
+  riskLevels: (string | null)[];
+  dates: string[];
+}
+
+/** Whether the completed DOC or Edovo programs list opened or closed. */
+export interface PbProgramsToggledMetadata {
+  pseudonymizedId: string;
+  programCount: number;
+  isExpanded: boolean;
+}
+
+/** Whether the older disciplinaries list opened or closed. */
+export interface PbDisciplinariesToggledMetadata {
+  pseudonymizedId: string;
+  disciplinaryCount: number;
+  isExpanded: boolean;
+}
+
+/**
+ * Analytics events the Parole Board features report through their host.
+ * Callers fire each calendar mutation's event only after the server confirms
+ * it.
  */
 export interface ParoleBoardAnalytics {
   trackPbPublicCalendarAdminViewed(metadata: PbCalendarMonthMetadata): void;
@@ -96,4 +141,11 @@ export interface ParoleBoardAnalytics {
   trackPbPublicCalendarPatternEdited(
     metadata: PbCalendarPatternEditedMetadata,
   ): void;
+  trackPbAssessmentClicked(metadata: PbAssessmentClickedMetadata): void;
+  trackPbAssessmentAggregateClicked(
+    metadata: PbAssessmentAggregateClickedMetadata,
+  ): void;
+  trackPbCompletedProgramsToggled(metadata: PbProgramsToggledMetadata): void;
+  trackPbEdovoProgramsToggled(metadata: PbProgramsToggledMetadata): void;
+  trackPbDisciplinariesToggled(metadata: PbDisciplinariesToggledMetadata): void;
 }

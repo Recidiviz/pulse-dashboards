@@ -54,6 +54,7 @@ beforeEach(() => {
       ({
         paroleStore,
         currentTenantId: rootStore.tenantStore.currentTenantId,
+        analyticsStore: rootStore.analyticsStore,
       }) as never,
   );
 });

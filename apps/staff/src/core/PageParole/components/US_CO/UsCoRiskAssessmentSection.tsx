@@ -18,6 +18,7 @@
 import { useMemo, useState } from "react";
 import styled from "styled-components";
 
+import type { ParoleBoardAnalytics } from "~@parole-board/common";
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 
 import type { ParoleRiskAssessmentConfig } from "../../../models/types";
@@ -79,9 +80,12 @@ const ChartsRow = styled.div`
 // RiskAssessmentLegend, RiskAssessmentDetailHeader, RiskTrajectoryChart, and
 // SubcategoryBreakdownChart for the actual rendering.
 export function UsCoRiskAssessmentSection({
+  pseudonymizedId,
   riskAssessments,
   riskAssessmentConfig,
+  analytics,
 }: {
+  pseudonymizedId: string;
   // Full assessment history per tool -- both the current per-tool detail
   // (legend, header, subcategory chart) and the trajectory chart are derived
   // from this single array, so there's one source of truth for risk data.
@@ -91,6 +95,7 @@ export function UsCoRiskAssessmentSection({
   // back to its original tool set, percent-of-max axis, and CARAS bar chart
   // when unset, so tenants that don't opt in see no behavior change.
   riskAssessmentConfig?: ParoleRiskAssessmentConfig;
+  analytics: ParoleBoardAnalytics;
 }) {
   const [selectedTool, setSelectedTool] = useState<ParoleRiskTool | null>(null);
 
@@ -117,6 +122,36 @@ export function UsCoRiskAssessmentSection({
 
   const selectedAssessment =
     visibleAssessments.find((a) => a.tool === selectedTool) ?? null;
+
+  const handleSelectTool = (tool: ParoleRiskTool | null) => {
+    setSelectedTool(tool);
+    if (tool === null) {
+      const aggregateAssessments = visibleAssessments.filter((a) =>
+        aggregateTools.includes(a.tool),
+      );
+      analytics.trackPbAssessmentAggregateClicked({
+        pseudonymizedId,
+        tools: aggregateAssessments.map((a) => a.tool),
+        scores: aggregateAssessments.map((a) => a.score),
+        maxScores: aggregateAssessments.map((a) => a.maxScore ?? null),
+        riskLevels: aggregateAssessments.map(
+          (a) => getRiskLevelForAssessment(a)?.label ?? null,
+        ),
+        dates: aggregateAssessments.map((a) => a.date),
+      });
+      return;
+    }
+    const assessment = visibleAssessments.find((a) => a.tool === tool);
+    if (!assessment) return;
+    analytics.trackPbAssessmentClicked({
+      pseudonymizedId,
+      tool: assessment.tool,
+      score: assessment.score,
+      maxScore: assessment.maxScore ?? null,
+      riskLevel: getRiskLevelForAssessment(assessment)?.label ?? null,
+      date: assessment.date,
+    });
+  };
 
   const overviewLines: Array<RiskTrajectoryLine> = useMemo(
     () =>
@@ -192,7 +227,7 @@ export function UsCoRiskAssessmentSection({
         <RiskAssessmentLegend
           visibleAssessments={visibleAssessments}
           selectedTool={selectedTool}
-          onSelectTool={setSelectedTool}
+          onSelectTool={handleSelectTool}
           aggregateLabel={aggregateLabel}
           hasCustomConfig={hasCustomConfig}
         />

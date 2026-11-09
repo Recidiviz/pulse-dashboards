@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { createFakeHost } from "~@parole-board/common/testing";
 import { ParoleConductRecord } from "~datatypes";
 
 import type { ParoleConfig } from "../../../../models/types";
@@ -53,6 +54,7 @@ describe("UsCoOlderDisciplinariesSection", () => {
   it("renders nothing when there are no older records", () => {
     const { container } = render(
       <UsCoOlderDisciplinariesSection
+        analytics={createFakeHost().analyticsStore}
         caseDetail={buildParoleCase({ conductHistory: [] })}
         config={CONFIG}
       />,
@@ -65,6 +67,7 @@ describe("UsCoOlderDisciplinariesSection", () => {
     const record = makeRecord({ violation: "Unauthorized Area" });
     render(
       <UsCoOlderDisciplinariesSection
+        analytics={createFakeHost().analyticsStore}
         caseDetail={buildParoleCase({ conductHistory: [record] })}
         config={CONFIG}
       />,
@@ -80,5 +83,37 @@ describe("UsCoOlderDisciplinariesSection", () => {
     );
 
     expect(screen.getByText("Unauthorized Area")).toBeInTheDocument();
+  });
+
+  it("reports the toggle opening and closing with the older record count", async () => {
+    const analytics = createFakeHost().analyticsStore;
+    const spy = vi.spyOn(analytics, "trackPbDisciplinariesToggled");
+    render(
+      <UsCoOlderDisciplinariesSection
+        analytics={analytics}
+        caseDetail={buildParoleCase({
+          pseudonymizedId: "pseudo-123",
+          conductHistory: [makeRecord({})],
+        })}
+        config={CONFIG}
+      />,
+    );
+    const toggle = screen.getByRole("button", {
+      name: /see older disciplinaries/i,
+    });
+
+    await userEvent.click(toggle);
+    await userEvent.click(toggle);
+
+    expect(spy).toHaveBeenNthCalledWith(1, {
+      pseudonymizedId: "pseudo-123",
+      disciplinaryCount: 1,
+      isExpanded: true,
+    });
+    expect(spy).toHaveBeenNthCalledWith(2, {
+      pseudonymizedId: "pseudo-123",
+      disciplinaryCount: 1,
+      isExpanded: false,
+    });
   });
 });

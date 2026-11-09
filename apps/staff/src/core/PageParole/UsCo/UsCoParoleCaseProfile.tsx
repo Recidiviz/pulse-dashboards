@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMemo } from "react";
+
 import { ParoleCase } from "~datatypes";
 
+import { useRootStore } from "../../../components/StoreProvider";
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { DefaultParoleGeneralInfo } from "../components/ParoleGeneralInfo";
@@ -33,6 +36,7 @@ import { UsCoProgramParticipationSection } from "../components/US_CO/UsCoProgram
 import { UsCoRiskAndNeedsAssessmentSection } from "../components/US_CO/UsCoRiskAndNeedsAssessmentSection";
 import { UsCoRiskAssessmentSection } from "../components/US_CO/UsCoRiskAssessmentSection";
 import { ParoleCaseProfileLayout } from "../ParoleCaseProfile/ParoleCaseProfileLayout";
+import { createParoleBoardAnalytics } from "./createParoleBoardAnalytics";
 
 /**
  * Quick-nav entries, in the order the sections render below. Every id here
@@ -79,6 +83,12 @@ export function UsCoParoleCaseProfile({
   caseDetail: ParoleCase;
   config: ParoleConfig;
 }) {
+  const { analyticsStore } = useRootStore();
+  const analytics = useMemo(
+    () => createParoleBoardAnalytics(analyticsStore),
+    [analyticsStore],
+  );
+
   return (
     <ParoleCaseProfileLayout
       sidebar={
@@ -93,8 +103,10 @@ export function UsCoParoleCaseProfile({
 
       <SectionAnchor id={PAROLE_SECTION_IDS.riskAssessment}>
         <UsCoRiskAssessmentSection
+          pseudonymizedId={caseDetail.pseudonymizedId}
           riskAssessments={caseDetail.riskAssessments}
           riskAssessmentConfig={config.riskAssessmentConfig}
+          analytics={analytics}
         />
       </SectionAnchor>
 
@@ -106,8 +118,10 @@ export function UsCoParoleCaseProfile({
 
       <SectionAnchor id={PAROLE_SECTION_IDS.programParticipation}>
         <UsCoProgramParticipationSection
+          pseudonymizedId={caseDetail.pseudonymizedId}
           docPrograms={caseDetail.docPrograms}
           edovoPrograms={caseDetail.edovoPrograms}
+          analytics={analytics}
         />
       </SectionAnchor>
 
@@ -126,6 +140,7 @@ export function UsCoParoleCaseProfile({
           <UsCoOlderDisciplinariesSection
             caseDetail={caseDetail}
             config={config}
+            analytics={analytics}
           />
         </UsCoConductHistorySection>
       </SectionAnchor>
