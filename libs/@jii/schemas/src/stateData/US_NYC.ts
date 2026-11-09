@@ -35,7 +35,9 @@ const usNycEmergencyContactAddressSchema = z.object({
 const usNycPreSentenceDocketsSchema = z.object({
   docketNumber: z.string().nullable(),
   nextCourtDate: dateStringSchema.nullable(),
+  // TODO(OBT-56217) Replace with court address
   nextCourtLocation: z.string().nullable(),
+  // TODO(OBT-56218) Map to borough name
   nextCourtBorough: z.string().nullable(),
 });
 

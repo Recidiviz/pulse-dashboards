@@ -26,6 +26,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import connectionsCoverSrc from "../../components/Banner/assets/connections-cover-cropped.png";
 import { CaseInfo } from "../../components/CaseInfo/CaseInfoCard";
+import { ScheduledCourtDates } from "../../components/ScheduledCourtDates/ScheduledCourtDates";
 import { UsNycHomePresenter } from "../PageUsNyc/UsNycHomePresenter";
 import {
   HomepageSectionHeading,
@@ -62,6 +63,7 @@ const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
           <HomepageSectionHeading>{COPY.title}</HomepageSectionHeading>
           <CaseInfo />
         </SpacedDiv>
+        <ScheduledCourtDates></ScheduledCourtDates>
         <SpacedDiv $gap={24}>
           <HomepageSectionHeading>
             {COPY.communityResourceTitle}

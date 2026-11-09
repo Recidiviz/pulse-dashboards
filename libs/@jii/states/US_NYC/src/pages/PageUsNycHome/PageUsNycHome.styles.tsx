@@ -26,7 +26,6 @@ import {
 export const PageContainer = styled(BasePageContainer)`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: ${rem(64)};
   align-self: stretch;
 `;

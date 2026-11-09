@@ -28,6 +28,7 @@ import US_MA from "../namespaces/US_MA/resources/en.json";
 import US_NC from "../namespaces/US_NC/resources/en.json";
 import US_ND from "../namespaces/US_ND/resources/en.json";
 import US_NE from "../namespaces/US_NE/resources/en.json";
+import US_NYC from "../namespaces/US_NYC/resources/en.json";
 import US_TN from "../namespaces/US_TN/resources/en";
 import {
   CombinedOnboardingVideoResources,
@@ -110,6 +111,7 @@ export interface I18nResources {
   US_NC: WithStateCorrections<typeof US_NC>;
   US_ND: WithStateCorrections<typeof US_ND>;
   US_NE: WithStateCorrections<typeof US_NE>;
+  US_NYC: WithStateCorrections<typeof US_NYC>;
   US_TN: WithStateCorrections<typeof US_TN>;
   // this is a fake state that we only use for testing. Its resources have to be
   // explicitly injected such that it will not normally work at runtime, but we declare

@@ -1,0 +1,26 @@
+{
+  "sentenceDates": {
+    "dates": {},
+    "general": {
+      "heading": "Scheduled court dates",
+      "hiddenMessage": "Your dockets are currently hidden"
+    },
+    "dateFormats": {
+      "missingDateMessage": "No date on file"
+    },
+    "toggle": {
+      "hideLabel": "Hide my dockets",
+      "showLabel": "Show my dockets"
+    }
+  },
+  "scheduledCourtDates": {
+    "nextCourtDateLabel": "Scheduled court date for docket: {{docketNumber}}",
+    "nextCourtDateDescription_noDate": "There is no court date on file for this docket. Ask your attorney or counselor if you think this is wrong.",
+    "nextCourtDateDescription_locationAndBorough": "At {{location}}, in {{borough}}.",
+    "nextCourtDateDescription_location": "At {{location}}.",
+    "nextCourtDateDescription_borough": "In {{borough}}.",
+    "hiddenSubHeading": "Docket information is hidden so they don't show on your screen until you choose to see them. Use the switch to show or hide them.",
+    "visibleSubHeading": "Court dates can move. Always confirm with your attorney or counselor.",
+    "unknownDocketNumber": "Unknown Docket Number"
+  }
+}

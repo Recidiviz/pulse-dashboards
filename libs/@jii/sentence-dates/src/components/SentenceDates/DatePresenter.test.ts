@@ -54,6 +54,31 @@ describe("DatePresenter", () => {
     return new DatePresenter(dates[0], t);
   }
 
+  describe("dateLabel", () => {
+    it("uses the label and description from dateLabel instead of the copy", () => {
+      const { dates } = getSentenceDatesFixtureData(getDefaultDates);
+      presenter = new DatePresenter(dates[0], t, {
+        id: dates[0].id,
+        label: "Custom label",
+        description: "Custom description",
+      });
+
+      expect(presenter.cardLabelText).toBe("Custom label");
+      expect(presenter.cardDescriptionText).toBe("Custom description");
+    });
+
+    it("does not need copy for the date id", () => {
+      presenter = new DatePresenter(
+        { id: "not_in_copy", date: new Date(2026, 4, 1) },
+        t,
+        { id: "not_in_copy", label: "Custom label" },
+      );
+
+      expect(presenter.cardLabelText).toBe("Custom label");
+      expect(presenter.cardValueText.supplemental).toBe("May 1, 2026");
+    });
+  });
+
   describe("past date", () => {
     beforeEach(() => {
       presenter = getPresenter(getDatesWithPast);

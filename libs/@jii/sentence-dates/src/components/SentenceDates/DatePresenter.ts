@@ -20,7 +20,7 @@ import { z } from "zod";
 
 import { dateDistanceTranslation } from "~@jii/translation";
 
-import { SentenceDate, SentenceDateIdLabel } from "../../data/types";
+import { SentenceDate, SentenceDateText } from "../../data/types";
 import { TFn } from "./types";
 import { getDateCopy } from "./utils";
 
@@ -36,7 +36,7 @@ export class DatePresenter {
   constructor(
     public data: SentenceDate,
     public t: TFn,
-    public dateLabel?: SentenceDateIdLabel,
+    public dateLabel?: SentenceDateText,
   ) {
     this.translatedCopy = this.processTranslations();
   }
@@ -45,7 +45,7 @@ export class DatePresenter {
     const { t, data, dateLabel } = this;
 
     const { label, description } = dateLabel
-      ? { label: dateLabel.label, description: undefined }
+      ? { label: dateLabel.label, description: dateLabel.description }
       : getDateCopy(t, data.id);
 
     return {
