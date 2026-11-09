@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
@@ -38,6 +38,7 @@ export type SentenceDatesProps = {
   stateCode: StateCodeWithSentenceDates;
   componentOverrides?: Partial<SentenceDatesComponents>;
   showToggle?: boolean;
+  alwaysStartHidden?: boolean;
   dateLabels?: DateLabels;
 };
 
@@ -121,9 +122,11 @@ function usePresenter({
   stateCode,
   data,
   componentOverrides,
+  alwaysStartHidden,
   dateLabels,
 }: SentenceDatesProps) {
   const { t } = useTranslation([stateCode, "common"]);
+  const [sessionHidden, setSessionHidden] = useState(true);
   const {
     residentsStore,
     userStore: { segmentClient },
@@ -135,6 +138,9 @@ function usePresenter({
     componentOverrides,
     residentsStore,
     segmentClient,
+    alwaysStartHidden
+      ? { hidden: sessionHidden, setHidden: setSessionHidden }
+      : undefined,
     dateLabels,
   );
 }

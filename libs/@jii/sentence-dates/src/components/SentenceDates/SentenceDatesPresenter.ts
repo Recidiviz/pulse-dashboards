@@ -22,6 +22,15 @@ import { defaultComponents } from "../defaultComponents";
 import { DatePresenter } from "./DatePresenter";
 import { SentenceDatesComponents, TFn } from "./types";
 
+/**
+ * Show/hide state that lasts only as long as the page is mounted, used instead of
+ * the user's saved hideSentenceDates preference.
+ */
+export type SessionHiddenState = {
+  hidden: boolean;
+  setHidden: (hidden: boolean) => void;
+};
+
 export class SentenceDatesPresenter {
   data: SentenceDatesData;
 
@@ -31,6 +40,7 @@ export class SentenceDatesPresenter {
     private componentOverrides?: Partial<SentenceDatesComponents>,
     private residentsStore?: ResidentsStore,
     private segmentClient?: SegmentClient,
+    private sessionHiddenState?: SessionHiddenState,
     private dateLabels?: DateLabels,
   ) {
     this.data = {
@@ -101,11 +111,16 @@ export class SentenceDatesPresenter {
     return this.t(($) => $.sentenceDates.general.hiddenMessage);
   }
   get hidden() {
+    if (this.sessionHiddenState) return this.sessionHiddenState.hidden;
     return this.residentsStore?.userProperties?.hideSentenceDates;
   }
 
   setHidden(nextHidden: boolean) {
     this.segmentClient?.trackSentenceDatesToggled({ hidden: nextHidden });
-    this.residentsStore?.setHideSentenceDates(nextHidden);
+    if (this.sessionHiddenState) {
+      this.sessionHiddenState.setHidden(nextHidden);
+    } else {
+      this.residentsStore?.setHideSentenceDates(nextHidden);
+    }
   }
 }

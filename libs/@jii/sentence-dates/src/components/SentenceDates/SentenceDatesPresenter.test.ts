@@ -204,5 +204,36 @@ describe("SentenceDatesPresenter", () => {
       expect(setHideSentenceDates).toHaveBeenCalledWith(false);
       expect(trackSentenceDatesToggled).toHaveBeenCalledWith({ hidden: false });
     });
+
+    describe("with session hidden state", () => {
+      const setSessionHidden = vi.fn();
+
+      function presenterWithSessionState(sessionHidden: boolean) {
+        return new SentenceDatesPresenter(
+          sentenceDatesFixture,
+          i18n.getFixedT("en", ["US_OZ", "common"]),
+          undefined,
+          {
+            userProperties: { hideSentenceDates: false },
+            setHideSentenceDates,
+          } as unknown as ResidentsStore,
+          { trackSentenceDatesToggled } as unknown as SegmentClient,
+          { hidden: sessionHidden, setHidden: setSessionHidden },
+        );
+      }
+
+      it("uses the session value instead of the saved value", () => {
+        expect(presenterWithSessionState(true).hidden).toEqual(true);
+      });
+
+      it("updates the session value and tracks, without saving", () => {
+        presenterWithSessionState(true).setHidden(false);
+        expect(setSessionHidden).toHaveBeenCalledWith(false);
+        expect(trackSentenceDatesToggled).toHaveBeenCalledWith({
+          hidden: false,
+        });
+        expect(setHideSentenceDates).not.toHaveBeenCalled();
+      });
+    });
   });
 });

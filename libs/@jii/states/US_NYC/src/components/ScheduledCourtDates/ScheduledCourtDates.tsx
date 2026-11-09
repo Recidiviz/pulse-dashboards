@@ -40,6 +40,7 @@ const ManagedComponent: React.FC<{ presenter: ScheduledCourtDatesPresenter }> =
         }}
         showToggle
         dateLabels={presenter.dateIdOverride}
+        alwaysStartHidden
       />
     );
   });

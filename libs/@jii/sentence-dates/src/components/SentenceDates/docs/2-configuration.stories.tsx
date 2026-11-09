@@ -94,6 +94,19 @@ export const ShowHideToggle: SentenceDateStory = {
 };
 
 /**
+ * By default the toggle remembers each resident's choice between visits. With
+ * alwaysStartHidden, the dates start hidden every time the page loads, and the
+ * resident's choice lasts only until they leave the page. The saved preference
+ * is neither read nor changed.
+ */
+export const AlwaysStartHidden: SentenceDateStory = {
+  args: {
+    showToggle: true,
+    alwaysStartHidden: true,
+  },
+};
+
+/**
  * Date labels normally come from your state's copy, keyed by each date's id,
  * which suits a fixed set of date types. When the dates vary by resident (one
  * per court case, for example), pass dateLabels instead. It lists the id,
