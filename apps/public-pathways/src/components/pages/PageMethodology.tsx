@@ -19,14 +19,11 @@ import { observer } from "mobx-react-lite";
 import { AnchorProvider } from "react-anchor-navigation";
 import styled from "styled-components";
 
-import {
-  getMethodologyCopy,
-  getMetricIdsForPage,
-  PathwaysPage,
-} from "~shared-pathways";
+import { getMethodologyCopy, getMetricIdsForPage } from "~shared-pathways";
 import { Methodology, MethodologySection } from "~ui";
 import useIsMobile from "~utils/react/useIsMobile";
 
+import { PUBLIC_PATHWAYS_DASHBOARD_PAGES } from "../../datastores/dashboards";
 import { Footer } from "../Footer/Footer";
 import { Header } from "../Header/Header";
 import { useRootStore } from "../StoreProvider";
@@ -57,18 +54,17 @@ export const PageMethodology = observer(function PageMethodology() {
 
   const { pageCopy, metricCopy } = methodologyCopy;
 
-  const enabledMetricIds = new Set(
-    Object.values(metricsStore.map).map((metric) => metric.id),
-  );
-
   const sections: MethodologySection[] = [];
-  for (const pageId of Object.keys(pageCopy) as PathwaysPage[]) {
+  for (const pageId of PUBLIC_PATHWAYS_DASHBOARD_PAGES) {
     const page = pageCopy[pageId];
     if (!page?.title) continue;
+    const servedMetricIds = new Set(
+      Object.values(metricsStore.mapsByPage[pageId]).map((metric) => metric.id),
+    );
     const subsections = getMetricIdsForPage(pageId)
       .filter(
         (metricId) =>
-          enabledMetricIds.has(metricId) && metricCopy[metricId]?.title,
+          servedMetricIds.has(metricId) && metricCopy[metricId]?.title,
       )
       .map((metricId) => metricCopy[metricId]);
     if (subsections.length === 0) continue;

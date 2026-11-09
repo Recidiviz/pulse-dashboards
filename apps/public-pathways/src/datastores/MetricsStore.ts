@@ -250,7 +250,7 @@ export default class MetricsStore implements PathwaysMetricStore {
    * The section-to-metric map for every page this dashboard serves. Built once
    * so that a section keeps the same metric instance across renders.
    */
-  private get mapsByPage(): Record<string, SectionMetricMap> {
+  get mapsByPage(): Record<string, SectionMetricMap> {
     if (!this._mapsByPage) {
       this._mapsByPage = {
         [PATHWAYS_PAGES.admissionsAndReleases]: {
