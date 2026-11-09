@@ -105,6 +105,12 @@ resource "google_project_iam_member" "sync_run_invoker" {
   member  = "serviceAccount:${google_service_account.sync.email}"
 }
 
+resource "google_project_iam_member" "sync_datastore_viewer" {
+  project = var.project_id
+  role    = "roles/datastore.viewer"
+  member  = "serviceAccount:${google_service_account.sync.email}"
+}
+
 # Access the Typesense API key secret. The secrets component owns it, under the
 # stack entry apps/typesense-api-key, and must be applied first. Both writers
 # share one key so a rotation is one key, not two.
@@ -214,6 +220,7 @@ resource "google_cloudfunctions2_function" "sync" {
   depends_on = [
     google_project_iam_member.sync_event_receiver,
     google_project_iam_member.sync_run_invoker,
+    google_project_iam_member.sync_datastore_viewer,
     google_secret_manager_secret_iam_member.sync_secret_accessor,
   ]
 }

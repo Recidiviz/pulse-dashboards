@@ -27,6 +27,8 @@
 // `event.data.after.exists === false`, which sync.ts turns into a Typesense
 // delete.
 
+import * as admin from "firebase-admin";
+import { firestore } from "firebase-admin";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import type { Client as TypesenseClient } from "typesense";
 
@@ -57,6 +59,19 @@ function typesenseClient(): TypesenseClient {
 
 const database = process.env["FIRESTORE_DATABASE"] ?? "(default)";
 
+admin.initializeApp();
+
+// `firestore()` addresses the default database only. Reading the wrong one
+// answers "does not exist" for every path, which this handler turns into a
+// Typesense DELETE — the whole mirror, emptied quietly.
+if (database !== "(default)") {
+  throw new Error(
+    `FIRESTORE_DATABASE is "${database}", but the re-read addresses the default ` +
+      `database only. Give sync-fn a client that can name the database before ` +
+      `pointing it at this one.`,
+  );
+}
+
 type Snapshot = {
   exists: boolean;
   data: () => FirestoreDoc | undefined;
@@ -71,7 +86,7 @@ type Snapshot = {
 // sync actually fired, and which document it touched. One FIRE line per
 // invocation, then one PATCH / UPSERT / DELETE / ABSENT / SKIP / NOOP line from
 // syncDocument — the verb says which write mode the path took.
-async function handleWrite(
+export async function handleWrite(
   before: Snapshot | undefined,
   after: Snapshot | undefined,
 ): Promise<void> {
@@ -97,8 +112,20 @@ async function handleWrite(
   const startedAt = Date.now();
   console.info(`[sync] FIRE  ${change} ${path}`);
 
-  const data = after?.exists ? after.data() ?? {} : null;
+  // READ, rather than trust the event's payload. The payload is the document
+  // as of the write that fired it, and triggers are unordered, so an older
+  // snapshot can arrive last.
+  const current = await firestore().doc(path).get();
+  const data = current.exists ? (current.data() as FirestoreDoc) ?? {} : null;
   const previousData = before?.exists ? before.data() ?? {} : null;
+
+  if (Boolean(after?.exists) !== current.exists) {
+    console.info(
+      `[sync] STALE ${path} — event said exists=${String(Boolean(after?.exists))}, ` +
+        `Firestore says exists=${String(current.exists)}; using Firestore`,
+    );
+  }
+
   try {
     const result = await syncDocument(
       typesenseClient(),

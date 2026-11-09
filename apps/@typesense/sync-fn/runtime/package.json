@@ -6,7 +6,7 @@
   "engines": {
     "node": "22"
   },
-  "comment": "firebase-admin is NOT imported by this function — it is firebase-functions' peer, used internally to build the DocumentSnapshot handed to the trigger. It must satisfy firebase-functions@7's peer range (^11.10 || ^12 || ^13); the repo root pins ^10.0.2, which yarn tolerates locally but the Cloud Functions builder (npm) rejects with ERESOLVE. These versions are resolved at deploy time and are independent of the workspace's.",
+  "comment": "firebase-admin is imported by this function, which re-reads each document from Firestore rather than trusting the event payload, AND is firebase-functions' peer. It must satisfy firebase-functions@7's peer range (^11.10 || ^12 || ^13); the repo root pins ^10.0.2, which yarn tolerates locally but the Cloud Functions builder (npm) rejects with ERESOLVE. These versions are resolved at deploy time and are independent of the workspace's.",
   "dependencies": {
     "firebase-admin": "13.9.0",
     "firebase-functions": "7.2.3",
