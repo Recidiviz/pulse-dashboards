@@ -154,6 +154,66 @@ describe("paroleBoardReportSchema", () => {
     ).toBe(false);
   });
 
+  it("parses a report with Past Actions rows the PHI added", () => {
+    const rowId = "phi_1793800000000_a1b2c3d4";
+    const report = paroleBoardReportSchema.parse({
+      ...baseReport,
+      sections: {
+        pastActions: {
+          rows: {
+            [rowId]: {
+              source: "PHI",
+              fields: {
+                date: phiEdit("2015-03"),
+                notes: phiEdit("Sentenced, entered custody"),
+              },
+            },
+          },
+        },
+      },
+    });
+
+    expect(report.sections.pastActions?.rows?.[rowId].fields?.date?.value).toBe(
+      "2015-03",
+    );
+  });
+
+  it.each(["2015-03-01", "2015-13", "2015-3", "03/2015"])(
+    "rejects a Past Actions date of %s, which is not a YYYY-MM month",
+    (date) => {
+      expect(
+        paroleBoardReportSchema.safeParse({
+          ...baseReport,
+          sections: {
+            pastActions: {
+              rows: {
+                phi_1: { source: "PHI", fields: { date: phiEdit(date) } },
+              },
+            },
+          },
+        }).success,
+      ).toBe(false);
+    },
+  );
+
+  it("parses Past Actions notes longer than the input allows, so one long note can't break the report", () => {
+    expect(
+      paroleBoardReportSchema.safeParse({
+        ...baseReport,
+        sections: {
+          pastActions: {
+            rows: {
+              phi_1: {
+                source: "PHI",
+                fields: { notes: phiEdit("x".repeat(300)) },
+              },
+            },
+          },
+        },
+      }).success,
+    ).toBe(true);
+  });
+
   it("rejects a row without a source", () => {
     expect(
       paroleBoardReportSchema.safeParse(

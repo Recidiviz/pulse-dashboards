@@ -37,22 +37,26 @@ type CaseDetailsFields = {
 };
 type OffenseFields = { sentencingDate: string; fullTermDate: string };
 
-const config: SectionConfig<
+type OffenseInformationConfig = SectionConfig<
   AtlasOffenseInformation,
   AtlasOffense,
   CaseDetailsFields,
   OffenseFields
-> = {
-  fields: { psychologicalEvaluation: {}, victim: {} },
-  rows: {
-    fromAtlas: (atlas) => atlas.offenses,
-    id: (offense) => offense.id,
-    label: (offense) => offense.charge,
-    fields: {
-      sentencingDate: { fromAtlas: (offense) => offense.sentencingDate },
-      fullTermDate: { fromAtlas: (offense) => offense.fullTermDate },
-    },
+>;
+
+const offenseRows: NonNullable<OffenseInformationConfig["rows"]> = {
+  fromAtlas: (atlas) => atlas.offenses,
+  id: (offense) => offense.id,
+  label: (offense) => offense.charge,
+  fields: {
+    sentencingDate: { fromAtlas: (offense) => offense.sentencingDate },
+    fullTermDate: { fromAtlas: (offense) => offense.fullTermDate },
   },
+};
+
+const config: OffenseInformationConfig = {
+  fields: { psychologicalEvaluation: {}, victim: {} },
+  rows: offenseRows,
 };
 
 // The schema's own type, so a schema change that no longer fits SectionInput
@@ -314,6 +318,35 @@ describe("resolveSection", () => {
       ["1001", "NO_LONGER_IN_ATLAS", "Robbery"],
       ["phi_a", "ADDED_BY_PHI", null],
       ["phi_b", "ADDED_BY_PHI", null],
+    ]);
+  });
+
+  it("orders rows with the config's compare function, keeping the usual order for rows it ranks equal", () => {
+    const addedFirst = resolveSection(
+      {
+        ...config,
+        rows: {
+          ...offenseRows,
+          compare: (a, b) =>
+            Number(b.status === "ADDED_BY_PHI") -
+            Number(a.status === "ADDED_BY_PHI"),
+        },
+      },
+      { offenses: [escape] },
+      {
+        rows: {
+          ...correctedRobbery.rows,
+          phi_b: { source: "PHI" },
+          phi_a: { source: "PHI" },
+        },
+      },
+    );
+
+    expect(addedFirst.rows.map((row) => row.id)).toEqual([
+      "phi_a",
+      "phi_b",
+      "1002",
+      "1001",
     ]);
   });
 

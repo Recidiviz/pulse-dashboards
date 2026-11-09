@@ -52,6 +52,19 @@ type FieldConfig<Atlas, Value> = {
   fromAtlas?: (atlas: Atlas) => Value | null | undefined;
 };
 
+type AtlasRowsConfig<AtlasSection, AtlasRow> = {
+  fromAtlas: (atlas: AtlasSection) => AtlasRow[];
+  // The row's Atlas id, which keys the PHI's input for it.
+  id: (row: AtlasRow) => string;
+  // Names the row. Writers save it as atlasLabel with the row's first edit,
+  // so the row can still be named after it drops out of Atlas.
+  label: (row: AtlasRow) => string;
+};
+
+// A section whose rows all come from the PHI, such as Past Actions, reads no
+// rows from Atlas.
+type NoAtlasRows = { fromAtlas?: never; id?: never; label?: never };
+
 /**
  * How one section's Atlas data and PHI input fit together. List every field
  * the section shows, including ones the PHI can't edit yet, because a
@@ -64,16 +77,13 @@ export type SectionConfig<AtlasSection, AtlasRow, SectionFields, RowFields> = {
       SectionFields[Name]
     >;
   };
-  rows?: {
-    fromAtlas: (atlas: AtlasSection) => AtlasRow[];
-    // The row's Atlas id, which keys the PHI's input for it.
-    id: (row: AtlasRow) => string;
-    // Names the row. Writers save it as atlasLabel with the row's first edit,
-    // so the row can still be named after it drops out of Atlas.
-    label: (row: AtlasRow) => string;
+  rows?: (AtlasRowsConfig<AtlasSection, AtlasRow> | NoAtlasRows) & {
     fields: {
       [Name in keyof RowFields]: FieldConfig<AtlasRow, RowFields[Name]>;
     };
+    // Orders the resolved rows, as a sort comparator. Rows it ranks equal
+    // keep the order resolveSection gives them without one.
+    compare?: (a: ResolvedRow<RowFields>, b: ResolvedRow<RowFields>) => number;
   };
 };
 
@@ -189,10 +199,11 @@ function hasAnyValue<Atlas, RowFields>(
  *   0998  NO_LONGER_IN_ATLAS  Burglary  2024-02-01      PHI     null
  *
  * Atlas rows keep Atlas's order. Rows no longer in Atlas follow them, then rows
- * the PHI added, each group sorted by id. Writers give a row the PHI adds an id
- * that starts with a fixed-width time, phi_<time>_<random>, so those rows stay
- * in the order the PHI added them. A row the PHI removed is left out, and so
- * is a row no longer in Atlas that has no PHI values left. A row the PHI added
+ * the PHI added, each group sorted by id. Rows the PHI added get their ids from
+ * newPhiRowId, so sorting by id keeps them in the order the PHI added them. A
+ * config's compare function, if it has one, reorders the rows, and rows it
+ * ranks equal keep this order. A row the PHI removed is left out, and so is a
+ * row no longer in Atlas that has no PHI values left. A row the PHI added
  * shows even before it has values, so the PHI can fill it in.
  *
  * Every missing value is null rather than undefined, because submitting a
@@ -220,18 +231,21 @@ export function resolveSection<
   const entries = input?.rows ?? {};
   const atlasIds = new Set<string>();
   const atlasRows: Array<ResolvedRow<RowFields>> = [];
-  rowConfig.fromAtlas(atlas).forEach((atlasRow) => {
-    const id = rowConfig.id(atlasRow);
-    atlasIds.add(id);
-    const entry = entries[id];
-    if (entry?.removed) return;
-    atlasRows.push({
-      id,
-      status: "IN_ATLAS",
-      label: rowConfig.label(atlasRow),
-      fields: resolveFields(rowConfig.fields, atlasRow, entry?.fields),
+  if (rowConfig.fromAtlas) {
+    const atlasRowsConfig = rowConfig;
+    atlasRowsConfig.fromAtlas(atlas).forEach((atlasRow) => {
+      const id = atlasRowsConfig.id(atlasRow);
+      atlasIds.add(id);
+      const entry = entries[id];
+      if (entry?.removed) return;
+      atlasRows.push({
+        id,
+        status: "IN_ATLAS",
+        label: atlasRowsConfig.label(atlasRow),
+        fields: resolveFields(rowConfig.fields, atlasRow, entry?.fields),
+      });
     });
-  });
+  }
 
   const unmatched = Object.entries(entries)
     .filter(
@@ -251,12 +265,11 @@ export function resolveSection<
     fields: resolveFields(rowConfig.fields, undefined, entry.fields),
   });
 
-  return {
-    fields,
-    rows: [
-      ...atlasRows,
-      ...unmatched.filter(([, entry]) => entry.source === "ATLAS").map(toRow),
-      ...unmatched.filter(([, entry]) => entry.source === "PHI").map(toRow),
-    ],
-  };
+  const rows = [
+    ...atlasRows,
+    ...unmatched.filter(([, entry]) => entry.source === "ATLAS").map(toRow),
+    ...unmatched.filter(([, entry]) => entry.source === "PHI").map(toRow),
+  ];
+  if (rowConfig.compare) rows.sort(rowConfig.compare);
+  return { fields, rows };
 }

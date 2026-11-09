@@ -127,6 +127,27 @@ export type OffenseInformationInput = z.infer<
   typeof offenseInformationInputSchema
 >;
 
+// A month and year, such as "2015-03", for a field where the PHI picks a month
+// rather than a day.
+const monthSchema = z
+  .string()
+  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Expected a month as YYYY-MM");
+
+/**
+ * Past Actions: events in the resident's history that the PHI enters, one row
+ * per event. Atlas has no source for them, so every row is one the PHI added.
+ */
+export const pastActionsInputSchema = reportSectionInputSchema(
+  {},
+  {
+    date: phiValueSchema(monthSchema).optional(),
+    // The input limits notes to 250 characters. The schema doesn't, because a
+    // note that failed validation would make the whole report fail to parse.
+    notes: phiValueSchema(z.string()).optional(),
+  },
+);
+export type PastActionsInput = z.infer<typeof pastActionsInputSchema>;
+
 /**
  * One PHI report, at paroleBoardReports/{recordId}/reports/{reportId}. It
  * holds only what the PHI entered; Atlas data stays in the resident's
@@ -183,6 +204,7 @@ export const paroleBoardReportSchema = z.object({
   sections: z
     .object({
       offenseInformation: offenseInformationInputSchema.optional(),
+      pastActions: pastActionsInputSchema.optional(),
     })
     .default({}),
 });
