@@ -35,6 +35,8 @@ export const usArStateDataSchema = usArResidentCommonSchema.extend({
   edovoIsCreditingMonth: z.boolean(),
   edovoLastRefreshedAt: nullishAsUndefined(dateStringSchema),
   lastUpdatedDate: dateStringSchema,
+  // adding a default here because this field isn't added to the product view yet
+  isReDosageChangeBanner: z.boolean().default(false),
 });
 export type UsArResidentJiiData = z.output<typeof usArStateDataSchema>;
 export type RawUsArResidentJiiData = z.input<typeof usArStateDataSchema>;

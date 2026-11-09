@@ -22,6 +22,7 @@ import { State } from "~@jii/paths";
 import { UsArResidentJiiData } from "~@jii/schemas";
 import { UsArTFunction } from "~@jii/translation";
 
+import { isPaaResident } from "../isPaaResident";
 import { DateInfoProps } from "./DateInfoCard";
 
 /**
@@ -44,6 +45,14 @@ export class UsArImportantDatesPresenter {
 
   get dateEntries(): DateInfoProps[] {
     return [this.eligibilityDateEntry, this.maximumReleaseDateEntry];
+  }
+
+  get showReDosageChangeBanner(): boolean {
+    return (
+      !!this.residentFlags.usArReBanner &&
+      this.metadata.isReDosageChangeBanner &&
+      isPaaResident(this.metadata)
+    );
   }
 
   private get programUnitsText(): string | undefined {

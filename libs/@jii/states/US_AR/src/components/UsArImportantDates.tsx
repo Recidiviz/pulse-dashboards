@@ -29,6 +29,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { DateInfoCard } from "./DateInfoCard";
 import { UsArImportantDatesPresenter } from "./UsArImportantDatesPresenter";
+import { UsArReBanner } from "./UsArReBanner";
 
 const LinkContainer = styled.div`
   margin-top: ${rem(spacing.lg)};
@@ -46,6 +47,7 @@ const ManagedComponent: React.FC<{ presenter: UsArImportantDatesPresenter }> =
         <HomepageSectionHeading>
           {t(($) => $.importantDates.sectionHeader)}
         </HomepageSectionHeading>
+        {presenter.showReDosageChangeBanner && <UsArReBanner />}
 
         {presenter.dateEntries.map((dateInfo) => (
           <DateInfoCard {...dateInfo} key={dateInfo.label} />

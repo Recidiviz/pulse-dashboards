@@ -125,5 +125,8 @@
       "intro": "[US_AR]earnedReleaseCredits.moreInfo.intro",
       "body": "[US_AR]earnedReleaseCredits.moreInfo.body"
     }
+  },
+  "reBanner": {
+    "message": "[US_AR]reBanner.message"
   }
 }
