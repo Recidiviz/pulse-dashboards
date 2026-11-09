@@ -899,7 +899,7 @@ class Queries:
         if cached_data:
             logger.info(f"Cache hit for caseworker email {email}")
             try:
-                return pickle.loads(cached_data)
+                return CaseWorkerDataRecord.model_validate_json(cached_data)
             except Exception as e:
                 logger.error(f"Error deserializing cached caseworker data: {str(e)}")
         else:
@@ -984,7 +984,7 @@ class Queries:
                 return None
 
             try:
-                redis_client.setex(cache_key, CACHE_TTL, pickle.dumps(caseworker))
+                redis_client.setex(cache_key, CACHE_TTL, caseworker.model_dump_json())
                 logger.info(f"Cached caseworker data for email {email}")
             except Exception as e:
                 logger.error(f"Error caching caseworker data: {str(e)}")

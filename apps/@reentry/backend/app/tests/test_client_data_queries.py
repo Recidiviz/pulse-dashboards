@@ -279,3 +279,73 @@ def test_get_client_by_doc_id_and_state_failure(mock_get_bigquery_client, mock_g
     result = Queries.get_client_by_doc_id_and_state(expected_state_code, expected_external_id)
 
     assert result is None
+
+
+def _caseworker_row(email: str) -> Row:
+    return Row(
+        (
+            "ext_id_1",
+            "pseudo_1",
+            email,
+            """{"given_names": "Staff", "surname": "One", "middle_names": "", "name_suffix": ""}""",
+            ["client1"],
+            "CA",
+            ["loc1"],
+        ),
+        {
+            "external_id": 0,
+            "pseudonymized_id": 1,
+            "email": 2,
+            "full_name": 3,
+            "client_ids": 4,
+            "state_code": 5,
+            "locations": 6,
+        },
+    )
+
+
+@patch("app.services.client_data.queries.redis_client")
+@patch("app.services.client_data.queries.get_bigquery_client")
+def test_get_caseworker_by_email_caches_as_json(
+    mock_get_bigquery_client, mock_redis_client
+):
+    store: dict[str, bytes] = {}
+    mock_redis_client.get.side_effect = store.get
+
+    def setex(key, _ttl, value):
+        store[key] = value.encode() if isinstance(value, str) else value
+
+    mock_redis_client.setex.side_effect = setex
+    mock_get_bigquery_client.return_value.query.return_value.result.return_value = [
+        _caseworker_row("caseworker@example.com")
+    ]
+
+    first = Queries.get_caseworker_by_email("Caseworker@example.com")
+    cached = store["caseworker_by_email:caseworker@example.com"]
+    assert CaseWorkerDataRecord.model_validate_json(cached) == first
+
+    second = Queries.get_caseworker_by_email("caseworker@example.com")
+    assert second == first
+    # The second call is served from the cache, not BigQuery.
+    assert mock_get_bigquery_client.return_value.query.call_count == 1
+
+
+@patch("app.services.client_data.queries.redis_client")
+@patch("app.services.client_data.queries.get_bigquery_client")
+def test_get_caseworker_by_email_ignores_non_json_cache_entry(
+    mock_get_bigquery_client, mock_redis_client
+):
+    # A pickle payload in the cache must not be deserialized; the lookup falls
+    # back to BigQuery.
+    import pickle
+
+    mock_redis_client.get.return_value = pickle.dumps({"not": "a caseworker"})
+    mock_get_bigquery_client.return_value.query.return_value.result.return_value = [
+        _caseworker_row("caseworker@example.com")
+    ]
+
+    result = Queries.get_caseworker_by_email("caseworker@example.com")
+
+    assert result is not None
+    assert result.email == "caseworker@example.com"
+    mock_get_bigquery_client.return_value.query.assert_called_once()
