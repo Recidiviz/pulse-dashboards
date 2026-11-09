@@ -58,7 +58,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
   }
 
   api.access.deny(
-    `Unrecognized user: not found in roster (email: ${email})`,
+    `Roster check returned ${response.status} (email: ${email})`,
     clientDenyMessage,
   );
 };
