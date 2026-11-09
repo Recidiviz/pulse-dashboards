@@ -25,6 +25,7 @@ const NoDataWrapper = styled.div`
   display: flex;
   height: 100%;
   justify-content: center;
+  padding-bottom: 3rem;
   padding-top: 3rem;
   width: 100%;
 `;

@@ -522,7 +522,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.CUSTODY_STATUS]: {
     type: FILTER_TYPES.CUSTODY_STATUS,
-    title: "Custody status",
+    title: "Custody Status",
     isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.CUSTODY_STATUS),
     options: [{ label: "All", value: "ALL" }],
@@ -535,7 +535,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.CALENDAR_YEAR]: {
     type: FILTER_TYPES.CALENDAR_YEAR,
-    title: "Calendar year",
+    title: "Calendar Year",
     setFilters: setFilters(FILTER_TYPES.CALENDAR_YEAR),
     options: [{ label: "All", value: "ALL" }],
     get defaultOption(): FilterOption {

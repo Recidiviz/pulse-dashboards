@@ -194,6 +194,7 @@ const VizCustodyStatusSnapshot: React.FC<Props> = observer(
         accessor={metric.accessor as string}
         isRate={false}
         isHorizontal
+        wrapHorizontalLabels
         rotateLabels={false}
         isGeographic={false}
         legendItems={legendItems}

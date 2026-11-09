@@ -78,6 +78,14 @@ type PopulationSnapshotChartProps = {
   isGeographic: boolean;
   dataSeries: SupervisionPopulationSnapshotRecord[];
   horizontalLabelFormatter?: (label: string) => string;
+  /** Breaks a long horizontal axis label onto several lines at its spaces. */
+  wrapHorizontalLabels?: boolean;
+  /**
+   * The points whose labels set the left margin of a horizontal chart. A chart
+   * that must line up with its siblings passes the points of all of them, so
+   * every chart reserves the same width. Defaults to the chart's own data.
+   */
+  leftMarginData?: SnapshotDataPoint[];
   barColor?: string;
   /**
    * Names the colors a chart whose bars count more than one kind of thing
@@ -202,18 +210,25 @@ function defaultOLabel(accessorLabel: string) {
  *   (i, l) slightly overestimated. The MIN/MAX clamps bound the worst cases.
  * - An empty dataset yields Math.max() = -Infinity, which the MIN clamp
  *   handles correctly (returns MIN_MARGIN).
+ *
+ * When shouldWrapLabels is true, only the longest line of each wrapped label
+ * counts.
  */
 function computeHorizontalLeftMargin(
   data: SnapshotDataPoint[],
   formatter: ((label: string) => string) | undefined,
+  shouldWrapLabels = false,
 ): number {
   const CHAR_WIDTH_PX = 7; // approximate average glyph width at 14px sans-serif
   const LABEL_PADDING_PX = 16;
   const MIN_MARGIN = 60;
   const MAX_MARGIN = 220;
-  const resolvedFormatter = formatter ?? ((l: string) => l);
   const maxChars = Math.max(
-    ...data.map((d) => resolvedFormatter(d.accessorLabel).length),
+    ...data.flatMap((d) =>
+      horizontalLabelLines(d.accessorLabel, formatter, shouldWrapLabels).map(
+        (line) => line.length,
+      ),
+    ),
   );
   return Math.min(
     MAX_MARGIN,
@@ -221,13 +236,84 @@ function computeHorizontalLeftMargin(
   );
 }
 
-function makeHorizontalOLabel(formatter: (label: string) => string) {
+const MAX_WRAPPED_LINE_CHARS = 24;
+const WRAPPED_LINE_HEIGHT_PX = 16;
+const HORIZONTAL_ROW_PADDING_PX = 8;
+const MIN_HORIZONTAL_ROW_HEIGHT_PX = 25;
+
+/**
+ * Splits a label at its spaces into lines of at most maxLineChars characters.
+ * A single word longer than that stays whole on its own line.
+ */
+function wrapLabel(label: string, maxLineChars: number): string[] {
+  return label.split(" ").reduce<string[]>((lines, word) => {
+    const lastLine = lines[lines.length - 1];
+    if (lastLine === undefined) return [word];
+    if (`${lastLine} ${word}`.length > maxLineChars) return [...lines, word];
+    return [...lines.slice(0, -1), `${lastLine} ${word}`];
+  }, []);
+}
+
+/** Returns the lines a horizontal axis label draws on, after formatting. */
+function horizontalLabelLines(
+  accessorLabel: string,
+  formatter: ((label: string) => string) | undefined,
+  shouldWrapLabels: boolean,
+): string[] {
+  const label = formatter ? formatter(accessorLabel) : accessorLabel;
+  return shouldWrapLabels ? wrapLabel(label, MAX_WRAPPED_LINE_CHARS) : [label];
+}
+
+/**
+ * Returns the height each bar gets in a horizontal chart. Every bar gets room
+ * for the label with the most lines.
+ */
+function computeHorizontalRowHeight(
+  data: SnapshotDataPoint[],
+  formatter: ((label: string) => string) | undefined,
+  shouldWrapLabels: boolean,
+): number {
+  const maxLines = Math.max(
+    1,
+    ...data.map(
+      (d) =>
+        horizontalLabelLines(d.accessorLabel, formatter, shouldWrapLabels)
+          .length,
+    ),
+  );
+  return Math.max(
+    MIN_HORIZONTAL_ROW_HEIGHT_PX,
+    maxLines * WRAPPED_LINE_HEIGHT_PX + HORIZONTAL_ROW_PADDING_PX,
+  );
+}
+
+/**
+ * Returns the dy offset for one line of a multi-line label, which centers the
+ * whole label on its bar. A one-line label needs no offset.
+ */
+function wrappedLineDy(index: number, lineCount: number): number | undefined {
+  if (lineCount === 1) return undefined;
+  if (index === 0) return (-(lineCount - 1) * WRAPPED_LINE_HEIGHT_PX) / 2;
+  return WRAPPED_LINE_HEIGHT_PX;
+}
+
+function makeHorizontalOLabel(
+  formatter: ((label: string) => string) | undefined,
+  shouldWrapLabels: boolean,
+) {
   return function horizontalOLabel(accessorLabel: string) {
+    const lines = horizontalLabelLines(
+      accessorLabel,
+      formatter,
+      shouldWrapLabels,
+    );
     return (
       <text textAnchor="end" dominantBaseline="central">
-        <tspan key={accessorLabel} x="0">
-          {formatter(accessorLabel)}
-        </tspan>
+        {lines.map((line, index) => (
+          <tspan key={line} x="0" dy={wrappedLineDy(index, lines.length)}>
+            {line}
+          </tspan>
+        ))}
       </text>
     );
   };
@@ -311,6 +397,8 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   isGeographic,
   dataSeries,
   horizontalLabelFormatter,
+  wrapHorizontalLabels = false,
+  leftMarginData,
   barColor: barColorOverride,
   legendItems,
 }) => {
@@ -427,9 +515,22 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     tooltipContent: makeDefaultTooltipContent(isRate),
     ...(isHorizontal && {
       projection: "horizontal",
-      size: [558, data.length * 25 + 150],
+      size: [
+        558,
+        data.length *
+          computeHorizontalRowHeight(
+            data,
+            horizontalLabelFormatter,
+            wrapHorizontalLabels,
+          ) +
+          150,
+      ],
       margin: {
-        left: computeHorizontalLeftMargin(data, horizontalLabelFormatter),
+        left: computeHorizontalLeftMargin(
+          leftMarginData ?? data,
+          horizontalLabelFormatter,
+          wrapHorizontalLabels,
+        ),
         bottom: 75,
         right: 50,
         top: 56,
@@ -441,7 +542,10 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
           tickValues,
         },
       ],
-      oLabel: makeHorizontalOLabel(horizontalLabelFormatter ?? ((l) => l)),
+      oLabel: makeHorizontalOLabel(
+        horizontalLabelFormatter,
+        wrapHorizontalLabels,
+      ),
       tooltipContent: makeHorizontalTooltipContent(isRate, dataSeries),
     }),
     ...(rotateLabels && {
@@ -557,5 +661,5 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
 };
 
 export default PopulationSnapshotChart;
-export { computeHorizontalLeftMargin };
+export { computeHorizontalLeftMargin, computeHorizontalRowHeight };
 export type { PopulationSnapshotChartProps, SnapshotDataPoint };

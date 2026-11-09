@@ -81,6 +81,25 @@ export const EVENT_TYPE_SECTION_RULES: Readonly<
 };
 
 /**
+ * Returns the one event type a section counts, or undefined where it counts
+ * more than one. A section whose rule leaves out admissions counts only
+ * releases, and the reverse.
+ */
+export function singleEventTypeForSection(
+  sectionId: string,
+): typeof EVENT_TYPES.ADMISSIONS | typeof EVENT_TYPES.RELEASES | undefined {
+  const rule = EVENT_TYPE_SECTION_RULES[sectionId];
+  if (!rule) return undefined;
+  if (!rule.eventTypes.includes(EVENT_TYPES.RELEASES)) {
+    return EVENT_TYPES.ADMISSIONS;
+  }
+  if (!rule.eventTypes.includes(EVENT_TYPES.ADMISSIONS)) {
+    return EVENT_TYPES.RELEASES;
+  }
+  return undefined;
+}
+
+/**
  * Returns the color a section's charts should draw in, or undefined where the
  * section counts more than one kind of event and no single color fits.
  *

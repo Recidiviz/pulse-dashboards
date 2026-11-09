@@ -100,6 +100,32 @@ export const DownloadMenuItem = styled(DropdownMenuItem)`
   &:active {
     background-color: rgba(0, 0, 0, 0.06);
   }
+
+  &:disabled {
+    background-color: transparent;
+
+    p {
+      opacity: 0.55;
+    }
+  }
+`;
+
+export const DownloadMenuItemHeadingRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+export const ComingSoonBadge = styled.span`
+  ${publicPathwaysTypography.Sans14}
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50px;
+  white-space: nowrap;
+  color: ${publicPathwaysPalette.slate70};
+  background-color: rgba(0, 0, 0, 0.06);
 `;
 
 export const DownloadMenuItemDivider = styled.div`

@@ -25,6 +25,7 @@ import {
   isEventType,
   isSectionAvailableForEventType,
   RELEASES_COLOR,
+  singleEventTypeForSection,
 } from "../eventTypes";
 
 describe("isEventType", () => {
@@ -80,6 +81,35 @@ describe("isSectionAvailableForEventType", () => {
         EVENT_TYPES.ADMISSIONS,
       ),
     ).toBe(true);
+  });
+});
+
+describe("singleEventTypeForSection", () => {
+  it("names the one event type each section counts, if any", () => {
+    const sectionNames = [
+      "countByAdmissionType",
+      "countByReleaseType",
+      "countByCommunitySupervision",
+      "countByCustodyStatus",
+      "countOverTime",
+    ] as const;
+
+    expect(
+      Object.fromEntries(
+        sectionNames.map((name) => [
+          name,
+          singleEventTypeForSection(PATHWAYS_SECTIONS[name]),
+        ]),
+      ),
+    ).toMatchInlineSnapshot(`
+      {
+        "countByAdmissionType": "ADMISSIONS",
+        "countByCommunitySupervision": "RELEASES",
+        "countByCustodyStatus": undefined,
+        "countByReleaseType": "RELEASES",
+        "countOverTime": undefined,
+      }
+    `);
   });
 });
 

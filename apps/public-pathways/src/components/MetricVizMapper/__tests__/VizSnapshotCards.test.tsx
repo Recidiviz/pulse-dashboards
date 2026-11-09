@@ -26,13 +26,21 @@ import {
 import VizSnapshotCards from "../VizSnapshotCards";
 
 const renderedTitles: string[] = [];
+const renderedSubtitles: string[] = [];
 
 vi.mock("~shared-pathways", async () => {
   const actual = await vi.importActual("~shared-pathways");
   return {
     ...actual,
-    VizPopulationSnapshot: ({ title }: { title: string }) => {
+    VizPopulationSnapshot: ({
+      title,
+      subtitle,
+    }: {
+      title: string;
+      subtitle: string;
+    }) => {
       renderedTitles.push(title);
+      renderedSubtitles.push(subtitle);
       return null;
     },
   };
@@ -56,11 +64,14 @@ const STATUS_LABELS: Record<string, string> = {
 const filtersStore = {
   getFilterLabel: (_filterType: string, value: string) =>
     STATUS_LABELS[value] ?? "",
+  getFiltersDescriptionForCompoundValuePart: (part: string) =>
+    `Filters for ${part}`,
 } as unknown as FiltersStoreBase;
 
 describe("VizSnapshotCards", () => {
   beforeEach(() => {
     renderedTitles.length = 0;
+    renderedSubtitles.length = 0;
   });
 
   it("renders one card per value of the split dimension", () => {
@@ -97,6 +108,26 @@ describe("VizSnapshotCards", () => {
     expect(renderedTitles).toEqual([
       "Test Chart — Incarcerated Individual",
       "Test Chart — incarcerated_parolee",
+    ]);
+  });
+
+  it("gives each card a header that lists only its own value's filters", () => {
+    const metric = buildMetric([
+      record("incarcerated_individual", 10),
+      record("incarcerated_parolee", 5),
+    ]);
+
+    render(
+      <VizSnapshotCards
+        metric={metric}
+        filtersStore={filtersStore}
+        splitDimension="custodyStatus"
+      />,
+    );
+
+    expect(renderedSubtitles).toEqual([
+      "Filters for incarcerated_individual",
+      "Filters for incarcerated_parolee",
     ]);
   });
 

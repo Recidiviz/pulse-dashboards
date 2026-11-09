@@ -17,9 +17,17 @@
 
 import { action, computed, makeObservable, observable } from "mobx";
 
-import { FiltersStoreBase, PathwaysTenantId } from "~shared-pathways";
+import {
+  FiltersStoreBase,
+  FilterType,
+  PathwaysTenantId,
+} from "~shared-pathways";
 
 import { enabledFilterOptionsByTenant } from "./enabledFilters";
+import {
+  disabledFiltersForEventType,
+  singleEventTypeForSection,
+} from "./eventTypes";
 import type { RootStore } from "./RootStore";
 
 export default class FiltersStore extends FiltersStoreBase {
@@ -66,5 +74,23 @@ export default class FiltersStore extends FiltersStoreBase {
 
   get enabledFilterOptionsByTenant() {
     return enabledFilterOptionsByTenant;
+  }
+
+  /**
+   * Leaves out the filters that describe an event type the chart does not
+   * count. A section that counts one event type decides this itself, so
+   * "Releases by type" never lists an admission type even while the combined
+   * view is selected. Any other section follows the selected event type.
+   */
+  protected override isFilterListedInDescription(
+    filterType: FilterType,
+  ): boolean {
+    const eventTypeInView =
+      singleEventTypeForSection(this.rootStore.section) ??
+      this.rootStore.eventType;
+    return (
+      super.isFilterListedInDescription(filterType) &&
+      !(filterType in disabledFiltersForEventType(eventTypeInView))
+    );
   }
 }

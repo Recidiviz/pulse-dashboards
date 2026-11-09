@@ -19,12 +19,15 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 
 import { Dropdown } from "~design-system";
+import { PATHWAYS_PAGES } from "~shared-pathways";
 
 import { useRootStore } from "../StoreProvider";
 import {
+  ComingSoonBadge,
   DownloadMenuItem,
   DownloadMenuItemDivider,
   DownloadMenuItemHeading,
+  DownloadMenuItemHeadingRow,
   DownloadMenuItemSubheading,
   DownloadMenuLabel,
   DownloadMenuPanel,
@@ -38,6 +41,9 @@ export const DownloadMenu = observer(function DownloadMenu() {
     useState(false);
   const maxSnapshotDate =
     metricsStore.latestAvailableSnapshotDate ?? new Date();
+  // TODO(XXXX): Enable individual-level data download on Admissions & Releases in v2.1.
+  const isIndividualLevelDataAvailable =
+    metricsStore.page !== PATHWAYS_PAGES.admissionsAndReleases;
 
   // The over-time metric only auto-hydrates while its own section is the
   // one being viewed, but the download button needs to know its data
@@ -52,8 +58,13 @@ export const DownloadMenu = observer(function DownloadMenu() {
   // viewing a different section), otherwise the button could get stuck
   // disabled with nothing left to re-trigger its fetch.
   useEffect(() => {
+    if (!isIndividualLevelDataAvailable) return;
     metricsStore.ensureLatestSnapshotDateHydrated();
-  }, [metricsStore, metricsStore.isLatestSnapshotDateReady]);
+  }, [
+    metricsStore,
+    metricsStore.isLatestSnapshotDateReady,
+    isIndividualLevelDataAvailable,
+  ]);
 
   const handleDownloadChartData = () => {
     metricsStore.download();
@@ -84,7 +95,10 @@ export const DownloadMenu = observer(function DownloadMenu() {
           kind="primary"
           shape="pill"
           showCaret
-          disabled={!metricsStore.isLatestSnapshotDateReady}
+          disabled={
+            isIndividualLevelDataAvailable &&
+            !metricsStore.isLatestSnapshotDateReady
+          }
         >
           Download
         </DownloadToggle>
@@ -97,10 +111,18 @@ export const DownloadMenu = observer(function DownloadMenu() {
             </DownloadMenuItemSubheading>
           </DownloadMenuItem>
           <DownloadMenuItemDivider />
-          <DownloadMenuItem onClick={() => setIsIndividualLevelFlowOpen(true)}>
-            <DownloadMenuItemHeading>
-              Individual-level data
-            </DownloadMenuItemHeading>
+          <DownloadMenuItem
+            disabled={!isIndividualLevelDataAvailable}
+            onClick={() => setIsIndividualLevelFlowOpen(true)}
+          >
+            <DownloadMenuItemHeadingRow>
+              <DownloadMenuItemHeading>
+                Individual-level data
+              </DownloadMenuItemHeading>
+              {!isIndividualLevelDataAvailable && (
+                <ComingSoonBadge>Coming soon</ComingSoonBadge>
+              )}
+            </DownloadMenuItemHeadingRow>
             <DownloadMenuItemSubheading>
               Every record we receive — all data dimensions, unfiltered.
             </DownloadMenuItemSubheading>

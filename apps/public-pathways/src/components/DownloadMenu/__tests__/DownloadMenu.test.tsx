@@ -22,7 +22,7 @@ import ReactModal from "react-modal";
 import { ThemeProvider } from "styled-components";
 import { Mock } from "vitest";
 
-import { defaultPathwaysTheme } from "~shared-pathways";
+import { defaultPathwaysTheme, PATHWAYS_PAGES } from "~shared-pathways";
 
 import { useRootStore } from "../../StoreProvider";
 import { DownloadMenu } from "../DownloadMenu";
@@ -50,6 +50,7 @@ describe("DownloadMenu", () => {
     mockUseRootStore.mockReturnValue({
       analyticsStore: { trackDownloadClicked: mockTrackDownloadClicked },
       metricsStore: {
+        page: PATHWAYS_PAGES.prison,
         current: { id: "prisonPopulationOverTime" },
         download: mockDownload,
         downloadIndividualLevelData: mockDownloadIndividualLevelData,
@@ -105,6 +106,39 @@ describe("DownloadMenu", () => {
       screen.getByRole("heading", { name: "Individual-level data" }),
     ).toBeInTheDocument();
     expect(mockDownload).not.toHaveBeenCalled();
+  });
+
+  it("disables the Individual-level data option with a Coming soon label on the Admissions & Releases page", () => {
+    mockUseRootStore.mockReturnValue({
+      analyticsStore: { trackDownloadClicked: mockTrackDownloadClicked },
+      metricsStore: {
+        page: PATHWAYS_PAGES.admissionsAndReleases,
+        current: { id: "admissionsAndReleasesOverTime" },
+        download: mockDownload,
+        downloadIndividualLevelData: mockDownloadIndividualLevelData,
+        ensureLatestSnapshotDateHydrated: mockEnsureLatestSnapshotDateHydrated,
+        isLatestSnapshotDateReady: false,
+      },
+    });
+    render(<DownloadMenu />, { wrapper });
+
+    expect(screen.getByRole("button", { name: /Download/i })).toBeEnabled();
+    openMenu();
+    expect(screen.getByText("Chart data")).toBeInTheDocument();
+    expect(screen.getByText("Coming soon")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Individual-level data"));
+    expect(
+      screen.queryByRole("heading", { name: "Individual-level data" }),
+    ).not.toBeInTheDocument();
+    expect(mockEnsureLatestSnapshotDateHydrated).not.toHaveBeenCalled();
+  });
+
+  it("does not show a Coming soon label on the Population Under Custody page", () => {
+    render(<DownloadMenu />, { wrapper });
+
+    openMenu();
+
+    expect(screen.queryByText("Coming soon")).not.toBeInTheDocument();
   });
 
   it("triggers hydration of the over-time metric as soon as it mounts", () => {

@@ -18,6 +18,7 @@
 import {
   defaultPopulationFilterValues,
   NyPopulationFilterOptions,
+  PATHWAYS_SECTIONS,
 } from "~shared-pathways";
 
 import MetricsStore from "../MetricsStore";
@@ -183,6 +184,128 @@ describe("FiltersStore", () => {
       expect(rootStore.filtersStore.filtersDescription).toEqual(
         "Time Period: 6 months;\nSex: All\n",
       );
+    });
+
+    describe("admission and release type filters", () => {
+      const OTHER_OF_INDIVIDUALS = {
+        label: "Other",
+        value: "Incarcerated Individual|Other",
+        group: "Incarcerated Individuals",
+      };
+      const OTHER_OF_PAROLEES = {
+        label: "Other",
+        value: "Incarcerated Parolee|Other",
+        group: "Incarcerated Parolees",
+      };
+      const COURT_COMMITMENT = {
+        label: "Court commitment",
+        value: "Incarcerated Individual|Court commitment",
+        group: "Incarcerated Individuals",
+      };
+
+      beforeEach(() => {
+        Object.assign(rootStore.metricsStore.current, {
+          filters: { enabledFilters: ["admissionType", "releaseType"] },
+          dynamicFilterOptions: {
+            admissionType: [
+              COURT_COMMITMENT,
+              OTHER_OF_INDIVIDUALS,
+              OTHER_OF_PAROLEES,
+            ],
+          },
+        });
+      });
+
+      it("names the group of selected options that share a label", () => {
+        rootStore.filtersStore.setFilters({
+          admissionType: [OTHER_OF_INDIVIDUALS.value, OTHER_OF_PAROLEES.value],
+        });
+
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Admission Type: Other (Incarcerated Individuals), Other (Incarcerated Parolees);\nLatest Release Type: All\n",
+        );
+      });
+
+      it("lists only the selected options of one custody status for that status's card", () => {
+        rootStore.filtersStore.setFilters({
+          admissionType: [OTHER_OF_INDIVIDUALS.value, OTHER_OF_PAROLEES.value],
+        });
+
+        expect(
+          rootStore.filtersStore.getFiltersDescriptionForCompoundValuePart(
+            "Incarcerated Individual",
+          ),
+        ).toEqual("Latest Admission Type: Other;\nLatest Release Type: All\n");
+        expect(
+          rootStore.filtersStore.getFiltersDescriptionForCompoundValuePart(
+            "Incarcerated Parolee",
+          ),
+        ).toEqual("Latest Admission Type: Other;\nLatest Release Type: All\n");
+      });
+
+      it("reads None when no selected option belongs to the card's custody status", () => {
+        rootStore.filtersStore.setFilters({
+          admissionType: [OTHER_OF_PAROLEES.value],
+        });
+
+        expect(
+          rootStore.filtersStore.getFiltersDescriptionForCompoundValuePart(
+            "Incarcerated Individual",
+          ),
+        ).toEqual("Latest Admission Type: None;\nLatest Release Type: All\n");
+      });
+
+      it("leaves a label bare when no other selected option shares it", () => {
+        rootStore.filtersStore.setFilters({
+          admissionType: [COURT_COMMITMENT.value, OTHER_OF_PAROLEES.value],
+        });
+
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Admission Type: Court commitment, Other;\nLatest Release Type: All\n",
+        );
+      });
+
+      it("leaves out the admission type filter while releases are in view", () => {
+        rootStore.setEventType("RELEASES");
+
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Release Type: All\n",
+        );
+      });
+
+      it("leaves out the release type filter while admissions are in view", () => {
+        rootStore.setEventType("ADMISSIONS");
+
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Admission Type: All\n",
+        );
+      });
+
+      it("leaves out the admission type filter on a releases-only section, even in the combined view", () => {
+        rootStore.setSection(PATHWAYS_SECTIONS["countByReleaseType"]);
+
+        expect(rootStore.eventType).toEqual("ALL");
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Release Type: All\n",
+        );
+      });
+
+      it("leaves out the release type filter on an admissions-only section, even in the combined view", () => {
+        rootStore.setSection(PATHWAYS_SECTIONS["countByAdmissionType"]);
+
+        expect(rootStore.eventType).toEqual("ALL");
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Admission Type: All\n",
+        );
+      });
+
+      it("lists both filters on a section that counts both event types in the combined view", () => {
+        rootStore.setSection(PATHWAYS_SECTIONS["countByCustodyStatus"]);
+
+        expect(rootStore.filtersStore.filtersDescription).toEqual(
+          "Latest Admission Type: All;\nLatest Release Type: All\n",
+        );
+      });
     });
 
     it("excludes dateInPopulation from the description", () => {

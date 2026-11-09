@@ -20,6 +20,7 @@ import React from "react";
 
 import {
   AdmissionsAndReleasesOverTimeMetric,
+  AdmissionsAndReleasesSnapshotMetric,
   OverTimeMetric,
   PATHWAYS_SECTIONS,
   SnapshotMetric,
@@ -84,6 +85,9 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
       );
     }
 
+    const wrapHorizontalLabels =
+      metric instanceof AdmissionsAndReleasesSnapshotMetric;
+
     const splitDimension = CARD_SPLIT_DIMENSION_BY_SECTION[section];
     if (splitDimension) {
       return (
@@ -92,6 +96,7 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
           filtersStore={filtersStore}
           splitDimension={splitDimension}
           barColor={chartColorForSection(section)}
+          wrapHorizontalLabels={wrapHorizontalLabels}
         />
       );
     }
@@ -101,6 +106,7 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
         metric={metric}
         filtersStore={filtersStore}
         barColor={chartColorForSection(section)}
+        wrapHorizontalLabels={wrapHorizontalLabels}
       />
     );
   },

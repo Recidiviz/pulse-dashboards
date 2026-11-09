@@ -23,6 +23,7 @@ import { vi } from "vitest";
 import { defaultPathwaysTheme } from "../../PathwaysTheme";
 import {
   computeHorizontalLeftMargin,
+  computeHorizontalRowHeight,
   type SnapshotDataPoint,
 } from "../PopulationSnapshotChart";
 import PopulationSnapshotChart from "../PopulationSnapshotChart";
@@ -134,6 +135,59 @@ describe("computeHorizontalLeftMargin", () => {
     // "District One" → 12 chars → 12*7+16 = 100
     expect(computeHorizontalLeftMargin(data, undefined)).toBe(100);
     expect(computeHorizontalLeftMargin(data, (l) => l)).toBe(100);
+  });
+
+  describe("with wrapped labels", () => {
+    const longLabel = "Conditional release to parole supervision";
+
+    it("measures the longest wrapped line instead of the whole label", () => {
+      // Wraps to "Conditional release to" (22) and "parole supervision" (18)
+      // → 22*7+16 = 170. Unwrapped, 41 chars would clamp to 220.
+      const data = makeHorizontalData([longLabel]);
+      expect(computeHorizontalLeftMargin(data, undefined, false)).toBe(220);
+      expect(computeHorizontalLeftMargin(data, undefined, true)).toBe(170);
+    });
+
+    it("keeps a single word longer than the line limit whole", () => {
+      const data = makeHorizontalData(["A".repeat(30)]);
+      // 30*7+16 = 226, clamped to 220
+      expect(computeHorizontalLeftMargin(data, undefined, true)).toBe(220);
+    });
+  });
+});
+
+describe("computeHorizontalRowHeight", () => {
+  const makeLabeledData = (labels: string[]): SnapshotDataPoint[] =>
+    labels.map((label, i) => ({
+      index: i,
+      accessorValue: label,
+      accessorLabel: label,
+      tooltipLabel: label,
+      value: "10",
+    }));
+  const threeLineLabel = ["A".repeat(20), "B".repeat(20), "C".repeat(20)].join(
+    " ",
+  );
+
+  it("keeps the standard row height when no label wraps", () => {
+    expect(
+      computeHorizontalRowHeight(
+        makeLabeledData(["Short", threeLineLabel]),
+        undefined,
+        false,
+      ),
+    ).toBe(25);
+  });
+
+  it("makes every row tall enough for the label with the most lines", () => {
+    // 3 lines * 16px + 8px padding
+    expect(
+      computeHorizontalRowHeight(
+        makeLabeledData(["Short", threeLineLabel]),
+        undefined,
+        true,
+      ),
+    ).toBe(56);
   });
 });
 

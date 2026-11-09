@@ -33,6 +33,7 @@ type CapturedChartProps = {
   data: SnapshotDataPoint[];
   title: string;
   dataSeries: Record<string, unknown>[];
+  leftMarginData?: SnapshotDataPoint[];
 };
 const capturedProps: { current: CapturedChartProps | null } = { current: null };
 
@@ -314,6 +315,39 @@ describe("VizPopulationSnapshot data composition", () => {
 
     expect(data.map((d) => d.accessorValue)).toEqual(["FROM_OVERRIDE"]);
     expect(capturedProps.current?.dataSeries).toBe(override);
+  });
+
+  it("sizes a records override's labels against every record of the metric", () => {
+    const metric = buildMetric({
+      accessor: "facility",
+      accessorIsNotFilterType: true,
+      dataSeries: [
+        { facility: "SHORT", count: 1 },
+        { facility: "A_MUCH_LONGER_FACILITY_NAME", count: 1 },
+      ],
+    });
+    const filtersStore = buildFiltersStore();
+    const override: SnapshotDataRecord[] = [
+      { facility: "SHORT", count: 1 } as unknown as SnapshotDataRecord,
+    ];
+
+    renderViz(metric, filtersStore, { records: override });
+
+    expect(
+      capturedProps.current?.leftMarginData?.map((d) => d.accessorLabel),
+    ).toEqual(["SHORT", "A_MUCH_LONGER_FACILITY_NAME"]);
+  });
+
+  it("leaves the left margin to the chart's own data without a records override", () => {
+    const metric = buildMetric({
+      accessor: "facility",
+      accessorIsNotFilterType: true,
+      dataSeries: [{ facility: "A", count: 1 }],
+    });
+
+    renderViz(metric, buildFiltersStore());
+
+    expect(capturedProps.current?.leftMarginData).toBeUndefined();
   });
 
   it("shows the title override instead of the metric's own chartTitle", () => {

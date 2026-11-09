@@ -78,6 +78,7 @@ type Props = {
   filtersStore: FiltersStoreBase;
   splitDimension: string;
   barColor?: string;
+  wrapHorizontalLabels?: boolean;
 };
 
 /**
@@ -89,6 +90,7 @@ const VizSnapshotCards: React.FC<Props> = observer(function VizSnapshotCards({
   filtersStore,
   splitDimension,
   barColor,
+  wrapHorizontalLabels,
 }) {
   const cards = splitRecordsIntoCards(metric.dataSeries, splitDimension);
 
@@ -117,7 +119,11 @@ const VizSnapshotCards: React.FC<Props> = observer(function VizSnapshotCards({
                 value,
               ) || value
             }`}
+            subtitle={filtersStore.getFiltersDescriptionForCompoundValuePart(
+              value,
+            )}
             barColor={barColor}
+            wrapHorizontalLabels={wrapHorizontalLabels}
           />
         </MetricVizCard>
       ))}

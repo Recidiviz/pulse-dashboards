@@ -36,18 +36,22 @@ type VizPopulationSnapshotProps = {
   metric: SnapshotMetric;
   filtersStore: FiltersStoreBase;
   horizontalLabelFormatter?: (label: string) => string;
+  wrapHorizontalLabels?: boolean;
   barColor?: string;
   records?: SnapshotDataRecord[];
   title?: string;
+  subtitle?: string;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
   metric,
   filtersStore,
   horizontalLabelFormatter,
+  wrapHorizontalLabels,
   barColor,
   records,
   title,
+  subtitle,
 }) => {
   const {
     filters,
@@ -68,6 +72,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
   } = metric;
   const dataSeries = records ?? allRecords;
   const chartTitle = title ?? metricTitle;
+  const chartSubtitle = subtitle ?? filtersDescription;
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
   const isSupervisionLevel = accessor === "supervisionLevel";
@@ -118,41 +123,47 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
         )
       : dataSeries;
 
-  const data: SnapshotDataPoint[] = sourceRecords.map(
-    (d: SnapshotDataRecord, index: number) => {
-      const accessorValue = String(
-        (d as Record<string, unknown>)[accessor as string] ?? "",
-      );
-      // A dimension no filter covers can still have labels in the metadata.
-      // A value without one shows as itself, so a gap stays visible.
-      const metadataLabel = isNotFilter
-        ? metric.dimensionValueLabels[accessor as string]?.[accessorValue]
-        : undefined;
-      const filterLabel = isNotFilter
-        ? metadataLabel ?? accessorValue
-        : getFilterLabel(
-            accessor as keyof PopulationFilterLabels,
-            accessorValue,
-          ) ?? accessorValue;
-      const filterLongLabel = isNotFilter
-        ? metadataLabel ??
-          getDimensionLabel(accessor as Dimension, accessorValue)
-        : getFilterLongLabel(
-            accessor as keyof PopulationFilterLabels,
-            accessorValue,
-          );
-      const currentValue = isRate
-        ? (d as Record<string, unknown>)["populationProportion"]
-        : d.count;
-      return {
-        index,
-        accessorValue,
-        accessorLabel: filterLabel,
-        tooltipLabel: filterLongLabel || filterLabel,
-        value: String(currentValue),
-      };
-    },
-  );
+  const toDataPoint = (
+    d: SnapshotDataRecord,
+    index: number,
+  ): SnapshotDataPoint => {
+    const accessorValue = String(
+      (d as Record<string, unknown>)[accessor as string] ?? "",
+    );
+    // A dimension no filter covers can still have labels in the metadata.
+    // A value without one shows as itself, so a gap stays visible.
+    const metadataLabel = isNotFilter
+      ? metric.dimensionValueLabels[accessor as string]?.[accessorValue]
+      : undefined;
+    const filterLabel = isNotFilter
+      ? metadataLabel ?? accessorValue
+      : getFilterLabel(
+          accessor as keyof PopulationFilterLabels,
+          accessorValue,
+        ) ?? accessorValue;
+    const filterLongLabel = isNotFilter
+      ? metadataLabel ?? getDimensionLabel(accessor as Dimension, accessorValue)
+      : getFilterLongLabel(
+          accessor as keyof PopulationFilterLabels,
+          accessorValue,
+        );
+    const currentValue = isRate
+      ? (d as Record<string, unknown>)["populationProportion"]
+      : d.count;
+    return {
+      index,
+      accessorValue,
+      accessorLabel: filterLabel,
+      tooltipLabel: filterLongLabel || filterLabel,
+      value: String(currentValue),
+    };
+  };
+
+  const data = sourceRecords.map(toDataPoint);
+
+  // A chart drawn from a subset of the metric's records is one of several
+  // sibling charts, so its labels line up with theirs.
+  const leftMarginData = records ? allRecords.map(toDataPoint) : undefined;
 
   sortByLabel({
     dataPoints: data,
@@ -171,7 +182,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
     return (
       <NoDataViz
         title={chartTitle}
-        subtitle={filtersDescription}
+        subtitle={chartSubtitle}
         latestUpdate={metric.latestUpdateLabel}
         eyebrow={metric.uploadDateLabel}
       />
@@ -183,7 +194,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       metricId={metric.id}
       data={data}
       title={chartTitle}
-      subtitle={filtersDescription}
+      subtitle={chartSubtitle}
       latestUpdate={metric.latestUpdateLabel}
       eyebrow={metric.uploadDateLabel}
       chartXAxisTitle={chartXAxisTitle}
@@ -194,6 +205,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       isGeographic={metric.isGeographic}
       dataSeries={dataSeries as SupervisionPopulationSnapshotRecord[]}
       horizontalLabelFormatter={horizontalLabelFormatter}
+      wrapHorizontalLabels={wrapHorizontalLabels}
+      leftMarginData={leftMarginData}
       barColor={barColor}
     />
   );
