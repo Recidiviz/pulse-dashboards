@@ -163,6 +163,44 @@ mockTranscribeAudioWithDeepgram.mockImplementation(
 );
 
 describe("tasks", () => {
+  describe("auth preHandler", () => {
+    test.each([
+      "/stitch-audio",
+      "/transcribe-audio",
+      "/process-notetaking",
+      "/run-llmaj-evaluation",
+      "/reprocess-meeting",
+    ])(
+      "Should tag the Sentry event with meetingId and stateCode when %s fails auth",
+      async (url) => {
+        setGetPayloadImp(
+          vi.fn().mockImplementation(() => {
+            throw new Error("Token used too late");
+          }),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url,
+          headers: { authorization: `Bearer token` },
+          body: {
+            stateCode: "US_NE",
+            meetingId: fakeMeeting.id,
+          },
+        });
+
+        expect(response.statusCode).toBe(401);
+        const [report] = await testAndGetSentryReports();
+        expect(report.tags).toEqual(
+          expect.objectContaining({
+            meetingId: fakeMeeting.id,
+            stateCode: "US_NE",
+          }),
+        );
+      },
+    );
+  });
+
   describe("/stitch-audio", () => {
     test("Should return authorization error if token is not provided", async () => {
       const response = await testServer.inject({

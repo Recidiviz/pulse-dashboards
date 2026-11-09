@@ -20,7 +20,12 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 
-import { captureException, captureMessage, withScope } from "@sentry/node";
+import {
+  captureException,
+  captureMessage,
+  getIsolationScope,
+  withScope,
+} from "@sentry/node";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import {
@@ -113,9 +118,19 @@ async function verifyGoogleIdToken(authorizationHeaders: string | undefined) {
   console.log(`Email verified: ${payload.email}`);
 }
 
+const taskRequestTagsSchema = z.object({
+  stateCode: z.nativeEnum(StateCode),
+  meetingId: z.string(),
+});
+
 async function authenticateInternalRequestPreHandlerFn<
   T extends FastifyRequest,
 >(request: T, reply: FastifyReply) {
+  const tags = taskRequestTagsSchema.safeParse(request.body);
+  if (tags.success) {
+    getIsolationScope().setTags(tags.data);
+  }
+
   if (env.NODE_ENV === "development") {
     // Skip authentication in development mode
     return;
