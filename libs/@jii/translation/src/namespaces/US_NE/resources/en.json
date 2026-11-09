@@ -105,8 +105,8 @@
         "linkText": "Begin Assessment"
       },
       "checkInTool": {
-        "title": "Prepare for Your 120-Day Check-In with Your Reentry Specialist",
-        "body": "Answer a few questions to help your Reentry Specialist prepare for your 120-Day Check-In.\nYour Reentry Specialist assigned this on {{date, formatFullDate}} — we recommend completing it in the next week.",
+        "title": "Prepare for Your 120-Day Reentry Planning Session",
+        "body": "Answer a few questions to help your Reentry Specialist prepare for your 120-Day Reentry Planning Session.\nYour Reentry Specialist assigned this on {{date, formatFullDate}} — we recommend completing it in the next week.",
         "linkText": "Get Started"
       }
     },
@@ -299,7 +299,7 @@
   "disclaimer": "This information is provided by a third-party vendor for general informational purposes only. This information is not intended as legal advice or as a substitute for the individualized advice of your counsel. Providing this information does not create an attorney-client relationship between the Nebraska Department of Correctional Services and the user. Providing this information does not create an attorney-client relationship between the third-party vendor and the user. The Nebraska Department of Correctional Services and the third-party vendor shall not be liable for any errors, omissions, delays, or interruptions related to the provided information.",
   "checkIn": {
     "header": {
-      "title": "120-Day Check-In Prep",
+      "title": "120-Day Check-In",
       "close": "Exit"
     },
     "exitModal": {
@@ -587,7 +587,7 @@
     "completion": {
       "heading": "You’re done, {{name}}!",
       "subheading": "Thanks for doing this today.",
-      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Your support system\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in to build your Release Plan and Success Plan with you.",
+      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Your support system\n\nYour Reentry Specialist will use what you’ve shared in your 120-Day Reentry Planning Session to build your Release Plan and Success Plan with you.",
       "close": "Close"
     },
     "questionPage": {
