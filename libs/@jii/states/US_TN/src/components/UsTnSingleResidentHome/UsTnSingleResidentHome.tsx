@@ -15,14 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useSingleResidentContext } from "~@jii/data";
+
+import { MaintenanceAnnouncement } from "../MaintenanceAnnouncement";
+import { MaintenancePage } from "../MaintenancePage";
 import { UsTnLastUpdatedBanner } from "../UsTnLastUpdatedBanner";
 import { UsTnImportantDates } from "./UsTnImportantDates";
 import { UsTnMonthlyReports } from "./UsTnMonthlyReports";
 
 export function UsTnSingleResidentHome() {
+  const {
+    residentFlags: { usTnMaintenanceBanner, usTnMaintenanceDowntime },
+  } = useSingleResidentContext();
+
+  if (usTnMaintenanceDowntime) {
+    return <MaintenancePage />;
+  }
+
   return (
     <div>
       <UsTnLastUpdatedBanner />
+      {usTnMaintenanceBanner && <MaintenanceAnnouncement />}
       <UsTnImportantDates />
       <UsTnMonthlyReports />
     </div>

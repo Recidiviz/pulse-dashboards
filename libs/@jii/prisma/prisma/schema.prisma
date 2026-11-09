@@ -66,6 +66,8 @@ enum ResidentFlagId {
     usMaReentry
     usMaSentenceDatesV1
     usNycSentenceDatesV1
+    usTnMaintenanceBanner
+    usTnMaintenanceDowntime
 }
 
 model ResidentFlagInstance {

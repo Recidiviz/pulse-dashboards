@@ -45,6 +45,8 @@ type ResidentFlag =
   | "usMaSentenceDatesV1"
   | "usNeCheckInTool"
   | "usNycSentenceDatesV1"
+  | "usTnMaintenanceBanner"
+  | "usTnMaintenanceDowntime"
   | "usNeSuccessPlan";
 
 // this type must stay in sync with the UserFlagId enum
