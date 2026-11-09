@@ -15,8 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleCase } from "~datatypes";
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import { ReactNode } from "react";
+import styled from "styled-components";
 
+import { ParoleCase } from "~datatypes";
+import { palette, typography } from "~design-system";
+import {
+  Hydratable,
+  hydrationFailure,
+  withPresenterManager,
+} from "~hydration-utils";
+
+import { useRootStore } from "../../../components/StoreProvider";
+import { ParoleBoardReportPresenter } from "../../../ParoleStore/presenters/ParoleBoardReportPresenter";
+import ModelHydrator from "../../ModelHydrator";
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { SectionAnchor } from "../components/SectionAnchor";
@@ -43,44 +57,96 @@ const SECTION_NAV = [
   },
 ];
 
+type UsIdParoleCaseProfileProps = {
+  caseDetail: ParoleCase;
+  config: ParoleConfig;
+};
+
+const ReportLoadFailedBanner = styled.div.attrs({ role: "alert" })`
+  ${typography.Sans14}
+  color: ${palette.pine1};
+  background: ${palette.marble1};
+  border-left: ${rem(4)} solid ${palette.signal.error};
+  padding: ${rem(16)};
+`;
+
+const UsIdParoleCaseProfileContents = observer(
+  function UsIdParoleCaseProfileContents({
+    caseDetail,
+    config,
+    presenter,
+  }: UsIdParoleCaseProfileProps & { presenter: ParoleBoardReportPresenter }) {
+    return (
+      <ParoleCaseProfileLayout
+        sidebar={
+          <CaseProfileSidebar caseDetail={caseDetail} sections={SECTION_NAV}>
+            <UsIdParoleSidebar caseDetail={caseDetail} config={config} />
+          </CaseProfileSidebar>
+        }
+        beforeReport={
+          presenter.reportFailedToLoad && (
+            <ReportLoadFailedBanner>
+              We couldn’t load the PHI report, so this page shows the current
+              Atlas data and editing is off. Reload the page to try again.
+            </ReportLoadFailedBanner>
+          )
+        }
+      >
+        <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
+          <UsIdOffenseHistorySection caseDetail={caseDetail} />
+        </SectionAnchor>
+
+        <SectionAnchor id={PAROLE_SECTION_IDS.institutionalHistory}>
+          <UsIdInstitutionalHistorySection
+            caseDetail={caseDetail}
+            config={config}
+          />
+        </SectionAnchor>
+
+        <SectionAnchor id={PAROLE_SECTION_IDS.hearingHistory}>
+          <UsIdHearingHistorySection
+            hearingHistory={caseDetail.hearingHistory ?? []}
+          />
+        </SectionAnchor>
+      </ParoleCaseProfileLayout>
+    );
+  },
+);
+
+function usePresenter({ caseDetail }: UsIdParoleCaseProfileProps) {
+  const { firestoreStore, userStore } = useRootStore();
+  return new ParoleBoardReportPresenter(firestoreStore, userStore, caseDetail);
+}
+
 /**
- * Idaho's Parole case profile.
+ * Shows a spinner while the PHI report loads, then the profile. A report that
+ * fails to load still leaves the profile showing, read-only, rather than the
+ * page's error.
+ */
+const ReportHydrator = observer(function ReportHydrator({
+  hydratable,
+  children,
+}: {
+  hydratable: Hydratable;
+  children: ReactNode;
+}) {
+  if (hydrationFailure(hydratable)) return <>{children}</>;
+  return <ModelHydrator hydratable={hydratable}>{children}</ModelHydrator>;
+});
+
+/**
+ * Idaho's Parole case profile. For a PHI with usIdParoleBoardReports on, it
+ * loads the resident's PHI report before rendering, and its sections take
+ * their mode and data from ParoleBoardReportPresenter. If the report fails to
+ * load, the profile shows today's read-only sections under a banner.
  *
  * @param caseDetail - The case to show.
  * @param config - Idaho's paroleConfig, for its conduct classification colors
  *   and risk assessment tool set.
  */
-export function UsIdParoleCaseProfile({
-  caseDetail,
-  config,
-}: {
-  caseDetail: ParoleCase;
-  config: ParoleConfig;
-}) {
-  return (
-    <ParoleCaseProfileLayout
-      sidebar={
-        <CaseProfileSidebar caseDetail={caseDetail} sections={SECTION_NAV}>
-          <UsIdParoleSidebar caseDetail={caseDetail} config={config} />
-        </CaseProfileSidebar>
-      }
-    >
-      <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
-        <UsIdOffenseHistorySection caseDetail={caseDetail} />
-      </SectionAnchor>
-
-      <SectionAnchor id={PAROLE_SECTION_IDS.institutionalHistory}>
-        <UsIdInstitutionalHistorySection
-          caseDetail={caseDetail}
-          config={config}
-        />
-      </SectionAnchor>
-
-      <SectionAnchor id={PAROLE_SECTION_IDS.hearingHistory}>
-        <UsIdHearingHistorySection
-          hearingHistory={caseDetail.hearingHistory ?? []}
-        />
-      </SectionAnchor>
-    </ParoleCaseProfileLayout>
-  );
-}
+export const UsIdParoleCaseProfile = withPresenterManager({
+  usePresenter,
+  ManagedComponent: UsIdParoleCaseProfileContents,
+  managerIsObserver: false,
+  HydratorComponent: ReportHydrator,
+});

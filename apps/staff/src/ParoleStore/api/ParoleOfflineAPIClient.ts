@@ -56,7 +56,12 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
   async caseDetail(pseudonymizedId: string): Promise<ParoleCase> {
     const caseDetail = this.casesFixture[pseudonymizedId];
     if (!caseDetail) throw new ParoleCaseNotFoundError();
-    return caseDetail;
+    // Keys the resident the way the residents collection keys a record, which
+    // is also how the offline PHI report fixture is keyed.
+    return {
+      ...caseDetail,
+      recordId: `${this.fixtureStateCode.toLowerCase()}_${caseDetail.displayId}`,
+    };
   }
 
   // Serves each Parole-enabled tenant its own conduct classification scheme

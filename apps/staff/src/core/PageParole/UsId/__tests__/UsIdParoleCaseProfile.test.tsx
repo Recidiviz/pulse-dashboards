@@ -21,8 +21,18 @@ import { MemoryRouter } from "react-router-dom";
 
 import { paroleCasesFixtureByState } from "~datatypes";
 
+import * as StoreProvider from "../../../../components/StoreProvider";
+import { RootStore } from "../../../../RootStore";
 import US_ID_CONFIG from "../../../../tenants/US_ID";
 import { UsIdParoleCaseProfile } from "../UsIdParoleCaseProfile";
+
+vi.mock("../../../../components/StoreProvider");
+
+// No signed-in user, so the profile reads no PHI report and shows today's
+// sections.
+beforeEach(() => {
+  vi.mocked(StoreProvider.useRootStore).mockReturnValue(new RootStore());
+});
 
 const CASE = {
   ...Object.values(paroleCasesFixtureByState.US_ID)[0],
@@ -79,6 +89,50 @@ describe("UsIdParoleCaseProfile", () => {
     expect(
       screen.queryByRole("button", { name: /download/i }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("UsIdParoleCaseProfile when the PHI report fails to load", () => {
+  // A PHI with the report's feature variant on, whose reports Firestore
+  // refuses to read.
+  beforeEach(() => {
+    const reportsForResident = {
+      hydrationState: {
+        status: "failed",
+        error: new Error("permission denied"),
+      },
+      hydrate: vi.fn(),
+      unsubscribe: vi.fn(),
+    };
+    vi.mocked(StoreProvider.useRootStore).mockReturnValue({
+      firestoreStore: {
+        buildParoleBoardReportsForResidentSubscription: () =>
+          reportsForResident,
+      },
+      userStore: {
+        activeFeatureVariants: { usIdParoleBoardReports: {} },
+        canEditParoleBoardReports: true,
+      },
+    } as unknown as RootStore);
+  });
+
+  it("shows today's sections under a banner", async () => {
+    render(
+      <MemoryRouter>
+        <UsIdParoleCaseProfile
+          caseDetail={{ ...CASE, recordId: "us_id_000001" }}
+          config={US_ID_CONFIG.paroleConfig}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "We couldn’t load the PHI report",
+    );
+    for (const label of NAV_LABELS) {
+      expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
+    }
+    expect(screen.getByText("Parole granted")).toBeInTheDocument();
   });
 });
 

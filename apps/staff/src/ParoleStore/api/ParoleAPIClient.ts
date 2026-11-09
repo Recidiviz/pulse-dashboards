@@ -603,6 +603,7 @@ export class ParoleAPIClient implements ParoleAPI {
     return {
       pseudonymizedId: resident.pseudonymizedId,
       displayId: resident.displayId,
+      recordId: resident.recordId,
       name: this.nameForResident(resident),
       dob: dates.dob ?? UNKNOWN_DATE,
       gender: resident.gender ?? UNKNOWN_TEXT,

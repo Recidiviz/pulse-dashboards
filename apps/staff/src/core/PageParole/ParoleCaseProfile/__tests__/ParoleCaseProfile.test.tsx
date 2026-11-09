@@ -55,6 +55,9 @@ beforeEach(() => {
         paroleStore,
         currentTenantId: rootStore.tenantStore.currentTenantId,
         analyticsStore: rootStore.analyticsStore,
+        // Idaho's profile reads these to decide whether to load a PHI report.
+        firestoreStore: rootStore.firestoreStore,
+        userStore: rootStore.userStore,
       }) as never,
   );
 });

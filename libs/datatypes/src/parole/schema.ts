@@ -340,6 +340,10 @@ export const paroleCaseSchema = z.object({
   // See paroleHearingSchema above for the pseudonymizedId/displayId split.
   pseudonymizedId: z.string(),
   displayId: z.string(),
+  // The resident's record id, which keys their PHI reports. It carries their
+  // DOC id, so never log it. Fixtures leave it out, and ParoleOfflineAPIClient
+  // builds it from the state code and displayId.
+  recordId: z.string().optional(),
   name: z.string(),
   dob: z.string(),
   gender: z.string(),

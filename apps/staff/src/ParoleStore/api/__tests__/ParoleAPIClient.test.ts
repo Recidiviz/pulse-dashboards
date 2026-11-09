@@ -588,6 +588,7 @@ describe("ParoleAPIClient", () => {
       expect(result).toEqual({
         pseudonymizedId: "anonres999",
         displayId: "dRES999",
+        recordId: "us_id_res999",
         name: "Resident, Test",
         dob: "9999-12-01",
         gender: "Not yet available",

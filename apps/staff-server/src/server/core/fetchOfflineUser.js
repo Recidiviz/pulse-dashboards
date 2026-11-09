@@ -80,6 +80,7 @@ export function fetchOfflineUser({
         usTnExpirationSubmitToTomis: { activeDate: "9999" },
         // supervisorHomepageVitals: {},
         // supervisorHomepageWorkflows: {},
+        // usIdParoleBoardReports: {},
         usTxAnnualReportStatusV1: { activeDate: "9999" },
         usTxEarlyReleaseFromSupervisionV1: { activeDate: "9999" },
         usTxAnnualReportStatusV2: {},
