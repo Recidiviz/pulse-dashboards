@@ -31,6 +31,7 @@ type ResidentFlag =
   // libs/@jii/configs, libs/@jii/prisma, and libs/@jii/states/US_AZ
   | "usAzFslImprovements"
   | "usAzIonReferral"
+  | "usAzTprEligibility"
   | "usCoV1Experience"
   | "usCoEdovoV1"
   | "usCoMrdOverride"

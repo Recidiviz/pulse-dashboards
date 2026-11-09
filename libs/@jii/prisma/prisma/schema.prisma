@@ -53,6 +53,7 @@ enum ResidentFlagId {
     usAzClassification
     usAzFslImprovements
     usAzIonReferral
+    usAzTprEligibility
     usCoV1Experience
     usCoEdovoV1
     usCoMrdOverride
