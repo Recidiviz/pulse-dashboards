@@ -26,6 +26,7 @@ import {
   locationIdsBySearchType,
   Searchable,
   SearchableGroup,
+  SearchEngine,
   SearchType,
 } from "../core/models/types";
 import { toTitleCase } from "../utils";
@@ -146,6 +147,7 @@ export class SearchStore {
             searchCount: defaultCaseloadIds.length,
             isDefault: true,
             searchType: this.searchType,
+            searchEngine: this.searchEngine,
           });
         }
       },
@@ -647,6 +649,10 @@ export class SearchStore {
   // its own reactions.
   get isTypesenseSearchEnabled(): boolean {
     return Boolean(this.workflowsStore.featureVariants.typesenseCaseloadSearch);
+  }
+
+  get searchEngine(): SearchEngine {
+    return this.isTypesenseSearchEnabled ? "TYPESENSE" : "FIRESTORE";
   }
 
   // Truthy when the homepage reads its opportunities from Typesense (phase 2).

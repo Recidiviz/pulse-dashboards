@@ -328,6 +328,9 @@ export type CaseloadSearchSelection =
   | { kind: "all" }
   | { kind: "ids"; ids: string[] };
 
+// The backend that runs a caseload search.
+export type SearchEngine = "FIRESTORE" | "TYPESENSE";
+
 export type SearchType =
   | "OFFICER"
   | "INCARCERATION_OFFICER"

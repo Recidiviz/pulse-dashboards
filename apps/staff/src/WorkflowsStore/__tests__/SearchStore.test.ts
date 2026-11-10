@@ -124,6 +124,17 @@ describe("isTypesenseHomepageEnabled", () => {
   });
 });
 
+describe("searchEngine", () => {
+  test.each([
+    ["TYPESENSE", { typesenseCaseloadSearch: true }],
+    ["FIRESTORE", {}],
+  ])("is %s with %o", (expected, featureVariants) => {
+    workflowsStore.featureVariants = featureVariants;
+
+    expect(searchStore.searchEngine).toBe(expected);
+  });
+});
+
 describe("workflowsSearchFieldTitle (phrase form)", () => {
   test("prepends the article 'a' for one constant-initial title", () => {
     workflowsStore.systemConfigFor = () => ({
@@ -869,6 +880,7 @@ describe("trackCaseloadSearch - default caseload", () => {
         searchCount: 1,
         isDefault: true,
         searchType: "OFFICER",
+        searchEngine: "FIRESTORE",
       });
     });
 
@@ -896,6 +908,7 @@ describe("trackCaseloadSearch - default caseload", () => {
         searchCount: 1,
         isDefault: true,
         searchType: "INCARCERATION_OFFICER",
+        searchEngine: "FIRESTORE",
       });
     });
   });

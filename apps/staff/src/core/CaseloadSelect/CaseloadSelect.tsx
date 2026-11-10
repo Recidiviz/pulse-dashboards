@@ -463,6 +463,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       availableSearchables,
       updateSelectedSearch,
       isTypesenseSearchEnabled,
+      searchEngine,
       caseloadSearchManager,
       facilityUnitSearchIds,
       isSearchAllCaseloadsEnabled,
@@ -580,6 +581,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           isDefault: false,
           searchType,
           searchAllCaseloads: true,
+          searchEngine,
         });
         return;
       }
@@ -592,6 +594,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         searchCount: searchIds.length,
         isDefault: false,
         searchType,
+        searchEngine,
       });
     },
     // When Typesense is on, drive the server-side typeahead on every input

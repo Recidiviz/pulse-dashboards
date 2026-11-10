@@ -39,7 +39,11 @@ import {
   SortOrderTrackingMetadata,
 } from "~sentencing-client";
 
-import { SearchType, TaskFilterValue } from "../../core/models/types";
+import {
+  SearchEngine,
+  SearchType,
+  TaskFilterValue,
+} from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
@@ -633,6 +637,7 @@ export default class AnalyticsStore {
   trackCaseloadSearch(metadata: {
     searchCount: number;
     isDefault: boolean;
+    searchEngine: SearchEngine;
     searchType?: SearchType;
     searchAllCaseloads?: boolean;
   }): void {
