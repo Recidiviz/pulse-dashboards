@@ -18,6 +18,7 @@
 locals {
   additional_databases = [
     "module-Calendar-us_co",
+    "module-Classification-us_mi",
     "module-UserSettings-recidiviz",
     "module-UsTnReclassification-us_tn",
     "global"
