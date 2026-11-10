@@ -22,18 +22,18 @@ This Terraform module sets up and automates the transfer of data from PostgreSQL
 
 This module uses the following input variables:
 
-| Name                                | Type          | Description                                                                          | Required | Default   |
-|-------------------------------------|---------------|--------------------------------------------------------------------------------------|----------|-----------|
-| `project_id`                        | `string`      | The GCP project ID where BigQuery datasets should be created (configured by Atmos)   | Yes      | -         |
-| `location`                          | `string`      | The GCP location for the BigQuery datasets and data transfers (e.g., `us-central1`)  | Yes      | -         |
-| `dataset_name`                      | `string`      | The prefix name for the BigQuery datasets created for the PostgreSQL database transfers | Yes      | -         |
-| `service_account_email`             | `string`      | The email of the service account that manages data transfers in the source project    | Yes      | -         |
-| `postgresql`                        | `object`      | An object containing PostgreSQL connection details (host, port, credentials, databases) | Yes      | -         |
-| `tables`                            | `list(string)`| A list of table names to be transferred from PostgreSQL into BigQuery                 | Yes      | -         |
-| `destination_project_id`            | `string`      | Optional destination project ID for cross-project BigQuery dataset copy               | No       | `null`    |
-| `destination_service_account_email` | `string`      | Service account email for cross-project transfers (required when destination_project_id is set) | No       | `null`    |
-| `transfer_start_time`               | `string`      | Start time for the initial PostgreSQL→BigQuery transfer in HH:MM format              | No       | `"09:00"` |
-| `transfer_delay_minutes`            | `number`      | Minutes to wait between each subsequent transfer stage                                | No       | `30`      |
+| Name                                | Type           | Description                                                                                     | Required | Default   |
+| ----------------------------------- | -------------- | ----------------------------------------------------------------------------------------------- | -------- | --------- |
+| `project_id`                        | `string`       | The GCP project ID where BigQuery datasets should be created (configured by Atmos)              | Yes      | -         |
+| `location`                          | `string`       | The GCP location for the BigQuery datasets and data transfers (e.g., `us-central1`)             | Yes      | -         |
+| `dataset_name`                      | `string`       | The prefix name for the BigQuery datasets created for the PostgreSQL database transfers         | Yes      | -         |
+| `service_account_email`             | `string`       | The email of the service account that manages data transfers in the source project              | Yes      | -         |
+| `postgresql`                        | `object`       | An object containing PostgreSQL connection details (host, port, credentials, databases)         | Yes      | -         |
+| `tables`                            | `list(string)` | A list of table names to be transferred from PostgreSQL into BigQuery                           | Yes      | -         |
+| `destination_project_id`            | `string`       | Optional destination project ID for cross-project BigQuery dataset copy                         | No       | `null`    |
+| `destination_service_account_email` | `string`       | Service account email for cross-project transfers (required when destination_project_id is set) | No       | `null`    |
+| `transfer_start_time`               | `string`       | Start time for the initial PostgreSQL→BigQuery transfer in HH:MM format                         | No       | `"09:00"` |
+| `transfer_delay_minutes`            | `number`       | Minutes to wait between each subsequent transfer stage                                          | No       | `30`      |
 
 Refer to the `variables.tf` file for detailed type definitions and descriptions.
 
@@ -47,7 +47,7 @@ This module does not currently export any outputs. You can extend the module to 
 
 When `destination_project_id` is not set, all resources are created in a single project:
 
-1. **IAM Permissions**: Configures the specified service account to act as a Token Creator for data transfers
+1. **IAM Permissions**: Configures the specified service account to act as a Token Creator for data transfers (same-project only; not granted in the destination project for cross-project transfers)
 2. **BigQuery Dataset Creation**: Creates regional and US BigQuery datasets for every specified PostgreSQL database
 3. **Network Attachment**: Configures secure attachment for PostgreSQL-to-BigQuery data flow
 4. **Three-Stage Transfer**:
@@ -60,6 +60,7 @@ When `destination_project_id` is not set, all resources are created in a single 
 When `destination_project_id` is set, an additional transfer stage is created:
 
 1. **Source Project** (`project_id`):
+
    - PostgreSQL → Regional BigQuery dataset
    - Regional BigQuery → US BigQuery dataset
    - IAM binding grants destination service account read access to US datasets
@@ -70,6 +71,7 @@ When `destination_project_id` is set, an additional transfer stage is created:
    - Uses `destination_service_account_email` to run the transfer
 
 **Requirements for Cross-Project**:
+
 - Both `destination_project_id` and `destination_service_account_email` must be set
 - Destination service account is automatically granted `roles/bigquery.dataEditor` on source datasets
 - No VPC peering or Private Service Connect required - uses native BigQuery cross-project copy
@@ -126,8 +128,8 @@ postgres-bq-data-transfer:
 postgres-bq-data-transfer:
   vars:
     dataset_name: my_database
-    transfer_start_time: "02:00"  # Start at 2:00 AM
-    transfer_delay_minutes: 60    # 1 hour between stages
+    transfer_start_time: "02:00" # Start at 2:00 AM
+    transfer_delay_minutes: 60 # 1 hour between stages
     # Stage 1: 2:00 AM, Stage 2: 3:00 AM, Stage 3: 4:00 AM
     # ... other config
 ```
@@ -138,7 +140,7 @@ This module creates the following Google Cloud resources:
 
 ### Always Created (Source Project)
 
-1. `google_project_iam_member.permissions`: Grants `roles/iam.serviceAccountTokenCreator` to service account
+1. `google_project_iam_member.permissions`: Grants `roles/iam.serviceAccountTokenCreator` to service account (same-project transfers only)
 2. `google_project_iam_member.job_user`: Grants `roles/bigquery.jobUser` to service account
 3. `google_bigquery_dataset.regional_transfer_dataset`: Regional BigQuery datasets (one per database)
 4. `google_bigquery_dataset.transfer_dataset`: US BigQuery datasets (one per database)

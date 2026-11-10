@@ -3,10 +3,19 @@ data "google_project" "project" {
   project_id = var.project_id
 }
 
+# Only needed for same-project transfers. Cross-project transfers run as
+# destination_service_account_email, so no grant is made in the destination project.
 resource "google_project_iam_member" "permissions" {
-  project = var.destination_project_id != null ? var.destination_project_id : var.project_id
+  count = var.destination_project_id == null ? 1 : 0
+
+  project = var.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${var.service_account_email}"
+}
+
+moved {
+  from = google_project_iam_member.permissions
+  to   = google_project_iam_member.permissions[0]
 }
 
 # Grant DTS service agent permission to impersonate the compute service account
