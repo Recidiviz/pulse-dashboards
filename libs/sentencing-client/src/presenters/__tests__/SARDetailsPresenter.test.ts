@@ -17,6 +17,7 @@
 
 import { runInAction } from "mobx";
 
+import { SAR } from "../../api";
 import { SARDetailsFixture, StaffInfoFixture } from "../../api/offlineFixtures";
 import { ORAS_EMPTY_FORM } from "../../components/OffenderAssessment/utils";
 import { SARSection } from "../../components/SARDetails/constants";
@@ -546,5 +547,57 @@ describe("defendant declined to participate", () => {
         "emp-1", // no start date, manual
       ]);
     });
+  });
+});
+
+describe("initialSection", () => {
+  async function hydrateWith(overrides: Partial<SAR>) {
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      completionDate: null,
+      ...overrides,
+    });
+    await presenter.hydrate();
+  }
+
+  it("opens a complete report on Summary", async () => {
+    await hydrateWith({ status: "Complete" });
+
+    expect(presenter.initialSection).toBe(SARSection.SUMMARY);
+  });
+
+  it("opens an archived complete report on Case Information", async () => {
+    await hydrateWith({
+      status: "Complete",
+      completionDate: new Date("2026-01-15"),
+    });
+
+    expect(presenter.initialSection).toBe(SARSection.CASE_INFORMATION);
+  });
+
+  it("opens an in-progress report on Case Information", async () => {
+    await hydrateWith({ status: "InProgress" });
+
+    expect(presenter.initialSection).toBe(SARSection.CASE_INFORMATION);
+  });
+
+  it("opens an in-progress Victim Impact only report on Victim Impact", async () => {
+    await hydrateWith({
+      status: "InProgress",
+      reportType: "PSR",
+      isVictimImpactOnly: true,
+    });
+
+    expect(presenter.initialSection).toBe(SARSection.VICTIM_IMPACT);
+  });
+
+  it("opens a complete Victim Impact only report on Summary", async () => {
+    await hydrateWith({
+      status: "Complete",
+      reportType: "PSR",
+      isVictimImpactOnly: true,
+    });
+
+    expect(presenter.initialSection).toBe(SARSection.SUMMARY);
   });
 });

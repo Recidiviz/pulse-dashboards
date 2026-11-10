@@ -23,6 +23,7 @@ import {
   compareSeverityRanks,
   getChargeSeverityRank,
   getMostSevereCharges,
+  isSARArchived,
   MostSevereCharge,
 } from "~@sentencing/trpc-types";
 import {
@@ -327,6 +328,15 @@ export class SARDetailsPresenter implements Hydratable {
 
   get SARSections(): SARSectionName[] {
     return getSARSections(this);
+  }
+
+  /** The section the builder opens on. Complete reports open on Summary,
+   * where the download button lives, unless they're archived; everything
+   * else opens on the first section the officer can see. */
+  get initialSection(): SARSectionName {
+    return this.SARData?.status === "Complete" && !isSARArchived(this.SARData)
+      ? SARSection.SUMMARY
+      : this.SARSections[0];
   }
 
   /** Whether a section's data should render on the builder's Summary page;

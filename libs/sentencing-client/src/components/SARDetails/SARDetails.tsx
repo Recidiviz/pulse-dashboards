@@ -135,21 +135,19 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
 }) {
   const navigate = useNavigate();
   const pageContainerRef = useRef<HTMLDivElement>(null);
-  const [currentSection, setCurrentSection] = useState<SARSectionName>(
-    SARSection.CASE_INFORMATION,
-  );
   const [currentSubsection, setCurrentSubsection] = useState<
     string | undefined
   >();
 
-  const { showReportTypeCard, SARSections } = presenter;
+  const { showReportTypeCard, SARSections, initialSection } = presenter;
 
-  // currentSection defaults to Case Information, but an officer's assigned
-  // sections (e.g. Victim Impact only, via the PSR builder) can exclude that
-  // section entirely. Whenever the currently-selected section falls outside
-  // the officer's actual section list — on first load or right after saving
-  // a report-type selection — snap forward to the first section they can
-  // actually see, instead of silently rendering an out-of-scope section.
+  const [currentSection, setCurrentSection] =
+    useState<SARSectionName>(initialSection);
+
+  // Saving a report-type selection can change the officer's section list
+  // (e.g. to Victim Impact only, via the PSR builder), so when the current
+  // section drops out of it, snap forward to the first section they can see
+  // instead of rendering an out-of-scope section.
   useEffect(() => {
     if (!SARSections.includes(currentSection) && SARSections.length > 0) {
       setCurrentSection(SARSections[0]);
