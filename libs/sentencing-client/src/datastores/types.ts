@@ -125,7 +125,8 @@ export type FeatureVariant =
   | "reactPdfSAR"
   | "SARImportEmploymentRecords"
   | "SARSexualHistory"
-  | "PSRBuilder";
+  | "PSRBuilder"
+  | "SARActivityLog";
 
 export type FeatureVariantValue = {
   activeDate?: Date;

@@ -209,6 +209,7 @@ export type FeatureVariant =
   | "SARImportEmploymentRecords"
   | "SARSexualHistory"
   | "PSRBuilder"
+  | "SARActivityLog"
 
   // HOME CONTACT ROUTE PLANNER
   | "HCRPAddMoreClients"
@@ -337,6 +338,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   SARImportEmploymentRecords: {},
   SARSexualHistory: {},
   PSRBuilder: {},
+  SARActivityLog: {},
   splitParoleProbationOutcomes: {},
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
@@ -495,6 +497,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         SARManualORAS: { activeTenants: ["US_MO"] },
         SARImportEmploymentRecords: { activeTenants: ["US_MO"] },
         PSRBuilder: { activeTenants: ["US_MO"] },
+        SARActivityLog: { activeTenants: ["US_MO"] },
         SARSexualHistory: { activeTenants: ["US_MO"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
         hideWorkflowsOpportunities: undefined,
