@@ -42,33 +42,27 @@ export type RosterLookupOpts = {
   userExternalId: string;
   userIdFromAuthProvider: string;
 };
-export async function checkResidentsRoster({
+async function lookupResident({
   stateCode,
   userExternalId,
   userIdFromAuthProvider,
-}: RosterLookupOpts): Promise<AuthorizedUserProfile | undefined> {
-  const lookupByDisplayId = [
-    "US_AR",
-    "US_AZ",
-    "US_CO",
-    "US_NE",
-    "US_NYC",
-  ].includes(stateCode);
-
-  const prisma = getPrismaClient({ stateCode, demo: false });
+  demo,
+}: RosterLookupOpts & {
+  demo: boolean;
+}): Promise<ResidentUserProfile | undefined> {
+  const prisma = getPrismaClient({ stateCode, demo });
   const userRecord = await prisma.resident.findFirst({
     where: {
-      displayId: lookupByDisplayId ? userExternalId : undefined,
-      personExternalId: lookupByDisplayId ? undefined : userExternalId,
+      tabletUserId: userExternalId,
     },
     select: { pseudonymizedId: true, personExternalId: true },
   });
   if (!userRecord) return;
   const { personExternalId, pseudonymizedId } = userRecord;
 
-  // if we've gotten this far, it means we have a match and we know this user is a resident.
-  // these are the applicable permissions for residents; constructing them now so the flag check can consume them
-  const userPermissions: Array<Permission> = ["live_data"];
+  // if we've gotten this far, it means we have a match and we know this user is a (demo) resident.
+  // only live residents get live data; constructing permissions now so the flag check can consume them
+  const userPermissions: Array<Permission> = demo ? [] : ["live_data"];
 
   let intercomToken: string | undefined;
   if (
@@ -92,45 +86,16 @@ export async function checkResidentsRoster({
   };
 }
 
-export async function checkDemoResidentsRoster({
-  stateCode,
-  userExternalId,
-  userIdFromAuthProvider,
-}: RosterLookupOpts): Promise<ResidentUserProfile | undefined> {
-  const prisma = getPrismaClient({ stateCode, demo: true });
-  const userRecord = await prisma.resident.findFirst({
-    where: {
-      personExternalId: userExternalId,
-    },
-    select: { pseudonymizedId: true },
-  });
-  if (!userRecord) return;
-  const { pseudonymizedId } = userRecord;
+export async function checkResidentsRoster(
+  opts: RosterLookupOpts,
+): Promise<AuthorizedUserProfile | undefined> {
+  return lookupResident({ ...opts, demo: false });
+}
 
-  // if we've gotten this far, it means we have a match and we know this user is a demo resident.
-  // these are the applicable permissions for demo residents; constructing them now so the flag check can consume them
-  const userPermissions: Array<Permission> = [];
-
-  let intercomToken: string | undefined;
-  if (
-    await isUserFlagActive({
-      stateCode,
-      prisma,
-      userIdFromAuthProvider,
-      flagId: "intercom",
-      userPermissions,
-    })
-  ) {
-    intercomToken = signIntercomJwt({ user_id: pseudonymizedId });
-  }
-
-  return {
-    stateCode: stateCode,
-    externalId: userExternalId,
-    pseudonymizedId,
-    intercomToken,
-    permissions: userPermissions,
-  };
+export async function checkDemoResidentsRoster(
+  opts: RosterLookupOpts,
+): Promise<ResidentUserProfile | undefined> {
+  return lookupResident({ ...opts, demo: true });
 }
 
 export async function checkEdovoTestAccountRoster(userId: string) {

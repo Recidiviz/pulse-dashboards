@@ -28,10 +28,7 @@ import { checkDemoResidentsRoster, checkResidentsRoster } from "./roster";
 // random string, not a secret that's used for anything
 const testIntercomSigningKey =
   "8bf3263bc6527e57dd73414757249c049297387998fa29cf7e8685115aa2bdbf";
-// a state that looks up residents by displayId
-const displayIdState: StateCode = "US_CO";
-// a state that looks up residents by personExternalId
-const externalIdState: StateCode = "US_TN";
+const testState: StateCode = "US_TN";
 // a stand-in for the resident's external ID (e.g. DOC ID), which is distinct
 // from userId -- the ID assigned by their auth provider
 const residentExternalId = "ext-abc123";
@@ -52,6 +49,7 @@ function buildResidentRecord(
     pseudonymizedId: "anonres1",
     personExternalId: "ext1",
     displayId: "display1",
+    tabletUserId: "tablet1",
     givenNames: null,
     middleNames: null,
     surname: null,
@@ -101,13 +99,13 @@ describe("checkResidentsRoster", () => {
 
   test("looks up the live (non-demo) Prisma client for the given state", async () => {
     await checkResidentsRoster({
-      stateCode: externalIdState,
+      stateCode: testState,
       userExternalId: residentExternalId,
       userIdFromAuthProvider: userId,
     });
 
     expect(getPrismaClient).toHaveBeenCalledWith({
-      stateCode: externalIdState,
+      stateCode: testState,
       demo: false,
     });
   });
@@ -116,19 +114,20 @@ describe("checkResidentsRoster", () => {
     await testPrismaClient.resident.create({
       data: buildResidentRecord({
         pseudonymizedId: "anonres1",
-        personExternalId: residentExternalId,
+        tabletUserId: residentExternalId,
+        personExternalId: `${residentExternalId}-pei`,
       }),
     });
 
     const result = await checkResidentsRoster({
-      stateCode: externalIdState,
+      stateCode: testState,
       userExternalId: residentExternalId,
       userIdFromAuthProvider: userId,
     });
 
     expect(result).toEqual({
-      stateCode: externalIdState,
-      externalId: residentExternalId,
+      stateCode: testState,
+      externalId: `${residentExternalId}-pei`,
       pseudonymizedId: "anonres1",
       permissions: ["live_data"],
     });
@@ -136,58 +135,12 @@ describe("checkResidentsRoster", () => {
 
   test("returns undefined when no resident record is found", async () => {
     const result = await checkResidentsRoster({
-      stateCode: externalIdState,
+      stateCode: testState,
       userExternalId: residentExternalId,
       userIdFromAuthProvider: userId,
     });
 
     expect(result).toBeUndefined();
-  });
-
-  test("matches residents by displayId for states that use display-id lookup", async () => {
-    await testPrismaClient.resident.create({
-      data: buildResidentRecord({
-        pseudonymizedId: "anonres1",
-        displayId: residentExternalId,
-        personExternalId: "someone-else",
-      }),
-    });
-
-    const result = await checkResidentsRoster({
-      stateCode: displayIdState,
-      userExternalId: residentExternalId,
-      userIdFromAuthProvider: userId,
-    });
-
-    expect(result).toEqual({
-      stateCode: displayIdState,
-      externalId: "someone-else",
-      pseudonymizedId: "anonres1",
-      permissions: ["live_data"],
-    });
-  });
-
-  test("matches residents by personExternalId for other states", async () => {
-    await testPrismaClient.resident.create({
-      data: buildResidentRecord({
-        pseudonymizedId: "anonres1",
-        personExternalId: residentExternalId,
-        displayId: "someone-else",
-      }),
-    });
-
-    const result = await checkResidentsRoster({
-      stateCode: externalIdState,
-      userExternalId: residentExternalId,
-      userIdFromAuthProvider: userId,
-    });
-
-    expect(result).toEqual({
-      stateCode: externalIdState,
-      externalId: residentExternalId,
-      pseudonymizedId: "anonres1",
-      permissions: ["live_data"],
-    });
   });
 
   test("includes Intercom token when flag is active", async () => {
@@ -196,14 +149,14 @@ describe("checkResidentsRoster", () => {
     await testPrismaClient.resident.create({
       data: buildResidentRecord({
         pseudonymizedId: "anonres1",
-        personExternalId: residentExternalId,
+        tabletUserId: residentExternalId,
       }),
     });
 
     // freezing so the timestamp in the payload will be consistent
     const result = await tk.withFreeze(new Date("2026-08-13"), async () => {
       return checkResidentsRoster({
-        stateCode: externalIdState,
+        stateCode: testState,
         userExternalId: residentExternalId,
         userIdFromAuthProvider: userId,
       });
@@ -229,13 +182,13 @@ describe("checkDemoResidentsRoster", () => {
 
   test("looks up the demo Prisma client for the given state", async () => {
     await checkDemoResidentsRoster({
-      stateCode: externalIdState,
+      stateCode: testState,
       userExternalId: residentExternalId,
       userIdFromAuthProvider: userId,
     });
 
     expect(getPrismaClient).toHaveBeenCalledWith({
-      stateCode: externalIdState,
+      stateCode: testState,
       demo: true,
     });
   });
@@ -244,19 +197,20 @@ describe("checkDemoResidentsRoster", () => {
     await testPrismaClient.resident.create({
       data: buildResidentRecord({
         pseudonymizedId: "anonres1",
-        personExternalId: residentExternalId,
+        tabletUserId: residentExternalId,
+        personExternalId: `${residentExternalId}-pei`,
       }),
     });
 
     const result = await checkDemoResidentsRoster({
-      stateCode: externalIdState,
+      stateCode: testState,
       userExternalId: residentExternalId,
       userIdFromAuthProvider: userId,
     });
 
     expect(result).toEqual({
-      stateCode: externalIdState,
-      externalId: residentExternalId,
+      stateCode: testState,
+      externalId: `${residentExternalId}-pei`,
       pseudonymizedId: "anonres1",
       permissions: [],
     });
@@ -264,7 +218,7 @@ describe("checkDemoResidentsRoster", () => {
 
   test("returns undefined when no resident record is found", async () => {
     const result = await checkDemoResidentsRoster({
-      stateCode: externalIdState,
+      stateCode: testState,
       userExternalId: residentExternalId,
       userIdFromAuthProvider: userId,
     });
