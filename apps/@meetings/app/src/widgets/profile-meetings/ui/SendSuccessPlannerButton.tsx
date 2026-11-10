@@ -20,6 +20,7 @@ import { View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
+import { getPersonType } from "~@meetings/app/entities/person";
 import {
   SendSuccessPlannerModal,
   useSuccessPlanner,
@@ -41,8 +42,9 @@ export function SendSuccessPlannerButton({
   // check-in, which could reset JII form progress.
   const [checkInId] = useState(() => crypto.randomUUID());
 
+  const isClient = getPersonType(person) === "client";
   const { planner, canResendSuccessPlanner, isLoading, isError } =
-    useSuccessPlanner(person.pseudonymizedId);
+    useSuccessPlanner(person.pseudonymizedId, isClient);
   const utils = jiiTrpc.useUtils();
   const createCheckIn = jiiTrpc.meetingsStaff.usNe.createCheckIn.useMutation({
     onSettled: () =>
@@ -52,8 +54,9 @@ export function SendSuccessPlannerButton({
   });
 
   const shouldRenderResendBtn = allowResend && canResendSuccessPlanner;
+  const shouldRenderBtn = !planner || shouldRenderResendBtn;
 
-  if (planner && !shouldRenderResendBtn) return null;
+  if (isClient || !shouldRenderBtn) return null;
 
   if (isError) {
     return (

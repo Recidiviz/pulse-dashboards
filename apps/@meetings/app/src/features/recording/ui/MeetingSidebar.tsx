@@ -76,7 +76,7 @@ export function MeetingSidebar({
   });
 
   const [isPlannerOpen, setIsPlannerOpen] = useState(false);
-  const { planner } = useSuccessPlanner(person.pseudonymizedId);
+  const { planner } = useSuccessPlanner(person.pseudonymizedId, isClient);
 
   const { data: meetings } = useMeetings({
     personId: person.personId,

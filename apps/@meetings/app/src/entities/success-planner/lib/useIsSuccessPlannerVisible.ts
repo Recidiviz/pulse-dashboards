@@ -23,12 +23,16 @@ import {
   useUserContext,
 } from "~@meetings/app/entities/user/@x/success-planner";
 
-export function useIsSuccessPlannerVisible() {
+export function useIsSuccessPlannerVisible(isClient: boolean) {
   const agencyConfig = useCurrentAgencyConfig();
   const { isRecidivizUser } = useUserContext();
   const { isVariantActive } = useFeatureVariants();
 
-  if (Platform.OS !== "web" || !agencyConfig?.successPlannerEnabled) {
+  if (
+    isClient ||
+    Platform.OS !== "web" ||
+    !agencyConfig?.successPlannerEnabled
+  ) {
     return false;
   }
 

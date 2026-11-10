@@ -47,8 +47,9 @@ type UseSuccessPlannerResult = {
 
 export function useSuccessPlanner(
   pseudonymizedId: string,
+  isClient: boolean,
 ): UseSuccessPlannerResult {
-  const isVisible = useIsSuccessPlannerVisible();
+  const isVisible = useIsSuccessPlannerVisible(isClient);
   const { data, isLoading, isError } =
     jiiTrpc.meetingsStaff.usNe.getCheckIn.useQuery(
       { pseudonymizedId },

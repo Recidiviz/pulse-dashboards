@@ -19,6 +19,7 @@ import clsx from "clsx";
 import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 
+import { getPersonType } from "~@meetings/app/entities/person";
 import { useIsSuccessPlannerVisible } from "~@meetings/app/entities/success-planner";
 import { useActiveMeetingStore } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
@@ -62,7 +63,9 @@ const MeetingsHeaderContent = ({
   const onPressNewMeeting =
     isWeb && width >= 768 ? handleOpenModal : handleOpenBottomSheet;
 
-  const isPlannerVisible = useIsSuccessPlannerVisible();
+  const isPlannerVisible = useIsSuccessPlannerVisible(
+    getPersonType(person) === "client",
+  );
 
   return (
     <>

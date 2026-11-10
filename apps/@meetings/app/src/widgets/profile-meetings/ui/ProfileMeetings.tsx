@@ -98,7 +98,7 @@ export const ProfileMeetings = ({
   const { agencyConfigs } = useAgencyConfigs();
   const { stateCode } = useStateSelection();
   const meetingTypes = agencyConfigs[stateCode].meetingTypes;
-  const isPlannerVisible = useIsSuccessPlannerVisible();
+  const isPlannerVisible = useIsSuccessPlannerVisible(personType === "client");
   const { openMeeting, setNote: setRecordingNote } = useActiveMeetingStore();
   const { startRecording, state: recordingState } = useNewRecording();
 

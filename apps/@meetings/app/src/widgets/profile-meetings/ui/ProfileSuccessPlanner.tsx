@@ -18,6 +18,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 
+import { getPersonType } from "~@meetings/app/entities/person";
 import {
   SuccessPlannerCard,
   SuccessPlannerDrawer,
@@ -29,7 +30,10 @@ import { SendSuccessPlannerButton } from "./SendSuccessPlannerButton";
 
 export function ProfileSuccessPlanner({ person }: { person: Person }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { planner } = useSuccessPlanner(person.pseudonymizedId);
+  const { planner } = useSuccessPlanner(
+    person.pseudonymizedId,
+    getPersonType(person) === "client",
+  );
 
   if (!planner) return null;
 
