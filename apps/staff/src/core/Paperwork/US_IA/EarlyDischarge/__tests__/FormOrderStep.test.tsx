@@ -23,8 +23,8 @@ import { UsIaEarlyDischargeForm } from "../../../../../WorkflowsStore/Opportunit
 import { OpportunityFormProvider } from "../../../OpportunityFormContext";
 import { FormOrderStep } from "../FormOrderStep";
 
-vi.mock("../FormCountyBlock", () => ({
-  FormCountyBlock: ({
+vi.mock("../FormJurisdictionBlock", () => ({
+  FormJurisdictionBlock: ({
     jurisdiction,
     charges,
   }: {
@@ -64,6 +64,8 @@ function renderStep(
       },
     },
     selectedChargesByJurisdiction,
+    selectedChargeCount: [...selectedChargesByJurisdiction.values()].flat()
+      .length,
   } as unknown as UsIaEarlyDischargeForm;
 
   render(
@@ -88,7 +90,7 @@ describe("FormOrderStep", () => {
     expect(screen.getByText("Shared header")).toBeInTheDocument();
   });
 
-  it("renders one county block for now", () => {
+  it("renders a block for every jurisdiction in the selection", () => {
     renderStep(
       new Map([
         ["POLK", [charge("POLK", "CHARGE-001", "THEFT")]],
@@ -97,7 +99,32 @@ describe("FormOrderStep", () => {
     );
 
     expect(screen.getByLabelText("POLK block")).toBeInTheDocument();
-    expect(screen.queryByLabelText("LINN block")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("LINN block")).toBeInTheDocument();
+  });
+
+  it("counts the selected charges and the forms they make", () => {
+    renderStep(
+      new Map([
+        [
+          "POLK",
+          [
+            charge("POLK", "CHARGE-001", "THEFT"),
+            charge("POLK", "CHARGE-002", "BURGLARY"),
+          ],
+        ],
+        ["LINN", [charge("LINN", "CHARGE-003", "ROBBERY")]],
+      ]),
+    );
+
+    expect(
+      screen.getByText("3 charges selected / 2 forms"),
+    ).toBeInTheDocument();
+  });
+
+  it("uses singular words for one charge and one form", () => {
+    renderStep(new Map([["POLK", [charge("POLK", "CHARGE-001", "THEFT")]]]));
+
+    expect(screen.getByText("1 charge selected / 1 form")).toBeInTheDocument();
   });
 
   it("shows an empty state when no charges are selected", () => {

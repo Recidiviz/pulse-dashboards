@@ -283,6 +283,14 @@ export class UsIaEarlyDischargeForm extends FormBase<
     return selected;
   }
 
+  /**
+   * Returns how many of the opportunity's charges are selected, across all
+   * jurisdictions.
+   */
+  get selectedChargeCount(): number {
+    return [...this.selectedChargesByJurisdiction.values()].flat().length;
+  }
+
   get currentUserIsSupervisingOfficer(): boolean {
     // isDemoMode allows Recidiviz users to demo signature functionality
     return isDemoMode() || !!this.getCurrentUserFromFormRecord();

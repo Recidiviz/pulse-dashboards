@@ -30,6 +30,7 @@ import { SecureSmallDetailsCopy } from "../../../WorkflowsJusticeInvolvedPersonP
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { FormChargeRow } from "./FormChargeRow";
 import {
+  SelectedCount,
   StepCard,
   StepHeader,
   StepHelpText,
@@ -67,10 +68,6 @@ const ChargeGroup = styled(CheckboxGroup)`
   gap: 0;
   padding: 0;
   margin-top: ${rem(spacing.lg)};
-`;
-
-const SelectedCount = styled(StepLabel)`
-  flex: none;
 `;
 
 type JurisdictionChargesProps = {
@@ -150,10 +147,6 @@ export const FormChargesStep = observer(function FormChargesStep() {
   const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
   const { chargesByJurisdiction } = form.opportunity;
   const showJurisdictionLabels = chargesByJurisdiction.size > 1;
-  const selectedCount = [...form.selectedChargesByJurisdiction.values()].reduce(
-    (total, charges) => total + charges.length,
-    0,
-  );
 
   return (
     <StepCard aria-labelledby="us-ia-ed-charges-step-title">
@@ -162,10 +155,13 @@ export const FormChargesStep = observer(function FormChargesStep() {
           <StepLabel>Step 1</StepLabel>
           <StepTitle id="us-ia-ed-charges-step-title">Select charges</StepTitle>
         </div>
-        <SelectedCount role="status">{selectedCount} selected</SelectedCount>
+        <SelectedCount role="status">
+          {form.selectedChargeCount} selected
+        </SelectedCount>
       </StepHeader>
       <StepHelpText>
-        Charges under different counties become separate ICON discharge orders.
+        Charges under different jurisdictions become separate ICON discharge
+        orders.
       </StepHelpText>
       {[...chargesByJurisdiction].map(([jurisdiction, charges]) => (
         <JurisdictionCharges

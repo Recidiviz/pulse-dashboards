@@ -17,26 +17,26 @@
 
 import { observer } from "mobx-react-lite";
 
+import { pluralize } from "~utils";
+
 import { formatNameFirstLast, formatWorkflowsDate } from "../../../../utils";
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { WorkflowsBadgePill } from "../../../BadgePill/BadgePill";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { FormCountyBlock } from "./FormCountyBlock";
+import { FormJurisdictionBlock } from "./FormJurisdictionBlock";
 import {
   FieldLabel,
   FieldRow,
   FieldValue,
   SectionHeader,
   SectionLabel,
+  SelectedCount,
   StepCard,
   StepHeader,
   StepHelpText,
   StepLabel,
   StepTitle,
 } from "./styles";
-
-// TODO(IA-385): render every county, not just the first.
-const MAX_COUNTY_BLOCKS = 1;
 
 export const FormOrderStep = observer(function FormOrderStep() {
   const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
@@ -58,6 +58,10 @@ export const FormOrderStep = observer(function FormOrderStep() {
             Discharge Order Report
           </StepTitle>
         </div>
+        <SelectedCount>
+          {pluralize(form.selectedChargeCount, "charge")} selected /{" "}
+          {pluralize(selectedChargesByJurisdiction.size, "form")}
+        </SelectedCount>
       </StepHeader>
       {selectedChargesByJurisdiction.size === 0 ? (
         <StepHelpText>
@@ -77,15 +81,13 @@ export const FormOrderStep = observer(function FormOrderStep() {
               <FieldValue>{value}</FieldValue>
             </FieldRow>
           ))}
-          {[...selectedChargesByJurisdiction]
-            .slice(0, MAX_COUNTY_BLOCKS)
-            .map(([jurisdiction, charges]) => (
-              <FormCountyBlock
-                key={jurisdiction}
-                jurisdiction={jurisdiction}
-                charges={charges}
-              />
-            ))}
+          {[...selectedChargesByJurisdiction].map(([jurisdiction, charges]) => (
+            <FormJurisdictionBlock
+              key={jurisdiction}
+              jurisdiction={jurisdiction}
+              charges={charges}
+            />
+          ))}
         </>
       )}
     </StepCard>

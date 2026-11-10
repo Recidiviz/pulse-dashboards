@@ -73,6 +73,8 @@ function renderStep(
     isChargeSelected,
     setChargesSelected: vi.fn(),
     selectedChargesByJurisdiction,
+    selectedChargeCount: [...selectedChargesByJurisdiction.values()].flat()
+      .length,
   } as unknown as UsIaEarlyDischargeForm;
 
   render(
@@ -84,7 +86,7 @@ function renderStep(
 }
 
 describe("FormChargesStep", () => {
-  it("names each county's group by its visible label when there are several counties", () => {
+  it("names each jurisdiction's group by its visible label when there are several jurisdictions", () => {
     renderStep([
       charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
       charge("MONROE", "FECR003", "CRIMINAL MISCHIEF"),
@@ -95,7 +97,7 @@ describe("FormChargesStep", () => {
     ).toBeInTheDocument();
   });
 
-  it("names the group by its county when the label is hidden", () => {
+  it("names the group by its jurisdiction when the label is hidden", () => {
     renderStep([charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE")]);
 
     expect(
@@ -177,13 +179,13 @@ describe("Select all", () => {
     charge("POLK", "FECR002", "BURGLARY IN THE THIRD DEGREE"),
   ];
 
-  it("shows for a county with several charges, even as the only county", () => {
+  it("shows for a jurisdiction with several charges, even as the only jurisdiction", () => {
     renderStep(polkCharges);
 
     expect(screen.getByLabelText("Select all")).toBeInTheDocument();
   });
 
-  it("shows only on counties with several charges", () => {
+  it("shows only on jurisdictions with several charges", () => {
     renderStep([
       ...polkCharges,
       charge("MONROE", "FECR003", "CRIMINAL MISCHIEF"),
@@ -192,7 +194,7 @@ describe("Select all", () => {
     expect(screen.getAllByLabelText("Select all")).toHaveLength(1);
   });
 
-  it("hides for a county with one charge", () => {
+  it("hides for a jurisdiction with one charge", () => {
     renderStep([charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE")]);
 
     expect(screen.queryByLabelText("Select all")).not.toBeInTheDocument();

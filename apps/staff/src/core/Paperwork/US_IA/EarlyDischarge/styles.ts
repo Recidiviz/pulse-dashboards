@@ -36,6 +36,11 @@ export const StepCard = styled.section`
 export const StepLabel = styled(DetailsHeading).attrs({ as: "div" })`
   margin-top: 0;
   margin-bottom: ${rem(spacing.xs)};
+  text-transform: uppercase;
+`;
+
+export const SelectedCount = styled(StepLabel)`
+  flex: none;
 `;
 
 export const StepHeader = styled.div`

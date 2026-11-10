@@ -235,7 +235,7 @@ describe("charge selection", () => {
   );
 });
 
-describe("selectedChargesByJurisdiction", () => {
+describe("selected charges", () => {
   let polk1: UsIaEarlyDischargeCharge;
   let polk2: UsIaEarlyDischargeCharge;
   let linn1: UsIaEarlyDischargeCharge;
@@ -267,54 +267,73 @@ describe("selectedChargesByJurisdiction", () => {
     vi.spyOn(form, "draftData", "get").mockReturnValue(draftData);
   }
 
-  test("includes every charge when nothing is deselected", () => {
-    expect([...form.selectedChargesByJurisdiction]).toEqual([
-      ["POLK", [polk1, polk2]],
-      ["LINN", [linn1]],
-    ]);
-  });
-
-  test("keeps a jurisdiction when only some of its charges are deselected", () => {
-    deselect("CHARGE-001");
-    expect([...form.selectedChargesByJurisdiction]).toEqual([
-      ["POLK", [polk2]],
-      ["LINN", [linn1]],
-    ]);
-  });
-
-  test("drops a jurisdiction when all of its charges are deselected", () => {
-    deselect("CHARGE-003");
-    expect([...form.selectedChargesByJurisdiction]).toEqual([
-      ["POLK", [polk1, polk2]],
-    ]);
-  });
-
-  test("is empty when every charge is deselected", () => {
-    deselect("CHARGE-001", "CHARGE-002", "CHARGE-003");
-    expect(form.selectedChargesByJurisdiction.size).toBe(0);
-  });
-
-  test("ignores deselections for charges no longer on the record", () => {
-    deselect("CHARGE-999");
-    expect([...form.selectedChargesByJurisdiction]).toEqual([
-      ["POLK", [polk1, polk2]],
-      ["LINN", [linn1]],
-    ]);
-  });
-
-  test("leaves a charge deselected if it leaves the record and returns", () => {
-    deselect("CHARGE-003");
-    vi.spyOn(form.opportunity, "chargesByJurisdiction", "get").mockReturnValue(
-      new Map([["POLK", [polk1, polk2]]]),
-    );
-    expect(form.selectedChargesByJurisdiction.has("LINN")).toBe(false);
-
-    vi.spyOn(form.opportunity, "chargesByJurisdiction", "get").mockReturnValue(
-      new Map([
+  describe("selectedChargesByJurisdiction", () => {
+    test("includes every charge when nothing is deselected", () => {
+      expect([...form.selectedChargesByJurisdiction]).toEqual([
         ["POLK", [polk1, polk2]],
         ["LINN", [linn1]],
-      ]),
-    );
-    expect(form.selectedChargesByJurisdiction.has("LINN")).toBe(false);
+      ]);
+    });
+
+    test("keeps a jurisdiction when only some of its charges are deselected", () => {
+      deselect("CHARGE-001");
+      expect([...form.selectedChargesByJurisdiction]).toEqual([
+        ["POLK", [polk2]],
+        ["LINN", [linn1]],
+      ]);
+    });
+
+    test("drops a jurisdiction when all of its charges are deselected", () => {
+      deselect("CHARGE-003");
+      expect([...form.selectedChargesByJurisdiction]).toEqual([
+        ["POLK", [polk1, polk2]],
+      ]);
+    });
+
+    test("is empty when every charge is deselected", () => {
+      deselect("CHARGE-001", "CHARGE-002", "CHARGE-003");
+      expect(form.selectedChargesByJurisdiction.size).toBe(0);
+    });
+
+    test("ignores deselections for charges no longer on the record", () => {
+      deselect("CHARGE-999");
+      expect([...form.selectedChargesByJurisdiction]).toEqual([
+        ["POLK", [polk1, polk2]],
+        ["LINN", [linn1]],
+      ]);
+    });
+
+    test("leaves a charge deselected if it leaves the record and returns", () => {
+      deselect("CHARGE-003");
+      vi.spyOn(
+        form.opportunity,
+        "chargesByJurisdiction",
+        "get",
+      ).mockReturnValue(new Map([["POLK", [polk1, polk2]]]));
+      expect(form.selectedChargesByJurisdiction.has("LINN")).toBe(false);
+
+      vi.spyOn(
+        form.opportunity,
+        "chargesByJurisdiction",
+        "get",
+      ).mockReturnValue(
+        new Map([
+          ["POLK", [polk1, polk2]],
+          ["LINN", [linn1]],
+        ]),
+      );
+      expect(form.selectedChargesByJurisdiction.has("LINN")).toBe(false);
+    });
+  });
+
+  describe("selectedChargeCount", () => {
+    test("counts every charge when nothing is deselected", () => {
+      expect(form.selectedChargeCount).toBe(3);
+    });
+
+    test("counts only selected charges", () => {
+      deselect("CHARGE-001");
+      expect(form.selectedChargeCount).toBe(2);
+    });
   });
 });

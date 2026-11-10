@@ -65,7 +65,7 @@ const BlockHeader = styled.div`
   border-bottom: 1px solid ${palette.slate10};
 `;
 
-// TODO(IA-397): color the dot by the county's submission status.
+// TODO(IA-397): color the dot by the jurisdiction's submission status.
 const StatusDot = styled.span`
   width: ${rem(10)};
   height: ${rem(10)};
@@ -76,6 +76,12 @@ const StatusDot = styled.span`
 
 const BlockBody = styled.div`
   padding: 0 ${rem(spacing.md)} ${rem(spacing.md)};
+`;
+
+// Block clips its overflow to keep the header inside its rounded corners, so
+// the table scrolls here rather than losing columns when the page is narrow.
+const ChargeTableScroller = styled.div`
+  overflow-x: auto;
 `;
 
 const ChargeTable = styled.table.attrs({ className: "fs-exclude" })`
@@ -96,6 +102,10 @@ const ChargeTable = styled.table.attrs({ className: "fs-exclude" })`
     border-bottom: 1px solid ${palette.slate10};
     vertical-align: top;
   }
+`;
+
+const BlockTitle = styled(SecureDetailsContent).attrs({ as: "h3" })`
+  margin: 0;
 `;
 
 const NarrativeField = styled(CharacterCountTextField).attrs({
@@ -142,15 +152,15 @@ function Signature({ signer, name, title, autoFilled }: SignatureProps) {
   );
 }
 
-type FormCountyBlockProps = {
+type FormJurisdictionBlockProps = {
   jurisdiction: string;
   charges: UsIaEarlyDischargeCharge[];
 };
 
-export const FormCountyBlock = observer(function FormCountyBlock({
+export const FormJurisdictionBlock = observer(function FormJurisdictionBlock({
   jurisdiction,
   charges,
-}: FormCountyBlockProps) {
+}: FormJurisdictionBlockProps) {
   const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
   const { userStore, workflowsStore } = useRootStore();
   const [narrative, , setNarrative] = useReactiveInput<HTMLTextAreaElement>(
@@ -173,36 +183,45 @@ export const FormCountyBlock = observer(function FormCountyBlock({
   const slug = jurisdictionSlug(jurisdiction);
 
   return (
-    <Block id={`county-${slug}`}>
+    <Block
+      id={`jurisdiction-${slug}`}
+      aria-labelledby={`jurisdiction-${slug}-label`}
+    >
       <BlockHeader>
         <StatusDot />
-        <SecureDetailsContent as="div">{headerLabel}</SecureDetailsContent>
+        <BlockTitle id={`jurisdiction-${slug}-label`}>{headerLabel}</BlockTitle>
       </BlockHeader>
       <BlockBody>
-        <ChargeTable>
-          <thead>
-            <tr>
-              <th scope="col">Jurisdiction</th>
-              <th scope="col">Cause number</th>
-              <th scope="col">Charge</th>
-              <th scope="col">Count</th>
-              <th scope="col">Class</th>
-              <th scope="col">TDD</th>
-            </tr>
-          </thead>
-          <tbody>
-            {charges.map((charge) => (
-              <tr key={charge.chargeExternalId}>
-                <td>{charge.jurisdiction}</td>
-                <td>{charge.causeNumber}</td>
-                <td>{charge.description}</td>
-                <td>{charge.counts}</td>
-                <td>{charge.classificationTypeRawText}</td>
-                <td>{formatWorkflowsDateString(charge.tdd, BLANK)}</td>
+        <ChargeTableScroller
+          role="group"
+          aria-label={`${jurisdiction} charges`}
+          tabIndex={0}
+        >
+          <ChargeTable>
+            <thead>
+              <tr>
+                <th scope="col">Jurisdiction</th>
+                <th scope="col">Cause number</th>
+                <th scope="col">Charge</th>
+                <th scope="col">Count</th>
+                <th scope="col">Class</th>
+                <th scope="col">TDD</th>
               </tr>
-            ))}
-          </tbody>
-        </ChargeTable>
+            </thead>
+            <tbody>
+              {charges.map((charge) => (
+                <tr key={charge.chargeExternalId}>
+                  <td>{charge.jurisdiction}</td>
+                  <td>{charge.causeNumber}</td>
+                  <td>{charge.description}</td>
+                  <td>{charge.counts}</td>
+                  <td>{charge.classificationTypeRawText}</td>
+                  <td>{formatWorkflowsDateString(charge.tdd, BLANK)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </ChargeTable>
+        </ChargeTableScroller>
         <NarrativeField
           id={`narrative-${slug}`}
           label="Progress of Supervision / Restitution Status / Recommendations"

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { axe } from "jest-axe";
 import { Mock } from "vitest";
 
 import { UsIaEarlyDischargeCharge } from "~datatypes";
@@ -24,7 +25,7 @@ import { useRootStore } from "../../../../../components/StoreProvider";
 import { UsIaEarlyDischargeForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { OpportunityFormProvider } from "../../../OpportunityFormContext";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "../../../utils";
-import { FormCountyBlock } from "../FormCountyBlock";
+import { FormJurisdictionBlock } from "../FormJurisdictionBlock";
 
 vi.mock("../../../../../components/StoreProvider");
 
@@ -58,18 +59,18 @@ function renderBlock(charges: UsIaEarlyDischargeCharge[]) {
 
   render(
     <OpportunityFormProvider value={form}>
-      <FormCountyBlock jurisdiction="BLACK HAWK" charges={charges} />
+      <FormJurisdictionBlock jurisdiction="BLACK HAWK" charges={charges} />
     </OpportunityFormProvider>,
   );
   return form;
 }
 
-describe("FormCountyBlock", () => {
+describe("FormJurisdictionBlock", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("labels a one-charge county with the charge's meta line", () => {
+  it("labels a one-charge jurisdiction with the charge's meta line", () => {
     renderBlock([charge("FECR002891")]);
 
     expect(
@@ -77,10 +78,42 @@ describe("FormCountyBlock", () => {
     ).toBeInTheDocument();
   });
 
-  it("labels a several-charge county with its charge count", () => {
+  it("labels a several-charge jurisdiction with its charge count", () => {
     renderBlock([charge("FECR002891"), charge("FECR004417")]);
 
     expect(screen.getByText("BLACK HAWK · 2 charges")).toBeInTheDocument();
+  });
+
+  it("makes the header a heading, so screen readers can jump between blocks", () => {
+    renderBlock([charge("FECR002891"), charge("FECR004417")]);
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "BLACK HAWK · 2 charges" }),
+    ).toBeInTheDocument();
+  });
+
+  it("names its region after the header, so the narrative has context", () => {
+    renderBlock([charge("FECR002891"), charge("FECR004417")]);
+
+    const region = screen.getByRole("region", {
+      name: "BLACK HAWK · 2 charges",
+    });
+    expect(within(region).getByRole("textbox")).toBeInTheDocument();
+  });
+
+  it("scrolls the charge table sideways instead of cutting off columns", () => {
+    renderBlock([charge("FECR002891")]);
+
+    const scroller = screen.getByRole("group", { name: "BLACK HAWK charges" });
+    expect(within(scroller).getByRole("table")).toBeInTheDocument();
+    expect(scroller).toHaveStyle({ overflowX: "auto" });
+    expect(scroller).toHaveAttribute("tabindex", "0");
+  });
+
+  it("has no detectable accessibility violations", async () => {
+    renderBlock([charge("FECR002891"), charge("FECR004417")]);
+
+    expect(await axe(document.body)).toHaveNoViolations();
   });
 
   it("excludes the narrative from session recordings", () => {
@@ -89,7 +122,7 @@ describe("FormCountyBlock", () => {
     expect(screen.getByRole("textbox").closest(".fs-exclude")).not.toBeNull();
   });
 
-  it("saves the narrative to a draft field named for the county", () => {
+  it("saves the narrative to a draft field named for the jurisdiction", () => {
     vi.useFakeTimers();
     const form = renderBlock([charge("FECR002891")]);
 
