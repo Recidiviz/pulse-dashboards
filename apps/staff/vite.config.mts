@@ -90,6 +90,7 @@ export default defineConfig(() => ({
   },
 
   test: {
+    name: "staff",
     passWithNoTests: true,
     globals: true,
     environment: "jsdom",
