@@ -29,6 +29,8 @@ import {
 import {
   fakeContactOne,
   fakePersonOne,
+  fakePersonThree,
+  fakePersonTwo,
   fakeWorkflowExecutionFour,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
@@ -1196,3 +1198,31 @@ test.each([
     expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
   },
 );
+
+describe("paging through people", () => {
+  // With three people, a page size of 3 ends on an empty page.
+  test.each([1, 2, 3])(
+    "processes every person exactly once with a page size of %i",
+    async (pageSize) => {
+      await testUsTxPrismaClient.person.createMany({
+        data: [fakePersonTwo, fakePersonThree].map((person) => ({
+          ...person,
+          stateCode: StateCode.US_TX,
+        })),
+      });
+
+      const results = await processJiiContactReminders({
+        stateCode: StateCode.US_TX,
+        dryRun: true,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+        pageSize,
+      });
+
+      expect(Object.values(results).flat().sort()).toEqual([
+        fakePersonOne.pseudonymizedId,
+        fakePersonTwo.pseudonymizedId,
+        fakePersonThree.pseudonymizedId,
+      ]);
+    },
+  );
+});

@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { init, prismaIntegration } from "@sentry/node";
+import {
+  init,
+  onUnhandledRejectionIntegration,
+  prismaIntegration,
+} from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 init({
@@ -23,6 +27,12 @@ init({
   environment: process.env["SENTRY_ENV"],
   tracesSampleRate: 0,
   profilesSampleRate: 0,
-  integrations: [nodeProfilingIntegration(), prismaIntegration()],
+  integrations: [
+    nodeProfilingIntegration(),
+    prismaIntegration(),
+    // The default "warn" mode lets the process exit 0 after an unhandled
+    // rejection, so a failed job looks successful in Cloud Run.
+    onUnhandledRejectionIntegration({ mode: "strict" }),
+  ],
   maxValueLength: 5000,
 });

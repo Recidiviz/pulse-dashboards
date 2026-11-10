@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Command } from "@commander-js/extra-typings";
+import { captureException, flush } from "@sentry/node";
 
 import { StateCode } from "~@jii-texting/prisma/client";
 import { processJiiContactReminders } from "~@jii-texting/processor/scripts/process-jii-contact-reminders";
@@ -30,7 +31,7 @@ const program = new Command()
     "The Workflow execution ID that triggered this script",
   );
 
-function main() {
+async function main() {
   program.parse();
   const options = program.opts();
 
@@ -41,12 +42,19 @@ function main() {
   };
 
   if (options.stateCode === "US_ID") {
-    processJiiEligiblityTexts(args);
+    await processJiiEligiblityTexts(args);
   }
 
   if (options.stateCode === "US_TX") {
-    processJiiContactReminders(args);
+    await processJiiContactReminders(args);
   }
 }
 
-main();
+// A non-zero exit fails the Cloud Run job and fires its alert. The exit code is
+// set before flushing so the job still fails if Sentry is unreachable.
+main().catch(async (error) => {
+  process.exitCode = 1;
+  console.error(error);
+  captureException(error);
+  await flush(2000);
+});
