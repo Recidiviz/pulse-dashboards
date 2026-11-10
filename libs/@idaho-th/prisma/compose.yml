@@ -1,0 +1,26 @@
+name: "idaho-th-prisma"
+services:
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=idaho_th
+    ports:
+      - 6600:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  test-db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=idaho_th_test
+    ports:
+      - 6601:5432
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/test-data/
+
+volumes:
+  postgres_data:
+  postgres_test_data:

@@ -1,0 +1,38 @@
+{
+  "name": "@idaho-th-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@idaho-th/client/src",
+  "projectType": "library",
+  "tags": ["idaho-th", "scope:client"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@idaho-th/shared"],
+          "target": "typecheck"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/@idaho-th/client"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

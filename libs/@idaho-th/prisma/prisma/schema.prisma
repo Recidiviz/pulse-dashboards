@@ -1,0 +1,788 @@
+generator client {
+  provider        = "prisma-client"
+  previewFeatures = ["fullTextSearchPostgres"]
+  output          = "../src/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum StateCode {
+  US_ID
+}
+
+enum ApplicationIntakeStatus {
+  DRAFT
+  SUBMITTED
+}
+
+enum HousingApplicationDocumentUploader {
+  STAFF
+  PROVIDER
+}
+
+enum HousingApplicationDocumentType {
+  HANDWRITTEN_SOURCE
+  DIGITIZED
+  ATTACHMENT
+}
+
+enum HousingApplicationDocumentStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+}
+
+enum HousingApplicationDocumentScanStatus {
+  PENDING
+  CLEAN
+  INFECTED
+  FAILED
+}
+
+enum ApplicationStage {
+  DRAFT
+  APPLICATION
+  APPROVALS
+  RELEASE
+  CLOSED
+}
+
+enum ApplicationSubStage {
+  PROVIDER_REVIEW
+  OFFERS_RECEIVED
+  INFO_NEEDED
+  DECLINED
+  RELEASED
+  PLAN_REJECTED
+  CANCELED
+  CONDITIONALLY_APPROVED
+  SELECTED
+  NOT_SELECTED
+  CONDITIONAL_APPROVAL_REVOKED
+}
+
+enum ApplicationStatus {
+  ACTION_NEEDED
+  WAITING
+  WAITING_ON_PAROLE_BOARD
+  WAITING_ON_PP
+  AWAITING_RELEASE
+  DONE
+}
+
+// Raw outcome selected by the CM in the "How did this case resolve?" popup when
+// closing a case. Maps down to the CLOSED sub-stages (RELEASED / PLAN_REJECTED /
+// CANCELED) via mapClosedOutcomeToSubStage. Stored separately from `subStage`
+// so we retain the CM's exact selection (and the OTHER free-text note).
+enum ClosedOutcome {
+  CLIENT_RELEASED
+  APPLICATION_WITHDRAWN
+  RELEASE_DENIED
+  HOUSING_PLAN_REJECTED
+  OTHER
+}
+
+enum AcceptedGenders {
+  MALE
+  FEMALE
+  ALL
+}
+
+enum MessageSenderType {
+  STAFF
+  PROVIDER
+}
+
+enum ThreadStatus {
+  OPEN
+  CLOSED
+}
+
+enum ThreadType {
+  INFO_REQUEST
+  CONDITIONAL_APPROVAL_REVOKED
+}
+
+enum HomePlanType {
+  MANUAL_ADDRESS
+  PROVIDER
+}
+
+// Retained (unused) alongside ReleaseDecision / HomePlanInvestigationResult so
+// the live screening rows stay available for a later backfill. A follow-up
+// migration drops this enum and its columns once that backfill has run.
+enum ScreeningResult {
+  APPROVED
+  REJECTED
+}
+
+// Rider-only court decision. Termers and Parole Violators get theirs from the
+// Parole Commission instead (StaffHousingApplication.paroleCommissionDecision).
+enum ReleaseDecision {
+  PROBATION_GRANTED
+  PROBATION_DENIED
+}
+
+enum ParoleCommissionDecision {
+  PAROLE_GRANTED
+  PAROLE_DENIED
+  NOT_APPLICABLE
+}
+
+enum HomePlanInvestigationResult {
+  APPROVED
+  REJECTED
+  NOT_APPLICABLE
+}
+
+enum ReleaseTaskType {
+  RESIDENT_CONFIRMED_FUNDING
+  FUNDING_SECURED
+  HOUSING_DATE_REQUESTED
+  HOUSING_DATE_PROVIDED
+  BED_CONFIRMED
+  TRANSPORTATION_SECURED
+  TRANSPORTATION_INSTRUCTIONS
+}
+
+enum TaskCompletedByRole {
+  STAFF
+  PROVIDER
+}
+
+enum TimelineEventType {
+  APPLICATION_CREATED
+  APPLICATION_SENT_TO_PROVIDERS
+  PROVIDER_CONDITIONALLY_APPROVED
+  PROVIDER_REQUESTED_INFO
+  CM_RESPONDED_TO_INFO_REQUEST
+  PROVIDER_DECLINED
+  PROVIDER_SELECTED_AS_HOME_PLAN
+  PROVIDER_NOT_SELECTED
+  PROVIDER_CANCELED
+  PROVIDER_REVOKED_CONDITIONAL_APPROVAL
+  HOME_PLAN_ADDRESS_SET
+  EXPECTED_RELEASE_DATE_UPDATED
+  STAGE_ADVANCED
+  APPROVALS_HOUSING_PLAN_APPROVED
+  APPROVALS_HOUSING_PLAN_REJECTED
+  PAROLE_COMMISSION_DECISION_RECORDED
+  RELEASE_TASK_UPDATED
+  RELEASE_TASK_NOTE_UPDATED
+  CASE_CLOSED
+  DOCUMENT_UPLOADED
+  DOCUMENT_DOWNLOADED
+}
+
+enum TimelineActorRole {
+  SYSTEM
+  STAFF
+  PROVIDER
+}
+
+enum TimelineViewerRole {
+  CASE_MANAGER
+  PROVIDER
+}
+
+enum DigestRecipientAudience {
+  PROVIDER
+  STAFF
+}
+
+enum DigestSendOutcome {
+  SENT
+  FAILED
+}
+
+enum AlertType {
+  SELECTED_AS_HOME_PLAN
+  NEW_APPLICATION
+  RELEASE_DATE_CHANGED
+}
+
+model HousingApplication {
+  id                  String    @id @default(uuid())
+  stateCode           StateCode
+  clientName          String
+  idocNumber          String?
+  formData            Json
+  rawAiResponse       Json?
+  expectedReleaseDate DateTime?
+  sentToProvidersAt   DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  lastActivityAt      DateTime  @default(now())
+  duplicatedFromId    String?
+
+  // Marks a shell claimed for extraction; stale claims are swept by the janitor.
+  extractionClaimedAt DateTime?
+
+  staffApplication     StaffHousingApplication?
+  eligibleProviders    EligibleHousingProvider[]
+  preferredProviders   PreferredHousingProvider[]
+  providerApplications ProviderHousingApplication[]
+  homePlan             HousingApplicationHomePlan?
+  documents            HousingApplicationDocument[]
+  timelineEvents       HousingApplicationTimelineEvent[]
+  staffReadStates      StaffTimelineReadState[]
+  providerReadStates   ProviderTimelineReadState[]
+  aiExtractionMetrics  AiExtractionMetrics?
+  alerts               Alert[]
+
+  duplicatedFrom HousingApplication?  @relation("HousingApplicationDuplication", fields: [duplicatedFromId], references: [id], onDelete: SetNull)
+  duplicates     HousingApplication[] @relation("HousingApplicationDuplication")
+
+  @@index([stateCode, createdAt])
+  @@index([lastActivityAt])
+  @@index([duplicatedFromId])
+}
+
+model HousingProvider {
+  id String @id @default(uuid())
+
+  // The organization's identity key for the seed, which matches a CSV row to an
+  // existing row by name. Unique because the seed's other matcher (email) now
+  // belongs to HousingProviderUser; without this it would update an arbitrary
+  // duplicate. Also unique case-insensitively via the raw index
+  // "HousingProvider_name_lower_key" on lower(name), which Prisma cannot
+  // express here.
+  name String @unique
+
+  businessMailingName    String?
+  businessMailingAddress String?
+  businessMailingCity    String?
+  businessMailingState   String?
+  businessMailingZip     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  locations            HousingProviderLocation[]
+  eligibleApplications EligibleHousingProvider[]
+  preferredBy          PreferredHousingProvider[]
+  providerApplications ProviderHousingApplication[]
+  selectedHomePlans    HousingApplicationHomePlan[]
+  userAssignments      HousingProviderUserAssignment[]
+  timelineReadStates   ProviderTimelineReadState[]
+  scopedDocuments      HousingApplicationDocument[]
+  lastActiveForUsers   HousingProviderUser[]
+  alerts               Alert[]
+}
+
+/// A person who manages one or more HousingProviders. Split out of
+/// HousingProvider, which previously carried both the organization and its
+/// representative on one row.
+model HousingProviderUser {
+  id String @id @default(uuid())
+
+  // The person's own name, not the organization's. Required: the Intercom
+  // contact needs one, and the seed falls back to the organization name when a
+  // CSV row leaves contactName blank.
+  name String
+
+  // Auth0 login identity and the Intercom contact address.
+  //
+  // Uniqueness is enforced by a raw `lower("email")` unique index rather than
+  // `@unique`, matching HousingProvider_email_lower_key, which this replaces.
+  // Prisma cannot express an expression index, so it does not appear here — see
+  // the migration. That index is what lets one person manage several
+  // organizations as a single user row instead of duplicates.
+  email String
+
+  // Populated on first login via the Auth0 post-login webhook (null when seeded).
+  auth0Sub        String?   @unique
+  pseudonymizedId String?   @unique
+  linkedAt        DateTime?
+
+  contactPhone String?
+
+  // Set on first login. Gates Intercom digests only, never access.
+  digestEnabled Boolean @default(false)
+
+  // Non-null once the flag has been decided, so the login converge cannot
+  // re-enable a user who has since been opted out.
+  digestEnabledAt DateTime?
+
+  intercomContactId String?   @unique
+  intercomSyncedAt  DateTime?
+  lastDigestSentAt  DateTime?
+
+  /// The organization this person last chose to act as, so the choice follows
+  /// them to any device.
+  ///
+  /// A preference hint, never a grant: it is re-validated against
+  /// `assignments` on every request, and a value whose assignment has been
+  /// revoked is treated as absent. Never read it as proof of access.
+  ///
+  /// SetNull on delete so removing an organization clears the hint instead of
+  /// deleting the person.
+  lastActiveProviderId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignments        HousingProviderUserAssignment[]
+  timelineReadStates ProviderTimelineReadState[]
+  lastActiveProvider HousingProvider?                @relation(fields: [lastActiveProviderId], references: [id], onDelete: SetNull)
+
+  @@index([lastDigestSentAt])
+  @@index([lastActiveProviderId])
+}
+
+/// Which organizations a HousingProviderUser may manage. One row per
+/// (user, organization) pair; a user with no rows can log in but sees nothing.
+model HousingProviderUserAssignment {
+  id             String   @id @default(uuid())
+  providerUserId String
+  providerId     String
+  createdAt      DateTime @default(now())
+
+  user     HousingProviderUser @relation(fields: [providerUserId], references: [id], onDelete: Cascade)
+  provider HousingProvider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  // An assigned user manages the whole organization. Per-location scoping is a
+  // later, purely additive child table keyed on this row's id, so this
+  // constraint stays correct when that lands — which is why there is no
+  // nullable locationId here to make it decorative.
+  //
+  // Revocation is a hard delete, deliberately: a soft-delete flag would put a
+  // filter on the authorization path, where forgetting it fails open. A missing
+  // row can only ever deny.
+  @@unique([providerUserId, providerId])
+  // Reverse lookup: every user at an organization, for the digest fan-out.
+  @@index([providerId])
+}
+
+model HousingStaff {
+  id                String    @id @default(uuid())
+  pseudonymizedId   String    @unique
+  email             String    @unique
+  intercomContactId String?   @unique
+  intercomSyncedAt  DateTime?
+  lastDigestSentAt  DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([lastDigestSentAt])
+}
+
+model HousingProviderLocation {
+  id                      String            @id @default(uuid())
+  providerId              String
+  provider                HousingProvider   @relation(fields: [providerId], references: [id])
+  district                String
+  streetAddress           String
+  city                    String
+  state                   String
+  zip                     String
+  acceptedGenders         AcceptedGenders[]
+  acceptsRiders           Boolean
+  acceptsSexOffenders     Boolean
+  acceptsViolentCriminals Boolean
+  faithBased              Boolean
+
+  housingType                   String?
+  populationsServed             String?
+  addressUsedForPPInvestigation Boolean @default(false)
+
+  eligibleProviders    EligibleHousingProvider[]
+  providerApplications ProviderHousingApplication[]
+}
+
+model StaffHousingApplication {
+  id                       String                    @id @default(uuid())
+  applicationId            String                    @unique
+  application              HousingApplication        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  staffPseudonymizedId     String
+  intakeStatus             ApplicationIntakeStatus   @default(DRAFT)
+  // Drafts start at DRAFT with no substage; submitDraftIntakeApplication
+  // advances to APPLICATION / PROVIDER_REVIEW when intake is confirmed.
+  stage                    ApplicationStage          @default(DRAFT)
+  subStage                 ApplicationSubStage?
+  status                   ApplicationStatus         @default(ACTION_NEEDED)
+  closedOutcome            ClosedOutcome?
+  closedOutcomeNote        String?
+  // Termer / Parole Violator only. Lives on the staff row because it can exist
+  // before a home plan does and is never returned to providers.
+  paroleCommissionDecision ParoleCommissionDecision?
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+
+  @@index([staffPseudonymizedId])
+}
+
+model EligibleHousingProvider {
+  id                      String                  @id @default(uuid())
+  applicationId           String
+  application             HousingApplication      @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  providerId              String
+  provider                HousingProvider         @relation(fields: [providerId], references: [id])
+  providerLocationId      String
+  providerLocation        HousingProviderLocation @relation(fields: [providerLocationId], references: [id])
+  isSelected              Boolean?
+  // Staff's free-text explanation for adding an ineligible provider. Internal only
+  eligibilityOverrideNote String?
+
+  // True when a CM added this provider by hand rather than the eligibility
+  // engine deriving it. Must not be inferred from eligibilityOverrideNote
+  // being set: that note is optional, so a manual add without one would be
+  // indistinguishable from a derived row and deleted on the next form edit.
+  isManualOverride Boolean @default(false)
+
+  @@unique([applicationId, providerId])
+}
+
+/// A case manager's ranked provider preferences for an application. Kept out
+/// of HousingApplication.formData so the foreign keys reject unknown providers
+/// on save and a provider deletion cascades instead of leaving a stale id.
+/// Saves replace every row, which is what makes the rank constraint safe.
+model PreferredHousingProvider {
+  id            String @id @default(uuid())
+  applicationId String
+  providerId    String
+  // 0-based slot order; gaps can appear after a cascade, reads sort by it.
+  rank          Int
+
+  application HousingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  provider    HousingProvider    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, providerId])
+  @@unique([applicationId, rank])
+  @@index([providerId])
+}
+
+model ProviderHousingApplication {
+  id                 String                  @id @default(uuid())
+  applicationId      String
+  application        HousingApplication      @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  providerId         String
+  provider           HousingProvider         @relation(fields: [providerId], references: [id])
+  providerLocationId String
+  providerLocation   HousingProviderLocation @relation(fields: [providerLocationId], references: [id])
+  stage              ApplicationStage        @default(APPLICATION)
+  subStage           ApplicationSubStage     @default(PROVIDER_REVIEW)
+  status             ApplicationStatus       @default(ACTION_NEEDED)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  threads            ProviderApplicationThread[]
+  selectedAsHomePlan HousingApplicationHomePlan?
+
+  @@unique([applicationId, providerId])
+  @@index([providerId])
+}
+
+model ProviderApplicationThread {
+  id                    String        @id @default(uuid())
+  providerApplicationId String
+  type                  ThreadType
+  // INFO_REQUEST and CONDITIONAL_APPROVAL_REVOKED threads have a lifecycle;
+  // purely informational threads leave this null.
+  status                ThreadStatus?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  resolvedAt            DateTime?
+
+  providerApplication ProviderHousingApplication @relation(fields: [providerApplicationId], references: [id], onDelete: Cascade)
+  messages            ThreadMessage[]
+
+  @@index([providerApplicationId, type])
+  @@index([status])
+}
+
+model ThreadMessage {
+  id                    String            @id @default(uuid())
+  threadId              String
+  senderType            MessageSenderType
+  // STAFF -> the staff member's pseudonymizedId; PROVIDER -> the
+  // HousingProviderUser's. The organization the sender acted for is reached
+  // through thread -> providerApplication.providerId.
+  senderPseudonymizedId String
+  body                  String
+  originalBody          String?
+  editedAt              DateTime?
+  readAt                DateTime?
+  createdAt             DateTime          @default(now())
+
+  thread ProviderApplicationThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+  @@index([readAt])
+}
+
+model HousingApplicationHomePlan {
+  id            String             @id @default(uuid())
+  applicationId String             @unique
+  application   HousingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  type                          HomePlanType
+  address                       String?
+  selectedProviderId            String?
+  selectedProvider              HousingProvider?            @relation(fields: [selectedProviderId], references: [id])
+  selectedProviderApplicationId String?                     @unique
+  selectedProviderApplication   ProviderHousingApplication? @relation(fields: [selectedProviderApplicationId], references: [id])
+
+  // Immutable audit: who created this home plan
+  // Plain String (no FK) — pseudonymizedId is Auth0-managed, not a Prisma Staff model
+  createdByStaffPseudonymizedId         String
+  createdAt                             DateTime         @default(now())
+  updatedAt                             DateTime         @updatedAt
+  // Retained and unused — see the comment on ScreeningResult.
+  screeningResult                       ScreeningResult?
+  screeningResultAt                     DateTime?
+  screeningResultByStaffPseudonymizedId String?
+
+  releaseDecision                 ReleaseDecision?
+  homePlanInvestigation           HomePlanInvestigationResult?
+  // Stamped when the approvals reach a terminal state (the case advances or
+  // closes), not when both columns happen to be set.
+  approvalsAt                     DateTime?
+  approvalsByStaffPseudonymizedId String?
+
+  releaseTasks HousingApplicationReleaseTask[]
+
+  @@index([selectedProviderId])
+  @@index([homePlanInvestigation])
+}
+
+model HousingApplicationReleaseTask {
+  id         String                     @id @default(uuid())
+  homePlanId String
+  homePlan   HousingApplicationHomePlan @relation(fields: [homePlanId], references: [id], onDelete: Cascade)
+
+  taskType  ReleaseTaskType
+  completed Boolean         @default(false)
+  note      String?
+  // Day-only detail (e.g. the bed available date); DATE keeps any time or
+  // timezone out of storage.
+  date      DateTime?       @db.Date
+
+  completedAt                DateTime?
+  completedByRole            TaskCompletedByRole?
+  // STAFF -> the staff member's pseudonymizedId; PROVIDER -> the
+  // HousingProviderUser's. The organization is reached through
+  // homePlan -> selectedProviderApplication.providerId.
+  completedByPseudonymizedId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([homePlanId, taskType])
+}
+
+model HousingApplicationDocument {
+  id             String                             @id @default(uuid())
+  applicationId  String
+  application    HousingApplication                 @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  uploadedByType HousingApplicationDocumentUploader
+
+  // STAFF -> the staff member's pseudonymizedId; PROVIDER -> the
+  // HousingProviderUser's. Person-level: it attributes the upload and never
+  // controls visibility, which is scopedProviderId's job.
+  uploadedByPseudonymizedId String
+
+  documentType  HousingApplicationDocumentType
+  fileName      String
+  // Uploads always land in the quarantine bucket. Once ClamAV clears an
+  // object it is moved into the clean bucket and this field is updated to
+  // match; objectKey stays the same across the move, which is why it (not
+  // the bucket/key pair) is the unique, stable identifier for the file.
+  bucketName    String
+  objectKey     String
+  contentType   String
+  fileSizeBytes Int?
+
+  // Lifecycle: PENDING until the upload is verified (size/type), then CONFIRMED.
+  // Only CONFIRMED rows are returned to users; deletes are hard deletes.
+  status          HousingApplicationDocumentStatus     @default(PENDING)
+  rejectionReason String?
+  confirmedAt     DateTime?
+  scanStatus      HousingApplicationDocumentScanStatus @default(PENDING)
+
+  // Provider-scoping drives visibility: null = shared with the CM and all
+  // providers with active access; set = visible only to that organization
+  // (+ CM). Scoped to the organization rather than the uploader, so every user
+  // at a provider sees the same documents.
+  //
+  // onDelete is Restrict, never SetNull: a visibility column must not fail
+  // open. Nulling this on an organization delete would expose that
+  // organization's private documents to every other provider on the
+  // application, so the delete is blocked until someone decides deliberately.
+  scopedProviderId String?
+  scopedProvider   HousingProvider? @relation(fields: [scopedProviderId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Single-column unique, not (bucketName, objectKey) — see the comment on
+  // bucketName above: objectKey is the stable identity across the
+  // quarantine-to-clean-bucket move, bucketName is not. This unique
+  // constraint is safe globally (not just per-application) because the key
+  // builder always encodes the applicationId into the path
+  // (applications/{applicationId}/documents/{uuid}.{ext}); there is no DB
+  // constraint enforcing that format, so if the key builder ever changes to
+  // omit applicationId, this constraint would need to be revisited.
+  @@unique([applicationId, objectKey])
+  @@index([applicationId, status])
+  @@index([applicationId, createdAt])
+  @@index([uploadedByType, uploadedByPseudonymizedId])
+  @@index([scopedProviderId])
+  @@index([scanStatus])
+}
+
+model HousingApplicationTimelineEvent {
+  id            String             @id @default(uuid())
+  applicationId String
+  application   HousingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  eventType            TimelineEventType
+  description          String
+  metadata             Json?
+  actorRole            TimelineActorRole
+  // The person who acted: a staff pseudonymizedId, or a HousingProviderUser's.
+  // The organization they acted for is `scopedProviderId` below.
+  actorPseudonymizedId String?
+  // Provider `id` (stable, always non-null) that this event is scoped to.
+  // Null means the event is visible to every provider on the application.
+  // Must not use `pseudonymizedId` here: it is null until a provider's first
+  // login, which would make freshly-scoped events look "global" and leak to
+  // every other provider on the application.
+  scopedProviderId     String?
+  // When true, hidden from every provider regardless of `scopedProviderId` —
+  // used for events (e.g. setting a manual-address home plan) that are the
+  // CM's business only and must never reach any provider.
+  cmOnly               Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+
+  @@index([applicationId, createdAt])
+  @@index([applicationId, scopedProviderId, createdAt])
+  @@index([applicationId, cmOnly, createdAt])
+}
+
+model AiExtractionMetrics {
+  id                   String             @id @default(uuid())
+  applicationId        String             @unique
+  application          HousingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  scannedAt            DateTime           @default(now())
+  submittedAt          DateTime?
+  overriddenFieldCount Int?
+  overriddenFields     String[]           @default([])
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([scannedAt])
+}
+
+/// Per-person read state for staff. Split out of
+/// HousingApplicationTimelineReadState, whose single viewer column meant a
+/// person for staff and an organization for providers.
+model StaffTimelineReadState {
+  id            String @id @default(uuid())
+  applicationId String
+
+  // Plain String (no FK) — HousingStaff rows are created lazily by the Intercom
+  // sync, so a staff member can read a timeline before their row exists.
+  staffPseudonymizedId String
+
+  lastViewedTimelineAt DateTime?
+  lastOpenedModalAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  application HousingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, staffPseudonymizedId])
+}
+
+/// Per-organization read state for providers: once anyone at a provider opens
+/// the timeline, the digest stops emailing everyone there. The in-app unread
+/// badge remains per-person, driven by the events themselves.
+model ProviderTimelineReadState {
+  id            String @id @default(uuid())
+  applicationId String
+  providerId    String
+
+  // Which person last performed the read. Nullable because backfilled rows for
+  // organizations that have no user cannot be attributed, and because losing
+  // the person must not lose the organization's read state (onDelete: SetNull).
+  providerUserId String?
+
+  lastViewedTimelineAt DateTime?
+  lastOpenedModalAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  application      HousingApplication   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  provider         HousingProvider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  lastViewedByUser HousingProviderUser? @relation(fields: [providerUserId], references: [id], onDelete: SetNull)
+
+  @@unique([applicationId, providerId])
+}
+
+model DigestSendAttempt {
+  id                String                  @id @default(uuid())
+  audience          DigestRecipientAudience
+  // The recipient's own id (never email/name) — which table it points at
+  // depends on `audience`: PROVIDER -> HousingProviderUser.id, STAFF ->
+  // HousingStaff.id. Digests go to people, never to organizations.
+  recipientId       String
+  attemptedAt       DateTime                @default(now())
+  outcome           DigestSendOutcome
+  // Plain string, not an enum: IntercomErrorCode has many values and grows
+  // independently of this table. Null on a SENT outcome.
+  errorCode         String?
+  // The contact this attempt targeted, if one had been resolved (may be a
+  // now-invalid contact on a resolve-stage failure, e.g. CONTACT_PENDING_DELETION).
+  // Null when resolution never produced a contact at all.
+  intercomContactId String?
+  // True only for the same-run deferred retry on a newly-created contact.
+  isRetry           Boolean                 @default(false)
+
+  @@index([recipientId, attemptedAt])
+}
+
+model AdminPanelDeletionLog {
+  id                String   @id @default(uuid())
+  entityType        String
+  entityId          String
+  entityDisplayName String
+  deletedAt         DateTime @default(now())
+
+  @@index([entityType, deletedAt])
+  @@index([entityId])
+}
+
+/// One row per recipient. Exactly one of providerId / staffPseudonymizedId is
+/// set (enforced by the raw CHECK "Alert_exactly_one_recipient" in the
+/// migration, which Prisma cannot express). An alert for both audiences
+/// is two rows, so each side dismisses independently.
+model Alert {
+  id            String    @id @default(uuid())
+  type          AlertType
+  applicationId String
+
+  // A provider alert belongs to the organization: one colleague's
+  // dismissal clears it for the whole team.
+  providerId           String?
+  // Plain String (no FK) — HousingStaff rows are created lazily.
+  staffPseudonymizedId String?
+
+  // Per-type snapshot of the event, validated against ALERT_METADATA_SCHEMA
+  // on write and read.
+  metadata Json?
+
+  dismissedAt                DateTime?
+  dismissedByPseudonymizedId String?
+  createdAt                  DateTime  @default(now())
+
+  application HousingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  provider    HousingProvider?   @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, providerId])
+  @@index([applicationId, staffPseudonymizedId])
+}

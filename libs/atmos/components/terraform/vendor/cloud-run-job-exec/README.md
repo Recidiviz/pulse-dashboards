@@ -1,5 +1,14 @@
 # Cloud Run Job
 
+> **Recidiviz fork.** This module is a copy of `modules/job-exec` from
+> [GoogleCloudPlatform/terraform-google-cloud-run](https://github.com/GoogleCloudPlatform/terraform-google-cloud-run)
+> at `v0.16.1`, with these local changes:
+>
+> - `vpc_access` accepts `network_interfaces` for Direct VPC egress, and `connector` and `egress` are optional.
+> - The terracurl request sets `destroy_skip = true` instead of issuing a no-op GET on destroy.
+>
+> Make changes here, not in a consumer's `vendor/` directory, which `atmos vendor pull` overwrites.
+
 ## Description
 
 ### tagline

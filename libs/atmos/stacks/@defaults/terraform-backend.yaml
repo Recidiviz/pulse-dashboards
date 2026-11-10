@@ -32,4 +32,6 @@ settings:
       recidiviz-dashboard-staging: gsm-staging
       recidiviz-dashboard-production: gsm-prod
       recidiviz-jii-staging: jii-staging
+      rcdvz-transitional-housing-dev: idaho-th-dev
+      recidiviz-transitional-housing: idaho-th-prod
       recidiviz-rnd-planner: rnd-planner

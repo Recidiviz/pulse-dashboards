@@ -31,12 +31,35 @@ variable "region" {
 }
 
 variable "additional_rules" {
-  description = "Extra rules to append to the base OWASP rule set. Priority must not conflict with the base rules (1000–1012), the rate limiter (2000), or the default allow rule (2147483647)."
+  description = <<-EOT
+    Optional extra rules appended to the base OWASP deny set. Empty by default
+    (no effect for callers that omit this variable, e.g. Meetings).
+
+    Each rule must set `action` (commonly `allow` or `deny(403)`). Priority must
+    not conflict with base rules (999–1012), the rate limiter (2000), or the
+    default allow rule (2147483647). Lower priority numbers are evaluated first.
+  EOT
   type = list(object({
     priority    = number
     action      = string
     description = optional(string, "")
     expression  = string
+  }))
+  default = []
+}
+
+variable "category_exclusions" {
+  description = <<-EOT
+    Optional path-scoped exclusions for specific base OWASP rules (identified
+    by priority, 999-1012). When a request matches exclude_when, that rule is
+    skipped for it (evaluation continues to the next rule) instead of denying
+    - for known false positives on a specific endpoint, without disabling the
+    rule for every other request. Empty by default (no effect for callers
+    that omit this variable, e.g. Meetings).
+  EOT
+  type = list(object({
+    priority     = number
+    exclude_when = string
   }))
   default = []
 }

@@ -1,0 +1,138 @@
+# Infrastructure configuration for Idaho TH deployed to contractor dev environment
+settings:
+  context:
+    project_id: rcdvz-transitional-housing-dev
+    project_number: 838953785404
+    product: idaho-th
+    location: us-central1
+    artifact_registry_repository_id: idaho-th
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+  location: "{{ .settings.context.location }}"
+
+import:
+  - ../@defaults/terraform-backend
+  - ../@defaults/vendor/artifact-registry
+
+components:
+  terraform:
+    artifact_registry:
+      vars:
+        project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"
+        repository_id: "{{ .settings.context.artifact_registry_repository_id }}"
+
+    apps/malware-scanning:
+      vars:
+        location: "{{ .settings.context.location }}"
+        artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.artifact_registry_repository_id }}"
+        scan_complete_default_cloud_run_service_name: idaho-th-server-dev
+        app_storage_members:
+          idaho-th: "idaho-th-dev@{{ .settings.context.project_id }}.iam.gserviceaccount.com"
+        # Seed SA clean-bucket get/list. Apply apps/idaho-th before apps/malware-scanning;
+        # complete malware-scanning apply before executing the seed job.
+        app_storage_read_members:
+          idaho-th:
+            - "idaho-th-seed-db-dev@{{ .settings.context.project_id }}.iam.gserviceaccount.com"
+        # Admin panel clean-bucket get/list/delete (removes documents on
+        # application delete). Apply apps/idaho-th-admin before apps/malware-scanning
+        # so the service account exists for the data-source existence check.
+        # Document janitor clean-bucket delete (sweeps orphaned shells/uploads).
+        # Apply apps/idaho-th before apps/malware-scanning so this account exists.
+        app_storage_delete_members:
+          idaho-th:
+            - "idaho-th-admin@{{ .settings.context.project_id }}.iam.gserviceaccount.com"
+            - "idaho-th-doc-janitor@{{ .settings.context.project_id }}.iam.gserviceaccount.com"
+        pdf_bucket_cors_origins:
+          - https://housing-stg.recidiviz.org
+        # Full scan path: scanner on, clean app-read-only, scan-complete webhooks on.
+        restrict_clean_bucket_to_read_only: true
+        enable_malware_scanner: true
+        enable_scan_complete_triggers: true
+        malware_scanner_container_version: 7de6a9ac18
+        enable_cvd_mirror_scheduler: true
+        malware_scanner_alert_email: security@recidiviz.org
+
+    apps/idaho-th:
+      vars:
+        location: "{{ .settings.context.location }}"
+        artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.artifact_registry_repository_id }}"
+        artifact_registry_project_id: "{{ .settings.context.project_id }}"
+        secrets_filename: secrets/rcdvz-transitional-housing-dev.enc.yaml
+        sql_instance_name: idaho-th-dev
+        sql_base_secret_name: idaho_th_dev
+        server_name: idaho-th-server-dev
+        migrate_db_name: idaho-th-migrate-db-dev
+        seed_db_name: idaho-th-seed-db-dev
+        service_account_id: idaho-th-dev
+        grant_artifact_registry_cloudrun_agent_iam: false
+        enable_load_balancer: true
+        # API Cloud Run accepts load balancer traffic only.
+        lock_server_ingress_to_lb: true
+        lb_create_proxy_only_subnet: true
+        lb_proxy_only_subnet_ip: 10.129.0.0/23
+        domain_name: housing-stg.recidiviz.org
+        frontend_name: idaho-th-frontend-dev
+        malware_scan_complete_triggers_enabled: true
+        malware_scan_enabled: true
+        enable_intercom_digest_scheduler: true
+        # Backfills Intercom contacts for providers that predate this
+        # integration, so the digest job isn't creating dozens of contacts
+        # inline on its first scheduled run. Manual trigger only, no scheduler.
+        enable_intercom_provider_sync: true
+        enable_document_janitor_scheduler: true
+        # Elevated capacity for concurrent PDF / Vertex uploads.
+        server_cpu: 2000m
+        server_memory: 2Gi
+        server_min_instance_count: 1
+        server_max_instance_count: 25
+        server_max_instance_request_concurrency: 4
+        sentry_dsn: https://0783e4010f9a4f34d132f9de017939df@o432474.ingest.us.sentry.io/4511886446231552
+        sentry_env: staging
+        app_env: staging
+        enable_security_alerts: true
+        security_alert_email: security@recidiviz.org
+        enable_operational_monitoring: true
+        operational_alert_email: alerts@recidiviz.org
+        # Enable once Cloud Monitoring uptime checks are allowed in this project.
+        enable_uptime_check: false
+        # First-time rollout must apply in phases via -target — network
+        # resources, then Cloud Run vpc_access, verify, then ipv4_enabled:
+        # false — since Terraform doesn't order module.server against the flip.
+        create_private_service_access: true
+        # Disjoint from the direct-egress subnet and the LB's proxy-only subnet.
+        private_service_access_address: 10.131.0.0
+        create_direct_egress_subnet: true
+        # Disjoint from the LB's proxy-only subnet (10.129.0.0/23) and the PSA range.
+        direct_egress_subnet_cidr: 10.130.0.0/25
+        enable_private_db_egress: true
+        ipv4_enabled: false
+
+    apps/idaho-th-admin:
+      settings:
+        # Atmos does not enforce this ordering — direct_egress_subnetwork_name
+        # below is a live data-source lookup at plan time, so applying
+        # idaho-th-admin before idaho-th fails plan itself (404), not silently.
+        depends_on:
+          idaho_th:
+            component: apps/idaho-th
+            stack: "{{ .settings.context.project_id }}--{{ .settings.context.product }}"
+      vars:
+        location: "{{ .settings.context.location }}"
+        artifact_registry_project_id: "{{ .settings.context.project_id }}"
+        sql_base_secret_name: idaho_th_dev
+        recidiviz_env: staging
+        domain_name: housing-admin-stg.recidiviz.org
+        # Turned on manually via the Console (Google-managed OAuth) per
+        # apps/idaho-th-admin/README.md's bootstrap steps; this brings it
+        # under Terraform management to match.
+        iap_enabled: true
+        values_filename: values/rcdvz-transitional-housing-dev.enc.yaml
+        # Shares apps/idaho-th's pre-existing Cloud SQL instance, so it needs
+        # the same private path — same subnet, applied after apps/idaho-th
+        # has created it.
+        enable_private_db_egress: true
+        direct_egress_subnetwork_name: idaho-th-server-dev-direct-egress-subnetwork
+        server_min_instance_count: 1

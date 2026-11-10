@@ -91,7 +91,25 @@ locals {
     }
   ]
 
-  all_rules = concat(local.deny_403_rules, var.additional_rules)
+  # Empty by default (var.category_exclusions == []), which makes this map
+  # empty and every lookup() below return null — every rule's expression is
+  # then left exactly as deny_403_rules defined it, same guarantee
+  # additional_rules already relies on for callers that omit it.
+  category_exclusions_by_priority = {
+    for e in var.category_exclusions : e.priority => e.exclude_when
+  }
+
+  deny_403_rules_with_exclusions = [
+    for rule in local.deny_403_rules : merge(rule, {
+      expression = (
+        lookup(local.category_exclusions_by_priority, rule.priority, null) != null
+        ? "!(${local.category_exclusions_by_priority[rule.priority]}) && (${rule.expression})"
+        : rule.expression
+      )
+    })
+  ]
+
+  all_rules = concat(local.deny_403_rules_with_exclusions, var.additional_rules)
 }
 
 resource "google_compute_region_security_policy" "waf" {
@@ -108,8 +126,10 @@ resource "google_compute_region_security_policy" "waf" {
   dynamic "rules" {
     for_each = local.all_rules
     content {
-      priority    = rules.value.priority
-      action      = "deny(403)"
+      priority = rules.value.priority
+      # Base OWASP entries omit action and default to deny(403). Callers may
+      # pass optional additional_rules with action (e.g. allow) — see variables.tf.
+      action      = try(rules.value.action, "deny(403)")
       description = rules.value.description
       match {
         expr {

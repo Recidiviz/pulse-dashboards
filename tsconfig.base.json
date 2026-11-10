@@ -189,7 +189,23 @@
       "~twilio-api": ["./libs/twilio-api/src/index.ts"],
       "~ui": ["./libs/ui/src/index.ts"],
       "~utils": ["./libs/utils/src/index.ts"],
-      "~utils/*": ["./libs/utils/src/*"]
+      "~utils/*": ["./libs/utils/src/*"],
+      "~@idaho-th/client": ["./libs/@idaho-th/client/src/index.ts"],
+      "~@idaho-th/client/*": ["./libs/@idaho-th/client/src/*"],
+      "~@idaho-th/client/trpc": ["./libs/@idaho-th/client/src/trpc/index.ts"],
+      "~@idaho-th/prisma": ["./libs/@idaho-th/prisma/src/index.ts"],
+      "~@idaho-th/prisma/*": ["./libs/@idaho-th/prisma/src/*"],
+      "~@idaho-th/prisma/client": [
+        "./libs/@idaho-th/prisma/src/client/client.ts"
+      ],
+      "~@idaho-th/server/*": ["./apps/@idaho-th/server/src/*"],
+      "~@idaho-th/shared": ["./libs/@idaho-th/shared/src/index.ts"],
+      "~@idaho-th/shared/*": ["./libs/@idaho-th/shared/src/*"],
+      "~@idaho-th/trpc": ["./libs/@idaho-th/trpc/src/index.ts"],
+      "~@idaho-th/trpc-types": ["./libs/@idaho-th/trpc-types/src/index.ts"],
+      "~@idaho-th/trpc/*": ["./libs/@idaho-th/trpc/src/*"],
+      "~observability": ["./libs/common/observability/src/index.ts"],
+      "~observability/*": ["./libs/common/observability/src/*"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",

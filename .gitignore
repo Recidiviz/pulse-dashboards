@@ -6,6 +6,8 @@
 !.env.offline
 !.env.typecheck
 !apps/jii/.env.*
+!apps/@idaho-th/client/.env.staging
+!apps/@idaho-th/client/.env.production
 !apps/staff-functions/.env*
 .env-cmdrc
 .nx

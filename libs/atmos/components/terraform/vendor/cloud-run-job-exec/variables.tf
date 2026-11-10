@@ -133,8 +133,13 @@ variable "volume_mounts" {
 
 variable "vpc_access" {
   type = list(object({
-    connector = string
-    egress    = string
+    connector = optional(string)
+    egress    = optional(string)
+    network_interfaces = optional(object({
+      network    = optional(string)
+      subnetwork = optional(string)
+      tags       = optional(list(string))
+    }))
   }))
   description = "VPC Access configuration to use for this Task."
   default     = []

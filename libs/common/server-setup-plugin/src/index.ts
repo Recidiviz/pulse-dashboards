@@ -42,7 +42,13 @@ export { createLogger, ENV_TO_LOGGER } from "~server-setup-plugin/logger";
 export function buildCommonServer<TRouter extends AnyRouter>(
   options: BuildServerOptions<TRouter>,
 ) {
-  const { appRouter, createContext, useWSS = false, trpcPrefix = "" } = options;
+  const {
+    appRouter,
+    createContext,
+    useWSS = false,
+    trpcPrefix = "",
+    allowMethodOverride,
+  } = options;
 
   const env = process.env["NODE_ENV"] || "development";
   let logger;
@@ -81,6 +87,7 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     trpcOptions: {
       router: appRouter,
       createContext: createContext,
+      allowMethodOverride,
       onError({ path, error }) {
         console.error(`Error in tRPC handler on path '${path}':`, error);
       },

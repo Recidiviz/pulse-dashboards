@@ -68,6 +68,7 @@ export type BuildServerOptions<TRouter extends AnyRouter> = {
   >;
   useWSS?: boolean;
   trpcPrefix?: string;
+  allowMethodOverride?: boolean;
   auth0Options?: Auth0Config;
   jwtOptions?: JwtConfig;
   firebaseAuthOptions?: FirebaseAuthConfig;

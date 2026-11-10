@@ -35,6 +35,29 @@ creation_rules:
     gcp_kms: projects/recidiviz-jii-staging/locations/us-central1/keyRings/recidiviz-jii-staging-sops/cryptoKeys/recidiviz-jii-staging-sops-key
   - path_regex: apps/public-pathways/.+\.enc\.yaml$
     gcp_kms: projects/public-pathways-staging/locations/us-central1/keyRings/public-pathways-staging-sops/cryptoKeys/public-pathways-staging-sops-key
+  - path_regex: apps/@idaho-th/server/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: libs/atmos/components/terraform/apps/idaho-th/secrets/.*\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: libs/atmos/components/terraform/apps/idaho-th-admin/values/.*\.enc\.yaml$
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: libs/@idaho-th/client/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: libs/@idaho-th/prisma/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: libs/@idaho-th/trpc/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: libs/@idaho-th/trpc-types/.*\.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1244vch2j4g0hwn02rz7gh0ymsam6p9zt3k2upzmwcmz9x4d0d49sueerpm,age1y6djnlk08gcnr3vm4k5he8v7jtvuq56ueyd7tzln0x564gt0nvysf82kpm
+  - path_regex: \.contractor\.enc\.yaml$
+    gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
+    age: age1e9s5dewcd5cmnzlxt6ngdukfzuvq8fdkm3ra6um68rs7qmxqxcdq3f3yvr,age1vv7jl7ljlsevpdphsjd22nrf867jrnwfcm0nx0gll9xca2rlgy6s3d3hun
   - path_regex: libs/@typesense/tools/env\.staging\.enc\.yaml$
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-typesense-admin
   - path_regex: \.enc\.yaml$

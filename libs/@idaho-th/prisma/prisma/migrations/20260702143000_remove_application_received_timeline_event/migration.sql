@@ -1,0 +1,26 @@
+-- AlterEnum
+CREATE TYPE "public"."TimelineEventType_new" AS ENUM (
+  'APPLICATION_CREATED',
+  'APPLICATION_SENT_TO_PROVIDERS',
+  'PROVIDER_CONDITIONALLY_APPROVED',
+  'PROVIDER_REQUESTED_INFO',
+  'CM_RESPONDED_TO_INFO_REQUEST',
+  'PROVIDER_DECLINED',
+  'PROVIDER_SELECTED_AS_HOME_PLAN',
+  'PROVIDER_NOT_SELECTED',
+  'HOME_PLAN_ADDRESS_SET',
+  'EXPECTED_RELEASE_DATE_UPDATED',
+  'STAGE_ADVANCED',
+  'SCREENING_HOUSING_PLAN_APPROVED',
+  'SCREENING_HOUSING_PLAN_REJECTED',
+  'RELEASE_TASK_UPDATED',
+  'CASE_CLOSED',
+  'DOCUMENT_UPLOADED'
+);
+
+ALTER TABLE "public"."HousingApplicationTimelineEvent"
+  ALTER COLUMN "eventType" TYPE "public"."TimelineEventType_new"
+  USING ("eventType"::text::"public"."TimelineEventType_new");
+
+DROP TYPE "public"."TimelineEventType";
+ALTER TYPE "public"."TimelineEventType_new" RENAME TO "TimelineEventType";

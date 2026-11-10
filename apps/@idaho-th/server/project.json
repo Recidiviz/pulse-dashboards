@@ -1,0 +1,154 @@
+{
+  "name": "@idaho-th/server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@idaho-th/server/src",
+  "projectType": "application",
+  "tags": ["idaho-th", "scope:server"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node --watch src/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/@idaho-th/server"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "test": {}
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "platform": "node",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "sourcemap": true,
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node22",
+        "minify": true,
+        "external": ["@prisma/client", "piscina"],
+        "additionalEntryPoints": [
+          "{projectRoot}/src/sentry/index.ts",
+          "{projectRoot}/src/workers/pdfSorterWorker.entry.ts",
+          "{projectRoot}/src/jobs/intercom-digest.ts",
+          "{projectRoot}/src/jobs/intercom-provider-sync.ts",
+          "{projectRoot}/src/jobs/document-janitor.ts"
+        ],
+        "assets": [
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@idaho-th/prisma",
+            "output": "."
+          },
+          {
+            "glob": "prisma.config.ts",
+            "input": "{workspaceRoot}/libs/@idaho-th/prisma",
+            "output": "."
+          },
+          {
+            "glob": "prisma/migrations/**/*",
+            "input": "{workspaceRoot}/libs/@idaho-th/prisma",
+            "output": "."
+          },
+          {
+            "glob": "**/*",
+            "input": "{workspaceRoot}/apps/@idaho-th/intercom/templates",
+            "output": "./intercom/templates"
+          },
+          "{projectRoot}/scripts/*",
+          "{workspaceRoot}/.yarnrc.yml"
+        ]
+      },
+      "configurations": {
+        "dev": {
+          "minify": false,
+          "sourcemap": false
+        },
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/rcdvz-transitional-housing-dev/idaho-th/idaho-th-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/rcdvz-transitional-housing-dev/idaho-th/idaho-th-server:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/rcdvz-transitional-housing-dev/idaho-th/idaho-th-server:$COMMIT_SHA"
+          ]
+        },
+        "production": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/rcdvz-transitional-housing-dev/idaho-th/idaho-th-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/rcdvz-transitional-housing-dev/idaho-th/idaho-th-server:latest"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    }
+  }
+}

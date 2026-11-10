@@ -1,0 +1,7 @@
+{
+  "name": "@idaho-th/trpc-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@idaho-th/trpc-types/src",
+  "projectType": "library",
+  "tags": ["idaho-th", "scope:universal"]
+}

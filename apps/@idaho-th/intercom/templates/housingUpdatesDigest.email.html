@@ -1,0 +1,232 @@
+<!--
+  Idaho TH — housing digest email (Intercom Messages API).
+  Inline styles only: Intercom strips <style> blocks when sending via API.
+  Placeholder: {{DASHBOARD_URL}} — replaced at send time with the escaped CTA href.
+  Logo is a hosted <img>, not inline <svg> — Gmail strips inline <svg> markup entirely.
+  Source file: apps/@idaho-th/client/public/recidiviz-logo.png, served at
+  https://housing-stg.recidiviz.org/recidiviz-logo.png once @idaho-th/client
+-->
+<table
+  role="presentation"
+  border="0"
+  cellpadding="0"
+  cellspacing="0"
+  width="100%"
+  style="border-collapse: collapse; border: none; background-color: #e9ebec"
+>
+  <tr>
+    <td
+      align="center"
+      valign="top"
+      style="padding: 40px 16px; border: none; text-align: center"
+    >
+      <table
+        role="presentation"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        width="600"
+        style="
+          border-collapse: collapse;
+          border: none;
+          max-width: 600px;
+          width: 100%;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 12px;
+        "
+      >
+        <!-- Header -->
+        <tr>
+          <td
+            bgcolor="#ffffff"
+            style="
+              border: none;
+              border-bottom: 1px solid rgba(43, 84, 105, 0.1);
+              background: #ffffff;
+              padding: 28px 40px;
+              line-height: 0;
+              font-size: 0;
+              border-radius: 12px 12px 0 0;
+            "
+          >
+            <img
+              src="https://housing-stg.recidiviz.org/recidiviz-logo.png"
+              alt="Recidiviz"
+              width="110"
+              height="26"
+              style="display: block; width: 110px; height: 26px; border: 0"
+            />
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td
+            style="
+              border: none;
+              padding: 40px 40px 32px;
+              font-family:
+                &quot;Public Sans&quot;,
+                -apple-system,
+                BlinkMacSystemFont,
+                &quot;Segoe UI&quot;,
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+            "
+          >
+            <h1
+              style="
+                margin: 0 0 10px;
+                font-family:
+                  &quot;Public Sans&quot;,
+                  -apple-system,
+                  BlinkMacSystemFont,
+                  &quot;Segoe UI&quot;,
+                  Roboto,
+                  Helvetica,
+                  Arial,
+                  sans-serif;
+                font-size: 22px;
+                line-height: 1.3;
+                color: #012322;
+                font-weight: 700;
+              "
+            >
+              You have updates in the Recidiviz Housing Tool!
+            </h1>
+            <p
+              style="
+                margin: 0 0 24px;
+                font-family:
+                  &quot;Public Sans&quot;,
+                  -apple-system,
+                  BlinkMacSystemFont,
+                  &quot;Segoe UI&quot;,
+                  Roboto,
+                  Helvetica,
+                  Arial,
+                  sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+                color: #3d3d3d;
+              "
+            >
+              There are one or more updates that require your attention. Log in
+              to the Housing Tool to review them.
+            </p>
+            <table
+              role="presentation"
+              border="0"
+              cellpadding="0"
+              cellspacing="0"
+              width="100%"
+              style="border-collapse: collapse; border: none; margin: 0"
+            >
+              <tr>
+                <td
+                  align="center"
+                  style="border: none; text-align: center; padding: 0"
+                >
+                  <table
+                    role="presentation"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    style="border-collapse: collapse; border: none; margin: 0"
+                  >
+                    <tr>
+                      <td
+                        align="center"
+                        bgcolor="#144D48"
+                        style="
+                          border: none;
+                          border-radius: 6px;
+                          background-color: #144d48;
+                          text-align: center;
+                          padding: 0;
+                          vertical-align: middle;
+                          font-family:
+                            &quot;Public Sans&quot;,
+                            -apple-system,
+                            BlinkMacSystemFont,
+                            &quot;Segoe UI&quot;,
+                            Roboto,
+                            Helvetica,
+                            Arial,
+                            sans-serif;
+                        "
+                      >
+                        <a
+                          href="{{DASHBOARD_URL}}"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style="
+                            display: inline-block;
+                            padding: 12px 24px;
+                            font-family:
+                              &quot;Public Sans&quot;,
+                              -apple-system,
+                              BlinkMacSystemFont,
+                              &quot;Segoe UI&quot;,
+                              Roboto,
+                              Helvetica,
+                              Arial,
+                              sans-serif;
+                            font-size: 15px;
+                            font-weight: 600;
+                            line-height: 18px;
+                            color: #ffffff;
+                            text-decoration: none;
+                            border-radius: 6px;
+                            border: none;
+                          "
+                          >Go to Dashboard</a
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td
+            style="
+              border: none;
+              border-top: 1px solid rgba(43, 84, 105, 0.1);
+              padding: 24px 40px 16px;
+              font-family:
+                &quot;Public Sans&quot;,
+                -apple-system,
+                BlinkMacSystemFont,
+                &quot;Segoe UI&quot;,
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+              font-size: 13px;
+              line-height: 1.6;
+              font-style: italic;
+              color: #6b6b6b;
+            "
+          >
+            Need help? Contact
+            <a
+              href="mailto:feedback@recidiviz.org"
+              style="color: #144d48; text-decoration: none; font-weight: 600"
+              >feedback@recidiviz.org</a
+            >.<br />
+            You're receiving this email because you have an account on the
+            Recidiviz Housing Tool.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

@@ -59,6 +59,22 @@ stores:
       locations:
         - us-central1
 
+  idaho-th-dev:
+    type: google-secret-manager
+    options:
+      project_id: rcdvz-transitional-housing-dev
+      prefix: atmos_
+      locations:
+        - us-central1
+
+  idaho-th-prod:
+    type: google-secret-manager
+    options:
+      project_id: recidiviz-transitional-housing
+      prefix: atmos_
+      locations:
+        - us-central1
+
   rnd-planner:
     type: google-secret-manager
     options:

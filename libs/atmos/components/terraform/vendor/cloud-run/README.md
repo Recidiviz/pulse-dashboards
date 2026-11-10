@@ -1,5 +1,14 @@
 # Cloud Run v2 Service
 
+> **Recidiviz fork.** This module is a copy of `modules/v2` from
+> [GoogleCloudPlatform/terraform-google-cloud-run](https://github.com/GoogleCloudPlatform/terraform-google-cloud-run)
+> at `v0.17.0`, with these local changes:
+>
+> - `containers[].env_vars` is a list of `{ name, value }` objects instead of a map.
+> - Startup and liveness probe `http_headers` loops use `coalesce(..., [])`, so a probe with no headers plans cleanly.
+>
+> Make changes here, not in a consumer's `vendor/` directory, which `atmos vendor pull` overwrites.
+
 ## Description
 
 ### tagline

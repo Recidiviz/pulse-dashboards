@@ -1,0 +1,62 @@
+{
+  "name": "@idaho-th/trpc",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@idaho-th/trpc/src",
+  "projectType": "library",
+  "tags": ["idaho-th", "scope:server"],
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@idaho-th/server"
+    }
+  },
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@idaho-th/shared"],
+          "target": "typecheck"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@idaho-th/prisma"],
+          "target": "prisma-deploy"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/libs/@idaho-th/trpc"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "ci": {},
+        "test": {}
+      }
+    }
+  }
+}
