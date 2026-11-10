@@ -18,6 +18,7 @@
 import { $, chalk } from "zx";
 
 import { dashboardProject } from "../config.mts";
+import { deleteOldGaeVersions } from "../gae-cleanup.mts";
 import type { ReleasePlan, ServiceDefinition } from "../types.mts";
 
 /** Build and deploy the staff App Engine backend (staff-server). */
@@ -35,16 +36,19 @@ export const staffBackend: ServiceDefinition = {
         await $`./tools/gcloud-sops-app-deploy.sh dist/apps/staff-server/gae-production.enc.yaml --quiet --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
           process.stdout,
         );
+        await deleteOldGaeVersions("recidiviz-dashboard-production", "default");
         break;
       case "demo":
         await $`./tools/gcloud-sops-app-deploy.sh dist/apps/staff-server/gae-staging-demo.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
           process.stdout,
         );
+        await deleteOldGaeVersions("recidiviz-dashboard-staging", "demo");
         break;
       default:
         await $`./tools/gcloud-sops-app-deploy.sh dist/apps/staff-server/gae-staging.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
           process.stdout,
         );
+        await deleteOldGaeVersions("recidiviz-dashboard-staging", "default");
         break;
     }
   },
@@ -96,6 +100,7 @@ export const staffFrontend: ServiceDefinition = {
         await $`firebase deploy --only hosting -P production -m "Version ${plan.nextVersion} - Commit hash ${plan.currentRevision}"`.pipe(
           process.stdout,
         );
+        await deleteOldGaeVersions("recidiviz-dashboard-staging", "demo");
         break;
       default:
         await $`firebase deploy --only hosting -P ${plan.env} -m "${plan.currentRevision}"`.pipe(
