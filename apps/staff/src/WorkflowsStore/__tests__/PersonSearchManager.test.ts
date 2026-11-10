@@ -302,7 +302,9 @@ describe("search", () => {
     manager.typesenseClient = {
       multiSearch: mockMultiSearch,
       reset: vi.fn(),
-      getScopedKeys: vi.fn(),
+      getScopedKeys: vi
+        .fn()
+        .mockResolvedValue({ clients: "ck", residents: "rk" }),
     } as any;
     errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
   });
@@ -346,6 +348,7 @@ describe("search", () => {
     const promise = manager.search("alice");
     expect(manager.searchPending).toBe(true);
 
+    await vi.waitFor(() => expect(mockMultiSearch).toHaveBeenCalled());
     resolveMultiSearch({ results: [] });
     await promise;
     expect(manager.searchPending).toBe(false);
@@ -382,6 +385,25 @@ describe("search", () => {
     ]);
   });
 
+  test("searches only the collections the mint endpoint returned keys for", async () => {
+    vi.mocked(manager.typesenseClient.getScopedKeys).mockResolvedValueOnce({
+      residents: "rk",
+    });
+    await manager.search("alice");
+    const searches = (mockMultiSearch.mock.calls[0][0] as any).searches;
+    expect(searches.map((s: any) => s.collection)).toEqual(["residents"]);
+  });
+
+  test("skips multiSearch when no person collection has a key", async () => {
+    vi.mocked(manager.typesenseClient.getScopedKeys).mockResolvedValueOnce({
+      opportunities: "ok",
+    });
+    await manager.search("alice");
+    expect(mockMultiSearch).not.toHaveBeenCalled();
+    expect(manager.results).toEqual([]);
+    expect(manager.searchPending).toBe(false);
+  });
+
   test("stale responses are dropped: only the latest search's results are committed", async () => {
     let resolveFirst!: (v: any) => void;
     mockMultiSearch.mockReturnValueOnce(
@@ -391,6 +413,7 @@ describe("search", () => {
     );
 
     const firstSearch = manager.search("alice");
+    await vi.waitFor(() => expect(mockMultiSearch).toHaveBeenCalled());
 
     mockMultiSearch.mockResolvedValueOnce({
       results: [
@@ -519,6 +542,19 @@ describe("search", () => {
 
     expect(manager.results[0]).not.toBe(firstResult);
     expect(manager.results[0]).toEqual(firstResult);
+  });
+});
+
+describe("searchSystem", () => {
+  test("is ALL when the user may see both systems, whatever the activeSystem", () => {
+    workflowsStore.workflowsSupportedSystems = ["SUPERVISION", "INCARCERATION"];
+    workflowsStore.activeSystem = "INCARCERATION";
+    expect(manager.searchSystem).toBe("ALL");
+  });
+
+  test("is the single system when the user may see only one", () => {
+    workflowsStore.workflowsSupportedSystems = ["INCARCERATION"];
+    expect(manager.searchSystem).toBe("INCARCERATION");
   });
 });
 

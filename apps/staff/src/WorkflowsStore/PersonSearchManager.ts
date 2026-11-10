@@ -23,6 +23,7 @@ import {
   createScopedTypesenseClient,
   type ScopedTypesenseClient,
 } from "~@typesense/client";
+import { SystemId } from "~datatypes";
 
 import { SearchStore } from "./SearchStore";
 import { PersonSearchResult, PlannedPersonSearch } from "./types";
@@ -62,7 +63,7 @@ export class PersonSearchManager {
       mintEndpoint: () =>
         `${import.meta.env.VITE_API_URL}/api/${this.workflowsStore.rootStore.currentTenantId}/workflows/person-scoped-key`,
       getMintRequestBody: () => ({
-        system: this.workflowsStore.activeSystem,
+        system: this.searchSystem,
       }),
       getAuthHeader: async () => {
         const getToken = this.workflowsStore.rootStore.userStore.getToken;
@@ -89,14 +90,8 @@ export class PersonSearchManager {
       { autoBind: true },
     );
 
-    // On every tenant/system change: invalidate the cached scoped Typesense
-    // key and the composed-results cache (keyed by pseudonymizedId, which is
-    // only unique within a tenant).
     reaction(
-      () => [
-        this.workflowsStore.activeSystem,
-        this.workflowsStore.rootStore.currentTenantId,
-      ],
+      () => this.workflowsStore.rootStore.currentTenantId,
       () => {
         this.typesenseClient.reset();
         this.resultsCache.clear();
@@ -106,6 +101,13 @@ export class PersonSearchManager {
 
   private get workflowsStore(): WorkflowsStore {
     return this.searchStore.workflowsStore;
+  }
+
+  // Person search spans every system the user may see, independent of the
+  // page's activeSystem.
+  get searchSystem(): SystemId {
+    const systems = this.workflowsStore.workflowsSupportedSystems ?? [];
+    return systems.length === 1 ? systems[0] : "ALL";
   }
 
   setSearchInput(value: string): void {
@@ -140,7 +142,16 @@ export class PersonSearchManager {
         return;
       }
 
-      const plan = buildPersonSearchPlan(q, stateCode);
+      const keys = await this.typesenseClient.getScopedKeys();
+      const plan = buildPersonSearchPlan(q, stateCode).filter(
+        (p) => p.collection in keys,
+      );
+
+      if (!isCurrent()) return;
+      if (plan.length === 0) {
+        runInAction(() => (this.results = []));
+        return;
+      }
 
       const response = await this.typesenseClient.multiSearch({
         searches: plan.map((p) => p.descriptor),
