@@ -17,14 +17,27 @@
 
 import type { StoryObj } from "@storybook/react";
 import { addDays, startOfDay } from "date-fns";
+import { rem } from "polished";
+import styled from "styled-components";
+
+import { spacing } from "~design-system";
 
 import {
   copyFixtureEnglishWithCustomHeading,
   copyFixtureEnglishWithoutDescriptions,
+  copyFixtureEnglishWithScheduledCourtDates,
   copyFixtureSpanishWithCustomHeading,
   copyFixtureSpanishWithoutDescriptions,
+  copyFixtureSpanishWithScheduledCourtDates,
 } from "../../../fixtures/copy";
+import { SentenceDates } from "../SentenceDates";
 import { baseMeta, SecondaryStoryPage, SentenceDatesMeta } from "./utils";
+
+const SectionStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.xl)};
+`;
 
 /**
  * The default feature set is configurable to a limited extent.
@@ -130,4 +143,41 @@ export const DateLabelsFromData: SentenceDateStory = {
       { id: "case-B5678", label: "Court date for case B5678" },
     ],
   },
+};
+
+/**
+ * SentenceDates reads its copy from the sentenceDates key by default. Pass
+ * copyKey to read the date labels, heading, hidden message, and toggle labels
+ * from a different key instead, which lets one page show more than one
+ * SentenceDates section, each with its own copy (scheduled court dates next to
+ * sentence dates, for example). The key must be one of the values of
+ * SentenceDatesCopyKey.
+ *
+ * Copy under the alternate key must have the same dates, general, and toggle
+ * shape as sentenceDates. Unlike sentenceDates, it does not fall back to the
+ * common translations, so your state's copy must supply the heading, hidden
+ * message, and toggle labels itself.
+ *
+ * Here the first section passes copyKey="scheduledCourtDates" and the second
+ * uses the default sentenceDates copy, so each shows its own heading and date
+ * labels for the same data.
+ */
+export const CopyKey: SentenceDateStory = {
+  args: {
+    copy: {
+      englishCopy: copyFixtureEnglishWithScheduledCourtDates,
+      spanishCopy: copyFixtureSpanishWithScheduledCourtDates,
+    },
+  },
+  render: ({ data, stateCode }) => (
+    <SectionStack>
+      <SentenceDates
+        data={data}
+        stateCode={stateCode}
+        copyKey="scheduledCourtDates"
+        showToggle
+      />
+      <SentenceDates data={data} stateCode={stateCode} />
+    </SectionStack>
+  ),
 };

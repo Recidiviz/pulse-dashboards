@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type { I18nResources } from "./@types/i18next";
+export type { I18nResources, SentenceDatesCopyKey } from "./@types/i18next";
 export * from "./constants";
 export * from "./createI18nInstance";
 export * from "./namespaces/common/useCommonTranslations";

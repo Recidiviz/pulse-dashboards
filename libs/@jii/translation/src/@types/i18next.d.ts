@@ -75,14 +75,30 @@ type WithCorrectedProgramCatalog<T> = T extends StateProgramCatalogResources
 type WithCorrectedOnboardingVideo<T> = Omit<T, "onboardingVideo"> &
   CombinedOnboardingVideoResources;
 
+/**
+ * The top-level translation key that a SentenceDates section reads its dates,
+ * heading, hidden message, and toggle labels from. Each key must hold the same
+ * dates, general, and toggle shape as sentenceDates.
+ */
+export type SentenceDatesCopyKey = "sentenceDates" | "scheduledCourtDates";
+
+type SentenceDatesSectionResources =
+  CombinedSentenceDatesResources["sentenceDates"];
+
 type WithCorrectedSentenceDates<T> = T extends StateSentenceDatesResources
-  ? // omitting and replacing this property with this predefined type ensures that we
+  ? // omitting and replacing these properties with this predefined type ensures that we
     // have a clean final object type; if we tried to merge the input with its augmentations
     // here we would wind up with a union of the incomplete and complete versions that
     // would cause spurious type failures when accessing translations. We are making an assertion
-    // here so please note that we are relying on unit tests in src/sentenceDates to back it up
-    Omit<T, "sentenceDates"> & {
-      sentenceDates: CombinedSentenceDatesResources["sentenceDates"];
+    // here so please note that we are relying on unit tests in src/sentenceDates to back it up.
+    // Every copy key is declared for every state with Sentence Dates so that SentenceDates
+    // can select any of them, but at runtime a key exists only if the state defines it.
+    // Any extra copy a state keeps under a key (beyond the shared section shape) is preserved.
+    Omit<T, SentenceDatesCopyKey> & {
+      [K in SentenceDatesCopyKey]: (K extends keyof T
+        ? Omit<T[K], keyof SentenceDatesSectionResources>
+        : unknown) &
+        SentenceDatesSectionResources;
     }
   : T;
 
@@ -116,7 +132,7 @@ export interface I18nResources {
   // this is a fake state that we only use for testing. Its resources have to be
   // explicitly injected such that it will not normally work at runtime, but we declare
   // the type here for convenience (otherwise various test cases will fail to typecheck)
-  US_OZ: CombinedSentenceDatesResources;
+  US_OZ: WithCorrectedSentenceDates<CombinedSentenceDatesResources>;
 }
 
 declare module "i18next" {

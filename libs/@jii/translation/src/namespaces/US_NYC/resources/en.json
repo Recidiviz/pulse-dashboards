@@ -1,5 +1,31 @@
 {
   "sentenceDates": {
+    "dates": {
+      "projectedDischargeDate": {
+        "label": "Projected Discharge Date",
+        "description": "The date you are expected to be released. This date counts the good time credit you have now, so it can move if your good time changes. If it doesn't match what your attorney or counselor told you, check with them."
+      },
+      "sentencedDate": {
+        "label": "Sentenced Date",
+        "description": "The date the judge sentenced you."
+      }
+    },
+    "general": {
+      "heading": "Sentenced information",
+      "hiddenMessage": "Your sentence dates are currently hidden"
+    },
+    "dateFormats": {
+      "missingDateMessage": "No date on file"
+    },
+    "toggle": {
+      "hideLabel": "Hide my sentence dates",
+      "showLabel": "Show my sentence dates"
+    }
+  },
+  "sentenceInfo": {
+    "hiddenSubHeading": "Your projected discharge date and sentenced date are hidden so they don't show on your screen until you choose to see them. Use the switch below to show them."
+  },
+  "scheduledCourtDates": {
     "dates": {},
     "general": {
       "heading": "Scheduled court dates",
@@ -11,9 +37,7 @@
     "toggle": {
       "hideLabel": "Hide my dockets",
       "showLabel": "Show my dockets"
-    }
-  },
-  "scheduledCourtDates": {
+    },
     "nextCourtDateLabel": "Scheduled court date for docket: {{docketNumber}}",
     "nextCourtDateDescription_noDate": "There is no court date on file for this docket. Ask your attorney or counselor if you think this is wrong.",
     "nextCourtDateDescription_locationAndBorough": "At {{location}}, in {{borough}}.",

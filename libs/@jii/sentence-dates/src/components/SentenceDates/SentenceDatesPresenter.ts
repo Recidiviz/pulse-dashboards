@@ -16,11 +16,13 @@
 // =============================================================================
 
 import type { ResidentsStore, SegmentClient } from "~@jii/data";
+import type { SentenceDatesCopyKey } from "~@jii/translation";
 
 import { DateLabels, SentenceDatesData } from "../../data/types";
 import { defaultComponents } from "../defaultComponents";
 import { DatePresenter } from "./DatePresenter";
 import { SentenceDatesComponents, TFn } from "./types";
+import { sectionCopy } from "./utils";
 
 /**
  * Show/hide state that lasts only as long as the page is mounted, used instead of
@@ -42,6 +44,7 @@ export class SentenceDatesPresenter {
     private segmentClient?: SegmentClient,
     private sessionHiddenState?: SessionHiddenState,
     private dateLabels?: DateLabels,
+    private copyKey: SentenceDatesCopyKey = "sentenceDates",
   ) {
     this.data = {
       ...inputData,
@@ -50,7 +53,7 @@ export class SentenceDatesPresenter {
   }
 
   private getValidatedDatesData() {
-    const { t, inputData, dateLabels } = this;
+    const { t, inputData, dateLabels, copyKey } = this;
 
     let datesInCopy: string[];
     if (dateLabels) {
@@ -59,7 +62,7 @@ export class SentenceDatesPresenter {
       datesInCopy = Object.keys(
         // we only care about the keys here, so it doesn't matter that the values
         // will be missing input data (e.g. the actual dates)
-        t(($) => $.sentenceDates.dates, { returnObjects: true }),
+        t(($) => sectionCopy($, copyKey).dates, { returnObjects: true }),
       );
     }
 
@@ -94,21 +97,22 @@ export class SentenceDatesPresenter {
           d,
           this.t,
           labels?.find((l) => l.id === d.id),
+          this.copyKey,
         ),
     );
   }
 
   get sectionHeadingText() {
-    return this.t(($) => $.sentenceDates.general.heading);
+    return this.t(($) => sectionCopy($, this.copyKey).general.heading);
   }
   get hideToggleText() {
-    return this.t(($) => $.sentenceDates.toggle.hideLabel);
+    return this.t(($) => sectionCopy($, this.copyKey).toggle.hideLabel);
   }
   get showToggleText() {
-    return this.t(($) => $.sentenceDates.toggle.showLabel);
+    return this.t(($) => sectionCopy($, this.copyKey).toggle.showLabel);
   }
   get hiddenMessageText() {
-    return this.t(($) => $.sentenceDates.general.hiddenMessage);
+    return this.t(($) => sectionCopy($, this.copyKey).general.hiddenMessage);
   }
   get hidden() {
     if (this.sessionHiddenState) return this.sessionHiddenState.hidden;

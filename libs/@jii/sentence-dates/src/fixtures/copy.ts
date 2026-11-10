@@ -107,6 +107,60 @@ export const copyFixtureSpanishWithCustomHeading: StateSentenceDatesResources =
     },
   };
 
+type SentenceDatesSectionCopy = StateSentenceDatesResources["sentenceDates"];
+
+/**
+ * Copy for a section that reads from the scheduledCourtDates key via copyKey.
+ * It keeps the default sentenceDates copy alongside so the namespace still
+ * matches StateSentenceDatesResources.
+ */
+export const copyFixtureEnglishWithScheduledCourtDates: StateSentenceDatesResources & {
+  scheduledCourtDates: SentenceDatesSectionCopy;
+} = {
+  ...copyFixtureEnglish,
+  scheduledCourtDates: {
+    dates: {
+      parole_eligibility_date: {
+        label: "Next Court Date",
+        description: "At the county courthouse, in Room 4B.",
+      },
+      max_discharge_date: { label: "Sentencing Hearing" },
+    },
+    general: {
+      heading: "Scheduled court dates",
+      hiddenMessage: "Your court dates are currently hidden",
+    },
+    toggle: {
+      hideLabel: "Hide my court dates",
+      showLabel: "Show my court dates",
+    },
+  },
+};
+
+// These are just machine translations for testing purposes, may contain inaccuracies
+export const copyFixtureSpanishWithScheduledCourtDates: StateSentenceDatesResources & {
+  scheduledCourtDates: SentenceDatesSectionCopy;
+} = {
+  ...copyFixtureSpanish,
+  scheduledCourtDates: {
+    dates: {
+      parole_eligibility_date: {
+        label: "Próxima Fecha de Corte",
+        description: "En el tribunal del condado, en la Sala 4B.",
+      },
+      max_discharge_date: { label: "Audiencia de Sentencia" },
+    },
+    general: {
+      heading: "Fechas de corte programadas",
+      hiddenMessage: "Sus fechas de corte están ocultas",
+    },
+    toggle: {
+      hideLabel: "Ocultar mis fechas de corte",
+      showLabel: "Mostrar mis fechas de corte",
+    },
+  },
+};
+
 export type TranslationsFixture = {
   englishCopy?: StateSentenceDatesResources;
   spanishCopy?: Partial<StateSentenceDatesResources>;

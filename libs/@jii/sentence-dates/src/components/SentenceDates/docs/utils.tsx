@@ -65,6 +65,7 @@ export const baseMeta: SentenceDatesMeta = {
     showToggle,
     alwaysStartHidden,
     dateLabels,
+    copyKey,
   }) => {
     return (
       <SentenceDates
@@ -74,6 +75,7 @@ export const baseMeta: SentenceDatesMeta = {
         showToggle={showToggle}
         alwaysStartHidden={alwaysStartHidden}
         dateLabels={dateLabels}
+        copyKey={copyKey}
       />
     );
   },

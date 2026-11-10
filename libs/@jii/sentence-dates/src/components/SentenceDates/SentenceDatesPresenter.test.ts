@@ -82,6 +82,38 @@ describe("SentenceDatesPresenter", () => {
           copyFixtureEnglishWithCustomHeading.sentenceDates.general?.heading,
         );
       });
+
+      it("reads dates, heading, and toggle copy from copyKey", () => {
+        i18n.addResourceBundle("en", "US_OZ", {
+          scheduledCourtDates: {
+            dates: { court_date: { label: "Court date" } },
+            general: {
+              heading: "Court dates",
+              hiddenMessage: "Court dates are hidden",
+            },
+            toggle: { hideLabel: "Hide court", showLabel: "Show court" },
+          },
+        });
+
+        const presenter = new SentenceDatesPresenter(
+          { dates: [{ id: "court_date", date: new Date(2026, 4, 1) }] },
+          t,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          "scheduledCourtDates",
+        );
+
+        expect(presenter.sectionHeadingText).toBe("Court dates");
+        expect(presenter.hiddenMessageText).toBe("Court dates are hidden");
+        expect(presenter.hideToggleText).toBe("Hide court");
+        expect(presenter.showToggleText).toBe("Show court");
+        expect(presenter.datePresenters.map((dp) => dp.cardLabelText)).toEqual([
+          "Court date",
+        ]);
+      });
     });
 
     describe("Spanish", () => {

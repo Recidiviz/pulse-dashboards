@@ -37,6 +37,30 @@ export const rawUsNycResidentCommon: RawResidentCommon[] = [
     personName: { givenNames: "Jordan", surname: "Chen" },
     facilityId: "NYC_DEMO_FACILITY",
   },
+  {
+    stateCode: "US_NYC",
+    personExternalId: "NYC_RES003",
+    pseudonymizedId: "anonres_nyc_003",
+    displayId: "RES003",
+    personName: { givenNames: "Drew", surname: "Lee" },
+    facilityId: "NYC_DEMO_FACILITY",
+  },
+  {
+    stateCode: "US_NYC",
+    personExternalId: "NYC_RES004",
+    pseudonymizedId: "anonres_nyc_004",
+    displayId: "RES004",
+    personName: { givenNames: "Jamie", surname: "Patel" },
+    facilityId: "NYC_DEMO_FACILITY",
+  },
+  {
+    stateCode: "US_NYC",
+    personExternalId: "NYC_RES005",
+    pseudonymizedId: "anonres_nyc_005",
+    displayId: "RES005",
+    personName: { givenNames: "Quinn", surname: "Nguyen" },
+    facilityId: "NYC_DEMO_FACILITY",
+  },
 ];
 
 export const usNycResidentCommon = rawUsNycResidentCommon.map((r) =>

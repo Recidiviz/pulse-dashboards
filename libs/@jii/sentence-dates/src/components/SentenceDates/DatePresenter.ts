@@ -18,7 +18,10 @@
 import { startOfDay } from "date-fns";
 import { z } from "zod";
 
-import { dateDistanceTranslation } from "~@jii/translation";
+import {
+  dateDistanceTranslation,
+  type SentenceDatesCopyKey,
+} from "~@jii/translation";
 
 import { SentenceDate, SentenceDateText } from "../../data/types";
 import { TFn } from "./types";
@@ -37,16 +40,17 @@ export class DatePresenter {
     public data: SentenceDate,
     public t: TFn,
     public dateLabel?: SentenceDateText,
+    public copyKey: SentenceDatesCopyKey = "sentenceDates",
   ) {
     this.translatedCopy = this.processTranslations();
   }
 
   private processTranslations() {
-    const { t, data, dateLabel } = this;
+    const { t, data, dateLabel, copyKey } = this;
 
     const { label, description } = dateLabel
       ? { label: dateLabel.label, description: dateLabel.description }
-      : getDateCopy(t, data.id);
+      : getDateCopy(t, data.id, copyKey);
 
     return {
       label,

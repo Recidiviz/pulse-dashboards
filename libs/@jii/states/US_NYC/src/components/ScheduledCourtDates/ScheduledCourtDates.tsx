@@ -34,6 +34,7 @@ const ManagedComponent: React.FC<{ presenter: ScheduledCourtDatesPresenter }> =
       <SentenceDates
         data={presenter.scheduledCourtDatesData}
         stateCode="US_NYC"
+        copyKey="scheduledCourtDates"
         componentOverrides={{
           CardsWrapper: CardsWrapperOverride,
           HiddenDatesCard: HiddenDatesCardOverride,

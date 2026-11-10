@@ -15,18 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { singleSentenceDateResourceSchema } from "~@jii/translation";
+import {
+  type CombinedSentenceDatesResources,
+  type SentenceDatesCopyKey,
+  singleSentenceDateResourceSchema,
+} from "~@jii/translation";
 
 import { TFn } from "./types";
+
+type SectionCopy = Pick<
+  CombinedSentenceDatesResources["sentenceDates"],
+  "dates" | "general" | "toggle"
+>;
+
+/**
+ * Returns the copy under copyKey, for use inside a t selector.
+ */
+export function sectionCopy(
+  $: Record<SentenceDatesCopyKey, SectionCopy>,
+  copyKey: SentenceDatesCopyKey,
+) {
+  return $[copyKey];
+}
 
 /**
  * i18next doesn't really support the concept of optional keys well,
  * but we rely on them for some display logic. This runs the translated object
  * through a Zod schema to produce a more useful output type.
  */
-export function getDateCopy(t: TFn, dateId: string) {
+export function getDateCopy(
+  t: TFn,
+  dateId: string,
+  copyKey: SentenceDatesCopyKey = "sentenceDates",
+) {
   // we don't expect this parse to fail since the resources should already be validated
   return singleSentenceDateResourceSchema.parse(
-    t(($) => $.sentenceDates.dates[dateId], { returnObjects: true }),
+    t(($) => sectionCopy($, copyKey).dates[dateId], { returnObjects: true }),
   );
 }

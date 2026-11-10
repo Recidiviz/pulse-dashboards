@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import { useRootStore } from "~@jii/data";
+import type { SentenceDatesCopyKey } from "~@jii/translation";
 import { spacing, Toggle } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -40,6 +41,7 @@ export type SentenceDatesProps = {
   showToggle?: boolean;
   alwaysStartHidden?: boolean;
   dateLabels?: DateLabels;
+  copyKey?: SentenceDatesCopyKey;
 };
 
 const ManagedComponent = observer(function ManagedComponent({
@@ -124,6 +126,7 @@ function usePresenter({
   componentOverrides,
   alwaysStartHidden,
   dateLabels,
+  copyKey,
 }: SentenceDatesProps) {
   const { t } = useTranslation([stateCode, "common"]);
   const [sessionHidden, setSessionHidden] = useState(true);
@@ -142,6 +145,7 @@ function usePresenter({
       ? { hidden: sessionHidden, setHidden: setSessionHidden }
       : undefined,
     dateLabels,
+    copyKey,
   );
 }
 
