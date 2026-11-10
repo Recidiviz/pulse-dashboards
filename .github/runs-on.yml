@@ -7,7 +7,7 @@ runners:
   arm64:
     image: ubuntu24-stepsecurity-arm64
     family: ["c9g", "m9g", "c8g", "m8g", "c7g", "m7g"]
-    extras: ["s3-cache"]
+    extras: ["s3-cache", "git-cache"]
     # Disable SSH access to the runner instances
     ssh: false
     # Balance spot price against interruption risk. capacity-optimized ignores price and
@@ -22,7 +22,7 @@ runners:
     # m8azn: ~11% faster single-thread than m8a, but ~1.8x the spot price.
     # m8i-flex.* adds spot capacity at the same 16 GiB per 4 vCPUs
     family: ["m8a.*", "m8i-flex.*"]
-    extras: ["s3-cache"]
+    extras: ["s3-cache", "git-cache"]
     # Disable SSH access to the runner instances
     ssh: false
     # Balance spot price against interruption risk. capacity-optimized ignores price and
