@@ -20,6 +20,8 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { CallToActionCard, Redirect } from "~@jii/common-ui";
 import { useSingleResidentContext } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
@@ -48,6 +50,7 @@ const COPY = {
 const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
   function PageUsNycHome({ presenter }) {
     const residentUrlParams = useTypedParams(State.Resident);
+    const stateSpecificData = useResidentMetadata("US_NYC");
 
     // Residents without usNycSentenceDatesV1 keep the redirect until a US_NYC
     // home page is designed.
@@ -60,31 +63,36 @@ const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
     }
 
     return (
-      <PageContainer>
-        <SpacedDiv>
-          <HomepageSectionHeading>{COPY.title}</HomepageSectionHeading>
-          <CaseInfo />
-        </SpacedDiv>
-        <ScheduledCourtDates />
-        <SentenceInfo />
-        <PersonalInfo />
-        <SpacedDiv $gap={24}>
-          <HomepageSectionHeading>
-            {COPY.communityResourceTitle}
-          </HomepageSectionHeading>
-          <CallToActionCard
-            //TODO(OBT-55734) Add Segment tracking
-            linkTo={State.Resident.ResourceExplorer.buildPath(
-              residentUrlParams,
-            )}
-            heading={COPY.reentryTitle}
-            description={COPY.reentryDescription}
-            linkText={COPY.reentryAction}
-            illustrationSrc={connectionsCoverSrc}
-            illustrationBackground={palette.white}
-          />
-        </SpacedDiv>
-      </PageContainer>
+      <>
+        <LastUpdatedBanner
+          lastUpdatedDate={stateSpecificData.lastUpdatedDate}
+        />
+        <PageContainer>
+          <SpacedDiv>
+            <HomepageSectionHeading>{COPY.title}</HomepageSectionHeading>
+            <CaseInfo />
+          </SpacedDiv>
+          <ScheduledCourtDates />
+          <SentenceInfo />
+          <PersonalInfo />
+          <SpacedDiv $gap={24}>
+            <HomepageSectionHeading>
+              {COPY.communityResourceTitle}
+            </HomepageSectionHeading>
+            <CallToActionCard
+              //TODO(OBT-55734) Add Segment tracking
+              linkTo={State.Resident.ResourceExplorer.buildPath(
+                residentUrlParams,
+              )}
+              heading={COPY.reentryTitle}
+              description={COPY.reentryDescription}
+              linkText={COPY.reentryAction}
+              illustrationSrc={connectionsCoverSrc}
+              illustrationBackground={palette.white}
+            />
+          </SpacedDiv>
+        </PageContainer>
+      </>
     );
   },
 );

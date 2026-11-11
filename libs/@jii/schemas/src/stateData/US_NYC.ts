@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, nullishAsUndefined } from "~datatypes";
 
 export const usNycBoroughCodeEnum = z.enum(["X", "I", "K", "Q", "R", "N"]);
 
@@ -47,7 +47,7 @@ export const usNycLegalStatusEnum = z.enum(["Pre-sentence", "Sentenced"]);
 
 export const usNycStateDataSchema = z.object({
   stateCode: z.literal("US_NYC"),
-  lastUpdatedDate: dateStringSchema.nullable(),
+  lastUpdatedDate: nullishAsUndefined(dateStringSchema),
   housingFacility: z.string().nullable(),
   // TODO(OBT-56128) Change commissaryBalance from numeric to float
   commissaryBalance: z.coerce.number().nullable(),

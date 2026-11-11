@@ -25,7 +25,7 @@ type Docket = UsNycResidentJiiData["preSentenceDockets"][number];
 function makeData(dockets: Array<Docket>): UsNycResidentJiiData {
   return {
     stateCode: "US_NYC",
-    lastUpdatedDate: null,
+    lastUpdatedDate: undefined,
     housingFacility: null,
     commissaryBalance: null,
     emergencyContactFullName: null,
