@@ -364,7 +364,7 @@ const MeetingMobile = ({
           )}
           {activeTab === Tab.ActionItems && (
             <ActionItemsTab
-              items={meetingDetails.meetingActionItems}
+              meetingDetails={meetingDetails}
               outputVote={
                 isMeetingCreator &&
                 meetingDetails.meetingActionItems.length > 0 && (

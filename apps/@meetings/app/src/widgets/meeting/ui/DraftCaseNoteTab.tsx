@@ -31,12 +31,15 @@ import { ReviewBeforeCopyModal } from "~@meetings/app/features/meeting-section-a
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { Button } from "~@meetings/app/shared/ui/Button";
+import { FadeContainer } from "~@meetings/app/shared/ui/FadeContainer";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { TextInput } from "~@meetings/app/shared/ui/TextInput";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { getFlaggedSections } from "../lib/getFlaggedSections";
 import { useCaseNoteTyping } from "../model/useCaseNoteTyping";
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
+import { FlaggedOutputBanner } from "./FlaggedOutputBanner";
 import { NotepadNotesSection } from "./NotepadNotesSection";
 
 type Props = {
@@ -89,6 +92,10 @@ const DraftCaseNoteTab = ({
   });
   const isNoteShown = !isPending && !isTyping;
   const isEditable = canEdit && isNoteShown && !isProcessing;
+  const isFlaggedBannerShown =
+    getFlaggedSections(meetingDetails.llmajGrades).caseNote &&
+    meetingDetails.caseNoteEditedAt === null &&
+    !isApproved;
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -164,6 +171,12 @@ const DraftCaseNoteTab = ({
           </Button>
         )}
       </View>
+      <FadeContainer isVisible={isFlaggedBannerShown && !isPending}>
+        <FlaggedOutputBanner
+          section="caseNote"
+          reviewerEmail={meetingDetails.staffEmail}
+        />
+      </FadeContainer>
       <View className="flex-1">
         {!isPending && (
           <TextInput

@@ -17,6 +17,8 @@
 
 import type { MeetingDetails } from "~@meetings/app/entities/meeting";
 
+import { getFlaggedSections } from "./getFlaggedSections";
+
 type Params = Pick<
   MeetingDetails,
   "llmajGrades" | "caseNoteEditedAt" | "actionItemsEditedAt"
@@ -34,18 +36,10 @@ export function getUneditedFlaggedSections({
   caseNoteEditedAt,
   actionItemsEditedAt,
 }: Params): FlaggedSections {
-  const isCaseNoteBad = llmajGrades?.caseNote === "BAD";
-  const isActionItemsBad = llmajGrades?.actionItems === "BAD";
-  const isOverallBad = llmajGrades?.overall === "BAD";
-
-  // A BAD overall grade doesn't say which section it's about, so it's put on
-  // the action items if they were graded BAD too, and on the case note otherwise
-  const isCaseNoteFlagged =
-    isCaseNoteBad || (isOverallBad && !isActionItemsBad);
-  const isActionItemsFlagged = isActionItemsBad;
+  const flagged = getFlaggedSections(llmajGrades);
 
   return {
-    caseNote: isCaseNoteFlagged && caseNoteEditedAt === null,
-    actionItems: isActionItemsFlagged && actionItemsEditedAt === null,
+    caseNote: flagged.caseNote && caseNoteEditedAt === null,
+    actionItems: flagged.actionItems && actionItemsEditedAt === null,
   };
 }

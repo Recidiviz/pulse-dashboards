@@ -335,7 +335,7 @@ const MeetingDesktop = ({
                 onVisible={handleSectionVisible}
               >
                 <ActionItemsTab
-                  items={meetingDetails.meetingActionItems}
+                  meetingDetails={meetingDetails}
                   outputVote={
                     isMeetingCreator &&
                     meetingDetails.meetingActionItems.length > 0 && (

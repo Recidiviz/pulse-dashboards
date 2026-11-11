@@ -43,13 +43,16 @@ import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Checkbox } from "~@meetings/app/shared/ui/Checkbox";
 import { EditableTypography } from "~@meetings/app/shared/ui/EditableTypography";
+import { FadeContainer } from "~@meetings/app/shared/ui/FadeContainer";
 import { HorizontalDivider } from "~@meetings/app/shared/ui/HorizontalDivider";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { getFlaggedSections } from "../lib/getFlaggedSections";
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
+import { FlaggedOutputBanner } from "./FlaggedOutputBanner";
 
 function actionItemErrorMessage(fallback: string, error: unknown): string {
   const message = extractError(error);
@@ -59,18 +62,23 @@ function actionItemErrorMessage(fallback: string, error: unknown): string {
 type ActionItems = MeetingDetails["meetingActionItems"];
 
 type ActionItemsTabProps = {
-  items?: ActionItems | null;
+  meetingDetails: MeetingDetails;
   outputVote?: ReactNode;
   meetingId: string;
   personType: PersonType;
 };
 
 export const ActionItemsTab = ({
-  items,
+  meetingDetails,
   outputVote,
   meetingId,
   personType,
 }: ActionItemsTabProps) => {
+  const items = meetingDetails.meetingActionItems;
+  const isFlaggedBannerShown =
+    getFlaggedSections(meetingDetails.llmajGrades).actionItems &&
+    meetingDetails.actionItemsEditedAt === null &&
+    !meetingDetails.approvals.actionItems.isApproved;
   const utils = trpc.useUtils();
   const { showSnackbar } = useSnackbar();
   const isMobile = useIsMobileWidth();
@@ -166,6 +174,14 @@ export const ActionItemsTab = ({
           </Button>
         )}
       </View>
+      <FadeContainer isVisible={isFlaggedBannerShown}>
+        <View className="mb-4">
+          <FlaggedOutputBanner
+            section="actionItems"
+            reviewerEmail={meetingDetails.staffEmail}
+          />
+        </View>
+      </FadeContainer>
       <View>
         {Object.values(itemsByOwner ?? {}).map((ownerItems, idx) => {
           const assignee = ownerItems[0].assignee;
