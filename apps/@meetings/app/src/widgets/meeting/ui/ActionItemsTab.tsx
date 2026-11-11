@@ -77,8 +77,8 @@ export const ActionItemsTab = ({
   const items = meetingDetails.meetingActionItems;
   const isFlaggedBannerShown =
     getFlaggedSections(meetingDetails.llmajGrades).actionItems &&
-    meetingDetails.actionItemsEditedAt === null &&
-    !meetingDetails.approvals.actionItems.isApproved;
+    (meetingDetails.actionItemsEditedAt !== null ||
+      !meetingDetails.approvals.actionItems.isApproved);
   const utils = trpc.useUtils();
   const { showSnackbar } = useSnackbar();
   const isMobile = useIsMobileWidth();
@@ -178,7 +178,8 @@ export const ActionItemsTab = ({
         <View className="mb-4">
           <FlaggedOutputBanner
             section="actionItems"
-            reviewerEmail={meetingDetails.staffEmail}
+            staffEmail={meetingDetails.staffEmail}
+            editedAt={meetingDetails.actionItemsEditedAt}
           />
         </View>
       </FadeContainer>
@@ -315,6 +316,7 @@ function ActionItemRow({
         old
           ? {
               ...old,
+              actionItemsEditedAt: new Date(),
               meetingActionItems: old.meetingActionItems.map((item) =>
                 item.id === actionItemId ? { ...item, editedTask: task } : item,
               ),

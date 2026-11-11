@@ -62,11 +62,9 @@ export function useApprovalFooter(
   // The reviewer must have actually changed something before they can mark
   // it reviewed — untouched LLM output can't be "confirmed accurate".
   const hasBeenEdited =
-    footerTab === Tab.DraftCaseNotes
-      ? meetingDetails.caseNoteEditedAt !== null
-      : meetingDetails.meetingActionItems.some(
-          (item) => item.editedTask !== null,
-        );
+    (footerTab === Tab.DraftCaseNotes
+      ? meetingDetails.caseNoteEditedAt
+      : meetingDetails.actionItemsEditedAt) !== null;
 
   const isFooterChecked = isApprovalChecked;
 

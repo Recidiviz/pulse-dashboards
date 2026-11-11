@@ -48,9 +48,9 @@ type Props = {
   outputVote?: ReactNode;
   canEdit?: boolean;
   onEdit?: () => void;
-  isProcessing?: boolean;
   // Holds the typing animation back
   isRevealBlocked?: boolean;
+  isProcessing?: boolean;
 };
 
 const DraftCaseNoteTab = ({
@@ -59,8 +59,8 @@ const DraftCaseNoteTab = ({
   outputVote,
   canEdit = false,
   onEdit,
-  isProcessing = false,
   isRevealBlocked = false,
+  isProcessing = false,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
@@ -92,10 +92,11 @@ const DraftCaseNoteTab = ({
   });
   const isNoteShown = !isPending && !isTyping;
   const isEditable = canEdit && isNoteShown && !isProcessing;
+  // The alert stays until the note is edited or approved. After an edit it
+  // becomes a confirmation, which stays even after approval
   const isFlaggedBannerShown =
     getFlaggedSections(meetingDetails.llmajGrades).caseNote &&
-    meetingDetails.caseNoteEditedAt === null &&
-    !isApproved;
+    (meetingDetails.caseNoteEditedAt !== null || !isApproved);
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -174,7 +175,8 @@ const DraftCaseNoteTab = ({
       <FadeContainer isVisible={isFlaggedBannerShown && !isPending}>
         <FlaggedOutputBanner
           section="caseNote"
-          reviewerEmail={meetingDetails.staffEmail}
+          staffEmail={meetingDetails.staffEmail}
+          editedAt={meetingDetails.caseNoteEditedAt}
         />
       </FadeContainer>
       <View className="flex-1">

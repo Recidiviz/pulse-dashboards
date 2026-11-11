@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { format } from "date-fns";
 import { View } from "react-native";
+import CheckIcon from "react-native-heroicons/outline/CheckIcon";
 import ExclamationIcon from "react-native-heroicons/solid/ExclamationIcon";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -24,25 +26,40 @@ import type { FlaggedSections } from "../lib/getUneditedFlaggedSections";
 
 const COPY: Record<
   keyof FlaggedSections,
-  { title: string; reviewSubject: string }
+  { title: string; reviewSubject: string; editedSubject: string }
 > = {
   caseNote: {
     title: "Our system found inaccuracies in this case note",
     reviewSubject: "this note",
+    editedSubject: "draft case note",
   },
   actionItems: {
     title: "Our system found inaccuracies in these action items",
     reviewSubject: "these action items",
+    editedSubject: "action items",
   },
 };
 
 type Props = {
   section: keyof FlaggedSections;
-  reviewerEmail: string;
+  staffEmail: string;
+  editedAt: Date | null;
 };
 
-export function FlaggedOutputBanner({ section, reviewerEmail }: Props) {
-  const { title, reviewSubject } = COPY[section];
+export function FlaggedOutputBanner({ section, staffEmail, editedAt }: Props) {
+  const { title, reviewSubject, editedSubject } = COPY[section];
+
+  if (editedAt) {
+    return (
+      <View className="flex-row items-start gap-3 rounded-xl border border-subtle bg-secondary px-4 py-3.5">
+        <CheckIcon className="mt-0.5 size-5 stroke-[2px] text-success" />
+        <Typography variant="body-s-medium" className="flex-1 !text-secondary">
+          Last edits on {format(editedAt, "MMMM d, yyyy")} made by {staffEmail}{" "}
+          on flagged {editedSubject}
+        </Typography>
+      </View>
+    );
+  }
 
   return (
     <View
@@ -55,7 +72,7 @@ export function FlaggedOutputBanner({ section, reviewerEmail }: Props) {
           {title}
         </Typography>
         <Typography variant="body-s-regular" className="mt-0.5 !text-warning">
-          {reviewerEmail} has not yet reviewed and approved {reviewSubject}.
+          {staffEmail} has not yet reviewed and approved {reviewSubject}.
         </Typography>
       </View>
     </View>

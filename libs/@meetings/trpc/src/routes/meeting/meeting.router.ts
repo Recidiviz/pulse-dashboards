@@ -749,27 +749,37 @@ export const meetingRouter = router({
           });
         }
 
-        return prisma.meetingActionItem.create({
-          data: {
-            meetingId,
-            assignee,
-            generatedTask: task,
-            editedTask: null,
-            completed: false,
-            deleted: false,
-            pipelineRunId: null,
-          },
-          select: {
-            id: true,
-            assignee: true,
-            completed: true,
-            editedTask: true,
-            generatedTask: true,
-            context: true,
-            evidenceQuotes: true,
-            deleted: true,
-          },
-        });
+        // Creating, editing or deleting an action item counts as an edit of
+        // that section. Completing one doesn't
+        const [item] = await prisma.$transaction([
+          prisma.meetingActionItem.create({
+            data: {
+              meetingId,
+              assignee,
+              generatedTask: task,
+              editedTask: null,
+              completed: false,
+              deleted: false,
+              pipelineRunId: null,
+            },
+            select: {
+              id: true,
+              assignee: true,
+              completed: true,
+              editedTask: true,
+              generatedTask: true,
+              context: true,
+              evidenceQuotes: true,
+              deleted: true,
+            },
+          }),
+          prisma.meeting.update({
+            where: { id: meetingId },
+            data: { actionItemsEditedAt: new Date() },
+            select: { id: true },
+          }),
+        ]);
+        return item;
       },
     ),
   updateActionItem: auth0Procedure
@@ -800,7 +810,10 @@ export const meetingRouter = router({
 
         return prisma.meetingActionItem.update({
           where: { id: actionItemId },
-          data: { editedTask: task },
+          data: {
+            editedTask: task,
+            meeting: { update: { actionItemsEditedAt: new Date() } },
+          },
           select: {
             id: true,
             assignee: true,
@@ -887,7 +900,11 @@ export const meetingRouter = router({
 
         await prisma.meetingActionItem.update({
           where: { id: actionItemId },
-          data: { deleted: true, deletedAt: new Date() },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+            meeting: { update: { actionItemsEditedAt: new Date() } },
+          },
         });
       },
     ),

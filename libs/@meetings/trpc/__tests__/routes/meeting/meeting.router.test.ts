@@ -107,6 +107,14 @@ async function setUSNEAudioPlayback(enabled: boolean) {
   });
 }
 
+async function getActionItemsEditedAt(meetingId: string) {
+  const meeting = await testPrismaClient.meeting.findUnique({
+    where: { id: meetingId },
+    select: { actionItemsEditedAt: true },
+  });
+  return meeting?.actionItemsEditedAt;
+}
+
 // Seeds only a "base" row — no us_ne row by default, so tests opt in via
 // the helpers above.
 beforeEach(async () => {
@@ -1544,6 +1552,9 @@ describe("meeting router", () => {
         evidenceQuotes: [],
       });
       expect(result.id).toBeDefined();
+      expect(await getActionItemsEditedAt(fakeActiveMeeting.id)).toBeInstanceOf(
+        Date,
+      );
     });
 
     test("User-created items appear in getDetails even when a notetakingPipelineRunId is set", async () => {
@@ -1634,6 +1645,9 @@ describe("meeting router", () => {
         editedTask: "Edited task text",
         generatedTask: "Original task",
       });
+      expect(await getActionItemsEditedAt(fakeActiveMeeting.id)).toBeInstanceOf(
+        Date,
+      );
     });
   });
 
@@ -1692,6 +1706,7 @@ describe("meeting router", () => {
       });
 
       expect(result.completed).toBe(true);
+      expect(await getActionItemsEditedAt(fakeActiveMeeting.id)).toBeNull();
     });
 
     test("Should toggle completed from true back to false", async () => {
@@ -1773,6 +1788,9 @@ describe("meeting router", () => {
       });
       expect(deleted?.deleted).toBe(true);
       expect(deleted?.deletedAt).toBeInstanceOf(Date);
+      expect(await getActionItemsEditedAt(fakeActiveMeeting.id)).toBeInstanceOf(
+        Date,
+      );
     });
 
     test("Deleted items are excluded from getDetails", async () => {
