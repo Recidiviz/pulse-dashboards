@@ -174,14 +174,19 @@ function useReactiveInput<
 
   useEffect(() => {
     return autorun(() => {
-      if (form.formIsDownloading) {
-        updateFirestoreRef.current?.flush();
-      }
       if (form.formIsReverting) {
         updateFirestoreRef.current?.cancel();
         setValue(fetchFromStore());
       }
     });
+  });
+
+  useEffect(() => {
+    return reaction(
+      () => form.inputFlushRequests,
+      () => updateFirestoreRef.current?.flush(),
+      { name: `useReactiveInput(${name}).flush` },
+    );
   });
 
   useEffect(() => {

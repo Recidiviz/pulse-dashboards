@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { configure } from "mobx";
+import { observer } from "mobx-react-lite";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
@@ -32,11 +33,26 @@ import { Client } from "../../../WorkflowsStore/Client";
 import { FormBase } from "../../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityBase } from "../../../WorkflowsStore/Opportunity/OpportunityBase";
 import { FormContainer, FormHeaderProps } from "../FormContainer";
+import { useReactiveInput } from "../utils";
 
 vi.mock("../../../components/StoreProvider/StoreProvider", () => ({
   useFeatureVariants: vi.fn(),
   useRootStore: vi.fn(),
 }));
+
+const NotesField = observer(function NotesField() {
+  const [value, onChange] = useReactiveInput<HTMLTextAreaElement>(
+    "notes",
+    form,
+  );
+  return (
+    <textarea
+      aria-label="Notes"
+      value={String(value ?? "")}
+      onChange={onChange}
+    />
+  );
+});
 
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
 let rootStore: RootStore;
@@ -232,6 +248,31 @@ describe("FormContainer DownloadButton", () => {
       "Download Unavailable",
     );
     expect(QueriedDownloadButton).toBeDefined();
+  });
+
+  it("saves what was just typed before the download runs", async () => {
+    const onClickDownload = vi.fn().mockResolvedValue(undefined);
+    setup({ onClickDownload, children: <NotesField /> });
+    const save = vi.spyOn(form, "updateDraftData").mockResolvedValue();
+    vi.spyOn(form, "recordSuccessfulDownload").mockResolvedValue(undefined);
+    vi.spyOn(
+      rootStore.firestoreStore,
+      "waitForPendingUpdates",
+    ).mockResolvedValue();
+
+    fireEvent.change(screen.getByLabelText("Notes"), {
+      target: { value: "Typed just now" },
+    });
+    expect(save).not.toHaveBeenCalled();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText("Download Form"));
+    });
+
+    expect(save).toHaveBeenCalledWith("notes", "Typed just now");
+    expect(save.mock.invocationCallOrder[0]).toBeLessThan(
+      onClickDownload.mock.invocationCallOrder[0],
+    );
   });
 
   it("hides the download button when hideDownloadButton is true", () => {

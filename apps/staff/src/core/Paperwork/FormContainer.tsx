@@ -407,7 +407,7 @@ export const FormContainer = observer(function FormContainer({
   const handleDownloadClick = async () => {
     form.markDownloading();
 
-    await form.waitForPendingUpdates();
+    await form.flushPendingInputs();
 
     try {
       if (!isMissingContent) {

@@ -60,6 +60,9 @@ export class FormBase<
 
   formIsReverting = false; // Reactive inputs will observe this and cancel their updates
 
+  /** Reactive inputs save any debounced value whenever this changes. */
+  inputFlushRequests = 0;
+
   constructor(opportunity: OpportunityModel, rootStore: RootStore) {
     this.opportunity = opportunity;
     this.person = opportunity.person;
@@ -74,6 +77,7 @@ export class FormBase<
       currentUserEmail: computed,
       formIsDownloading: computed,
       formIsReverting: true,
+      inputFlushRequests: true,
       revert: action,
       markDownloading: action,
       hydrate: action,
@@ -298,6 +302,17 @@ export class FormBase<
     }
   }
 
+  /**
+   * Saves what the user has typed but reactive inputs haven't sent yet, and
+   * waits for every pending Firestore write.
+   */
+  async flushPendingInputs(): Promise<void> {
+    runInAction(() => {
+      this.inputFlushRequests += 1;
+    });
+    await this.waitForPendingUpdates();
+  }
+
   waitForPendingUpdates(): Promise<void> {
     // This waits for all firestore updates (not just ours) but doing it this way
     // avoids fussy bookkeeping and shouldn't differ in practice.
@@ -345,7 +360,7 @@ export class FormBase<
   async download(domElement?: HTMLElement | null): Promise<string | undefined> {
     this.markDownloading();
 
-    await this.waitForPendingUpdates();
+    await this.flushPendingInputs();
 
     try {
       await this.fillAndSaveFile(domElement);

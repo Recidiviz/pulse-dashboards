@@ -103,6 +103,37 @@ describe("form downloading", () => {
   });
 });
 
+describe("download", () => {
+  test("saves typed input before it fills the file", async () => {
+    const flush = vi.spyOn(form, "flushPendingInputs").mockResolvedValue();
+    const fill = vi.spyOn(form, "fillAndSaveFile").mockResolvedValue();
+
+    await form.download();
+
+    expect(flush).toHaveBeenCalled();
+    expect(flush.mock.invocationCallOrder[0]).toBeLessThan(
+      fill.mock.invocationCallOrder[0],
+    );
+  });
+});
+
+describe("flushPendingInputs", () => {
+  test("asks reactive inputs to save now, then waits for the writes", async () => {
+    const requestsBefore = form.inputFlushRequests;
+    let requestsWhenWaiting: number | undefined;
+    vi.spyOn(
+      rootStore.firestoreStore,
+      "waitForPendingUpdates",
+    ).mockImplementation(async () => {
+      requestsWhenWaiting = form.inputFlushRequests;
+    });
+
+    await form.flushPendingInputs();
+
+    expect(requestsWhenWaiting).toBe(requestsBefore + 1);
+  });
+});
+
 describe("record form download", () => {
   test("updates opportunity status", () => {
     vi.spyOn(opp, "setCompletedIfEligible");
