@@ -40,6 +40,7 @@ import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import {
   createGetSectionApproval,
   deriveValidationErrorType,
+  getLlmajGrades,
 } from "~@meetings/trpc/routes/meeting.helpers";
 import {
   approveSectionInputSchema,
@@ -287,6 +288,11 @@ export const meetingRouter = router({
             : [];
           const getSectionApproval = createGetSectionApproval(approvalRows);
 
+          const llmajGrades = await getLlmajGrades(
+            prisma,
+            meeting.notetakingPipelineRunId,
+          );
+
           const currentActionItems = meeting.meetingActionItems.filter(
             (item) =>
               meeting.notetakingPipelineRunId === null ||
@@ -324,6 +330,7 @@ export const meetingRouter = router({
               caseNote: getSectionApproval(NoteSection.CASE_NOTE),
               actionItems: getSectionApproval(NoteSection.ACTION_ITEMS),
             },
+            llmajGrades,
             transcription: includeTranscription
               ? clientTranscription(meeting)
               : undefined,

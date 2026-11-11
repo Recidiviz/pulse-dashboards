@@ -56,6 +56,16 @@ const sectionApprovalSchema = z.object({
   approvedAt: z.date().nullable(),
 });
 
+const llmajGradeSchema = z.enum(["GOOD", "PARTIAL", "BAD"]);
+
+const llmajGradesSchema = z.object({
+  caseNote: llmajGradeSchema.nullable(),
+  actionItems: llmajGradeSchema.nullable(),
+  overall: llmajGradeSchema.nullable(),
+});
+
+export type LlmajGrades = z.infer<typeof llmajGradesSchema>;
+
 // Output schema for parsed meeting details
 export const getDetailsOutputSchema = z.object({
   id: z.string(),
@@ -106,6 +116,7 @@ export const getDetailsOutputSchema = z.object({
     caseNote: sectionApprovalSchema,
     actionItems: sectionApprovalSchema,
   }),
+  llmajGrades: llmajGradesSchema.nullable(),
   durationMs: z.number().nullable(),
   postMeetingProcessingStatus: z.nativeEnum(PostMeetingProcessingStatus),
   transcriptDeletedAt: z.date().nullable(),

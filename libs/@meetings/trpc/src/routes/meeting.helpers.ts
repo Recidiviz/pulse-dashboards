@@ -35,6 +35,7 @@ import {
 import { ValidationError } from "~@meetings/tasks";
 import env from "~@meetings/trpc/env";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
+import type { LlmajGrades } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import { AuthUser } from "~@meetings/trpc/types";
 
 // Pipeline runs from before PR #12855 don't have validationErrorType in
@@ -159,6 +160,27 @@ export function createGetSectionApproval(approvalRows: ApprovalRow[]) {
       approverEmail: latest?.approverEmail ?? null,
       approvedAt: latest?.createdAt ?? null,
     };
+  };
+}
+
+/** The judge's grades for a notetaking run, or null if it hasn't been evaluated yet. */
+export async function getLlmajGrades(
+  prisma: PrismaClient,
+  pipelineRunId: string | null,
+): Promise<LlmajGrades | null> {
+  if (!pipelineRunId) return null;
+
+  const evaluation = await prisma.notetakingEvaluationRun.findFirst({
+    where: { pipelineRunId },
+    orderBy: { createdAt: "desc" },
+    select: { scores: true },
+  });
+  if (!evaluation) return null;
+
+  return {
+    caseNote: evaluation.scores.caseNote?.grade ?? null,
+    actionItems: evaluation.scores.actionItems?.grade ?? null,
+    overall: evaluation.scores.overall?.grade ?? null,
   };
 }
 

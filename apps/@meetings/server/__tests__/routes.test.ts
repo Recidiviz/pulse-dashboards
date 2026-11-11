@@ -1946,99 +1946,8 @@ describe("tasks", () => {
       });
 
       expect(updatedMeeting.postMeetingProcessingStatus).toBe(
-        PostMeetingProcessingStatus.COMPLETED,
+        PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
       );
-    });
-
-    describe("completed Slack notification", () => {
-      let slackSpy: MockInstance;
-
-      beforeEach(() => {
-        slackSpy = vi
-          .spyOn(slackService, "postMeetingCompletedNotification")
-          .mockResolvedValue(undefined);
-      });
-
-      afterEach(() => {
-        slackSpy.mockRestore();
-      });
-
-      test("Should pass person link info for a client meeting", async () => {
-        const meeting = await testPrismaClient.meeting.create({
-          data: { ...fakeMeeting, id: "slack-client-meeting" },
-        });
-
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/process-notetaking",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_NE", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(slackSpy).toHaveBeenCalledWith({
-          staffEmail: fakeMeeting.staffEmail,
-          stateCode: "US_NE",
-          personPseudoId: fakeClient.pseudonymizedId,
-          meetingId: meeting.id,
-          personType: "client",
-          personId: fakeClient.personId.toString(),
-          recordingSource: null,
-          isReprocess: false,
-        });
-      });
-
-      test("Should flag a reprocess when notetaking already ran", async () => {
-        const meeting = await testPrismaClient.meeting.create({
-          data: {
-            ...fakeMeeting,
-            id: "slack-reprocess-meeting",
-            notetakingPipelineRunId: "prior-run",
-          },
-        });
-
-        await testServer.inject({
-          method: "POST",
-          url: "/process-notetaking",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_NE", meetingId: meeting.id },
-        });
-
-        expect(slackSpy).toHaveBeenCalledWith(
-          expect.objectContaining({ isReprocess: true }),
-        );
-      });
-
-      test("Should omit person link info when meeting has no client or resident", async () => {
-        const meeting = await testPrismaClient.meeting.create({
-          data: {
-            id: "slack-no-person-meeting",
-            staffEmail: fakeMeeting.staffEmail,
-            startTime: new Date(),
-            recordingsGCSBucket: "test-bucket",
-            recordingsFolderPath: "slack-no-person-meeting",
-          },
-        });
-
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/process-notetaking",
-          headers: { authorization: `Bearer token` },
-          body: { stateCode: "US_NE", meetingId: meeting.id },
-        });
-
-        expect(response.statusCode).toBe(200);
-        expect(slackSpy).toHaveBeenCalledWith({
-          staffEmail: fakeMeeting.staffEmail,
-          stateCode: "US_NE",
-          personPseudoId: meeting.id,
-          meetingId: meeting.id,
-          personType: undefined,
-          personId: undefined,
-          recordingSource: null,
-          isReprocess: false,
-        });
-      });
     });
 
     test("Should set error status if LLM processing fails", async () => {
@@ -2146,7 +2055,7 @@ describe("tasks", () => {
       );
     });
 
-    test("Should remain COMPLETED if LLMAJ task queueing fails", async () => {
+    test("Should mark the meeting COMPLETED if LLMAJ task queueing fails", async () => {
       const meeting = await createMeetingForNotetaking("llmaj-queue-fail");
       mockCloudTasksClient.createTask.mockRejectedValueOnce(
         new Error("Queue error"),
@@ -2167,6 +2076,74 @@ describe("tasks", () => {
       expect(updatedMeeting.postMeetingProcessingStatus).toBe(
         PostMeetingProcessingStatus.COMPLETED,
       );
+    });
+
+    test("Should still return 200 if releasing the meeting fails after LLMAJ task queueing fails", async () => {
+      const meeting = await createMeetingForNotetaking("llmaj-release-fail");
+      mockCloudTasksClient.createTask.mockRejectedValueOnce(
+        new Error("Queue error"),
+      );
+      const completeSpy = vi
+        .spyOn(
+          await import("~@meetings/server/server/utils"),
+          "completeMeetingEvaluation",
+        )
+        .mockRejectedValueOnce(new Error("DB error"));
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/process-notetaking",
+        headers: { authorization: `Bearer token` },
+        body: { stateCode: "US_NE", meetingId: meeting.id },
+      });
+
+      expect(response.statusCode).toBe(200);
+      completeSpy.mockRestore();
+    });
+
+    describe("completed Slack notification", () => {
+      let slackSpy: MockInstance;
+
+      beforeEach(() => {
+        slackSpy = vi
+          .spyOn(slackService, "postMeetingCompletedNotification")
+          .mockResolvedValue(undefined);
+      });
+
+      afterEach(() => {
+        slackSpy.mockRestore();
+      });
+
+      test("Should not post until the LLMAJ evaluation finishes", async () => {
+        const meeting = await createMeetingForNotetaking("slack-awaits-llmaj");
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(slackSpy).not.toHaveBeenCalled();
+      });
+
+      test("Should post right away if LLMAJ task queueing fails", async () => {
+        const meeting = await createMeetingForNotetaking("slack-queue-fail");
+        mockCloudTasksClient.createTask.mockRejectedValueOnce(
+          new Error("Queue error"),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(slackSpy).toHaveBeenCalledOnce();
+      });
     });
 
     test("Should create MeetingActionItem rows from pipeline output", async () => {
@@ -2524,6 +2501,212 @@ describe("tasks", () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toContain("Missing audio or transcripts");
       expect(mockRunAllEvaluators).not.toHaveBeenCalled();
+    });
+
+    describe("meeting status", () => {
+      let slackSpy: MockInstance;
+
+      beforeEach(() => {
+        slackSpy = vi
+          .spyOn(slackService, "postMeetingCompletedNotification")
+          .mockResolvedValue(undefined);
+      });
+
+      afterEach(() => {
+        slackSpy.mockRestore();
+      });
+
+      async function createEvaluatingMeeting(
+        meetingId: string,
+        status: PostMeetingProcessingStatus = PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
+      ) {
+        const meeting = await createMeetingWithSuccessfulPipelineRun(meetingId);
+        await testPrismaClient.meeting.update({
+          where: { id: meeting.id },
+          data: { postMeetingProcessingStatus: status },
+        });
+        return meeting;
+      }
+
+      async function evaluate(meetingId: string) {
+        return testServer.inject({
+          method: "POST",
+          url: "/run-llmaj-evaluation",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId },
+        });
+      }
+
+      async function getStatus(meetingId: string) {
+        const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+          where: { id: meetingId },
+        });
+        return meeting.postMeetingProcessingStatus;
+      }
+
+      test("Should mark the meeting COMPLETED after evaluating it", async () => {
+        const meeting = await createEvaluatingMeeting("llmaj-status-success");
+
+        const response = await evaluate(meeting.id);
+
+        expect(response.statusCode).toBe(200);
+        expect(await getStatus(meeting.id)).toBe(
+          PostMeetingProcessingStatus.COMPLETED,
+        );
+      });
+
+      test("Should mark the meeting COMPLETED when it skips the evaluation", async () => {
+        const meeting = await testPrismaClient.meeting.create({
+          data: {
+            ...fakeMeeting,
+            id: "llmaj-status-skip",
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
+          },
+        });
+
+        const response = await evaluate(meeting.id);
+
+        expect(response.body).toContain("No successful pipeline run found");
+        expect(await getStatus(meeting.id)).toBe(
+          PostMeetingProcessingStatus.COMPLETED,
+        );
+      });
+
+      test("Should mark the meeting COMPLETED when the evaluators throw", async () => {
+        const meeting = await createEvaluatingMeeting("llmaj-status-error");
+        mockRunAllEvaluators.mockRejectedValueOnce(new Error("Gemini error"));
+
+        const response = await evaluate(meeting.id);
+
+        expect(response.statusCode).toBe(500);
+        expect(await getStatus(meeting.id)).toBe(
+          PostMeetingProcessingStatus.COMPLETED,
+        );
+      });
+
+      test("Should keep the evaluator error if releasing the meeting also fails", async () => {
+        const meeting = await createEvaluatingMeeting(
+          "llmaj-status-double-error",
+        );
+        mockRunAllEvaluators.mockRejectedValueOnce(new Error("Gemini error"));
+        const completeSpy = vi
+          .spyOn(
+            await import("~@meetings/server/server/utils"),
+            "completeMeetingEvaluation",
+          )
+          .mockRejectedValueOnce(new Error("DB error"));
+
+        const response = await evaluate(meeting.id);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toContain("Gemini error");
+        completeSpy.mockRestore();
+      });
+
+      test("Should mark the meeting COMPLETED even if the Slack notification can't be built", async () => {
+        const meeting = await createEvaluatingMeeting(
+          "llmaj-status-slack-fail",
+        );
+        const buildSpy = vi
+          .spyOn(slackService, "buildMeetingNotificationParams")
+          .mockImplementationOnce(() => {
+            throw new Error("Slack params error");
+          });
+
+        const response = await evaluate(meeting.id);
+
+        expect(response.statusCode).toBe(200);
+        expect(await getStatus(meeting.id)).toBe(
+          PostMeetingProcessingStatus.COMPLETED,
+        );
+        buildSpy.mockRestore();
+      });
+
+      test("Should not change the status of a meeting that is no longer awaiting evaluation", async () => {
+        const meeting = await createEvaluatingMeeting(
+          "llmaj-status-reprocessed",
+          PostMeetingProcessingStatus.NOTETAKING_QUEUED,
+        );
+
+        await evaluate(meeting.id);
+
+        expect(await getStatus(meeting.id)).toBe(
+          PostMeetingProcessingStatus.NOTETAKING_QUEUED,
+        );
+        expect(slackSpy).not.toHaveBeenCalled();
+      });
+
+      test("Should post the completed Slack notification with person link info for a client meeting", async () => {
+        const meeting = await testPrismaClient.meeting.create({
+          data: {
+            ...fakeMeeting,
+            id: "slack-client-meeting",
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
+          },
+        });
+
+        await evaluate(meeting.id);
+
+        expect(slackSpy).toHaveBeenCalledWith({
+          staffEmail: fakeMeeting.staffEmail,
+          stateCode: "US_NE",
+          personPseudoId: fakeClient.pseudonymizedId,
+          meetingId: meeting.id,
+          personType: "client",
+          personId: fakeClient.personId.toString(),
+          recordingSource: null,
+          isReprocess: false,
+        });
+      });
+
+      test("Should flag a reprocess in the Slack notification when notetaking succeeded before", async () => {
+        const meeting = await createEvaluatingMeeting(
+          "slack-reprocess-meeting",
+        );
+        await testPrismaClient.notetakingPipelineRun.create({
+          data: {
+            id: "slack-reprocess-meeting-prior-run",
+            meetingId: meeting.id,
+            status: "SUCCESS",
+            personPseudonymizedId: "pseudo-1",
+          },
+        });
+
+        await evaluate(meeting.id);
+
+        expect(slackSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ isReprocess: true }),
+        );
+      });
+
+      test("Should omit person link info from the Slack notification when meeting has no client or resident", async () => {
+        const meeting = await testPrismaClient.meeting.create({
+          data: {
+            id: "slack-no-person-meeting",
+            staffEmail: fakeMeeting.staffEmail,
+            startTime: new Date(),
+            recordingsGCSBucket: "test-bucket",
+            recordingsFolderPath: "slack-no-person-meeting",
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
+          },
+        });
+
+        await evaluate(meeting.id);
+
+        expect(slackSpy).toHaveBeenCalledWith({
+          staffEmail: fakeMeeting.staffEmail,
+          stateCode: "US_NE",
+          personPseudoId: meeting.id,
+          meetingId: meeting.id,
+          personType: undefined,
+          personId: undefined,
+          recordingSource: null,
+          isReprocess: false,
+        });
+      });
     });
 
     describe("full review random sampling", () => {

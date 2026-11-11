@@ -38,6 +38,11 @@ import {
 } from "~@meetings/tasks/llm";
 import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
+import {
+  buildMeetingNotificationParams,
+  MEETING_NOTIFICATION_SELECT,
+  postMeetingCompletedNotification,
+} from "~@meetings/trpc/services/slack";
 import { logger } from "~server-setup-plugin/logger";
 
 // The confidence threshold we use to determine when to trigger fallback transcription behavior
@@ -426,6 +431,48 @@ export async function queueLlmajEvaluationTask(
     queueLlmajEvaluationTaskLocal(stateCode, meetingId);
   } else {
     await queueLlmajEvaluationTaskCloud(stateCode, meetingId);
+  }
+}
+
+export async function completeMeetingEvaluation(
+  prisma: PrismaClient,
+  stateCode: StateCode,
+  meetingId: string,
+) {
+  const { count } = await prisma.meeting.updateMany({
+    where: {
+      id: { equals: meetingId },
+      postMeetingProcessingStatus:
+        PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
+    },
+    data: {
+      postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
+    },
+  });
+  if (count === 0) return;
+
+  // The meeting is ready from here on, so failing to load what the Slack
+  // notification needs mustn't fail the caller
+  try {
+    const meeting = await prisma.meeting.findUniqueOrThrow({
+      where: { id: meetingId },
+      select: MEETING_NOTIFICATION_SELECT,
+    });
+    const successfulRuns = await prisma.notetakingPipelineRun.count({
+      where: { meetingId, status: "SUCCESS" },
+    });
+    postMeetingCompletedNotification({
+      ...buildMeetingNotificationParams(meeting, { meetingId, stateCode }),
+      // Loaded after notetaking saved this run's id, so a reprocess shows up as an
+      // earlier successful run instead
+      isReprocess: successfulRuns > 1,
+    }).catch((e) => {
+      captureException(e);
+      console.error("Failed to post meeting completed Slack notification", e);
+    });
+  } catch (e) {
+    captureException(e);
+    console.error("Failed to load meeting for completed Slack notification", e);
   }
 }
 

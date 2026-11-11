@@ -101,6 +101,7 @@ type Props = {
   person: Person;
   personType: PersonType;
   showTranscription?: boolean;
+  isCaseNoteRevealBlocked: boolean;
 };
 
 const MeetingMobile = ({
@@ -109,6 +110,7 @@ const MeetingMobile = ({
   person,
   personType,
   showTranscription = false,
+  isCaseNoteRevealBlocked,
 }: Props) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -350,6 +352,7 @@ const MeetingMobile = ({
               meetingDetails={meetingDetails}
               personId={person.personId.toString()}
               canEdit={isMeetingCreator && !isMobile}
+              isRevealBlocked={isCaseNoteRevealBlocked}
               onEdit={canOpenEditScreen ? handleEditCaseNote : undefined}
               outputVote={
                 isMeetingCreator &&

@@ -43,6 +43,7 @@ import {
 } from "~@meetings/prisma/client";
 import env from "~@meetings/server/env";
 import {
+  completeMeetingEvaluation,
   getStepFromMeetingStatus,
   getStepFromUserSetStep,
   handleNotetakingProcessing,
@@ -78,7 +79,6 @@ import { queueTranscriptionTask } from "~@meetings/trpc/routes/meeting/utils";
 import {
   buildMeetingNotificationParams,
   MEETING_NOTIFICATION_SELECT,
-  postMeetingCompletedNotification,
   postMeetingErrorNotification,
 } from "~@meetings/trpc/services/slack";
 
@@ -611,8 +611,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
               notetakingPipelineRunId: result.output.pipelineRunId,
               caseNoteEditedAt: null,
               actionItemsEditedAt: null,
+              // Not ready until the LLM judge has graded the new notes; the
+              // evaluation task moves it to COMPLETED.
               postMeetingProcessingStatus:
-                PostMeetingProcessingStatus.COMPLETED,
+                PostMeetingProcessingStatus.EVALUATION_IN_PROGRESS,
               meetingActionItems: {
                 createMany: {
                   data: result.output.actionItems.map((item) => ({
@@ -659,26 +661,19 @@ export function registerTaskRoutes(app: FastifyInstance) {
           throw e;
         }
 
-        // Post-completion side effects — these run after the meeting is already
-        // marked COMPLETED, so failures here must not revert the status.
-        // Uses the pre-run snapshot so a prior pipeline run id marks this as a reprocess.
-        postMeetingCompletedNotification(
-          buildMeetingNotificationParams(existingMeeting, {
-            meetingId,
-            stateCode,
-          }),
-        ).catch((e) => {
-          captureException(e);
-          console.error(
-            "Failed to post meeting completed Slack notification",
-            e,
-          );
-        });
-
-        queueLlmajEvaluationTask(stateCode, meetingId).catch((e) => {
-          captureException(e);
-          console.error("Failed to queue LLMAJ evaluation task", e);
-        });
+        await queueLlmajEvaluationTask(stateCode, meetingId).catch(
+          async (e) => {
+            captureException(e);
+            console.error("Failed to queue LLMAJ evaluation task", e);
+            // Nothing will finish the evaluation, so release the meeting now
+            await completeMeetingEvaluation(prisma, stateCode, meetingId).catch(
+              (err) => {
+                captureException(err);
+                console.error("Failed to complete meeting evaluation", err);
+              },
+            );
+          },
+        );
 
         return reply
           .code(200)
@@ -697,7 +692,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
       }),
     },
     preHandler: [authenticateInternalRequestPreHandlerFn],
-    handler: async (req, reply) => {
+    handler: async (req) => {
       const { stateCode, meetingId } = req.body;
 
       return withScope(async (scope) => {
@@ -706,212 +701,217 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         const prisma = getPrismaClientForStateCode(stateCode);
 
-        const pipelineRun = await prisma.notetakingPipelineRun.findFirst({
-          where: { meetingId, status: "SUCCESS" },
-          include: {
-            agentExecutions: {
-              where: { agentType: { in: ["DRAFTING", "VERIFICATION"] } },
-              orderBy: { attemptNumber: "desc" },
+        try {
+          const pipelineRun = await prisma.notetakingPipelineRun.findFirst({
+            where: { meetingId, status: "SUCCESS" },
+            include: {
+              agentExecutions: {
+                where: { agentType: { in: ["DRAFTING", "VERIFICATION"] } },
+                orderBy: { attemptNumber: "desc" },
+              },
             },
-          },
-          orderBy: { createdAt: "desc" },
-        });
+            orderBy: { createdAt: "desc" },
+          });
 
-        if (!pipelineRun) {
-          return reply
-            .code(200)
-            .send("No successful pipeline run found for meeting; skipping.");
-        }
+          if (!pipelineRun) {
+            return "No successful pipeline run found for meeting; skipping.";
+          }
 
-        const alreadyEvaluated = await prisma.notetakingEvaluationRun.findFirst(
-          {
-            where: {
+          const alreadyEvaluated =
+            await prisma.notetakingEvaluationRun.findFirst({
+              where: {
+                pipelineRunId: pipelineRun.id,
+                evaluatorVersion: EVALUATOR_VERSION,
+              },
+            });
+
+          if (alreadyEvaluated) {
+            return "Pipeline run already evaluated at current version; skipping.";
+          }
+
+          const draftingExecution = pipelineRun.agentExecutions
+            .filter((e) => e.agentType === "DRAFTING")
+            .find((e) => DraftingOutputSchema.safeParse(e.outputData).success);
+          const draftingOutput = draftingExecution
+            ? DraftingOutputSchema.parse(draftingExecution.outputData)
+            : null;
+
+          const verificationExecution = pipelineRun.agentExecutions.find(
+            (e) => e.agentType === "VERIFICATION",
+          );
+          const verificationParsed = verificationExecution
+            ? VerificationOutputSchema.safeParse(
+                verificationExecution.outputData,
+              )
+            : null;
+          const verificationOutput = verificationParsed?.success
+            ? verificationParsed.data
+            : null;
+
+          if (!draftingOutput || !verificationOutput) {
+            return "Missing drafting or verification output for pipeline run; skipping.";
+          }
+
+          const meeting = await prisma.meeting.findUnique({
+            where: { id: meetingId },
+            include: labelStudioMeetingInclude,
+          });
+
+          if (
+            !meeting ||
+            !meeting.finalRecordingGCSPath ||
+            meeting.transcriptions.length === 0 ||
+            meeting.transcriptDeletedAt
+          ) {
+            return "Missing audio or transcripts for meeting; skipping.";
+          }
+
+          const {
+            timestampedByProvider: transcriptsByProvider,
+            best: bestTranscript,
+          } = formatTranscripts(meeting.transcriptions);
+
+          const person = meeting.client ?? meeting.resident;
+          const inputs = {
+            audioBucket: meeting.recordingsGCSBucket,
+            audioPath: meeting.finalRecordingGCSPath,
+            transcriptsByProvider,
+            bestTranscript,
+            caseNote: draftingOutput.caseNote,
+            actionItems: verificationOutput.actionItems,
+            meetingContext: {
+              personName: person
+                ? normalizeNameCasing(
+                    [person.givenNames, person.surname]
+                      .filter(Boolean)
+                      .join(" "),
+                  )
+                : undefined,
+              staffEmail: meeting.staffEmail,
+              staffNotes: meeting.userNotepadNotes ?? undefined,
+              meetingStart: formatMeetingStartForPrompt(
+                meeting.startTime,
+                stateCode,
+                meeting.timeZone,
+              ),
+            },
+          };
+
+          const evaluatorClients = createEvaluatorClients(stateCode);
+          const { scores, langsmithTraceId } = await runAllEvaluators(
+            evaluatorClients,
+            inputs,
+          );
+
+          const evaluationRun = await prisma.notetakingEvaluationRun.create({
+            data: {
               pipelineRunId: pipelineRun.id,
               evaluatorVersion: EVALUATOR_VERSION,
+              scores,
+              langsmithTraceId,
             },
-          },
-        );
+          });
 
-        if (alreadyEvaluated) {
-          return reply
-            .code(200)
-            .send(
-              "Pipeline run already evaluated at current version; skipping.",
-            );
-        }
+          const llmajSuccessMessage = "LLMAJ evaluation completed successfully";
 
-        const draftingExecution = pipelineRun.agentExecutions
-          .filter((e) => e.agentType === "DRAFTING")
-          .find((e) => DraftingOutputSchema.safeParse(e.outputData).success);
-        const draftingOutput = draftingExecution
-          ? DraftingOutputSchema.parse(draftingExecution.outputData)
-          : null;
+          // Exports are fully skipped for US_DEMO in production — staging US_DEMO
+          // meetings should still flow to Label Studio.
+          if (
+            stateCode === StateCode.US_DEMO &&
+            env.DEPLOY_ENV === "production"
+          ) {
+            return llmajSuccessMessage;
+          }
 
-        const verificationExecution = pipelineRun.agentExecutions.find(
-          (e) => e.agentType === "VERIFICATION",
-        );
-        const verificationParsed = verificationExecution
-          ? VerificationOutputSchema.safeParse(verificationExecution.outputData)
-          : null;
-        const verificationOutput = verificationParsed?.success
-          ? verificationParsed.data
-          : null;
+          // Two label studio task export paths exist:
+          // 1. Full review (label-studio-task.json): a random sample excluding
+          //    meetings sent to LLMAJ triage, (see labelStudioReviewPercent, default
+          //    100%) to be graded from scratch, which is how the judge's miss rate
+          //    is measured.
+          //
+          //    TODO(MM-674): remove labelStudioAlwaysReviewPartial
+          //    PARTIAL-graded meetings are also forced in when
+          //    labelStudioAlwaysReviewPartial is set.
+          //
+          // 2. LLMAJ triage (llmaj-triage-task.json): every BAD-graded meeting,
+          //    and every PARTIAL-graded one when llmajTriageMinGrade is PARTIAL.
+          //
+          // Because triaged meetings are excluded from full-review, a given meeting
+          // can generate at most ONE labeling task.
 
-        if (!draftingOutput || !verificationOutput) {
-          return reply
-            .code(200)
-            .send(
-              "Missing drafting or verification output for pipeline run; skipping.",
-            );
-        }
+          const agencyConfig = await getAgencyConfig(stateCode).catch((e) => {
+            // Catch any errors from fetching/parsing the agency config and
+            // assume default behavior (100% sample) to avoid losing the full
+            // review task.
+            captureException(e);
+            console.error("Failed to fetch agency config", e);
+            return undefined;
+          });
 
-        const meeting = await prisma.meeting.findUnique({
-          where: { id: meetingId },
-          include: labelStudioMeetingInclude,
-        });
+          const reviewPercent = agencyConfig?.labelStudioReviewPercent ?? 100;
+          const sampledForReview = Math.random() * 100 < reviewPercent;
 
-        if (
-          !meeting ||
-          !meeting.finalRecordingGCSPath ||
-          meeting.transcriptions.length === 0 ||
-          meeting.transcriptDeletedAt
-        ) {
-          return reply
-            .code(200)
-            .send("Missing audio or transcripts for meeting; skipping.");
-        }
+          const gradedBad =
+            scores.caseNote?.grade === "BAD" ||
+            scores.actionItems?.grade === "BAD" ||
+            scores.overall?.grade === "BAD";
 
-        const {
-          timestampedByProvider: transcriptsByProvider,
-          best: bestTranscript,
-        } = formatTranscripts(meeting.transcriptions);
+          const gradedPartial = [
+            scores.caseNote,
+            scores.actionItems,
+            scores.overall,
+          ].some((s) => s?.grade === "PARTIAL");
+          const alwaysReviewPartial =
+            agencyConfig?.labelStudioAlwaysReviewPartial ?? false;
 
-        const person = meeting.client ?? meeting.resident;
-        const inputs = {
-          audioBucket: meeting.recordingsGCSBucket,
-          audioPath: meeting.finalRecordingGCSPath,
-          transcriptsByProvider,
-          bestTranscript,
-          caseNote: draftingOutput.caseNote,
-          actionItems: verificationOutput.actionItems,
-          meetingContext: {
-            personName: person
-              ? normalizeNameCasing(
-                  [person.givenNames, person.surname].filter(Boolean).join(" "),
-                )
-              : undefined,
-            staffEmail: meeting.staffEmail,
-            staffNotes: meeting.userNotepadNotes ?? undefined,
-            meetingStart: formatMeetingStartForPrompt(
-              meeting.startTime,
+          const forcedFullReview = alwaysReviewPartial && gradedPartial;
+
+          const triageMinGrade = agencyConfig?.llmajTriageMinGrade ?? "BAD";
+          const sendToTriage =
+            gradedBad || (triageMinGrade === "PARTIAL" && gradedPartial);
+
+          // Path for full-review Label Studio task
+          if (!sendToTriage && (sampledForReview || forcedFullReview)) {
+            exportLabelStudioTask(meeting, stateCode, gradedBad).catch((e) => {
+              captureException(e);
+              console.error("Failed to export Label Studio task to GCS", e);
+            });
+          }
+
+          // Path for LLMAJ triage task
+          if (sendToTriage) {
+            const gradedOutputs: LlmajGradedOutputs = {
+              caseNote: draftingOutput.caseNote,
+              actionItems: verificationOutput.actionItems.map(
+                ({ task, assignee, deadline }) => ({
+                  task,
+                  assignee,
+                  deadline,
+                }),
+              ),
+            };
+            exportLlmajTriageTask(
+              meeting,
+              evaluationRun,
               stateCode,
-              meeting.timeZone,
-            ),
-          },
-        };
+              gradedOutputs,
+              triageMinGrade,
+            ).catch((e) => {
+              captureException(e);
+              console.error("Failed to export LLMAJ triage task to GCS", e);
+            });
+          }
 
-        const evaluatorClients = createEvaluatorClients(stateCode);
-        const { scores, langsmithTraceId } = await runAllEvaluators(
-          evaluatorClients,
-          inputs,
-        );
-
-        const evaluationRun = await prisma.notetakingEvaluationRun.create({
-          data: {
-            pipelineRunId: pipelineRun.id,
-            evaluatorVersion: EVALUATOR_VERSION,
-            scores,
-            langsmithTraceId,
-          },
-        });
-
-        const llmajSuccessMessage = "LLMAJ evaluation completed successfully";
-
-        // Exports are fully skipped for US_DEMO in production — staging US_DEMO
-        // meetings should still flow to Label Studio.
-        if (
-          stateCode === StateCode.US_DEMO &&
-          env.DEPLOY_ENV === "production"
-        ) {
-          return reply.code(200).send(llmajSuccessMessage);
+          return llmajSuccessMessage;
+        } finally {
+          // However the evaluation ended, the meeting is ready now
+          await completeMeetingEvaluation(prisma, stateCode, meetingId).catch(
+            (e) => {
+              captureException(e);
+              console.error("Failed to complete meeting evaluation", e);
+            },
+          );
         }
-
-        // Two label studio task export paths exist:
-        // 1. Full review (label-studio-task.json): a random sample excluding
-        //    meetings sent to LLMAJ triage, (see labelStudioReviewPercent, default
-        //    100%) to be graded from scratch, which is how the judge's miss rate
-        //    is measured.
-        //
-        //    TODO(MM-674): remove labelStudioAlwaysReviewPartial
-        //    PARTIAL-graded meetings are also forced in when
-        //    labelStudioAlwaysReviewPartial is set.
-        //
-        // 2. LLMAJ triage (llmaj-triage-task.json): every BAD-graded meeting,
-        //    and every PARTIAL-graded one when llmajTriageMinGrade is PARTIAL.
-        //
-        // Because triaged meetings are excluded from full-review, a given meeting
-        // can generate at most ONE labeling task.
-
-        const agencyConfig = await getAgencyConfig(stateCode).catch((e) => {
-          // Catch any errors from fetching/parsing the agency config and
-          // assume default behavior (100% sample) to avoid losing the full
-          // review task.
-          captureException(e);
-          console.error("Failed to fetch agency config", e);
-          return undefined;
-        });
-
-        const reviewPercent = agencyConfig?.labelStudioReviewPercent ?? 100;
-        const sampledForReview = Math.random() * 100 < reviewPercent;
-
-        const gradedBad =
-          scores.caseNote?.grade === "BAD" ||
-          scores.actionItems?.grade === "BAD" ||
-          scores.overall?.grade === "BAD";
-
-        const gradedPartial = [
-          scores.caseNote,
-          scores.actionItems,
-          scores.overall,
-        ].some((s) => s?.grade === "PARTIAL");
-        const alwaysReviewPartial =
-          agencyConfig?.labelStudioAlwaysReviewPartial ?? false;
-
-        const forcedFullReview = alwaysReviewPartial && gradedPartial;
-
-        const triageMinGrade = agencyConfig?.llmajTriageMinGrade ?? "BAD";
-        const sendToTriage =
-          gradedBad || (triageMinGrade === "PARTIAL" && gradedPartial);
-
-        // Path for full-review Label Studio task
-        if (!sendToTriage && (sampledForReview || forcedFullReview)) {
-          exportLabelStudioTask(meeting, stateCode, gradedBad).catch((e) => {
-            captureException(e);
-            console.error("Failed to export Label Studio task to GCS", e);
-          });
-        }
-
-        // Path for LLMAJ triage task
-        if (sendToTriage) {
-          const gradedOutputs: LlmajGradedOutputs = {
-            caseNote: draftingOutput.caseNote,
-            actionItems: verificationOutput.actionItems.map(
-              ({ task, assignee, deadline }) => ({ task, assignee, deadline }),
-            ),
-          };
-          exportLlmajTriageTask(
-            meeting,
-            evaluationRun,
-            stateCode,
-            gradedOutputs,
-            triageMinGrade,
-          ).catch((e) => {
-            captureException(e);
-            console.error("Failed to export LLMAJ triage task to GCS", e);
-          });
-        }
-
-        reply.code(200).send(llmajSuccessMessage);
       });
     },
   });

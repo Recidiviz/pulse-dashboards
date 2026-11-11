@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 
+import { getUneditedFlaggedSections } from "../lib/getUneditedFlaggedSections";
+import { FlaggedOutputModal } from "./FlaggedOutputModal";
 import MeetingDesktop from "./MeetingDesktop";
 import MeetingMobile from "./MeetingMobile";
 
@@ -42,6 +44,13 @@ export const Meeting = ({
 }: Props) => {
   // Show transcription tab if the backend returned transcription data
   const showTranscription = meetingDetails?.transcription !== undefined;
+  const [isFlaggedOutputAcknowledged, setIsFlaggedOutputAcknowledged] =
+    useState(false);
+  const flaggedSections = getUneditedFlaggedSections(meetingDetails);
+  const isFlaggedOutputWarningVisible =
+    (flaggedSections.caseNote || flaggedSections.actionItems) &&
+    !isFlaggedOutputAcknowledged;
+
   return (
     <SafeAreaView className="flex-1 grow bg-primary">
       <View className="flex-1 grow lg:hidden">
@@ -51,6 +60,7 @@ export const Meeting = ({
           person={person}
           personType={personType}
           showTranscription={showTranscription}
+          isCaseNoteRevealBlocked={isFlaggedOutputWarningVisible}
         />
       </View>
       <View className="hidden flex-1 grow lg:flex">
@@ -60,9 +70,16 @@ export const Meeting = ({
           person={person}
           personType={personType}
           showTranscription={showTranscription}
+          isCaseNoteRevealBlocked={isFlaggedOutputWarningVisible}
           header={header}
         />
       </View>
+      {isFlaggedOutputWarningVisible && (
+        <FlaggedOutputModal
+          flaggedSections={flaggedSections}
+          onAcknowledge={() => setIsFlaggedOutputAcknowledged(true)}
+        />
+      )}
     </SafeAreaView>
   );
 };

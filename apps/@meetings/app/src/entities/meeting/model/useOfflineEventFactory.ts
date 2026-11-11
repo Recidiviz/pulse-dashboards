@@ -141,6 +141,7 @@ export function useOfflineEventFactory() {
                 approvedAt: null,
               },
             },
+            llmajGrades: null,
             postMeetingProcessingStatus: "NOT_STARTED",
             validationErrorType: null,
             transcriptDeletedAt: null,

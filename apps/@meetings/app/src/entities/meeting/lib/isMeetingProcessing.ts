@@ -24,6 +24,7 @@ const recordProcessingStatuses = [
   "TRANSCRIPTION_IN_PROGRESS",
   "NOTETAKING_QUEUED",
   "NOTETAKING_IN_PROGRESS",
+  "EVALUATION_IN_PROGRESS",
 ];
 
 export function isMeetingProcessing(status: PostMeetingProcessingStatus) {

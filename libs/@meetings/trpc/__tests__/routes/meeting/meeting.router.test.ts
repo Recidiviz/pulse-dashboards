@@ -30,6 +30,7 @@ import { AUDIO_FORMATS } from "~@meetings/config";
 import {
   ApprovalValue,
   NoteSection,
+  NotetakingPipelineStatus,
   OutputVoteTab,
   OutputVoteValue,
   PostMeetingProcessingStatus,
@@ -164,6 +165,7 @@ describe("meeting router", () => {
             approvedAt: null,
           },
         },
+        llmajGrades: null,
         validationErrorType: null,
         transcriptDeletedAt: null,
         audioUrl: null,
@@ -274,6 +276,7 @@ describe("meeting router", () => {
             approvedAt: null,
           },
         },
+        llmajGrades: null,
         validationErrorType: null,
         transcriptDeletedAt: null,
         audioUrl: null,
@@ -627,6 +630,93 @@ describe("meeting router", () => {
           approverEmail: null,
           approvedAt: null,
         },
+      });
+    });
+
+    describe("llmajGrades", () => {
+      const runId = "notes-run-current";
+      const evaluatedAt = new Date("2026-10-01T00:00:00Z");
+
+      type Grade = "GOOD" | "PARTIAL" | "BAD";
+
+      const textScore = (grade: Grade) => ({
+        rationale: "",
+        grade,
+        hallucinations: [],
+        omissions: [],
+      });
+
+      async function evaluate(
+        pipelineRunId: string,
+        grades: { caseNote: Grade; actionItems: Grade; overall: Grade },
+        createdAt = evaluatedAt,
+      ) {
+        await testPrismaClient.notetakingPipelineRun.upsert({
+          where: { id: pipelineRunId },
+          create: {
+            id: pipelineRunId,
+            meetingId: fakeActiveMeeting.id,
+            personPseudonymizedId: "person-pid-1",
+            status: NotetakingPipelineStatus.SUCCESS,
+          },
+          update: {},
+        });
+        await testPrismaClient.notetakingEvaluationRun.create({
+          data: {
+            pipelineRunId,
+            evaluatorVersion: "v1",
+            createdAt,
+            scores: {
+              transcriptComparison: null,
+              caseNote: textScore(grades.caseNote),
+              actionItems: textScore(grades.actionItems),
+              overall: textScore(grades.overall),
+            },
+          },
+        });
+      }
+
+      async function getGrades() {
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeActiveMeeting.id,
+        });
+        return result.llmajGrades;
+      }
+
+      beforeEach(async () => {
+        await testPrismaClient.meeting.update({
+          where: { id: fakeActiveMeeting.id },
+          data: { notetakingPipelineRunId: runId },
+        });
+      });
+
+      test("Should be null until the active run is evaluated", async () => {
+        await evaluate("notes-run-old", {
+          caseNote: "BAD",
+          actionItems: "BAD",
+          overall: "BAD",
+        });
+
+        expect(await getGrades()).toBeNull();
+      });
+
+      test("Should return the newest evaluation of the active run", async () => {
+        await evaluate(
+          runId,
+          { caseNote: "GOOD", actionItems: "GOOD", overall: "GOOD" },
+          new Date("2026-09-01T00:00:00Z"),
+        );
+        await evaluate(runId, {
+          caseNote: "BAD",
+          actionItems: "PARTIAL",
+          overall: "BAD",
+        });
+
+        expect(await getGrades()).toEqual({
+          caseNote: "BAD",
+          actionItems: "PARTIAL",
+          overall: "BAD",
+        });
       });
     });
   });

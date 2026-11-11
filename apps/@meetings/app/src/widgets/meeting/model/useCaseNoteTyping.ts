@@ -34,6 +34,8 @@ type CaseNoteTypingAnimation = {
   meetingStartTime: Date;
   // if someone has already read this note
   isRead: boolean;
+  // waits to start (note stays hidden) while true
+  isBlocked?: boolean;
 };
 
 type Params = {
@@ -64,17 +66,20 @@ export const useCaseNoteTyping = ({
     Date.now() - new Date(animation.meetingStartTime).getTime() <
       CASE_NOTE_TYPING_WINDOW_MS;
   const isEligible = canAnimate && !hasSeen;
+  const isBlocked = !!animation?.isBlocked;
 
   // null = waiting
   const [shouldAnimate, setShouldAnimate] = useState<boolean | null>(() => {
     if (!canAnimate) return false;
-    return hasHydrated ? isEligible : null;
+    return hasHydrated && !isBlocked ? isEligible : null;
   });
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    if (shouldAnimate === null && hasHydrated) setShouldAnimate(isEligible);
-  }, [shouldAnimate, hasHydrated, isEligible]);
+    if (shouldAnimate === null && hasHydrated && !isBlocked) {
+      setShouldAnimate(isEligible);
+    }
+  }, [shouldAnimate, hasHydrated, isBlocked, isEligible]);
 
   // Marked on start, so leaving mid-animation doesn't replay it next time
   // (doesn't stop the run)

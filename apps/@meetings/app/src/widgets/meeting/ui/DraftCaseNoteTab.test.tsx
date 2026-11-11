@@ -116,6 +116,7 @@ function buildMeetingDetails({
       caseNote: { isApproved, approverEmail: null, approvedAt: null },
       actionItems: { isApproved: false, approverEmail: null, approvedAt: null },
     },
+    llmajGrades: null,
     postMeetingProcessingStatus: "NOT_STARTED",
     validationErrorType: null,
     transcriptDeletedAt: null,

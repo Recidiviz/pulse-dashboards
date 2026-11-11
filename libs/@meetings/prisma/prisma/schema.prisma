@@ -1,6 +1,6 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../src/client"
+  provider = "prisma-client"
+  output   = "../src/client"
 }
 
 generator json {
@@ -189,6 +189,7 @@ enum PostMeetingProcessingStatus {
   NOTETAKING_QUEUED
   NOTETAKING_IN_PROGRESS
   NOTETAKING_ERROR
+  EVALUATION_IN_PROGRESS
   COMPLETED
 }
 
@@ -422,8 +423,8 @@ model MeetingReviewOutcome {
   createdAt DateTime @default(now())
 
   // Not FKs (matches NoteApproval): rows are kept as audit history across reprocess/deletion.
-  meetingId String
-  section   ReviewSection
+  meetingId     String
+  section       ReviewSection
   // The Meeting.outputsPipelineRunId the reviewer was looking at, to tell when the outputs have
   // since been regenerated.
   pipelineRunId String?

@@ -75,6 +75,7 @@ type Props = {
   person: Person;
   personType: PersonType;
   showTranscription?: boolean;
+  isCaseNoteRevealBlocked: boolean;
   header: ReactNode;
 };
 
@@ -84,6 +85,7 @@ const MeetingDesktop = ({
   person,
   personType,
   showTranscription = false,
+  isCaseNoteRevealBlocked,
   header,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
@@ -315,6 +317,7 @@ const MeetingDesktop = ({
                   meetingDetails={meetingDetails}
                   personId={person.personId.toString()}
                   canEdit={isMeetingCreator}
+                  isRevealBlocked={isCaseNoteRevealBlocked}
                   outputVote={
                     isMeetingCreator &&
                     meetingDetails.caseNote && (

@@ -46,6 +46,8 @@ type Props = {
   canEdit?: boolean;
   onEdit?: () => void;
   isProcessing?: boolean;
+  // Holds the typing animation back
+  isRevealBlocked?: boolean;
 };
 
 const DraftCaseNoteTab = ({
@@ -55,6 +57,7 @@ const DraftCaseNoteTab = ({
   canEdit = false,
   onEdit,
   isProcessing = false,
+  isRevealBlocked = false,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
@@ -81,6 +84,7 @@ const DraftCaseNoteTab = ({
       isRead:
         !!meetingDetails.caseNoteEditedAt ||
         meetingDetails.approvals.caseNote.isApproved,
+      isBlocked: isRevealBlocked,
     },
   });
   const isNoteShown = !isPending && !isTyping;
