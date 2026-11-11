@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const getDoc = vi.fn();
 const upsert = vi.fn();
@@ -44,7 +44,7 @@ vi.mock("~@typesense/client", async (importOriginal) => ({
   }),
 }));
 
-const { handleWrite } = await import("../src/index");
+const { handleWrite, SYNC_FAILED_EVENT } = await import("../src/index");
 
 /** The document as of ONE write, which is all the trigger carries. */
 function event(path: string, data: Record<string, unknown> | null) {
@@ -154,5 +154,96 @@ describe("handleWrite", () => {
 
     expect(update).toHaveBeenCalledTimes(1);
     expect(update.mock.calls[0]?.[0]).toMatchObject({ preferredName: "Sam" });
+  });
+});
+
+describe("handleWrite — a write that does not reach Typesense", () => {
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  });
+
+  // Runs when a test fails too, so a failure cannot leak a rejecting mock, the
+  // console spy, or fake timers into the next test.
+  afterEach(() => {
+    errorSpy.mockRestore();
+    upsert.mockReset();
+    getDoc.mockReset();
+    vi.useRealTimers();
+  });
+
+  function loggedFailures(): Array<Record<string, unknown>> {
+    return errorSpy.mock.calls
+      .map(([line]) => JSON.parse(String(line)) as Record<string, unknown>)
+      .filter((entry) => entry["event"] === SYNC_FAILED_EVENT);
+  }
+
+  it("logs one failure event that names the collections but no document", async () => {
+    firestoreHolds({ denial: DENIAL, stateCode: "US_AZ" });
+    upsert.mockRejectedValue(
+      Object.assign(new Error("Could not find a document with id: us_az_123"), {
+        name: "ObjectNotFound",
+        httpStatus: 404,
+      }),
+    );
+
+    await expect(
+      handleWrite(
+        event(OPP_PATH, { stateCode: "US_AZ" }),
+        event(OPP_PATH, { denial: DENIAL, stateCode: "US_AZ" }),
+      ),
+    ).rejects.toThrow();
+
+    const failures = loggedFailures();
+    expect(failures).toEqual([
+      {
+        severity: "ERROR",
+        event: SYNC_FAILED_EVENT,
+        reason: "sync_failed",
+        change: "update",
+        collections: "clientUpdatesV2/clientOpportunityUpdates",
+        eventAgeSeconds: null,
+        errorType: "ObjectNotFound",
+        httpStatus: 404,
+        message: "Could not find a document with id: <id>",
+      },
+    ]);
+    expect(JSON.stringify(failures)).not.toMatch(/us_az_123/i);
+  });
+
+  it("reports how old the event is, so the alert can skip a failure a retry fixes", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-10T12:15:00Z"));
+    firestoreHolds({ denial: DENIAL, stateCode: "US_AZ" });
+    upsert.mockRejectedValue(new Error("503 Service Unavailable"));
+
+    await expect(
+      handleWrite(
+        undefined,
+        event(OPP_PATH, { denial: DENIAL, stateCode: "US_AZ" }),
+        "2026-11-10T12:00:00Z",
+      ),
+    ).rejects.toThrow();
+
+    expect(loggedFailures()[0]?.["eventAgeSeconds"]).toBe(900);
+  });
+
+  it("logs a failed Firestore read as a failure too", async () => {
+    getDoc.mockRejectedValue(new Error("DEADLINE_EXCEEDED"));
+
+    await expect(
+      handleWrite(undefined, event(OPP_PATH, { stateCode: "US_AZ" })),
+    ).rejects.toThrow("DEADLINE_EXCEEDED");
+
+    expect(loggedFailures()).toMatchObject([
+      { reason: "sync_failed", message: "DEADLINE_EXCEEDED" },
+    ]);
+  });
+
+  it("logs a failure when the event carries no document", async () => {
+    await handleWrite(undefined, undefined);
+
+    expect(loggedFailures()).toMatchObject([{ reason: "no_event_data" }]);
   });
 });

@@ -63,6 +63,21 @@ indexed yet), `NOOP` (the write touched no owned field) or `SKIP` (path not
 synced), naming the collection, doc id and which fields were set or cleared.
 Field names only — never values.
 
+## Alerts
+
+A failed sync pages through the shared PagerDuty Alert Forwarder. For each failed
+delivery, the function writes one JSON log entry with
+`event: typesense_sync_failed`, and the trigger retries the event. The alert policy
+in `monitoring.tf` pages when an event still fails 10 minutes after the write, so a
+failure that a retry fixes does not page. An event with no document data cannot be
+retried, so it pages at once.
+
+The log entry names the collections, the error type, and the HTTP status. It holds
+no document id, because a document id holds a person's external id.
+
+The alert does not detect a function that never runs, for example one that a
+failed apply did not create. That function writes no logs.
+
 ## Gotchas
 
 **`firestore_database_location` is the Eventarc trigger region, not the function

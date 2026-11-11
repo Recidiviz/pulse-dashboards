@@ -100,3 +100,9 @@ variable "function_max_instances" {
   default     = 10
   description = "Cap on concurrent invocations. Workflows writes are low-volume (tens per day), so this exists to bound a runaway retry storm rather than to serve throughput."
 }
+
+variable "pagerduty_forwarder_topic" {
+  type        = string
+  default     = "projects/recidiviz-123/topics/cloud-monitoring-alerts-to-forward"
+  description = "Pub/Sub topic of the shared PagerDuty Alert Forwarder. The sync failure alert publishes here. Matches monitoring.pagerduty_forwarder_topic on the apps/typesense component."
+}
