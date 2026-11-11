@@ -41,6 +41,7 @@ type ResidentFlag =
   | "usArEdovoCredits"
   | "usArMaxCpus"
   | "usArReBanner"
+  | "usArEdovoHistory"
   | "usNcRNAAutoEnablement"
   | "usMaReentry"
   | "usMaSentenceDatesV1"

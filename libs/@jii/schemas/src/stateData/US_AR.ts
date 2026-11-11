@@ -23,6 +23,14 @@ import {
   usArResidentCommonSchema,
 } from "~datatypes";
 
+export const usArEdovoCreditActivitySchema = z.object({
+  completionMonth: dateStringSchema,
+  eligibleHours: z.number(),
+  carryInHours: z.number(),
+  totalHours: z.number(),
+  is16HoursReached: z.boolean(),
+});
+
 export const usArStateDataSchema = usArResidentCommonSchema.extend({
   cohortCode: nullishAsUndefined(z.string()),
   hasApprovedCasePlan: nullishAsUndefined(z.boolean()),
@@ -34,9 +42,13 @@ export const usArStateDataSchema = usArResidentCommonSchema.extend({
   edovoHoursToNextCpu: z.number(),
   edovoIsCreditingMonth: z.boolean(),
   edovoLastRefreshedAt: nullishAsUndefined(dateStringSchema),
+  creditActivity: z.array(usArEdovoCreditActivitySchema),
   lastUpdatedDate: dateStringSchema,
   // adding a default here because this field isn't added to the product view yet
   isReDosageChangeBanner: z.boolean().default(false),
 });
 export type UsArResidentJiiData = z.output<typeof usArStateDataSchema>;
 export type RawUsArResidentJiiData = z.input<typeof usArStateDataSchema>;
+export type UsArEdovoCreditActivity = z.output<
+  typeof usArEdovoCreditActivitySchema
+>;

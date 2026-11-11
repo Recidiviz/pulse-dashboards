@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { RawUsArResidentJiiData } from "~@jii/schemas";
-import { usArResidentCommonDataFixtures } from "~datatypes";
+import {
+  relativeFixtureMonth,
+  usArResidentCommonDataFixtures,
+} from "~datatypes";
 
 // The view gives every resident the same Edovo refresh time
 const edovoLastRefreshedAt = "2021-12-16T20:10:12Z";
@@ -36,6 +39,106 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 6.5,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
+    creditActivity: [
+      {
+        completionMonth: relativeFixtureMonth({ months: -13 }, "start"),
+        carryInHours: 0,
+        eligibleHours: 4,
+        totalHours: 4,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -12 }, "start"),
+        carryInHours: 4,
+        eligibleHours: 14,
+        totalHours: 18,
+        is16HoursReached: true,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -11 }, "start"),
+        carryInHours: 2,
+        eligibleHours: 0,
+        totalHours: 2,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -10 }, "start"),
+        carryInHours: 2,
+        eligibleHours: 9.5,
+        totalHours: 11.5,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -9 }, "start"),
+        carryInHours: 11.5,
+        eligibleHours: 6,
+        totalHours: 17.5,
+        is16HoursReached: true,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -8 }, "start"),
+        carryInHours: 1.5,
+        eligibleHours: 16,
+        totalHours: 17.5,
+        is16HoursReached: true,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -7 }, "start"),
+        carryInHours: 1.5,
+        eligibleHours: 0,
+        totalHours: 1.5,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -6 }, "start"),
+        carryInHours: 1.5,
+        eligibleHours: 3,
+        totalHours: 4.5,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -5 }, "start"),
+        carryInHours: 4.5,
+        eligibleHours: 12,
+        totalHours: 16.5,
+        is16HoursReached: true,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -4 }, "start"),
+        carryInHours: 0.5,
+        eligibleHours: 0,
+        totalHours: 0.5,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -3 }, "start"),
+        carryInHours: 0.5,
+        eligibleHours: 8,
+        totalHours: 8.5,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -2 }, "start"),
+        carryInHours: 8.5,
+        eligibleHours: 7.5,
+        totalHours: 16,
+        is16HoursReached: true,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: -1 }, "start"),
+        carryInHours: 0,
+        eligibleHours: 19,
+        totalHours: 19,
+        is16HoursReached: true,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: 0 }, "start"),
+        carryInHours: 3,
+        eligibleHours: 6.5,
+        totalHours: 9.5,
+        is16HoursReached: false,
+      },
+    ],
   },
   {
     ...usArResidentCommonDataFixtures[1],
@@ -50,6 +153,7 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 16,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
+    creditActivity: [],
   },
   {
     ...usArResidentCommonDataFixtures[2],
@@ -67,6 +171,7 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 16,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
+    creditActivity: [],
   },
   {
     ...usArResidentCommonDataFixtures[3],
@@ -86,6 +191,22 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 0,
     edovoIsCreditingMonth: true,
     edovoLastRefreshedAt,
+    creditActivity: [
+      {
+        completionMonth: relativeFixtureMonth({ months: -1 }, "start"),
+        carryInHours: 0,
+        eligibleHours: 7.9,
+        totalHours: 7.9,
+        is16HoursReached: false,
+      },
+      {
+        completionMonth: relativeFixtureMonth({ months: 0 }, "start"),
+        carryInHours: 7.9,
+        eligibleHours: 8,
+        totalHours: 16,
+        is16HoursReached: true,
+      },
+    ],
   },
   {
     ...usArResidentCommonDataFixtures[4],
@@ -96,6 +217,7 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 16,
     edovoIsCreditingMonth: false,
     edovoLastRefreshedAt,
+    creditActivity: [],
   },
   {
     ...usArResidentCommonDataFixtures[5],
@@ -111,5 +233,14 @@ export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
     edovoHoursToNextCpu: 0,
     edovoIsCreditingMonth: true,
     edovoLastRefreshedAt,
+    creditActivity: [
+      {
+        completionMonth: relativeFixtureMonth({ months: 0 }, "start"),
+        carryInHours: 0,
+        eligibleHours: 18.5,
+        totalHours: 18.5,
+        is16HoursReached: true,
+      },
+    ],
   },
 ];
