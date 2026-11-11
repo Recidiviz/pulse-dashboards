@@ -23,7 +23,7 @@ import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import type { FlaggedSections } from "../lib/getUneditedFlaggedSections";
+import type { FlaggedSections } from "../lib/getFlaggedSections";
 
 type Props = {
   flaggedSections: FlaggedSections;
@@ -31,8 +31,9 @@ type Props = {
 };
 
 function getFlaggedSectionsLabel({ caseNote, actionItems }: FlaggedSections) {
-  if (caseNote && actionItems) return "the draft case note and action items";
-  if (actionItems) return "the action items";
+  if (caseNote.needsEdit && actionItems.needsEdit)
+    return "the draft case note and action items";
+  if (actionItems.needsEdit) return "the action items";
   return "the draft case note";
 }
 

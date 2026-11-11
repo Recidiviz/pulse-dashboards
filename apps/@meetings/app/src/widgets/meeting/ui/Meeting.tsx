@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 
-import { getUneditedFlaggedSections } from "../lib/getUneditedFlaggedSections";
+import { getFlaggedSections } from "../lib/getFlaggedSections";
 import { FlaggedOutputModal } from "./FlaggedOutputModal";
 import MeetingDesktop from "./MeetingDesktop";
 import MeetingMobile from "./MeetingMobile";
@@ -46,9 +46,10 @@ export const Meeting = ({
   const showTranscription = meetingDetails?.transcription !== undefined;
   const [isFlaggedOutputAcknowledged, setIsFlaggedOutputAcknowledged] =
     useState(false);
-  const flaggedSections = getUneditedFlaggedSections(meetingDetails);
+  const flaggedSections = getFlaggedSections(meetingDetails);
   const isFlaggedOutputWarningVisible =
-    (flaggedSections.caseNote || flaggedSections.actionItems) &&
+    (flaggedSections.caseNote.needsEdit ||
+      flaggedSections.actionItems.needsEdit) &&
     !isFlaggedOutputAcknowledged;
 
   return (

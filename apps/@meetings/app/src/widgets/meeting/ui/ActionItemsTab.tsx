@@ -76,9 +76,7 @@ export const ActionItemsTab = ({
 }: ActionItemsTabProps) => {
   const items = meetingDetails.meetingActionItems;
   const isFlaggedBannerShown =
-    getFlaggedSections(meetingDetails.llmajGrades).actionItems &&
-    (meetingDetails.actionItemsEditedAt !== null ||
-      !meetingDetails.approvals.actionItems.isApproved);
+    getFlaggedSections(meetingDetails).actionItems.isBannerShown;
   const utils = trpc.useUtils();
   const { showSnackbar } = useSnackbar();
   const isMobile = useIsMobileWidth();

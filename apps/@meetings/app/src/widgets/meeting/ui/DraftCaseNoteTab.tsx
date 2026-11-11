@@ -41,6 +41,7 @@ import { useCaseNoteTyping } from "../model/useCaseNoteTyping";
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
 import { FlaggedOutputBanner } from "./FlaggedOutputBanner";
 import { NotepadNotesSection } from "./NotepadNotesSection";
+import { UneditedCaseNoteModal } from "./UneditedCaseNoteModal";
 
 type Props = {
   meetingDetails: MeetingDetails;
@@ -78,6 +79,7 @@ const DraftCaseNoteTab = ({
   const [inputNotes, setInputNotes] = useState(caseNote);
   const [inputHeight, setInputHeight] = useState(0);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+  const [isUneditedModalVisible, setIsUneditedModalVisible] = useState(false);
   const { isPending, isTyping, visibleText } = useCaseNoteTyping({
     meetingId,
     caseNote,
@@ -92,11 +94,8 @@ const DraftCaseNoteTab = ({
   });
   const isNoteShown = !isPending && !isTyping;
   const isEditable = canEdit && isNoteShown && !isProcessing;
-  // The alert stays until the note is edited or approved. After an edit it
-  // becomes a confirmation, which stays even after approval
-  const isFlaggedBannerShown =
-    getFlaggedSections(meetingDetails.llmajGrades).caseNote &&
-    (meetingDetails.caseNoteEditedAt !== null || !isApproved);
+  const { isBannerShown, needsEdit } =
+    getFlaggedSections(meetingDetails).caseNote;
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -125,7 +124,9 @@ const DraftCaseNoteTab = ({
   };
 
   const onCopy = () => {
-    if (isApproved) {
+    if (needsEdit) {
+      setIsUneditedModalVisible(true);
+    } else if (isApproved) {
       copyToClipboard();
     } else {
       setIsReviewModalVisible(true);
@@ -135,6 +136,11 @@ const DraftCaseNoteTab = ({
   const handleCopyAnyway = () => {
     setIsReviewModalVisible(false);
     copyToClipboard();
+  };
+
+  const handleEditDraft = () => {
+    setIsUneditedModalVisible(false);
+    onEdit?.();
   };
 
   useEffect(() => {
@@ -172,7 +178,7 @@ const DraftCaseNoteTab = ({
           </Button>
         )}
       </View>
-      <FadeContainer isVisible={isFlaggedBannerShown && !isPending}>
+      <FadeContainer isVisible={isBannerShown && !isPending}>
         <FlaggedOutputBanner
           section="caseNote"
           staffEmail={meetingDetails.staffEmail}
@@ -215,6 +221,12 @@ const DraftCaseNoteTab = ({
           onConfirm={handleCopyAnyway}
           isMeetingCreator={isMeetingCreator}
           action="copy"
+        />
+      )}
+      {isUneditedModalVisible && (
+        <UneditedCaseNoteModal
+          onClose={() => setIsUneditedModalVisible(false)}
+          onEdit={handleEditDraft}
         />
       )}
     </View>

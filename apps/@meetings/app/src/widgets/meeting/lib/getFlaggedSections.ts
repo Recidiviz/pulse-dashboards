@@ -17,8 +17,41 @@
 
 import type { MeetingDetails } from "~@meetings/app/entities/meeting";
 
+type Params = Pick<
+  MeetingDetails,
+  "llmajGrades" | "caseNoteEditedAt" | "actionItemsEditedAt" | "approvals"
+>;
+
+export type FlaggedSection = "caseNote" | "actionItems";
+
+export type FlaggedSectionState = {
+  // The banner stays until the section is edited or approved. After an edit it
+  // becomes a confirmation, which stays even after approval
+  isBannerShown: boolean;
+  // Graded BAD and nobody has edited it since
+  needsEdit: boolean;
+};
+
+export type FlaggedSections = Record<FlaggedSection, FlaggedSectionState>;
+
+function getSectionState(
+  isFlagged: boolean,
+  editedAt: MeetingDetails["caseNoteEditedAt"],
+  isApproved: boolean,
+): FlaggedSectionState {
+  return {
+    isBannerShown: isFlagged && (editedAt !== null || !isApproved),
+    needsEdit: isFlagged && editedAt === null,
+  };
+}
+
 // Which sections of the current notes the LLM judge graded BAD
-export function getFlaggedSections(llmajGrades: MeetingDetails["llmajGrades"]) {
+export function getFlaggedSections({
+  llmajGrades,
+  caseNoteEditedAt,
+  actionItemsEditedAt,
+  approvals,
+}: Params): FlaggedSections {
   const isCaseNoteBad = llmajGrades?.caseNote === "BAD";
   const isActionItemsBad = llmajGrades?.actionItems === "BAD";
   const isOverallBad = llmajGrades?.overall === "BAD";
@@ -26,7 +59,15 @@ export function getFlaggedSections(llmajGrades: MeetingDetails["llmajGrades"]) {
   // A BAD overall grade doesn't say which section it's about, so it's put on
   // the action items if they were graded BAD too, and on the case note otherwise
   return {
-    caseNote: isCaseNoteBad || (isOverallBad && !isActionItemsBad),
-    actionItems: isActionItemsBad,
+    caseNote: getSectionState(
+      isCaseNoteBad || (isOverallBad && !isActionItemsBad),
+      caseNoteEditedAt,
+      approvals.caseNote.isApproved,
+    ),
+    actionItems: getSectionState(
+      isActionItemsBad,
+      actionItemsEditedAt,
+      approvals.actionItems.isApproved,
+    ),
   };
 }

@@ -22,10 +22,10 @@ import ExclamationIcon from "react-native-heroicons/solid/ExclamationIcon";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import type { FlaggedSections } from "../lib/getUneditedFlaggedSections";
+import type { FlaggedSection } from "../lib/getFlaggedSections";
 
 const COPY: Record<
-  keyof FlaggedSections,
+  FlaggedSection,
   { title: string; reviewSubject: string; editedSubject: string }
 > = {
   caseNote: {
@@ -41,7 +41,7 @@ const COPY: Record<
 };
 
 type Props = {
-  section: keyof FlaggedSections;
+  section: FlaggedSection;
   staffEmail: string;
   editedAt: Date | null;
 };
