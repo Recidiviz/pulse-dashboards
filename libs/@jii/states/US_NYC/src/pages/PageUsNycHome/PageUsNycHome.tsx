@@ -26,6 +26,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import connectionsCoverSrc from "../../components/Banner/assets/connections-cover-cropped.png";
 import { CaseInfo } from "../../components/CaseInfo/CaseInfoCard";
+import { PersonalInfo } from "../../components/PersonalInfo/PersonalInfo";
 import { ScheduledCourtDates } from "../../components/ScheduledCourtDates/ScheduledCourtDates";
 import { SentenceInfo } from "../../components/SentenceInfo/SentenceInfo";
 import { UsNycHomePresenter } from "../PageUsNyc/UsNycHomePresenter";
@@ -66,6 +67,7 @@ const ManagedComponent: React.FC<{ presenter: UsNycHomePresenter }> = observer(
         </SpacedDiv>
         <ScheduledCourtDates />
         <SentenceInfo />
+        <PersonalInfo />
         <SpacedDiv $gap={24}>
           <HomepageSectionHeading>
             {COPY.communityResourceTitle}

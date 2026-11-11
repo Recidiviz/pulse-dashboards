@@ -46,5 +46,26 @@
     "hiddenSubHeading": "Docket information is hidden so they don't show on your screen until you choose to see them. Use the switch to show or hide them.",
     "visibleSubHeading": "Court dates can move. Always confirm with your attorney or counselor.",
     "unknownDocketNumber": "Unknown Docket Number"
+  },
+  "personalInformation": {
+    "dates": {
+      "commissaryBalance": {
+        "label": "Commissary Balance",
+        "subheading": "(as of {{asOfDate, datetime}})",
+        "value": "{{commissaryBalance, currency(USD)}}",
+        "description": "This is the amount available in your commissary account."
+      },
+      "emergencyContact": {
+        "label": "Emergency Contact (Next-of-kin)"
+      }
+    },
+    "general": {
+      "heading": "Personal information",
+      "hiddenMessage": "Your personal information is currently hidden"
+    },
+    "toggle": {
+      "hideLabel": "Hide my personal information",
+      "showLabel": "Show my personal information"
+    }
   }
 }
