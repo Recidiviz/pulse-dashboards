@@ -30,7 +30,6 @@ type Docket = UsNycResidentJiiData["preSentenceDockets"][number];
  */
 // TODO(OBT-56202) Add time once we have this ingested
 // TODO(OBT-56217) Replace with court address
-// TODO(OBT-56218) Map to borough name
 function descriptionContext({
   nextCourtDate,
   nextCourtLocation,
@@ -75,6 +74,7 @@ export class ScheduledCourtDatesPresenter {
   get dateIdOverride(): DateLabels {
     return this.stateSpecificData.preSentenceDockets.map((docket, i) => {
       const context = descriptionContext(docket);
+      const boroughCode = docket.nextCourtBorough;
       return {
         id: docketDateId(docket, i),
         label: this.t(($) => $.scheduledCourtDates.nextCourtDateLabel, {
@@ -86,7 +86,9 @@ export class ScheduledCourtDatesPresenter {
           ? this.t(($) => $.scheduledCourtDates.nextCourtDateDescription, {
               context,
               location: docket.nextCourtLocation,
-              borough: docket.nextCourtBorough,
+              borough: boroughCode
+                ? this.t(($) => $.scheduledCourtDates.borough[boroughCode])
+                : undefined,
             })
           : undefined,
       };

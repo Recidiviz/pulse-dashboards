@@ -19,6 +19,8 @@ import { z } from "zod";
 
 import { dateStringSchema } from "~datatypes";
 
+export const usNycBoroughCodeEnum = z.enum(["X", "I", "K", "Q", "R", "N"]);
+
 const usNycEmergencyContactFullNameSchema = z.object({
   givenNames: z.string().nullable(),
   middleNames: z.string().nullable(),
@@ -37,8 +39,8 @@ const usNycPreSentenceDocketsSchema = z.object({
   nextCourtDate: dateStringSchema.nullable(),
   // TODO(OBT-56217) Replace with court address
   nextCourtLocation: z.string().nullable(),
-  // TODO(OBT-56218) Map to borough name
-  nextCourtBorough: z.string().nullable(),
+  // An unrecognized borough code parses as null rather than failing the whole record.
+  nextCourtBorough: usNycBoroughCodeEnum.nullable().catch(null),
 });
 
 export const usNycLegalStatusEnum = z.enum(["Pre-sentence", "Sentenced"]);

@@ -43,6 +43,14 @@
     "nextCourtDateDescription_locationAndBorough": "At {{location}}, in {{borough}}.",
     "nextCourtDateDescription_location": "At {{location}}.",
     "nextCourtDateDescription_borough": "In {{borough}}.",
+    "borough": {
+      "X": "the Bronx",
+      "I": "Rikers Island",
+      "K": "Brooklyn",
+      "Q": "Queens",
+      "R": "Staten Island",
+      "N": "Manhattan"
+    },
     "hiddenSubHeading": "Docket information is hidden so they don't show on your screen until you choose to see them. Use the switch to show or hide them.",
     "visibleSubHeading": "Court dates can move. Always confirm with your attorney or counselor.",
     "unknownDocketNumber": "Unknown Docket Number"

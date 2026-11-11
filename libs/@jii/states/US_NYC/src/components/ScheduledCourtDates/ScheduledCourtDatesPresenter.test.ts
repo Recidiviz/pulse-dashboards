@@ -68,7 +68,7 @@ describe("ScheduledCourtDatesPresenter", () => {
             docketNumber: null,
             nextCourtDate: new Date(2026, 11, 15),
             nextCourtLocation: null,
-            nextCourtBorough: "Brooklyn",
+            nextCourtBorough: "K",
           },
         ]),
         t,
