@@ -187,6 +187,10 @@ Things to note:
 - The Python backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
 - Test vigorously on staging before deploying to production, and don't be afraid to rollback the deploy of frontend or backend through the Firebase and GAE consoles.
 
+### PR previews
+
+A PR that changes the staff app deploys a preview to a Firebase Hosting channel only when it has the `preview:staff` label. The staging Firebase project has a limited number of preview channels, so add the label only to PRs that need a preview. The `preview:sentencing` label also deploys a staff preview, which points at the PR's sentencing preview server. Removing the label or closing the PR deletes the channel.
+
 ### Cherry-pick deploys
 
 In order to cherry-pick or revert:
