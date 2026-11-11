@@ -21,6 +21,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
+import { hideWhenPrintingStyle } from "../../../sharedComponents";
 import {
   DetailsHeading,
   DetailsSubheading,
@@ -88,4 +89,8 @@ export const FieldLabel = styled(DetailsSubheading).attrs({ as: "div" })`
 
 export const FieldValue = styled(SecureDetailsContent).attrs({ as: "div" })`
   text-align: right;
+`;
+
+export const ScreenOnly = styled.span`
+  ${hideWhenPrintingStyle}
 `;

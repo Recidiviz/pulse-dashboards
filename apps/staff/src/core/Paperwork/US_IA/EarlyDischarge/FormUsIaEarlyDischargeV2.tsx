@@ -43,6 +43,8 @@ export function FormUsIaEarlyDischargeV2({
       hideDownloadButton
       downloadButtonLabel=""
       onClickDownload={async () => undefined}
+      menuActions={[{ label: "Print", onClick: () => window.print() }]}
+      printable
     >
       <FormChargesStep />
       <FormOrderStep />

@@ -16,18 +16,21 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import styled from "styled-components";
 
 import { pluralize } from "~utils";
 
 import { formatNameFirstLast, formatWorkflowsDate } from "../../../../utils";
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { WorkflowsBadgePill } from "../../../BadgePill/BadgePill";
+import { hideWhenPrintingStyle } from "../../../sharedComponents";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { FormJurisdictionBlock } from "./FormJurisdictionBlock";
 import {
   FieldLabel,
   FieldRow,
   FieldValue,
+  ScreenOnly,
   SectionHeader,
   SectionLabel,
   SelectedCount,
@@ -37,6 +40,14 @@ import {
   StepLabel,
   StepTitle,
 } from "./styles";
+
+const OrderStepLabel = styled(StepLabel)`
+  ${hideWhenPrintingStyle}
+`;
+
+const OrderSelectedCount = styled(SelectedCount)`
+  ${hideWhenPrintingStyle}
+`;
 
 export const FormOrderStep = observer(function FormOrderStep() {
   const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
@@ -53,15 +64,15 @@ export const FormOrderStep = observer(function FormOrderStep() {
     <StepCard aria-labelledby="us-ia-ed-order-step-title">
       <StepHeader>
         <div>
-          <StepLabel>Step 2</StepLabel>
+          <OrderStepLabel>Step 2</OrderStepLabel>
           <StepTitle id="us-ia-ed-order-step-title">
             Discharge Order Report
           </StepTitle>
         </div>
-        <SelectedCount>
+        <OrderSelectedCount>
           {pluralize(form.selectedChargeCount, "charge")} selected /{" "}
           {pluralize(selectedChargesByJurisdiction.size, "form")}
-        </SelectedCount>
+        </OrderSelectedCount>
       </StepHeader>
       {selectedChargesByJurisdiction.size === 0 ? (
         <StepHelpText>
@@ -73,7 +84,9 @@ export const FormOrderStep = observer(function FormOrderStep() {
         <>
           <SectionHeader>
             <SectionLabel>Shared header</SectionLabel>
-            <WorkflowsBadgePill text="Auto-filled" palette="GREEN" />
+            <ScreenOnly>
+              <WorkflowsBadgePill text="Auto-filled" palette="GREEN" />
+            </ScreenOnly>
           </SectionHeader>
           {headerFields.map(({ label, value }) => (
             <FieldRow key={label}>

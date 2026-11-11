@@ -27,7 +27,7 @@ import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import styled from "styled-components";
+import styled, { createGlobalStyle, css } from "styled-components";
 
 import {
   Button,
@@ -47,12 +47,39 @@ import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { FormLastEdited } from "../FormLastEdited";
 import { DenialItem } from "../OpportunityDenial/DropdownMenuButton";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
+import { hideWhenPrintingStyle } from "../sharedComponents";
 import { RevertChangesConfirmationModal } from "../WorkflowsJusticeInvolvedPersonProfile/RevertChangesConfirmationModal";
+import {
+  FORM_LAYOUT_CLASS,
+  FORM_SIDEBAR_CLASS,
+} from "../WorkflowsLayouts/constants";
 import { SubmitApprovalModal } from "./SubmitApprovalModal";
 import { SubmitRevisionModal } from "./SubmitRevisionModal";
 import { createDownloadLabel } from "./utils";
 
-const FormHeaderBar = styled.div`
+type PrintableProps = { $printable?: boolean };
+
+const hideOnPrintout = ({ $printable }: PrintableProps) =>
+  $printable && hideWhenPrintingStyle;
+
+// The side panel and the page grid belong to WorkflowsFormLayout, which every
+// form shares, so a printable form hides them only while it is on the page.
+// The layout's own grid rule has the same specificity and comes later in the
+// page's styles, so the grid selector names the element to win.
+const PrintOnlyTheForm = createGlobalStyle`
+  @media print {
+    .${FORM_SIDEBAR_CLASS} {
+      display: none;
+    }
+
+    div.${FORM_LAYOUT_CLASS} {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+  }
+`;
+
+const FormHeaderBar = styled.div<PrintableProps>`
   display: flex;
   justify-content: space-between;
   padding: ${rem(spacing.lg)} ${rem(spacing.xl)};
@@ -62,6 +89,17 @@ const FormHeaderBar = styled.div`
   top: 0;
   background-color: ${palette.pine1};
   z-index: 999;
+
+  ${({ $printable }) =>
+    $printable &&
+    css`
+      @media print {
+        position: static;
+        padding: 0 0 ${rem(spacing.md)};
+        border-bottom: none;
+        background: none;
+      }
+    `}
 `;
 
 const FormHeaderSection = styled.div`
@@ -70,16 +108,34 @@ const FormHeaderSection = styled.div`
   gap: ${rem(spacing.md)};
 `;
 
-const FormHeading = styled(Sans24)`
-  color: ${palette.marble1};
+const FormHeaderActions = styled(FormHeaderSection).attrs({
+  role: "group",
+  "aria-label": "Form actions",
+})<PrintableProps>`
+  ${hideOnPrintout}
 `;
 
-const LastEditedMessage = styled(Sans12)`
+const FormHeading = styled(Sans24)<PrintableProps>`
+  color: ${palette.marble1};
+
+  ${({ $printable }) =>
+    $printable &&
+    css`
+      @media print {
+        color: ${palette.pine1};
+      }
+    `}
+`;
+
+const LastEditedMessage = styled(Sans12)<PrintableProps>`
   color: ${palette.marble1};
   margin-top: ${rem(spacing.sm)};
+
+  ${hideOnPrintout}
 `;
 
-const ReviewChainButtons = styled.div`
+const ReviewChainButtons = styled.div<PrintableProps>`
+  ${hideOnPrintout}
   display: inline-flex;
   justify-content: flex-end;
   align-items: center;
@@ -149,17 +205,32 @@ const ActionsDropdownToggle = styled(DropdownToggle)`
     color: inherit;
     outline: none;
   }
+
+  &:focus-visible {
+    outline: 2px solid ${palette.white70};
+    outline-offset: 2px;
+  }
 `;
 
-const FormContainerElement = styled.div`
+const FormContainerElement = styled.div<PrintableProps>`
   background-color: ${palette.pine1};
   color: ${palette.marble1};
   min-height: 100vh;
   height: 100%;
   padding-bottom: ${rem(spacing.xl)};
+
+  ${({ $printable }) =>
+    $printable &&
+    css`
+      @media print {
+        min-height: auto;
+        padding-bottom: 0;
+        background: none;
+      }
+    `}
 `;
 
-const FormPreviewContainer = styled.div`
+const FormPreviewContainer = styled.div<PrintableProps>`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
@@ -167,6 +238,15 @@ const FormPreviewContainer = styled.div`
   width: 100%;
   height: 100%;
   background-color: ${palette.pine1};
+
+  ${({ $printable }) =>
+    $printable &&
+    css`
+      @media print {
+        padding: 0;
+        background: none;
+      }
+    `}
 `;
 
 const StyledDropdown = styled(Dropdown)`
@@ -192,6 +272,22 @@ const ActionsDropdownMenuItem = styled(DropdownMenuItem)`
   }
 `;
 
+function FormActionsMenu({ children }: { children: React.ReactNode }) {
+  return (
+    <StyledDropdown>
+      <ActionsDropdownToggle aria-label="More actions">
+        <Icon kind="TripleDot" size={16} color={palette.white70} />
+      </ActionsDropdownToggle>
+      <ActionsDropdownMenu alignment="right">{children}</ActionsDropdownMenu>
+    </StyledDropdown>
+  );
+}
+
+export type FormMenuAction = {
+  label: string;
+  onClick: () => void;
+};
+
 export type FormHeaderProps = {
   hideLastEditedMessage?: boolean;
   agencyName: string;
@@ -205,6 +301,14 @@ export type FormHeaderProps = {
   opportunity: Opportunity;
   children: React.ReactNode;
   additionalHeaderButtons?: React.ReactNode;
+  /** Shown in the header's "More actions" menu, after any built-in actions. */
+  menuActions?: FormMenuAction[];
+  /**
+   * Prints the heading in dark text and the form's body on a plain page. The
+   * side panel, the header's actions and the "Last edited" message stay on
+   * screen; anything else a form doesn't want on paper, it hides itself.
+   */
+  printable?: boolean;
   /** Rendered in the header bar, below the "Last edited" message. */
   headerBanner?: React.ReactNode;
   onDenialButtonClick?: () => void;
@@ -227,6 +331,8 @@ export const FormContainer = observer(function FormContainer({
   opportunity,
   children,
   additionalHeaderButtons,
+  menuActions = [],
+  printable = false,
   headerBanner,
   onDenialButtonClick = () => null,
 }: FormHeaderProps): React.ReactElement<any> {
@@ -328,14 +434,29 @@ export const FormContainer = observer(function FormContainer({
       "Add Name, Signature, Date, and Recommendation to form";
   }
 
+  const menuActionItems = menuActions.map(({ label, onClick }) => (
+    <ActionsDropdownMenuItem key={label} onClick={onClick}>
+      {label}
+    </ActionsDropdownMenuItem>
+  ));
+  const hasMenuActions = menuActionItems.length > 0;
+
+  const showRevertEdits = formRevertButton && form.allowRevert;
+  const revertEditsProps = {
+    disabled: !form.formLastUpdated || form.formIsReverting,
+    onClick: () => form.revert(),
+    children: form.formIsReverting ? currentlyRevertingLabel : revertEditsLabel,
+  };
+
   return (
-    <FormContainerElement>
-      <FormHeaderBar>
+    <FormContainerElement $printable={printable}>
+      {printable && <PrintOnlyTheForm />}
+      <FormHeaderBar $printable={printable}>
         <FormHeaderSection>
           <div>
-            <FormHeading>{heading}</FormHeading>
+            <FormHeading $printable={printable}>{heading}</FormHeading>
             {!hideLastEditedMessage && (
-              <LastEditedMessage>
+              <LastEditedMessage $printable={printable}>
                 <FormLastEdited
                   agencyName={agencyName}
                   dataProviso={dataProviso}
@@ -349,7 +470,7 @@ export const FormContainer = observer(function FormContainer({
         </FormHeaderSection>
         {opportunity.config.enableSupervisorReviewChain ? (
           <>
-            <ReviewChainButtons>
+            <ReviewChainButtons $printable={printable}>
               <TooltipTrigger contents={submitButtonTooltip}>
                 <SubmitButton
                   disabled={!userHasFilledNecessaryFields}
@@ -358,50 +479,39 @@ export const FormContainer = observer(function FormContainer({
                   <SubmitButtonText>Submit</SubmitButtonText>
                 </SubmitButton>
               </TooltipTrigger>
-              <StyledDropdown>
-                <ActionsDropdownToggle>
-                  <Icon kind="TripleDot" size={16} color={palette.white70} />
-                </ActionsDropdownToggle>
-                <ActionsDropdownMenu alignment="right">
+              <FormActionsMenu>
+                <ActionsDropdownMenuItem
+                  disabled={!opportunity.isInSupervisorReview}
+                  onClick={() => setOpenModal("revision")}
+                >
+                  Send Back for Revisions
+                </ActionsDropdownMenuItem>
+                {!hideDownloadButton && (
                   <ActionsDropdownMenuItem
-                    disabled={!opportunity.isInSupervisorReview}
-                    onClick={() => setOpenModal("revision")}
+                    disabled={
+                      isDownloadButtonDisabled || form.formIsDownloading
+                    }
+                    onClick={handleDownloadClick}
                   >
-                    Send Back for Revisions
+                    {downloadLabel}
                   </ActionsDropdownMenuItem>
-                  {!hideDownloadButton && (
-                    <ActionsDropdownMenuItem
-                      disabled={
-                        isDownloadButtonDisabled || form.formIsDownloading
-                      }
-                      onClick={handleDownloadClick}
-                    >
-                      {downloadLabel}
-                    </ActionsDropdownMenuItem>
-                  )}
-                  {formRevertButton && form.allowRevert && (
-                    <ActionsDropdownMenuItem
-                      disabled={!form.formLastUpdated || form.formIsReverting}
-                      onClick={() => form.revert()}
-                    >
-                      {form.formIsReverting
-                        ? currentlyRevertingLabel
-                        : revertEditsLabel}
-                    </ActionsDropdownMenuItem>
-                  )}
-                  {opportunity.config.supportsDenial && (
-                    <DenialItem
-                      opportunity={opportunity}
-                      onDenialButtonClick={onDenialButtonClick}
-                    />
-                  )}
-                  {showRevertLink && (
-                    <ActionsDropdownMenuItem onClick={handleUndoClick}>
-                      Revert from {opportunity.tabTitle()}
-                    </ActionsDropdownMenuItem>
-                  )}
-                </ActionsDropdownMenu>
-              </StyledDropdown>
+                )}
+                {showRevertEdits && (
+                  <ActionsDropdownMenuItem {...revertEditsProps} />
+                )}
+                {opportunity.config.supportsDenial && (
+                  <DenialItem
+                    opportunity={opportunity}
+                    onDenialButtonClick={onDenialButtonClick}
+                  />
+                )}
+                {showRevertLink && (
+                  <ActionsDropdownMenuItem onClick={handleUndoClick}>
+                    Revert from {opportunity.tabTitle()}
+                  </ActionsDropdownMenuItem>
+                )}
+                {menuActionItems}
+              </FormActionsMenu>
             </ReviewChainButtons>
             <SubmitApprovalModal
               showModal={openModal === "approval"}
@@ -426,17 +536,12 @@ export const FormContainer = observer(function FormContainer({
             />
           </>
         ) : (
-          <FormHeaderSection>
-            {formRevertButton && form.allowRevert && (
+          <FormHeaderActions $printable={printable}>
+            {showRevertEdits && !hasMenuActions && (
               <RevertButton
-                disabled={!form.formLastUpdated || form.formIsReverting}
                 className="WorkflowsFormRevertButton"
-                onClick={() => form.revert()}
-              >
-                {form.formIsReverting
-                  ? currentlyRevertingLabel
-                  : revertEditsLabel}
-              </RevertButton>
+                {...revertEditsProps}
+              />
             )}
             {additionalHeaderButtons}
             {!hideDownloadButton && (
@@ -450,10 +555,20 @@ export const FormContainer = observer(function FormContainer({
                 </DownloadButton>
               </TooltipTrigger>
             )}
-          </FormHeaderSection>
+            {hasMenuActions && (
+              <FormActionsMenu>
+                {menuActionItems}
+                {showRevertEdits && (
+                  <ActionsDropdownMenuItem {...revertEditsProps} />
+                )}
+              </FormActionsMenu>
+            )}
+          </FormHeaderActions>
         )}
       </FormHeaderBar>
-      <FormPreviewContainer>{children}</FormPreviewContainer>
+      <FormPreviewContainer $printable={printable}>
+        {children}
+      </FormPreviewContainer>
     </FormContainerElement>
   );
 });

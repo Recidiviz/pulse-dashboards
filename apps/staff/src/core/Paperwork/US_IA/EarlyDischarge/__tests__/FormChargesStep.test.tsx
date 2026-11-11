@@ -238,4 +238,12 @@ describe("Select all", () => {
       );
     },
   );
+
+  it("leaves the charge selection off the printout", () => {
+    renderStep([charge("POLK", "FECR001", "THEFT")]);
+
+    expect(
+      screen.getByRole("region", { name: "Select charges" }),
+    ).toHaveStyleRule("display", "none", { media: "print" });
+  });
 });

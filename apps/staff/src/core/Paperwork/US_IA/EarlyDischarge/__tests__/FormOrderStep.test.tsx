@@ -150,4 +150,18 @@ describe("FormOrderStep", () => {
     expect(screen.queryByText(/select charges above/)).not.toBeInTheDocument();
     expect(screen.queryByText("Shared header")).not.toBeInTheDocument();
   });
+
+  it("prints the report without its step label or selection count", () => {
+    renderStep(new Map([["POLK", [charge("POLK", "FECR001", "THEFT")]]]));
+
+    expect(screen.getByText("Step 2")).toHaveStyleRule("display", "none", {
+      media: "print",
+    });
+    expect(screen.getByText(/selected \//)).toHaveStyleRule("display", "none", {
+      media: "print",
+    });
+    expect(
+      screen.getByRole("region", { name: "Discharge Order Report" }),
+    ).not.toHaveStyleRule("display", "none", { media: "print" });
+  });
 });

@@ -69,10 +69,11 @@ import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 import WorkflowsUsTnReclassForm from "../WorkflowsUsTnReclassForm";
 import WorkflowsUsTxAnnualReportStatusForm from "../WorkflowsUsTxAnnualReportStatusForm";
 import WorkflowsUsTxEarlyReleaseFromSupervisionForm from "../WorkflowsUsTxEarlyReleaseFromSupervisionForm";
+import { FORM_LAYOUT_CLASS, FORM_SIDEBAR_CLASS } from "./constants";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div.attrs({ className: FORM_LAYOUT_CLASS })`
   ${typography.Sans16}
   align-items: stretch;
   display: grid;
@@ -86,7 +87,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Sidebar = styled.div`
+const Sidebar = styled.div.attrs({ className: FORM_SIDEBAR_CLASS })`
   background: ${palette.marble1};
 `;
 

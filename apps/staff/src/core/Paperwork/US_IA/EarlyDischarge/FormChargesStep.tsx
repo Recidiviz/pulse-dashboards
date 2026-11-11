@@ -26,6 +26,7 @@ import { Checkbox, CheckboxGroup, palette, typography } from "~design-system";
 import { pluralize } from "~utils";
 
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
+import { hideWhenPrintingStyle } from "../../../sharedComponents";
 import { SecureSmallDetailsCopy } from "../../../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { FormChargeRow } from "./FormChargeRow";
@@ -68,6 +69,11 @@ const ChargeGroup = styled(CheckboxGroup)`
   gap: 0;
   padding: 0;
   margin-top: ${rem(spacing.lg)};
+`;
+
+// The court gets the report from Step 2; choosing charges stays on screen.
+const ChargesStepCard = styled(StepCard)`
+  ${hideWhenPrintingStyle}
 `;
 
 type JurisdictionChargesProps = {
@@ -149,7 +155,7 @@ export const FormChargesStep = observer(function FormChargesStep() {
   const showJurisdictionLabels = chargesByJurisdiction.size > 1;
 
   return (
-    <StepCard aria-labelledby="us-ia-ed-charges-step-title">
+    <ChargesStepCard aria-labelledby="us-ia-ed-charges-step-title">
       <StepHeader>
         <div>
           <StepLabel>Step 1</StepLabel>
@@ -171,6 +177,6 @@ export const FormChargesStep = observer(function FormChargesStep() {
           showLabel={showJurisdictionLabels}
         />
       ))}
-    </StepCard>
+    </ChargesStepCard>
   );
 });

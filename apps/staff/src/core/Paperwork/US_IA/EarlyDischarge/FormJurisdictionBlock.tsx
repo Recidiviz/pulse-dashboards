@@ -37,6 +37,7 @@ import {
   DEFAULT_MAX_CHAR_LENGTH,
   DEFAULT_MIN_CHAR_LENGTH,
 } from "../../../constants";
+import { hideWhenPrintingStyle } from "../../../sharedComponents";
 import { SecureDetailsContent } from "../../../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useReactiveInput } from "../../utils";
@@ -44,16 +45,23 @@ import {
   FieldLabel,
   FieldRow,
   FieldValue,
+  ScreenOnly,
   SectionHeader,
   SectionLabel,
 } from "./styles";
 import { chargeMetaLine, jurisdictionSlug } from "./utils";
 
+// Block and ChargeTableScroller drop their overflow on paper, because clipped
+// or scrolling boxes don't continue onto the next printed page.
 const Block = styled.section`
   border: 1px solid ${palette.slate10};
   border-radius: ${rem(8)};
   margin-top: ${rem(spacing.lg)};
   overflow: hidden;
+
+  @media print {
+    overflow: visible;
+  }
 `;
 
 const BlockHeader = styled.div`
@@ -72,6 +80,7 @@ const StatusDot = styled.span`
   border-radius: 50%;
   flex: none;
   background-color: ${palette.pine4};
+  ${hideWhenPrintingStyle}
 `;
 
 const BlockBody = styled.div`
@@ -82,6 +91,10 @@ const BlockBody = styled.div`
 // the table scrolls here rather than losing columns when the page is narrow.
 const ChargeTableScroller = styled.div`
   overflow-x: auto;
+
+  @media print {
+    overflow: visible;
+  }
 `;
 
 const ChargeTable = styled.table.attrs({ className: "fs-exclude" })`
@@ -112,6 +125,24 @@ const NarrativeField = styled(CharacterCountTextField).attrs({
   className: "fs-exclude",
 })`
   margin-top: ${rem(spacing.md)};
+  ${hideWhenPrintingStyle}
+`;
+
+// A textarea prints only its visible rows, so paper gets the full text instead.
+const PrintedNarrative = styled.div.attrs({ className: "fs-exclude" })`
+  display: none;
+  margin-top: ${rem(spacing.md)};
+
+  @media print {
+    display: block;
+  }
+`;
+
+const PrintedNarrativeText = styled.p`
+  ${typography.Sans14}
+  margin: ${rem(spacing.xs)} 0 0;
+  white-space: pre-wrap;
+  color: ${palette.pine1};
 `;
 
 const Signatures = styled.div`
@@ -123,6 +154,9 @@ const Signatures = styled.div`
 const SignatureRole = FieldLabel;
 
 const BLANK = "—";
+
+const NARRATIVE_LABEL =
+  "Progress of Supervision / Restitution Status / Recommendations";
 
 type SignatureProps = {
   signer: string;
@@ -137,7 +171,9 @@ function Signature({ signer, name, title, autoFilled }: SignatureProps) {
       <SectionHeader>
         <SignatureRole>{signer}</SignatureRole>
         {autoFilled && (
-          <WorkflowsBadgePill text="Auto-filled" palette="GREEN" />
+          <ScreenOnly>
+            <WorkflowsBadgePill text="Auto-filled" palette="GREEN" />
+          </ScreenOnly>
         )}
       </SectionHeader>
       <FieldRow>
@@ -224,7 +260,7 @@ export const FormJurisdictionBlock = observer(function FormJurisdictionBlock({
         </ChargeTableScroller>
         <NarrativeField
           id={`narrative-${slug}`}
-          label="Progress of Supervision / Restitution Status / Recommendations"
+          label={NARRATIVE_LABEL}
           value={String(narrative ?? "")}
           onChange={setNarrative}
           minLength={DEFAULT_MIN_CHAR_LENGTH}
@@ -232,6 +268,12 @@ export const FormJurisdictionBlock = observer(function FormJurisdictionBlock({
           showRequired
           showCountBottomRight
         />
+        <PrintedNarrative>
+          <FieldLabel>{NARRATIVE_LABEL}</FieldLabel>
+          <PrintedNarrativeText>
+            {String(narrative ?? "") || BLANK}
+          </PrintedNarrativeText>
+        </PrintedNarrative>
         <SectionHeader>
           <SectionLabel>Signatures</SectionLabel>
         </SectionHeader>

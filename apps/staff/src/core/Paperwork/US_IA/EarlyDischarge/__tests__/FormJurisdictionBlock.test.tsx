@@ -44,13 +44,16 @@ function charge(causeNumber: string): UsIaEarlyDischargeCharge {
   };
 }
 
-function renderBlock(charges: UsIaEarlyDischargeCharge[]) {
+function renderBlock(
+  charges: UsIaEarlyDischargeCharge[],
+  formData: Record<string, string> = {},
+) {
   (useRootStore as Mock).mockReturnValue({
     userStore: { userFullName: undefined, userFullNameFromAdminPanel: "" },
     workflowsStore: { user: undefined },
   });
   const form = {
-    formData: {},
+    formData,
     formIsDownloading: false,
     formIsReverting: false,
     updateDraftData: vi.fn(),
@@ -108,6 +111,58 @@ describe("FormJurisdictionBlock", () => {
     expect(within(scroller).getByRole("table")).toBeInTheDocument();
     expect(scroller).toHaveStyle({ overflowX: "auto" });
     expect(scroller).toHaveAttribute("tabindex", "0");
+  });
+
+  it("prints the narrative as plain text, so none of it is cut off", () => {
+    renderBlock([charge("FECR002891")], {
+      "narrative-BLACK HAWK": "Paid restitution in full.",
+    });
+
+    const printed = screen.getByText("Paid restitution in full.", {
+      selector: "p",
+    });
+    expect(printed.parentElement).toHaveStyleRule("display", "none");
+    expect(printed.parentElement).toHaveStyleRule("display", "block", {
+      media: "print",
+    });
+    expect(printed.closest(".fs-exclude")).not.toBeNull();
+    expect(
+      screen.getByRole("textbox").closest(".CharacterCountTextField"),
+    ).toHaveStyleRule("display", "none", { media: "print" });
+  });
+
+  it("lets a long charge table run onto the next printed page", () => {
+    renderBlock([charge("FECR002891")]);
+
+    const scroller = screen.getByRole("group", { name: "BLACK HAWK charges" });
+    expect(scroller).toHaveStyleRule("overflow", "visible", { media: "print" });
+    expect(
+      screen.getByRole("region", { name: "BLACK HAWK · FECR002891 · Count 1" }),
+    ).toHaveStyleRule("overflow", "visible", { media: "print" });
+  });
+
+  it("prints a dash for an empty narrative, like the other blank fields", () => {
+    renderBlock([charge("FECR002891")]);
+
+    expect(screen.getByText("—", { selector: "p" })).toBeInTheDocument();
+  });
+
+  it("leaves the status dot off the printout", () => {
+    renderBlock([charge("FECR002891")]);
+
+    expect(
+      screen.getByRole("heading", { level: 3 }).previousElementSibling,
+    ).toHaveStyleRule("display", "none", { media: "print" });
+  });
+
+  it("leaves the Auto-filled badge off the printout", () => {
+    renderBlock([charge("FECR002891")]);
+
+    expect(screen.getByText("Auto-filled").parentElement).toHaveStyleRule(
+      "display",
+      "none",
+      { media: "print" },
+    );
   });
 
   it("has no detectable accessibility violations", async () => {
