@@ -45,6 +45,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
+  getFlaggedSections,
   MeetingDetails,
 } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
@@ -529,6 +530,7 @@ const MeetingMobile = ({
             showTranscription={showTranscription}
             showStaffFeedback={meetingDetails.staffFeedback != null}
             approvals={meetingDetails.approvals}
+            flaggedSections={getFlaggedSections(meetingDetails)}
           />
         </View>
       </Animated.View>

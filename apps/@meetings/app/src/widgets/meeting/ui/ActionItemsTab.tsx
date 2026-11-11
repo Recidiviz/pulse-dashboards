@@ -33,6 +33,7 @@ import {
   useCurrentAgencyConfig,
 } from "~@meetings/app/entities/agency-config";
 import {
+  getFlaggedSections,
   MeetingDetails,
   useCompleteActionItem,
 } from "~@meetings/app/entities/meeting";
@@ -50,7 +51,6 @@ import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { getFlaggedSections } from "../lib/getFlaggedSections";
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
 import { FlaggedOutputBanner } from "./FlaggedOutputBanner";
 

@@ -163,6 +163,31 @@ export function createGetSectionApproval(approvalRows: ApprovalRow[]) {
   };
 }
 
+/** The judge's grades for each notetaking run, from its newest evaluation. Runs that haven't been evaluated yet are left out. */
+export async function getLlmajGradesByRunId(
+  prisma: PrismaClient,
+  pipelineRunIds: string[],
+): Promise<Map<string, LlmajGrades>> {
+  if (pipelineRunIds.length === 0) return new Map();
+
+  const evaluations = await prisma.notetakingEvaluationRun.findMany({
+    where: { pipelineRunId: { in: pipelineRunIds } },
+    orderBy: { createdAt: "desc" },
+    select: { pipelineRunId: true, scores: true },
+  });
+
+  return new Map(
+    uniqBy(evaluations, "pipelineRunId").map(({ pipelineRunId, scores }) => [
+      pipelineRunId,
+      {
+        caseNote: scores.caseNote?.grade ?? null,
+        actionItems: scores.actionItems?.grade ?? null,
+        overall: scores.overall?.grade ?? null,
+      },
+    ]),
+  );
+}
+
 /** The judge's grades for a notetaking run, or null if it hasn't been evaluated yet. */
 export async function getLlmajGrades(
   prisma: PrismaClient,
@@ -170,18 +195,8 @@ export async function getLlmajGrades(
 ): Promise<LlmajGrades | null> {
   if (!pipelineRunId) return null;
 
-  const evaluation = await prisma.notetakingEvaluationRun.findFirst({
-    where: { pipelineRunId },
-    orderBy: { createdAt: "desc" },
-    select: { scores: true },
-  });
-  if (!evaluation) return null;
-
-  return {
-    caseNote: evaluation.scores.caseNote?.grade ?? null,
-    actionItems: evaluation.scores.actionItems?.grade ?? null,
-    overall: evaluation.scores.overall?.grade ?? null,
-  };
+  const gradesByRunId = await getLlmajGradesByRunId(prisma, [pipelineRunId]);
+  return gradesByRunId.get(pipelineRunId) ?? null;
 }
 
 export async function getMeetingsForPerson({
@@ -221,8 +236,12 @@ export async function getMeetingsForPerson({
       durationMs: true,
       staffEmail: true,
       notetakingPipelineRunId: true,
+      caseNoteEditedAt: true,
+      actionItemsEditedAt: true,
     },
   });
+
+  const currentRunIds = compact(meetings.map((m) => m.notetakingPipelineRunId));
 
   const pipelineRuns = await prisma.notetakingPipelineRun.findMany({
     where: { meetingId: { in: meetings.map((m) => m.id) } },
@@ -238,9 +257,7 @@ export async function getMeetingsForPerson({
   const approvalRows = await prisma.noteApproval.findMany({
     where: {
       meetingId: { in: meetings.map((m) => m.id) },
-      pipelineRunId: {
-        in: compact(meetings.map((m) => m.notetakingPipelineRunId)),
-      },
+      pipelineRunId: { in: currentRunIds },
     },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: {
@@ -254,6 +271,8 @@ export async function getMeetingsForPerson({
   });
 
   const approvalRowsByMeetingId = groupBy(approvalRows, "meetingId");
+
+  const llmajGradesByRunId = await getLlmajGradesByRunId(prisma, currentRunIds);
 
   return meetings.map((meeting) => {
     const getSectionApproval = createGetSectionApproval(
@@ -271,6 +290,9 @@ export async function getMeetingsForPerson({
         caseNote: getSectionApproval(NoteSection.CASE_NOTE),
         actionItems: getSectionApproval(NoteSection.ACTION_ITEMS),
       },
+      llmajGrades: meeting.notetakingPipelineRunId
+        ? llmajGradesByRunId.get(meeting.notetakingPipelineRunId) ?? null
+        : null,
     };
   });
 }

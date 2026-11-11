@@ -20,15 +20,29 @@ import { View } from "react-native";
 import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import FlaggedIcon from "../assets/flagged.svg";
 import NotReviewedIcon from "../assets/not-reviewed.svg";
 import ReviewedIcon from "../assets/reviewed.svg";
+import type { ReviewIndicatorProps } from "../model/types";
 
-export function ReviewIndicator({ isApproved }: { isApproved: boolean }) {
-  const icon = isApproved ? (
-    <ReviewedIcon className="size-3" />
-  ) : (
-    <NotReviewedIcon className="size-3" />
-  );
+function getIndicator({ isApproved, isFlagged }: ReviewIndicatorProps) {
+  if (isApproved) {
+    return { icon: <ReviewedIcon className="size-3" />, label: "Reviewed" };
+  }
+  if (isFlagged) {
+    return {
+      icon: <FlaggedIcon className="size-3" />,
+      label: "Not yet reviewed, inaccuracies detected",
+    };
+  }
+  return {
+    icon: <NotReviewedIcon className="size-3" />,
+    label: "Not yet reviewed",
+  };
+}
+
+export function ReviewIndicator(props: ReviewIndicatorProps) {
+  const { icon, label } = getIndicator(props);
 
   return (
     <Tooltip
@@ -36,7 +50,7 @@ export function ReviewIndicator({ isApproved }: { isApproved: boolean }) {
       contentClassName="!p-2"
       content={
         <Typography variant="body-s-regular" className="!text-on-brand">
-          {isApproved ? "Reviewed" : "Not yet reviewed"}
+          {label}
         </Typography>
       }
     >

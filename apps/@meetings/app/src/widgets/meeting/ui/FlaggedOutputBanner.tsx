@@ -20,9 +20,8 @@ import { View } from "react-native";
 import CheckIcon from "react-native-heroicons/outline/CheckIcon";
 import ExclamationIcon from "react-native-heroicons/solid/ExclamationIcon";
 
+import type { FlaggedSection } from "~@meetings/app/entities/meeting";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-
-import type { FlaggedSection } from "../lib/getFlaggedSections";
 
 const COPY: Record<
   FlaggedSection,

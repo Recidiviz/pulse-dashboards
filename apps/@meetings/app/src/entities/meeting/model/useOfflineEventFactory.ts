@@ -95,6 +95,9 @@ export function useOfflineEventFactory() {
               approvedAt: null,
             },
           },
+          llmajGrades: null,
+          caseNoteEditedAt: null,
+          actionItemsEditedAt: null,
           staffEmail: currentUserEmail ?? "",
         };
 

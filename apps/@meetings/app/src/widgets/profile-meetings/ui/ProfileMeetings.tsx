@@ -34,6 +34,7 @@ import {
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
   ClientMeetings,
+  getFlaggedSections,
   ResidentMeetings,
   useCreateMeeting,
 } from "~@meetings/app/entities/meeting";
@@ -256,6 +257,7 @@ export const ProfileMeetings = ({
           status: m.postMeetingProcessingStatus,
           validationErrorType: m.validationErrorType,
           approvals: m.approvals,
+          isCaseNoteFlagged: getFlaggedSections(m).caseNote.needsEdit,
           isActive: !end,
           caseNote: m.caseNote,
           staffEmail: m.staffEmail,

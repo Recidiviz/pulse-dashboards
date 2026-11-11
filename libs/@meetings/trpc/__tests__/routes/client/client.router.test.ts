@@ -22,6 +22,7 @@ import { TRPCError } from "@trpc/server";
 import {
   ApprovalValue,
   NoteSection,
+  NotetakingPipelineStatus,
   OutputVoteValue,
   PostMeetingProcessingStatus,
   StateCode,
@@ -350,6 +351,125 @@ describe("client router", () => {
           [noRun.id]: false,
         });
         expect(result[0]).not.toHaveProperty("notetakingPipelineRunId");
+      });
+
+      test("Returns each meeting's LLMAJ grades from the newest evaluation of its current pipeline run", async () => {
+        type Grade = "GOOD" | "PARTIAL" | "BAD";
+
+        const textScore = (grade: Grade) => ({
+          rationale: "",
+          grade,
+          hallucinations: [],
+          omissions: [],
+        });
+
+        const createCompletedMeeting = (
+          notetakingPipelineRunId: string | null,
+          caseNoteEditedAt: Date | null = null,
+        ) =>
+          testPrismaClient.meeting.create({
+            data: {
+              clientId: fakeClients[0].personId,
+              staffEmail: fakeStaff[1].email,
+              startTime: faker.date.past(),
+              endTime: faker.date.recent(),
+              recordingsGCSBucket: "test-audio-bucket",
+              recordingsFolderPath: createId(),
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.COMPLETED,
+              notetakingPipelineRunId,
+              caseNoteEditedAt,
+            },
+          });
+        const evaluate = async (
+          meetingId: string,
+          pipelineRunId: string,
+          grade: Grade,
+          createdAt = new Date(),
+        ) => {
+          await testPrismaClient.notetakingPipelineRun.upsert({
+            where: { id: pipelineRunId },
+            create: {
+              id: pipelineRunId,
+              meetingId,
+              personPseudonymizedId: "person-pid-1",
+              status: NotetakingPipelineStatus.SUCCESS,
+            },
+            update: {},
+          });
+          await testPrismaClient.notetakingEvaluationRun.create({
+            data: {
+              pipelineRunId,
+              evaluatorVersion: "v1",
+              createdAt,
+              scores: {
+                transcriptComparison: null,
+                caseNote: textScore(grade),
+                actionItems: textScore(grade),
+                overall: textScore(grade),
+              },
+            },
+          });
+        };
+
+        const editedAt = new Date("2026-01-03T00:00:00Z");
+        const reEvaluated = await createCompletedMeeting(
+          "run-re-evaluated",
+          editedAt,
+        );
+        await evaluate(
+          reEvaluated.id,
+          "run-re-evaluated",
+          "GOOD",
+          new Date("2026-01-01T00:00:00Z"),
+        );
+        await evaluate(
+          reEvaluated.id,
+          "run-re-evaluated",
+          "BAD",
+          new Date("2026-01-02T00:00:00Z"),
+        );
+
+        const regenerated = await createCompletedMeeting("run-not-evaluated");
+        await evaluate(regenerated.id, "run-superseded", "BAD");
+
+        const noRun = await createCompletedMeeting(null);
+
+        const result = await testTRPCClient.v1.client.getMeetings.query({
+          clientId: fakeClients[0].personId,
+        });
+
+        const byId = Object.fromEntries(
+          result.map((m) => [
+            m.id,
+            {
+              llmajGrades: m.llmajGrades,
+              caseNoteEditedAt: m.caseNoteEditedAt,
+              actionItemsEditedAt: m.actionItemsEditedAt,
+            },
+          ]),
+        );
+        expect(byId).toEqual({
+          [reEvaluated.id]: {
+            llmajGrades: {
+              caseNote: "BAD",
+              actionItems: "BAD",
+              overall: "BAD",
+            },
+            caseNoteEditedAt: editedAt,
+            actionItemsEditedAt: null,
+          },
+          [regenerated.id]: {
+            llmajGrades: null,
+            caseNoteEditedAt: null,
+            actionItemsEditedAt: null,
+          },
+          [noRun.id]: {
+            llmajGrades: null,
+            caseNoteEditedAt: null,
+            actionItemsEditedAt: null,
+          },
+        });
       });
     });
 

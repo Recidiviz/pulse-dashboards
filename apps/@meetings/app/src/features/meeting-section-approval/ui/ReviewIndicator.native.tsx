@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import FlaggedIcon from "../assets/flagged.svg";
 import NotReviewedIcon from "../assets/not-reviewed.svg";
 import ReviewedIcon from "../assets/reviewed.svg";
+import type { ReviewIndicatorProps } from "../model/types";
 
-export function ReviewIndicator({ isApproved }: { isApproved: boolean }) {
-  return isApproved ? (
-    <ReviewedIcon className="size-3" />
-  ) : (
-    <NotReviewedIcon className="size-3" />
-  );
+export function ReviewIndicator({
+  isApproved,
+  isFlagged,
+}: ReviewIndicatorProps) {
+  if (isApproved) return <ReviewedIcon className="size-3" />;
+  if (isFlagged) return <FlaggedIcon className="size-3" />;
+  return <NotReviewedIcon className="size-3" />;
 }

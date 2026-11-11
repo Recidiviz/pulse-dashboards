@@ -27,6 +27,11 @@ export {
   formatMeetingStartDateTitle,
 } from "./lib/formatMeetingDate";
 export { formatSpeakerLabel } from "./lib/formatMeetingSpeakers";
+export {
+  type FlaggedSection,
+  type FlaggedSections,
+  getFlaggedSections,
+} from "./lib/getFlaggedSections";
 export { isMeetingProcessing } from "./lib/isMeetingProcessing";
 export { useCompleteActionItem } from "./model/useCompleteActionItem";
 export { useCreateMeeting } from "./model/useCreateMeeting";

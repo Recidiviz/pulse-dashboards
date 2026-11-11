@@ -19,11 +19,10 @@ import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import ExclamationIcon from "react-native-heroicons/solid/ExclamationIcon";
 
+import type { FlaggedSections } from "~@meetings/app/entities/meeting";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-
-import type { FlaggedSections } from "../lib/getFlaggedSections";
 
 type Props = {
   flaggedSections: FlaggedSections;

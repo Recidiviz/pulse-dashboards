@@ -69,6 +69,7 @@ type Meeting = {
   status: PostMeetingProcessingStatus;
   validationErrorType: string | null;
   approvals: ClientMeetings[number]["approvals"];
+  isCaseNoteFlagged: boolean;
   start: Date;
   end: Date | null;
   staffEmail: string;
@@ -169,6 +170,7 @@ const MeetingRow = ({
                   <View className="h-6 justify-center">
                     <ReviewIndicator
                       isApproved={meeting.approvals.caseNote.isApproved}
+                      isFlagged={meeting.isCaseNoteFlagged}
                     />
                   </View>
                 )}

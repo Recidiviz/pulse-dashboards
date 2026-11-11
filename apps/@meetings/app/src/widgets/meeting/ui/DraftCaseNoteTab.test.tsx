@@ -32,6 +32,9 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 let mockCapturedOnSuccess: (() => void) | undefined;
 const mockMutate = jest.fn();
 jest.mock("~@meetings/app/entities/meeting", () => ({
+  getFlaggedSections: jest.requireActual(
+    "~@meetings/app/entities/meeting/lib/getFlaggedSections",
+  ).getFlaggedSections,
   useUpdateNotes: jest.fn((options?: { onSuccess?: () => void }) => {
     mockCapturedOnSuccess = options?.onSuccess;
     return { mutate: mockMutate };

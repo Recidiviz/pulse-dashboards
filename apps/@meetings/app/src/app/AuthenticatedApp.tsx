@@ -234,7 +234,7 @@ const AuthenticatedApp: React.FC = () => {
             // Update this field to bust cache (whenever a
             // procedure's output gains, renames, or retypes a field, so that old
             // cached results are dropped that don't match the new shape).
-            buster: "v1",
+            buster: "v2",
           }}
         >
           <AgencyConfigProvider>

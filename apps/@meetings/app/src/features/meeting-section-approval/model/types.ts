@@ -25,3 +25,10 @@ export const APPROVABLE_SECTION_TO_NOTE_SECTION = {
   caseNote: "CASE_NOTE",
   actionItems: "ACTION_ITEMS",
 } as const satisfies Record<ApprovableSectionKey, NoteSection>;
+
+export type ReviewIndicatorProps = {
+  isApproved: boolean;
+  // The LLM judge graded the section BAD and nobody has edited it since.
+  // Approval still wins: an approved section shows as reviewed
+  isFlagged?: boolean;
+};

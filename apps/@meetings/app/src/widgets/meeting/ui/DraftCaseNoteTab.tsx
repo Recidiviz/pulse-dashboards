@@ -23,6 +23,7 @@ import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicat
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
 import {
+  getFlaggedSections,
   MeetingDetails,
   useUpdateNotes,
 } from "~@meetings/app/entities/meeting";
@@ -36,7 +37,6 @@ import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { TextInput } from "~@meetings/app/shared/ui/TextInput";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { getFlaggedSections } from "../lib/getFlaggedSections";
 import { useCaseNoteTyping } from "../model/useCaseNoteTyping";
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
 import { FlaggedOutputBanner } from "./FlaggedOutputBanner";
@@ -151,7 +151,7 @@ const DraftCaseNoteTab = ({
 
   return (
     <View className="flex-1 gap-3 pb-4">
-      {notepadNotes?.trim() && (
+      {!!notepadNotes?.trim() && (
         <View className="mb-5">
           <NotepadNotesSection notes={notepadNotes} />
         </View>

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { MeetingDetails } from "~@meetings/app/entities/meeting";
+import type { MeetingDetails } from "../api/meeting";
 
 type Params = Pick<
   MeetingDetails,

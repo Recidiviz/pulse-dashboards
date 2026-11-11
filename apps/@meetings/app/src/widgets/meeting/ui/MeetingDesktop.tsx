@@ -25,6 +25,7 @@ import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 import {
   formatMeetingDuration,
   formatMeetingStartDate,
+  getFlaggedSections,
   isMeetingProcessing,
   MeetingDetails,
 } from "~@meetings/app/entities/meeting";
@@ -277,6 +278,7 @@ const MeetingDesktop = ({
                   showStaffFeedback={meetingDetails.staffFeedback != null}
                   tabOrder={TAB_ORDER}
                   approvals={meetingDetails.approvals}
+                  flaggedSections={getFlaggedSections(meetingDetails)}
                 />
               </View>
               <View className="ml-3 flex-row gap-3">

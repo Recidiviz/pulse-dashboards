@@ -18,6 +18,10 @@
 import { Pressable, ScrollView } from "react-native";
 import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
 
+import type {
+  FlaggedSection,
+  FlaggedSections,
+} from "~@meetings/app/entities/meeting";
 import { ReviewIndicator } from "~@meetings/app/features/meeting-section-approval";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -39,7 +43,13 @@ type Props = {
   tabOrder?: Tab[];
   // Only Draft Case Notes and Action Items are approvable; other tabs never
   // show a review indicator regardless of this being set.
-  approvals?: { caseNote: SectionApproval; actionItems: SectionApproval };
+  approvals?: Record<FlaggedSection, SectionApproval>;
+  flaggedSections?: FlaggedSections;
+};
+
+const TAB_TO_SECTION: Partial<Record<Tab, FlaggedSection>> = {
+  [Tab.DraftCaseNotes]: "caseNote",
+  [Tab.ActionItems]: "actionItems",
 };
 
 const MeetingTabs = ({
@@ -50,6 +60,7 @@ const MeetingTabs = ({
   showStaffFeedback,
   tabOrder = Object.values(Tab),
   approvals,
+  flaggedSections,
 }: Props) => {
   const visibleTabs = tabOrder.filter((tab) => {
     if (tab === Tab.Transcript) return showTranscription;
@@ -57,10 +68,13 @@ const MeetingTabs = ({
     return true;
   });
 
-  const getIsApprovedForTab = (tab: Tab): boolean | undefined => {
-    if (tab === Tab.DraftCaseNotes) return approvals?.caseNote.isApproved;
-    if (tab === Tab.ActionItems) return approvals?.actionItems.isApproved;
-    return undefined;
+  const getReviewForTab = (tab: Tab) => {
+    const section = TAB_TO_SECTION[tab];
+    if (!section || !approvals) return undefined;
+    return {
+      isApproved: approvals[section].isApproved,
+      isFlagged: flaggedSections?.[section].needsEdit,
+    };
   };
 
   return (
@@ -70,7 +84,7 @@ const MeetingTabs = ({
       contentContainerClassName="flex-row gap-1 bg-screen rounded-full p-1"
     >
       {visibleTabs.map((tab) => {
-        const isApproved = getIsApprovedForTab(tab);
+        const review = getReviewForTab(tab);
 
         return (
           <Pressable
@@ -90,9 +104,7 @@ const MeetingTabs = ({
                 : undefined
             }
           >
-            {isApproved !== undefined && (
-              <ReviewIndicator isApproved={isApproved} />
-            )}
+            {review && <ReviewIndicator {...review} />}
             <Typography
               className={`text-base ${tab === activeTab ? "text-primary" : "text-secondary"}`}
             >

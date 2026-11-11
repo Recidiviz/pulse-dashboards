@@ -19,10 +19,12 @@ import { ReactNode, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { MeetingDetails } from "~@meetings/app/entities/meeting";
+import {
+  getFlaggedSections,
+  MeetingDetails,
+} from "~@meetings/app/entities/meeting";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 
-import { getFlaggedSections } from "../lib/getFlaggedSections";
 import { FlaggedOutputModal } from "./FlaggedOutputModal";
 import MeetingDesktop from "./MeetingDesktop";
 import MeetingMobile from "./MeetingMobile";
