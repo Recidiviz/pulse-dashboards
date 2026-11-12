@@ -35,6 +35,8 @@ import {
 } from "~hydration-utils";
 
 import FirestoreStore, {
+  ParoleBoardReportFieldName,
+  ParoleBoardReportFieldValue,
   ParoleBoardReportRef,
   ParoleBoardReportRowEntry,
 } from "../../FirestoreStore";
@@ -274,6 +276,33 @@ export class ParoleBoardReportPresenter implements Hydratable {
           ),
         ),
     };
+  }
+
+  /**
+   * Saves the PHI's value for a field that belongs to a section as a whole,
+   * such as the Summary's text. A null value records that the PHI cleared the
+   * field. Like every edit, the first one creates the report.
+   *
+   * @param section - The section's key in the report, such as "summary".
+   * @param field - The field's name within the section.
+   * @param value - The PHI's value, or null when they cleared the field.
+   */
+  setFieldValue<
+    Section extends ParoleBoardReportSectionKey,
+    Field extends ParoleBoardReportFieldName<Section>,
+  >(
+    section: Section,
+    field: Field,
+    value: ParoleBoardReportFieldValue<Section, Field>,
+  ): Promise<void> {
+    return this.editReport((report) =>
+      this.firestoreStore.setParoleBoardReportFieldValue(
+        report,
+        section,
+        field,
+        value,
+      ),
+    );
   }
 
   /**

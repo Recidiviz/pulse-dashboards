@@ -35,8 +35,9 @@ import {
   SENTENCED_ID,
   UNDATED_ID,
 } from "../__fixtures__/pastActions";
+import { MISSING_VALUE_TEXT } from "../constants";
 import { ReportRowColumn } from "../reportRowColumn";
-import { MISSING_VALUE_TEXT, ReportRowList } from "../ReportRowList";
+import { ReportRowList } from "../ReportRowList";
 import { SAVE_FAILED_MESSAGE } from "../ReportRowModal";
 import { ReportRowValues, resolveSavedNewRow } from "../reportRowValues";
 import { Removal } from "../useRemoveWithUndo";

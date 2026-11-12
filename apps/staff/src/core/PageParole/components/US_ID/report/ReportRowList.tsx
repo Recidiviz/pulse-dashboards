@@ -26,6 +26,7 @@ import { ParoleBoardReportMode } from "../../../../../ParoleStore/presenters/Par
 import { newPhiRowId } from "../../../../../ParoleStore/report/newPhiRowId";
 import { ResolvedRow } from "../../../../../ParoleStore/report/resolveSection";
 import { EmptyState } from "../../shared";
+import { MISSING_VALUE_TEXT } from "./constants";
 import { ReportRowColumn } from "./reportRowColumn";
 import { ReportRowModal, SAVE_FAILED_MESSAGE } from "./ReportRowModal";
 import {
@@ -36,10 +37,6 @@ import {
   rowValues,
 } from "./reportRowValues";
 import { Removal, useRemoveWithUndo } from "./useRemoveWithUndo";
-
-// What a cell shows for a field with no value. Q16 in the design doc decides
-// how a missing value reads, so change it here.
-export const MISSING_VALUE_TEXT = "----";
 
 const ListWrapper = styled.div`
   display: flex;

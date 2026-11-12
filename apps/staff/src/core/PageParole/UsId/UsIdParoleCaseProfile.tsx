@@ -30,6 +30,7 @@ import {
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleBoardReportPresenter } from "../../../ParoleStore/presenters/ParoleBoardReportPresenter";
+import { resolveSummary } from "../../../ParoleStore/report/summary";
 import ModelHydrator from "../../ModelHydrator";
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
@@ -39,6 +40,7 @@ import { UsIdHearingHistorySection } from "../components/US_ID/UsIdHearingHistor
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
 import { UsIdParoleSidebar } from "../components/US_ID/UsIdParoleSidebar";
+import { UsIdSummarySection } from "../components/US_ID/UsIdSummarySection";
 import { ParoleCaseProfileLayout } from "../ParoleCaseProfile/ParoleCaseProfileLayout";
 
 /**
@@ -55,6 +57,12 @@ const SECTION_NAV = [
     id: PAROLE_SECTION_IDS.hearingHistory,
     label: "Hearing History",
   },
+];
+
+// Entries for the PHI report's sections, which follow the sections above and
+// show only while the profile shows the report.
+const REPORT_SECTION_NAV = [
+  { id: PAROLE_SECTION_IDS.summary, label: "Summary" },
 ];
 
 type UsIdParoleCaseProfileProps = {
@@ -76,10 +84,15 @@ const UsIdParoleCaseProfileContents = observer(
     config,
     presenter,
   }: UsIdParoleCaseProfileProps & { presenter: ParoleBoardReportPresenter }) {
+    const { mode } = presenter;
+    const sections = mode
+      ? [...SECTION_NAV, ...REPORT_SECTION_NAV]
+      : SECTION_NAV;
+
     return (
       <ParoleCaseProfileLayout
         sidebar={
-          <CaseProfileSidebar caseDetail={caseDetail} sections={SECTION_NAV}>
+          <CaseProfileSidebar caseDetail={caseDetail} sections={sections}>
             <UsIdParoleSidebar caseDetail={caseDetail} config={config} />
           </CaseProfileSidebar>
         }
@@ -108,6 +121,25 @@ const UsIdParoleCaseProfileContents = observer(
             hearingHistory={caseDetail.hearingHistory ?? []}
           />
         </SectionAnchor>
+
+        {mode && (
+          <SectionAnchor id={PAROLE_SECTION_IDS.summary}>
+            <UsIdSummarySection
+              mode={mode}
+              summary={resolveSummary(presenter.report?.sections.summary)}
+              onSaveSummary={(value) =>
+                presenter.setFieldValue("summary", "summary", value)
+              }
+              onSaveWaiver={(value) =>
+                presenter.setFieldValue(
+                  "summary",
+                  "fourthAmendmentWaiver",
+                  value,
+                )
+              }
+            />
+          </SectionAnchor>
+        )}
       </ParoleCaseProfileLayout>
     );
   },

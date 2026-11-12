@@ -18,12 +18,11 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 
+import { AUTOSAVE_FAILED_MESSAGE, MISSING_VALUE_TEXT } from "../constants";
 import {
-  AUTOSAVE_FAILED_MESSAGE,
   ReportLongTextField,
   ReportLongTextFieldHandle,
 } from "../ReportLongTextField";
-import { MISSING_VALUE_TEXT } from "../ReportRowList";
 import { AUTOSAVE_DELAY_MS } from "../useAutosavedText";
 
 const DESCRIPTION =

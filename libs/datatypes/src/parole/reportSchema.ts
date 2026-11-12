@@ -148,6 +148,33 @@ export const pastActionsInputSchema = reportSectionInputSchema(
 );
 export type PastActionsInput = z.infer<typeof pastActionsInputSchema>;
 
+// The PHI's answer under the Summary's statement that the Idaho Code 20-1007
+// 4th Amendment Waiver was read and reviewed during the interview.
+export const PAROLE_REPORT_FOURTH_AMENDMENT_WAIVER = z.enum([
+  "YES",
+  "INTERVIEW_NOT_CONDUCTED",
+]);
+export type ParoleReportFourthAmendmentWaiver = z.infer<
+  typeof PAROLE_REPORT_FOURTH_AMENDMENT_WAIVER
+>;
+
+/**
+ * Summary: the PHI's summary of the case and their answer about the 4th
+ * Amendment Waiver. The PHI writes both, and the section has no rows.
+ */
+export const summaryInputSchema = reportSectionInputSchema(
+  {
+    // The input limits the summary to 10,000 characters. The schema doesn't,
+    // for the same reason as Past Actions' notes.
+    summary: phiValueSchema(z.string()).optional(),
+    fourthAmendmentWaiver: phiValueSchema(
+      PAROLE_REPORT_FOURTH_AMENDMENT_WAIVER,
+    ).optional(),
+  },
+  {},
+);
+export type SummaryInput = z.infer<typeof summaryInputSchema>;
+
 /**
  * One PHI report, at paroleBoardReports/{recordId}/reports/{reportId}. It
  * holds only what the PHI entered; Atlas data stays in the resident's
@@ -205,6 +232,7 @@ export const paroleBoardReportSchema = z.object({
     .object({
       offenseInformation: offenseInformationInputSchema.optional(),
       pastActions: pastActionsInputSchema.optional(),
+      summary: summaryInputSchema.optional(),
     })
     .default({}),
 });

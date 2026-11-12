@@ -214,6 +214,49 @@ describe("paroleBoardReportSchema", () => {
     ).toBe(true);
   });
 
+  it("parses a report with a Summary and the 4th Amendment Waiver answer", () => {
+    const report = paroleBoardReportSchema.parse({
+      ...baseReport,
+      sections: {
+        summary: {
+          fields: {
+            summary: phiEdit("The resident was cooperative throughout."),
+            fourthAmendmentWaiver: phiEdit("INTERVIEW_NOT_CONDUCTED"),
+          },
+        },
+      },
+    });
+
+    expect(report.sections.summary?.fields?.summary?.value).toBe(
+      "The resident was cooperative throughout.",
+    );
+    expect(report.sections.summary?.fields?.fourthAmendmentWaiver?.value).toBe(
+      "INTERVIEW_NOT_CONDUCTED",
+    );
+  });
+
+  it("parses a Summary longer than the input allows, so one long summary can't break the report", () => {
+    expect(
+      paroleBoardReportSchema.safeParse({
+        ...baseReport,
+        sections: {
+          summary: { fields: { summary: phiEdit("x".repeat(10_001)) } },
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it("rejects a 4th Amendment Waiver answer outside its options", () => {
+    expect(
+      paroleBoardReportSchema.safeParse({
+        ...baseReport,
+        sections: {
+          summary: { fields: { fourthAmendmentWaiver: phiEdit("NO") } },
+        },
+      }).success,
+    ).toBe(false);
+  });
+
   it("rejects a row without a source", () => {
     expect(
       paroleBoardReportSchema.safeParse(

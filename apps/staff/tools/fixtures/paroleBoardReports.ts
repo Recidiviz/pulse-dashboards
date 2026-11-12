@@ -66,6 +66,26 @@ export const paroleBoardReportsFixture = {
           victim: { value: "YES", updatedBy: PHI_EMAIL, updatedAt: EDITED_AT },
         },
       },
+      summary: {
+        fields: {
+          summary: {
+            value:
+              "The interview took place in the facility's visiting room, with " +
+              "no third party present. The resident was cooperative and " +
+              "answered every question, and spoke about the offense with " +
+              "remorse.\n\n" +
+              "They completed two programs since their last hearing and plan " +
+              "to live with family after release.",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+          fourthAmendmentWaiver: {
+            value: "YES",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+        },
+      },
     },
   },
 };

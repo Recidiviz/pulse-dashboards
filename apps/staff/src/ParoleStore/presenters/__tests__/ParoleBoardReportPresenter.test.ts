@@ -104,6 +104,7 @@ let firestoreStore: {
   deleteParoleBoardReportRow: ReturnType<typeof vi.fn>;
   restoreParoleBoardReportRow: ReturnType<typeof vi.fn>;
   setParoleBoardReportRowRemoved: ReturnType<typeof vi.fn>;
+  setParoleBoardReportFieldValue: ReturnType<typeof vi.fn>;
 };
 let userStore: {
   activeFeatureVariants: Record<string, unknown>;
@@ -146,6 +147,7 @@ beforeEach(() => {
     deleteParoleBoardReportRow: vi.fn().mockResolvedValue(undefined),
     restoreParoleBoardReportRow: vi.fn().mockResolvedValue(undefined),
     setParoleBoardReportRowRemoved: vi.fn().mockResolvedValue(undefined),
+    setParoleBoardReportFieldValue: vi.fn().mockResolvedValue(undefined),
   };
   // A PHI with the report's feature variant on.
   userStore = {
@@ -505,6 +507,23 @@ describe("editReport", () => {
       "Trying to edit a PHI report the profile shows read-only",
     );
     expect(write).not.toHaveBeenCalled();
+  });
+
+  test("setFieldValue saves a section field, creating the report on the first edit", async () => {
+    const presenter = makePresenter();
+    await presenter.hydrate();
+
+    await presenter.setFieldValue("summary", "fourthAmendmentWaiver", "YES");
+
+    expect(
+      firestoreStore.getOrCreateActiveParoleBoardReport,
+    ).toHaveBeenCalled();
+    expect(firestoreStore.setParoleBoardReportFieldValue).toHaveBeenCalledWith(
+      { recordId: RECORD_ID, reportId: "new_report" },
+      "summary",
+      "fourthAmendmentWaiver",
+      "YES",
+    );
   });
 
   test("refuses to edit for a commissioner", async () => {

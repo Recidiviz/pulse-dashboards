@@ -16,18 +16,16 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { hideVisually, rem } from "polished";
 import { Ref, useId, useImperativeHandle } from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 
 import { ParoleBoardReportMode } from "../../../../../ParoleStore/presenters/ParoleBoardReportPresenter";
-import { MISSING_VALUE_TEXT } from "./ReportRowList";
+import { AUTOSAVE_FAILED_MESSAGE, MISSING_VALUE_TEXT } from "./constants";
 import { ReportTextInput } from "./ReportTextInput";
 import { useAutosavedText } from "./useAutosavedText";
-
-export const AUTOSAVE_FAILED_MESSAGE = "Couldn't save.";
 
 const Field = styled.div`
   display: flex;
@@ -36,9 +34,10 @@ const Field = styled.div`
   width: 100%;
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $hidden?: boolean }>`
   ${typography.Sans16}
   color: ${palette.slate70};
+  ${({ $hidden }) => $hidden && hideVisually()}
 `;
 
 const ReadText = styled.div`
@@ -90,6 +89,8 @@ export type ReportLongTextFieldHandle = {
  * @param maxLength - The most characters the field takes.
  * @param placeholder - Shows in the empty box, such as "Enter description".
  * @param rows - How many lines the box shows before the PHI resizes it.
+ * @param hideLabel - Whether to hide the label from view, for a field whose
+ *   section title already names it. Screen readers still read the label.
  * @param ref - Receives a handle whose flush saves any unsaved text now.
  */
 export function ReportLongTextField({
@@ -100,6 +101,7 @@ export function ReportLongTextField({
   maxLength,
   placeholder,
   rows = 4,
+  hideLabel = false,
   ref,
 }: {
   mode: ParoleBoardReportMode;
@@ -109,6 +111,7 @@ export function ReportLongTextField({
   maxLength: number;
   placeholder?: string;
   rows?: number;
+  hideLabel?: boolean;
   ref?: Ref<ReportLongTextFieldHandle>;
 }) {
   const inputId = useId();
@@ -119,7 +122,9 @@ export function ReportLongTextField({
   if (mode === "READ") {
     return (
       <Field>
-        <Label as="div">{label}</Label>
+        <Label as="div" $hidden={hideLabel}>
+          {label}
+        </Label>
         <ReadText>{value || MISSING_VALUE_TEXT}</ReadText>
       </Field>
     );
@@ -127,7 +132,9 @@ export function ReportLongTextField({
 
   return (
     <Field>
-      <Label htmlFor={inputId}>{label}</Label>
+      <Label htmlFor={inputId} $hidden={hideLabel}>
+        {label}
+      </Label>
       <ReportTextInput
         id={inputId}
         label={label}

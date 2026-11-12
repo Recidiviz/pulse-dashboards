@@ -363,6 +363,7 @@ export const PAROLE_SECTION_IDS = {
   hearingHistory: "parole-section-hearing-history",
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",
+  summary: "parole-section-summary",
 } as const;
 
 export const PAROLE_REPORT_CAPTURE_ID = "parole-report-capture";
