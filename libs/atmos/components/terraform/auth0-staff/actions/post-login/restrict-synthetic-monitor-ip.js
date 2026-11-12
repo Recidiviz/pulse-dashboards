@@ -44,10 +44,11 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 
+const net = require("node:net");
+
 exports.onExecutePostLogin = async (event, api) => {
   // Only synthetic-monitor accounts are subject to the IP allowlist; everyone
   // else is untouched. Keep this check first so real logins do zero extra work.
-  // foo
   if (event.user.app_metadata?.synthetic_monitor !== true) {
     return;
   }
@@ -56,15 +57,33 @@ exports.onExecutePostLogin = async (event, api) => {
     "This account may only be used from approved networks. " +
     "If you are seeing this, contact security@recidiviz.org.";
 
-  // Per-tenant allowlist of IP(s). Comma/space separated.
-  // Should contain the monitoring egress IPs and Jamf Trust VPN IPs
-  const allowedIps = (event.secrets.SYNTHETIC_MONITOR_ALLOWED_IPS || "")
+  // Per-tenant allowlist: exact IPs and/or CIDR blocks (e.g. "34.8.0.9,
+  // 203.0.113.0/24"), comma/space separated — the monitoring egress IPs and
+  // Jamf Trust VPN ranges. Malformed entries are logged and skipped.
+  const allowed = new net.BlockList();
+  let hasEntries = false;
+  for (const entry of (event.secrets.SYNTHETIC_MONITOR_ALLOWED_IPS || "")
     .split(/[\s,]+/)
-    .map((ip) => ip.trim())
-    .filter(Boolean);
+    .filter(Boolean)) {
+    const family = entry.includes(":") ? "ipv6" : "ipv4";
+    try {
+      const [addr, prefix] = entry.split("/");
+      if (prefix === undefined) {
+        allowed.addAddress(addr, family);
+      } else {
+        allowed.addSubnet(addr, Number(prefix), family);
+      }
+      hasEntries = true;
+    } catch {
+      console.log(
+        `SYNTHETIC_MONITOR_ALLOWED_IPS: skipping malformed entry "${entry}"`,
+      );
+    }
+  }
 
-  const requestIp = event.request.ip;
-  if (allowedIps.length > 0 && allowedIps.includes(requestIp)) {
+  const requestIp = event.request.ip || "";
+  const requestFamily = requestIp.includes(":") ? "ipv6" : "ipv4";
+  if (hasEntries && allowed.check(requestIp, requestFamily)) {
     return;
   }
 

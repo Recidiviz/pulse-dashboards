@@ -36,3 +36,49 @@ components:
         # `yarn deploy`. Add engineers or the deploy SA
         # here as the rollout widens.
         deployer_members: []
+
+    apps/staff-synthetic-monitor:
+      vars:
+        region: us-east1
+        function_name: staff-synthetic-monitor
+        staff_app_url: https://dashboard-staging.recidiviz.org
+
+        # The states to monitor AND each state's credentials come from the
+        # component's environments/staging/<STATE_CODE>.enc.yaml SOPS files
+        # (one { username, password } map per state). State codes come from the
+        # filenames; credentials are read ephemerally and written to Secret
+        # Manager via write-only args. One function + two secrets + one uptime
+        # check are created per state.
+
+        # Absolute path to the workspace root, used by the component to locate
+        # the nx-built function bundle at
+        # $${workspace_root}/dist/apps/@staff/synthetic-monitor-fn. Read from
+        # $NX_WORKSPACE_ROOT (set automatically by `nx deploy`); when running
+        # atmos directly from libs/atmos it falls back to the repo root (two dirs
+        # up from $PWD). TF validation fails loudly if it ends up empty.
+        workspace_root: '{{ env.Getenv "NX_WORKSPACE_ROOT" (filepath.Dir (filepath.Dir (env.Getenv "PWD"))) }}'
+
+        # Cadence: GCP caps uptime checks at 900s (15 min), so that's the slowest
+        # we can run. Drives most of the cost (~225k -> ~75k runs/mo at 15 min).
+        check_period: 900s
+
+        # Step-by-step breadcrumbs to Cloud Logging while we stabilize the checks.
+        # Flip to false for steady state.
+        verbose_logging: true
+
+        # Record a per-run HAR (network trace) and upload it to the screenshots
+        # bucket on failure — for diagnosing slow/hung requests that don't surface
+        # as outright failures. Heavier than verbose_logging; on while we stabilize.
+        trace_logging: true
+
+        # Outbound traffic egresses via a dedicated Serverless VPC connector +
+        # Cloud NAT pinned to a reserved static IP (see the `egress_ip` output) so
+        # the monitor logins can be IP-allowlisted in Auth0. Flip false to revert
+        # to Google's shared serverless egress pool.
+        static_egress_enabled: true
+
+        # Alerting: a sustained synthetic-check failure pages on-call via the
+        # shared PagerDuty forwarder + emails alerts@recidiviz.org. Set
+        # `monitoring_enabled: false` to deploy the monitors without alerting.
+        monitoring:
+          alert_email: alerts@recidiviz.org

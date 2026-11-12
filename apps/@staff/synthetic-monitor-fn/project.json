@@ -1,0 +1,134 @@
+{
+  "name": "@staff/synthetic-monitor-fn",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@staff/synthetic-monitor-fn/src",
+  "projectType": "application",
+  "tags": ["scope:server"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/@staff/synthetic-monitor-fn"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "smoke": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "tsx scripts/smoke.mts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {
+          "command": "tsx scripts/smoke.mts --env staging"
+        },
+        "production": {
+          "command": "tsx scripts/smoke.mts --env production"
+        }
+      }
+    },
+    "provision-auth0-users": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      },
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "command": "echo 'Must run with staging or production configuration'; exit 1"
+        },
+        "staging": {
+          "command": "tsx apps/@staff/synthetic-monitor-fn/scripts/provision-auth0-users.mts libs/atmos/components/terraform/apps/staff-synthetic-monitor/environments/staging libs/atmos/components/terraform/auth0-staff/secrets/recidiviz-dev-auth0-credentials.enc.yaml"
+        },
+        "production": {
+          "command": "tsx apps/@staff/synthetic-monitor-fn/scripts/provision-auth0-users.mts libs/atmos/components/terraform/apps/staff-synthetic-monitor/environments/production libs/atmos/components/terraform/auth0-staff/secrets/recidiviz-auth0-credentials.enc.yaml"
+        }
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "//": "cache:false — this bundle is the deploy artifact that atmos zips and uploads. The project tree is untracked in git, and the Nx daemon's file-hash cache intermittently serves a stale hash for edits in an untracked dir, so a cached build would skip esbuild ('outputs match the cache, left as is') and ship a stale dist/index.cjs. esbuild is sub-second, so always rebuild.",
+      "cache": false,
+      "options": {
+        "platform": "node",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
+        "format": ["cjs"],
+        "bundle": true,
+        "main": "{projectRoot}/src/index.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": false,
+        "target": "node22",
+        "external": ["playwright-core", "@sparticuz/chromium"],
+        "assets": [
+          {
+            "glob": "package.json",
+            "input": "{projectRoot}/runtime",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "plan": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{workspaceRoot}/libs/atmos",
+        "usePty": false,
+        "env": {
+          "NX_TUI": "false",
+          "NX_NATIVE_TASK_RUNNER": "false"
+        }
+      },
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "command": "echo 'Must run with staging or production configuration'; exit 1"
+        },
+        "staging": {
+          "command": "atmos terraform plan apps/staff-synthetic-monitor -s recidiviz-dashboard-staging--staff"
+        },
+        "production": {
+          "command": "atmos terraform plan apps/staff-synthetic-monitor -s recidiviz-dashboard-production--staff"
+        }
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{workspaceRoot}/libs/atmos",
+        "usePty": false,
+        "env": {
+          "NX_TUI": "false",
+          "NX_NATIVE_TASK_RUNNER": "false"
+        }
+      },
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "command": "echo 'Must run with staging or production configuration'; exit 1"
+        },
+        "staging": {
+          "command": "atmos terraform apply apps/staff-synthetic-monitor -s recidiviz-dashboard-staging--staff"
+        },
+        "production": {
+          "command": "atmos terraform apply apps/staff-synthetic-monitor -s recidiviz-dashboard-production--staff"
+        }
+      }
+    }
+  }
+}

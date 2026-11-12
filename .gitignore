@@ -64,6 +64,9 @@ yalc.lock
 !apps/@typesense/backfill-fn/runtime/package.json
 !apps/@typesense/sync-fn/runtime/package.json
 !apps/staff-functions/runtime/package.json
+# runtime manifest for the staff-synthetic-monitor Cloud Function — copied into
+# dist/ at build time and shipped in the deploy zip
+!apps/@staff/synthetic-monitor-fn/runtime/package.json
 
 # Redis dump
 dump.rdb

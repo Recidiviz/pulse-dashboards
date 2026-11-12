@@ -1,0 +1,13 @@
+{
+  "name": "staff-synthetic-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.cjs",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@sparticuz/chromium": "131.0.1",
+    "playwright-core": "1.49.1"
+  }
+}
