@@ -37,6 +37,7 @@ describe("get properties for user in auth token", () => {
 
     expect(await c.getProperties()).toMatchInlineSnapshot(`
       {
+        "hasDismissedPolicyExplainer": null,
         "hasSeenOnboarding": 2025-12-10T11:14:00.000Z,
         "hasSeenReentryOnboarding": null,
         "hasSeenResourcesOnboarding": null,
@@ -53,6 +54,7 @@ test("set properties for user in auth token", async () => {
   });
   expect(result).toMatchInlineSnapshot(`
     {
+      "hasDismissedPolicyExplainer": null,
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
       "hasSeenReentryOnboarding": null,
       "hasSeenResourcesOnboarding": null,
@@ -71,6 +73,7 @@ test("set multiple properties at once", async () => {
   });
   expect(result).toMatchInlineSnapshot(`
     {
+      "hasDismissedPolicyExplainer": null,
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
       "hasSeenReentryOnboarding": null,
       "hasSeenResourcesOnboarding": null,
@@ -91,6 +94,7 @@ test("setting one property doesn't affect another", async () => {
   });
   expect(result).toMatchInlineSnapshot(`
     {
+      "hasDismissedPolicyExplainer": null,
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
       "hasSeenReentryOnboarding": null,
       "hasSeenResourcesOnboarding": null,

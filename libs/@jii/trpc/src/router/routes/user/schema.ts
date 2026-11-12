@@ -24,5 +24,6 @@ export const setPropertiesInputSchema = z.object({
   hideAboutVideoFromHomePage: z.date().optional(),
   hasSeenResourcesOnboarding: z.date().optional(),
   hasSeenReentryOnboarding: z.date().optional(),
+  hasDismissedPolicyExplainer: z.date().optional(),
   hideSentenceDates: z.boolean().optional(),
 }) satisfies z.Schema<Prisma.UserPropertiesUpdateInput>;
