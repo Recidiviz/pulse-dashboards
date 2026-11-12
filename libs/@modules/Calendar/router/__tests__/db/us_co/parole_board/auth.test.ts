@@ -17,6 +17,7 @@
 
 import { TRPCClient, TRPCClientError } from "@trpc/client";
 
+import { currentYearMonth } from "~@modules/Calendar/rules";
 import { US_CO_PAROLE_BOARD } from "~@modules/Calendar/rules/us_co/parole_board";
 import type { Auth0User } from "~@modules-server/trpc-base";
 
@@ -51,7 +52,8 @@ const ADMIN_CALLS = {
     t.Calendar.usCo.paroleBoard.admin.months.addOptions.query(),
   "admin.months.create": (t: Client) =>
     t.Calendar.usCo.paroleBoard.admin.months.create.mutate({
-      months: [{ year: 2026, month: 10 }],
+      // The current month is always in the Add month window.
+      months: [currentYearMonth("America/Denver")],
     }),
   "admin.months.publishPreview": (t: Client) =>
     t.Calendar.usCo.paroleBoard.admin.months.publishPreview.query({
@@ -116,6 +118,28 @@ const PUBLIC_CALLS = {
 const ADMIN_PROCEDURES = Object.keys(ADMIN_CALLS);
 
 /**
+ * What an allowed editor gets from each call above: the reads answer, and a
+ * procedure whose handler hasn't landed is NOT_IMPLEMENTED.
+ */
+const EDITOR_OUTCOMES: Record<keyof typeof ADMIN_CALLS, string> = {
+  "admin.months.list": "OK",
+  "admin.months.get": "OK",
+  "admin.months.addOptions": "OK",
+  "admin.months.create": "OK",
+  "admin.months.publishPreview": "NOT_FOUND",
+  "admin.months.publish": "NOT_FOUND",
+  "admin.months.unpublish": "NOT_FOUND",
+  "admin.entries.add": "NOT_FOUND",
+  "admin.entries.delete": "NOT_FOUND",
+  "admin.entries.move": "NOT_FOUND",
+  "admin.entries.cancel": "NOT_FOUND",
+  "admin.entries.uncancel": "NOT_FOUND",
+  "admin.config.get": "OK",
+  "admin.patterns.listCurrent": "OK",
+  "admin.patterns.update": "NOT_IMPLEMENTED",
+};
+
+/**
  * Calls every procedure and returns each one's tRPC error code, or "OK".
  * Comparing the whole map shows every procedure that went wrong at once.
  */
@@ -169,10 +193,8 @@ describe("Calendar access", () => {
   it.each([
     ["a US_CO editor", coEditor],
     ["a Recidiviz user", recidivizUser],
-  ])("reaches the NOT_IMPLEMENTED stub for %s", async (_label, user) => {
-    expect(await outcomes(ADMIN_CALLS, user)).toEqual(
-      every(ADMIN_PROCEDURES, "NOT_IMPLEMENTED"),
-    );
+  ])("reaches every handler for %s", async (_label, user) => {
+    expect(await outcomes(ADMIN_CALLS, user)).toEqual(EDITOR_OUTCOMES);
   });
 
   it.each([
@@ -180,7 +202,7 @@ describe("Calendar access", () => {
     ["a US_ID user", idUser, { stateCode: "US_ID" }],
   ])("lets anyone reach the public read: %s", async (_label, user, options) => {
     expect(await outcomes(PUBLIC_CALLS, user, options)).toEqual({
-      "public.months.get": "NOT_IMPLEMENTED",
+      "public.months.get": "OK",
     });
   });
 
@@ -188,13 +210,17 @@ describe("Calendar access", () => {
     const client = await initUsCoClient(coEditor);
 
     await expect(
-      client.Calendar.usCo.paroleBoard.admin.months.get.query({
-        year: 2026,
-        month: 10,
+      client.Calendar.usCo.paroleBoard.admin.patterns.update.mutate({
+        kindCode: "HEARING",
+        resourceId: "resource-1",
+        expectedPatternId: null,
+        rules: [{ type: "weekOfMonth", week: 1, weekday: "MONDAY" }],
+        startTime: null,
+        endTime: null,
       }),
     ).rejects.toMatchObject({
       message:
-        "Calendar.usCo.paroleBoard.admin.months.get isn't implemented yet",
+        "Calendar.usCo.paroleBoard.admin.patterns.update isn't implemented yet",
     });
   });
 

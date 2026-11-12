@@ -19,12 +19,26 @@ import { TRPCError } from "@trpc/server";
 
 import { Prisma } from "~@modules/Calendar/prisma";
 
-import { handlePrismaError, isPrismaErrorCode } from "../src/errors";
+import {
+  handlePrismaError,
+  isPrismaErrorCode,
+  isUniqueViolationOn,
+} from "../src/errors";
 
-function prismaError(code: string) {
+function prismaError(code: string, meta?: Record<string, unknown>) {
   return new Prisma.PrismaClientKnownRequestError("Prisma failed", {
     code,
     clientVersion: "test",
+    meta,
+  });
+}
+
+/** A P2002 shaped as the pg driver adapter reports it, with quoted columns. */
+function adapterUniqueError(fields: string[]) {
+  return prismaError("P2002", {
+    driverAdapterError: {
+      cause: { kind: "UniqueConstraintViolation", constraint: { fields } },
+    },
   });
 }
 
@@ -66,5 +80,48 @@ describe("isPrismaErrorCode", () => {
     const error = Object.assign(new Error("P2002"), { code: "P2002" });
 
     expect(isPrismaErrorCode(error, "P2002")).toBe(false);
+  });
+});
+
+describe("isUniqueViolationOn", () => {
+  const monthKey = ["calendarId", "year", "month"];
+
+  it("matches the driver adapter's columns, quoted or not, in any order", () => {
+    expect(
+      isUniqueViolationOn(
+        adapterUniqueError(['"calendarId"', "year", "month"]),
+        monthKey,
+      ),
+    ).toBe(true);
+    expect(
+      isUniqueViolationOn(
+        adapterUniqueError(["month", "year", "calendarId"]),
+        monthKey,
+      ),
+    ).toBe(true);
+  });
+
+  it("matches the Rust engine's meta.target", () => {
+    expect(
+      isUniqueViolationOn(
+        prismaError("P2002", { target: ["calendarId", "year", "month"] }),
+        monthKey,
+      ),
+    ).toBe(true);
+  });
+
+  it("doesn't match a unique violation on another key", () => {
+    expect(
+      isUniqueViolationOn(
+        adapterUniqueError(['"monthId"', "date", '"slotKey"']),
+        monthKey,
+      ),
+    ).toBe(false);
+  });
+
+  it("doesn't match a P2002 that names no columns, or another error", () => {
+    expect(isUniqueViolationOn(prismaError("P2002"), monthKey)).toBe(false);
+    expect(isUniqueViolationOn(prismaError("P2025"), monthKey)).toBe(false);
+    expect(isUniqueViolationOn(new Error("P2002"), monthKey)).toBe(false);
   });
 });

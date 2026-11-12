@@ -17,20 +17,25 @@
 
 import type { TRPCClient } from "@trpc/client";
 
+import type { CalendarConfig } from "~@modules/Calendar/rules";
 import {
   US_CO_PAROLE_BOARD,
+  US_CO_PAROLE_BOARD_RULES,
   US_CO_REFERENCE_DATA,
 } from "~@modules/Calendar/rules/us_co/parole_board";
 import { router } from "~@modules-server/trpc-base";
 
+import type { ResolvedCalendar } from "../../../src/procedures";
 import { usCoPublicCalendarRouter } from "../../../src/us_co/parole_board";
 import { initFastifyAndSetUser, testPrismaClient } from "../../setup";
 import { AUDIT_EMAIL } from "../../setup/fixtures";
 
 /**
- * The harness for Colorado's API: it mounts the router as Calendar,
- * and inserts US_CO's PAROLE_BOARD_PUBLIC Calendar row before each test, after
- * the generic setup empties the tables.
+ * The harness for Colorado's API: it mounts the router at
+ * Calendar.usCo.paroleBoard, as the Modules server does, and inserts
+ * US_CO's PAROLE_BOARD_PUBLIC Calendar row before each test, after the generic
+ * setup empties the tables and inserts its calendars. The isolation tests use
+ * the generic setup's OTHER_CALENDAR_CODE row as another calendar.
  */
 
 export const usCoTestRouter = router({
@@ -52,6 +57,108 @@ export async function initUsCoClient(
     router: usCoTestRouter,
   });
   return testTRPCClient;
+}
+
+/**
+ * Synthetic rows in the shape Colorado's code expects: its three entry kinds,
+ * two made-up sites and a pattern for each kind. None of it is Colorado's
+ * reference data.
+ */
+export const US_CO_TEST_CONFIG: Omit<CalendarConfig, "calendar"> = {
+  resourceTypes: [{ code: "SITE", label: "Site", sortOrder: 1 }],
+  resources: [
+    {
+      code: "SITE_A",
+      typeCode: "SITE",
+      label: "Site A",
+      name: "Site A full name",
+      sortOrder: 10,
+      isActive: true,
+    },
+    {
+      code: "SITE_B",
+      typeCode: "SITE",
+      label: "Site B",
+      name: null,
+      sortOrder: 20,
+      isActive: true,
+    },
+  ],
+  kinds: [
+    { code: "HEARING", label: "Hearing", sortOrder: 1 },
+    { code: "FULL_BOARD", label: "Full Board", sortOrder: 2 },
+    { code: "BUSINESS_MEETING", label: "Business Mtg", sortOrder: 3 },
+  ],
+  patterns: [
+    {
+      kindCode: "HEARING",
+      resourceCode: "SITE_A",
+      rules: [{ type: "weekOfMonth", week: 1, weekday: "MONDAY" }],
+      startTime: "08:00",
+      endTime: null,
+    },
+    {
+      kindCode: "HEARING",
+      resourceCode: "SITE_B",
+      rules: [{ type: "weekOfMonth", week: 2, weekday: "TUESDAY" }],
+      startTime: "09:30",
+      endTime: null,
+    },
+    {
+      kindCode: "FULL_BOARD",
+      resourceCode: null,
+      rules: [{ type: "everyWeekday", weekday: "FRIDAY" }],
+      startTime: null,
+      endTime: null,
+    },
+    {
+      kindCode: "BUSINESS_MEETING",
+      resourceCode: null,
+      rules: [{ type: "weekOfMonth", week: 3, weekday: "FRIDAY" }],
+      startTime: null,
+      endTime: null,
+    },
+  ],
+};
+
+/**
+ * The id of the PAROLE_BOARD_PUBLIC row, or of the row with another code, such
+ * as OTHER_CALENDAR_CODE.
+ */
+export async function paroleBoardCalendarId(
+  code: string = US_CO_PAROLE_BOARD.code,
+): Promise<string> {
+  const { id } = await testPrismaClient.calendar.findUniqueOrThrow({
+    where: { code },
+  });
+  return id;
+}
+
+/**
+ * The PAROLE_BOARD_PUBLIC row, or the row with another code, resolved with
+ * Colorado's rules as Colorado's editor procedure resolves it, for a test that
+ * calls the engine directly, such as one that sets up another calendar's
+ * month.
+ */
+export async function resolveParoleBoardCalendar(
+  code: string = US_CO_PAROLE_BOARD.code,
+): Promise<ResolvedCalendar> {
+  const row = await testPrismaClient.calendar.findUniqueOrThrow({
+    where: { code },
+    include: { kinds: { orderBy: { sortOrder: "asc" } } },
+  });
+  return {
+    id: row.id,
+    stateCode: US_CO_PAROLE_BOARD.stateCode,
+    code: row.code,
+    name: row.name,
+    rules: US_CO_PAROLE_BOARD_RULES,
+    kinds: row.kinds.flatMap((kind) =>
+      US_CO_PAROLE_BOARD_RULES.entryTypes
+        .filter((type) => type.code === kind.code)
+        .map((type) => ({ ...kind, ...type })),
+    ),
+  };
 }
 
 beforeEach(async () => {

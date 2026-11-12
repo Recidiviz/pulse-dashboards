@@ -18,6 +18,25 @@
 import { router } from "~@modules-server/trpc-base";
 
 import { notImplemented } from "../../calendar.errors";
+import { createMonths, listAddMonthOptions } from "../../services/createMonths";
+import {
+  addEntry,
+  deleteEntry,
+  moveEntries,
+  setEntryCancelled,
+} from "../../services/entries";
+import {
+  getPublishPreview,
+  publishMonth,
+  unpublishMonth,
+} from "../../services/monthStatus";
+import { getPublicMonth } from "../../services/publicMonths";
+import {
+  getConfig,
+  getMonth,
+  listCurrentPatterns,
+  listEditorMonths,
+} from "../../services/reads";
 import {
   usCoPublicCalendarAnonymousProcedure as anyone,
   usCoPublicCalendarEditorProcedure as editor,
@@ -56,16 +75,16 @@ const monthsRouter = router({
   list: editor
     .input(listMonthsInput)
     .query(
-      async (): Promise<MonthListPage> =>
-        notImplemented(`${PATH}.admin.months.list`),
+      async ({ ctx, input }): Promise<MonthListPage> =>
+        listEditorMonths(ctx.prisma, ctx.calendar, input),
     ),
 
   /** Returns null when the month doesn't exist. */
   get: editor
     .input(getMonthInput)
     .query(
-      async (): Promise<UsCoMonthDetail | null> =>
-        notImplemented(`${PATH}.admin.months.get`),
+      async ({ ctx, input }): Promise<UsCoMonthDetail | null> =>
+        getMonth(ctx.prisma, ctx.calendar, input),
     ),
 
   /**
@@ -73,15 +92,20 @@ const monthsRouter = router({
    * month in America/Denver when it's missing, and the next 12.
    */
   addOptions: editor.query(
-    async (): Promise<YearMonthOption[]> =>
-      notImplemented(`${PATH}.admin.months.addOptions`),
+    async ({ ctx }): Promise<YearMonthOption[]> =>
+      listAddMonthOptions(ctx.prisma, ctx.calendar),
   ),
 
+  /**
+   * Creates DRAFT months from the patterns and Colorado's generation rules:
+   * holidays and weekends skipped, the 3rd-Thursday rule applied. All
+   * the months are created or none.
+   */
   create: editor
     .input(createMonthsInput)
     .mutation(
-      async (): Promise<CreateMonthsResult> =>
-        notImplemented(`${PATH}.admin.months.create`),
+      async ({ ctx, input }): Promise<CreateMonthsResult> =>
+        createMonths(ctx.prisma, ctx.calendar, ctx.user.email, input.months),
     ),
 
   /**
@@ -91,8 +115,8 @@ const monthsRouter = router({
   publishPreview: editor
     .input(monthIdInput)
     .query(
-      async (): Promise<UsCoPublishPreview> =>
-        notImplemented(`${PATH}.admin.months.publishPreview`),
+      async ({ ctx, input }): Promise<UsCoPublishPreview> =>
+        getPublishPreview(ctx.prisma, ctx.calendar, input.monthId),
     ),
 
   /**
@@ -100,24 +124,27 @@ const monthsRouter = router({
    * entries on the public calendar and locks it, and returns the published
    * month. A PUBLISHED month is PRECONDITION_FAILED.
    */
-  publish: editor
-    .input(publishMonthInput)
-    .mutation(
-      async (): Promise<UsCoPublishResult> =>
-        notImplemented(`${PATH}.admin.months.publish`),
-    ),
+  publish: editor.input(publishMonthInput).mutation(
+    async ({ ctx, input }): Promise<UsCoPublishResult> =>
+      publishMonth(ctx.prisma, ctx.calendar, {
+        monthId: input.monthId,
+        expectedRevision: input.expectedRevision,
+        email: ctx.user.email,
+      }),
+  ),
 
   /**
    * The editor's Edit month: moves a PUBLISHED month back to DRAFT, which
    * takes it off the public calendar and unlocks its entries until its next
    * publish. It returns the month back in DRAFT.
    */
-  unpublish: editor
-    .input(monthIdInput)
-    .mutation(
-      async (): Promise<UsCoUnpublishResult> =>
-        notImplemented(`${PATH}.admin.months.unpublish`),
-    ),
+  unpublish: editor.input(monthIdInput).mutation(
+    async ({ ctx, input }): Promise<UsCoUnpublishResult> =>
+      unpublishMonth(ctx.prisma, ctx.calendar, {
+        monthId: input.monthId,
+        email: ctx.user.email,
+      }),
+  ),
 });
 
 /**
@@ -127,40 +154,67 @@ const monthsRouter = router({
  * write, so the client can show it without fetching it again.
  */
 const entriesRouter = router({
+  /**
+   * Adds a MANUAL entry on a weekday Colorado allows, Monday to Friday. A
+   * holiday never blocks it.
+   */
   add: editor
     .input(addEntryInput)
     .mutation(
-      async (): Promise<UsCoEntryMutationResult> =>
-        notImplemented(`${PATH}.admin.entries.add`),
+      async ({ ctx, input }): Promise<UsCoEntryMutationResult> =>
+        addEntry(ctx.prisma, ctx.calendar, ctx.user.email, input),
     ),
 
+  /** Business Meetings can only be cancelled, never deleted. */
   delete: editor
     .input(entryVersionInput)
     .mutation(
-      async (): Promise<UsCoDeleteEntryResult> =>
-        notImplemented(`${PATH}.admin.entries.delete`),
+      async ({ ctx, input }): Promise<UsCoDeleteEntryResult> =>
+        deleteEntry(ctx.prisma, ctx.calendar, ctx.user.email, input),
     ),
 
-  /** Moves one or more entries of one month to another day in it, all or nothing. */
+  /**
+   * Moves one or more entries of one month to another weekday in it, all or
+   * nothing. A move to the entries' own day changes nothing, but on a
+   * PUBLISHED month it is still PRECONDITION_FAILED.
+   */
   move: editor
     .input(moveEntriesInput)
     .mutation(
-      async (): Promise<UsCoMoveEntriesResult> =>
-        notImplemented(`${PATH}.admin.entries.move`),
+      async ({ ctx, input }): Promise<UsCoMoveEntriesResult> =>
+        moveEntries(ctx.prisma, ctx.calendar, ctx.user.email, input),
     ),
 
+  /**
+   * Full Board and Business Meetings can be cancelled; hearings can't.
+   * Cancelling a cancelled entry changes nothing, but on a PUBLISHED month it
+   * is still PRECONDITION_FAILED.
+   */
   cancel: editor
     .input(entryVersionInput)
     .mutation(
-      async (): Promise<UsCoEntryMutationResult> =>
-        notImplemented(`${PATH}.admin.entries.cancel`),
+      async ({ ctx, input }): Promise<UsCoEntryMutationResult> =>
+        setEntryCancelled(
+          ctx.prisma,
+          ctx.calendar,
+          ctx.user.email,
+          input,
+          true,
+        ),
     ),
 
+  /** Like cancel: a repeat on a PUBLISHED month is still PRECONDITION_FAILED. */
   uncancel: editor
     .input(entryVersionInput)
     .mutation(
-      async (): Promise<UsCoEntryMutationResult> =>
-        notImplemented(`${PATH}.admin.entries.uncancel`),
+      async ({ ctx, input }): Promise<UsCoEntryMutationResult> =>
+        setEntryCancelled(
+          ctx.prisma,
+          ctx.calendar,
+          ctx.user.email,
+          input,
+          false,
+        ),
     ),
 });
 
@@ -170,15 +224,15 @@ const configRouter = router({
    * and its resource types and active resources with their full names.
    */
   get: editor.query(
-    async (): Promise<UsCoCalendarConfig> =>
-      notImplemented(`${PATH}.admin.config.get`),
+    async ({ ctx }): Promise<UsCoCalendarConfig> =>
+      getConfig(ctx.prisma, ctx.calendar),
   ),
 });
 
 const patternsRouter = router({
   listCurrent: editor.query(
-    async (): Promise<UsCoCurrentPatternRow[]> =>
-      notImplemented(`${PATH}.admin.patterns.listCurrent`),
+    async ({ ctx }): Promise<UsCoCurrentPatternRow[]> =>
+      listCurrentPatterns(ctx.prisma, ctx.calendar),
   ),
 
   /**
@@ -209,8 +263,8 @@ const publicMonthsRouter = router({
   get: anyone
     .input(publicMonthInput)
     .query(
-      async (): Promise<UsCoPublicMonth | null> =>
-        notImplemented(`${PATH}.public.months.get`),
+      async ({ ctx, input }): Promise<UsCoPublicMonth | null> =>
+        getPublicMonth(ctx.prisma, ctx.calendar, input),
     ),
 });
 

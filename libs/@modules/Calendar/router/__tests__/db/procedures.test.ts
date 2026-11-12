@@ -16,6 +16,8 @@
 // =============================================================================
 
 import { TRPCClientError } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 import { getPrismaClient } from "~@modules/Calendar/prisma";
 import { type Auth0User, router } from "~@modules-server/trpc-base";
@@ -26,7 +28,12 @@ import {
   createCalendarPublicProcedure,
   type FixedCalendar,
 } from "../../src/procedures";
-import { initFastifyAndSetUser, testPrismaClient } from "../setup";
+import {
+  initFastifyAndSetUser,
+  testHost,
+  testPort,
+  testPrismaClient,
+} from "../setup";
 import { TEST_RULES, testCalendarConfig } from "../setup/calendarConfig";
 import {
   coEditor,
@@ -74,6 +81,12 @@ const testRouter = router({
   })),
   missingPub: createCalendarPublicProcedure(MISSING_CALENDAR).query(() => "no"),
   pubWrite: createCalendarPublicProcedure(TEST_CALENDAR).mutation(() => "no"),
+  pubWithInput: createCalendarPublicProcedure(TEST_CALENDAR)
+    .input(z.object({ n: z.number() }))
+    .query(({ input }) => input.n),
+  pubFails: createCalendarPublicProcedure(TEST_CALENDAR).query(() => {
+    throw new TRPCError({ code: "NOT_FOUND" });
+  }),
 });
 
 type Options = Omit<
@@ -104,6 +117,17 @@ async function errorOf(call: Promise<unknown>) {
   }
   throw new Error("Expected the call to fail");
 }
+
+/**
+ * Sends a raw GET to the running test server, the way the public site's
+ * unbatched link does, so the test can read the response headers.
+ */
+function rawGet(path: string, headers: Record<string, string> = {}) {
+  return fetch(`http://${testHost}:${testPort}/${path}`, { headers });
+}
+
+/** The headers a signed-in staff call sends, for rawGet. */
+const SIGNED_IN = { Authorization: "Bearer test-token", StateCode: "US_CO" };
 
 function findTestCalendar() {
   return testPrismaClient.calendar.findUniqueOrThrow({
@@ -339,4 +363,67 @@ describe("createCalendarPublicProcedure", () => {
       message: "Calendar not found",
     });
   });
+});
+
+describe("Cache-Control", () => {
+  it("marks a successful public read cacheable for 30 seconds", async () => {
+    await client(undefined, { omitAuth: true });
+
+    const response = await rawGet("pub");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe(
+      "public, max-age=30, s-maxage=30",
+    );
+  });
+
+  it.each([
+    ["a bad input", "pubWithInput", 400],
+    ["a handler error", "pubFails", 404],
+    ["a calendar with no row", "missingPub", 500],
+  ])("sends no-store for %s", async (_label, path, status) => {
+    await client(undefined, { omitAuth: true });
+
+    const response = await rawGet(path);
+
+    expect(response.status).toBe(status);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("sends no-store for a mutation", async () => {
+    await client(undefined, { omitAuth: true });
+
+    const response = await fetch(`http://${testHost}:${testPort}/pubWrite`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+
+    expect(response.status).toBe(405);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("sends no-store for a batch, even when the public read succeeds", async () => {
+    await client(coEditor);
+
+    const response = await rawGet(
+      `pub,authed?batch=1&input=${encodeURIComponent("{}")}`,
+      SIGNED_IN,
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it.each(["authed", "editor"])(
+    "sends no Cache-Control from the %s procedure",
+    async (path) => {
+      await client(coEditor);
+
+      const response = await rawGet(path, SIGNED_IN);
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("cache-control")).toBeNull();
+    },
+  );
 });

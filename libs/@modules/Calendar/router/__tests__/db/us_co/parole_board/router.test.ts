@@ -41,11 +41,13 @@ describe("Calendar router", () => {
   ])("passes %s through to the handler", async (_label, user) => {
     const trpc = await initUsCoClient(user);
 
-    await expect(
-      trpc.Calendar.usCo.paroleBoard.admin.months.list.query({}),
-    ).rejects.toSatisfy(
-      (e) => e instanceof TRPCClientError && e.data?.code === "NOT_IMPLEMENTED",
-    );
+    expect(
+      await trpc.Calendar.usCo.paroleBoard.admin.months.list.query({}),
+    ).toEqual({
+      items: [],
+      prevCursor: null,
+      nextCursor: null,
+    });
   });
 
   it("is FORBIDDEN for a US_CO user without the publicCalendar route", async () => {

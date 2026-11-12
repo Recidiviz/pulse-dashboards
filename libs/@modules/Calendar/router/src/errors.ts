@@ -32,6 +32,48 @@ export function isPrismaErrorCode(
 }
 
 /**
+ * The columns of the unique key a P2002 error names, without Postgres's
+ * identifier quotes. The Modules client runs Prisma's query compiler over the
+ * pg driver adapter, which reports the columns in
+ * meta.driverAdapterError.cause.constraint.fields; Prisma's Rust engine
+ * reports them in meta.target. Undefined when the error names no columns.
+ */
+function uniqueViolationColumns(
+  e: Prisma.PrismaClientKnownRequestError,
+): string[] | undefined {
+  const meta = e.meta as
+    | {
+        target?: unknown;
+        driverAdapterError?: {
+          cause?: { constraint?: { fields?: unknown } };
+        };
+      }
+    | undefined;
+  const columns =
+    meta?.driverAdapterError?.cause?.constraint?.fields ?? meta?.target;
+  if (!Array.isArray(columns)) return undefined;
+  return columns.map((column) => String(column).replace(/^"(.*)"$/, "$1"));
+}
+
+/**
+ * Whether e is a P2002 unique violation on exactly these columns, in any
+ * order. A P2002 on another key, or one that names no columns, doesn't match,
+ * so callers rethrow it as a real error instead of misreporting it.
+ */
+export function isUniqueViolationOn(
+  e: unknown,
+  columns: readonly string[],
+): boolean {
+  if (!isPrismaErrorCode(e, "P2002")) return false;
+  const violated = uniqueViolationColumns(e);
+  return (
+    violated !== undefined &&
+    violated.length === columns.length &&
+    columns.every((column) => violated.includes(column))
+  );
+}
+
+/**
  * Turns the Prisma errors for a missing row into NOT_FOUND and rethrows
  * anything else. P2025 is an update or delete of a row that doesn't exist, and
  * P2003 is an insert whose parent row doesn't exist.

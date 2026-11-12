@@ -33,6 +33,7 @@ import {
   CalendarWithConfig,
   findCalendarByCode,
 } from "./db/calendar";
+import { cacheControl } from "./middleware";
 
 /**
  * A calendar a state's API is fixed to: the state whose Calendar database
@@ -226,14 +227,23 @@ export function createCalendarEditorProcedure<Code extends string>(
 }
 
 /**
+ * What every public procedure shares. cacheControl marks a successful read
+ * cacheable for 30 seconds and sends "no-store" on every rejected call. 30
+ * seconds is short enough that a publish or an Edit month reaches readers
+ * within half a minute.
+ */
+const publicProcedure = baseProcedure.concat(cacheControl({ maxAgeS: 30 }));
+
+/**
  * Builds the anonymous public read procedure for one fixed calendar. It reads
  * no token and no StateCode header and gives handlers no user, so a result
- * never depends on who asks. Mutations fail with METHOD_NOT_SUPPORTED.
+ * never depends on who asks. Mutations fail with METHOD_NOT_SUPPORTED. It
+ * builds on publicProcedure, so every call gets its Cache-Control.
  */
 export function createCalendarPublicProcedure<Code extends string>(
   fixed: FixedCalendar<Code>,
 ) {
-  return baseProcedure.use(async ({ type, next }) => {
+  return publicProcedure.use(async ({ type, next }) => {
     if (type !== "query") {
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" });
     }

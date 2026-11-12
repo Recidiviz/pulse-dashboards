@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatMonthLabel } from "../src/calendar.errors";
+import {
+  duplicateEntryError,
+  formatMonthLabel,
+  monthPublishedError,
+  weekdayNotAllowedError,
+} from "../src/calendar.errors";
 
 describe("formatMonthLabel", () => {
   // In Denver, a Date built at UTC midnight would fall on the last day of the
@@ -30,4 +35,41 @@ describe("formatMonthLabel", () => {
       expect(formatMonthLabel(2026, 12)).toBe("December 2026");
     },
   );
+});
+
+describe("duplicateEntryError", () => {
+  it.each(["UTC", "America/Denver"])(
+    "names the label and the same day in %s",
+    (timeZone) => {
+      vi.stubEnv("TZ", timeZone);
+
+      expect(duplicateEntryError("Site A", "2026-09-01")).toMatchObject({
+        code: "CONFLICT",
+        message: "Site A is already on September 1.",
+      });
+    },
+  );
+});
+
+describe("weekdayNotAllowedError", () => {
+  it.each(["UTC", "America/Denver"])(
+    "names the date's weekday in %s",
+    (timeZone) => {
+      vi.stubEnv("TZ", timeZone);
+
+      expect(weekdayNotAllowedError("2026-09-12")).toMatchObject({
+        code: "BAD_REQUEST",
+        message: "This calendar has no entries on Saturdays. Pick another day.",
+      });
+    },
+  );
+});
+
+describe("monthPublishedError", () => {
+  it("names the month and points to Edit month", () => {
+    expect(monthPublishedError(2026, 9)).toMatchObject({
+      code: "PRECONDITION_FAILED",
+      message: "September 2026 is published. Click Edit month to change it.",
+    });
+  });
 });

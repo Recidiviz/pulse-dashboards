@@ -133,9 +133,12 @@ export interface EntryDto<Kind extends string = string> {
 }
 
 export interface MonthCounts {
-  /** Distinct dates with at least one entry whose kind counts toward the total. */
+  /**
+   * Distinct dates with at least one uncancelled entry whose kind counts
+   * toward the total.
+   */
   entryDays: number;
-  /** Entries whose kind counts toward the total. */
+  /** Uncancelled entries whose kind counts toward the total. */
   entryCount: number;
 }
 
