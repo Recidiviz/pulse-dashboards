@@ -61,6 +61,29 @@ describe("NewRevocationsMetrics", () => {
       );
     });
 
+    // RECIDIVIZ-PULSE-DASHBOARD-632: the US_MO export added drug_court, and
+    // rejecting it blanked every revocations matrix file for the state.
+    it("accepts the US_MO charge categories in the production export", () => {
+      const sourceDimensions = [
+        [
+          "charge_category",
+          [
+            "all",
+            "domestic_violence",
+            "drug_court",
+            "general",
+            "internal_unknown",
+            "serious_mental_illness_or_disability",
+            "sex_offense",
+          ],
+        ],
+      ];
+
+      expect(() =>
+        metric.validateDimensionsForFile(fileName, sourceDimensions),
+      ).not.toThrow();
+    });
+
     it("does not throw an error for missing dimension value", () => {
       const sourceDimensions = [["metric_period_months", ["12", "6"]]];
 

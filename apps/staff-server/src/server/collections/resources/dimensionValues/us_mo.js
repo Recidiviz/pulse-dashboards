@@ -26,6 +26,7 @@ import {
 const DEFAULT_CHARGE_CATEGORIES = [
   "all",
   "domestic_violence",
+  "drug_court",
   "general",
   "serious_mental_illness",
   "sex_offense",
