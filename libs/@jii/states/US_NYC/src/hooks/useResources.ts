@@ -29,7 +29,9 @@ export function useResources() {
   } = useRootStore();
 
   const query = useSuspenseQuery({
-    ...trpcQuerier.resident.resources.getResources.queryOptions(),
+    ...trpcQuerier.resident.resources.getResources.queryOptions({
+      stateCode: "US_NYC",
+    }),
     staleTime: ONE_HOUR_MS,
   });
 

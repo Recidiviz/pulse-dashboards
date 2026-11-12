@@ -36,7 +36,9 @@ export const SearchButton = () => {
 
   // Cache read (uses same key as useResources) and intentionally non-suspending
   const { data: resources } = useQuery({
-    ...trpcQuerier.resident.resources.getResources.queryOptions(),
+    ...trpcQuerier.resident.resources.getResources.queryOptions({
+      stateCode: "US_MA",
+    }),
     staleTime: ONE_HOUR_MS,
   });
 

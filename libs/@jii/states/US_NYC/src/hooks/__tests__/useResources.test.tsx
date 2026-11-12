@@ -16,11 +16,16 @@
 // =============================================================================
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
+import { createTRPCClient } from "@trpc/client";
+import { observable } from "@trpc/server/observable";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { Suspense } from "react";
 
 import { useRootStore } from "~@jii/data";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 
+import type { ResourceSummary } from "../../types";
 import { useResources } from "../useResources";
 import { makeResource } from "./testUtils";
 
@@ -71,6 +76,44 @@ function wrapper({ children }: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 }
+
+test("doesn't reuse another state's cached resources", async () => {
+  const resourcesByState: Record<string, ResourceSummary[]> = {
+    US_NYC: [makeResource(1)],
+    US_MA: [makeResource(2)],
+  };
+  // Answers like the server, returning the list for the requested state
+  const client = createTRPCClient<JiiResidentAppRouter>({
+    links: [
+      () =>
+        ({ op }) =>
+          observable((observer) => {
+            const { stateCode } = op.input as { stateCode: string };
+            observer.next({
+              result: { type: "data", data: resourcesByState[stateCode] },
+            });
+            observer.complete();
+          }),
+    ],
+  });
+  const trpcQuerier = createTRPCOptionsProxy({ client, queryClient });
+  vi.mocked(useRootStore).mockReturnValue({
+    apiClient: { trpcQuerier },
+  } as unknown as ReturnType<typeof useRootStore>);
+
+  // A staff user browsed US_MA's resources first
+  await queryClient.fetchQuery(
+    trpcQuerier.resident.resources.getResources.queryOptions({
+      stateCode: "US_MA",
+    }),
+  );
+
+  const { result } = renderHook(() => useResources(), { wrapper });
+
+  await waitFor(() =>
+    expect(result.current?.data).toEqual(resourcesByState["US_NYC"]),
+  );
+});
 
 test("getSimilarResources filters against the fetched data", () => {
   const { result } = renderHook(() => useResources(), { wrapper });

@@ -42,9 +42,18 @@ describe("getResources", () => {
   test("passes ctx.stateCode to resourceApiClient", async () => {
     mockCtx.stateCode = "US_NYC";
 
-    await caller.resources.getResources();
+    await caller.resources.getResources({ stateCode: "US_NYC" });
 
     expect(resourceApiClient.getOrganizations).toHaveBeenCalledWith("US_NYC");
+  });
+
+  test("rejects a stateCode input that doesn't match the request's state", async () => {
+    mockCtx.stateCode = "US_NYC";
+
+    await expect(
+      caller.resources.getResources({ stateCode: "US_MA" }),
+    ).rejects.toThrow("stateCode input does not match");
+    expect(resourceApiClient.getOrganizations).not.toHaveBeenCalled();
   });
 });
 

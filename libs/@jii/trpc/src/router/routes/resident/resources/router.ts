@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+
+import { stateCodes } from "~@jii/configs";
 
 import { segment } from "../../../../analytics/segment";
 import { firebaseAuthedResidentProcedure } from "../../../../procedures/firebaseAuthedResidentProcedure";
@@ -23,9 +26,19 @@ import { router } from "../../../../procedures/init";
 import { resourceApiClient } from "./resourceApiClient";
 
 export const resourcesRouter = router({
-  getResources: firebaseAuthedResidentProcedure.query(({ ctx }) =>
-    resourceApiClient.getOrganizations(ctx.stateCode),
-  ),
+  // The stateCode input keeps each state's list in its own client cache entry.
+  // The header still decides which state's data is returned.
+  getResources: firebaseAuthedResidentProcedure
+    .input(z.object({ stateCode: stateCodes }))
+    .query(({ ctx, input }) => {
+      if (input.stateCode !== ctx.stateCode) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "stateCode input does not match the request's state",
+        });
+      }
+      return resourceApiClient.getOrganizations(ctx.stateCode);
+    }),
 
   getResource: firebaseAuthedResidentProcedure
     .input(z.object({ organizationId: z.number() }))

@@ -16,18 +16,23 @@
 // =============================================================================
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { createTRPCClient } from "@trpc/client";
+import { observable } from "@trpc/server/observable";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { Suspense } from "react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 
 import { useRootStore, useTrackEvent } from "~@jii/data";
 import { State } from "~@jii/paths";
+import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 
 import {
   makeResource,
   rentFilters,
 } from "../../components/Reentry/Resources/__tests__/testUtils";
 import { NO_SELECTION } from "../../components/Reentry/Resources/filters/filterConfig";
+import type { ResourceSummary } from "../../components/Reentry/Resources/types";
 import { useResources } from "../useResources";
 
 vi.mock("~@jii/data", async (importOriginal) => ({
@@ -135,6 +140,49 @@ const renderResources = (search = "") =>
 
 const namesFor = (search: string) =>
   renderResources(search).resources.map((resource) => resource.name);
+
+test("doesn't reuse another state's cached resources", async () => {
+  const resourcesByState: Record<string, ResourceSummary[]> = {
+    US_MA: [resources[0]],
+    US_NYC: [
+      makeResource(5, {
+        name: "NYC Housing Works",
+        categories: [{ category: "Housing", subcategory: "Transitional" }],
+      }),
+    ],
+  };
+  // Answers like the server, returning the list for the requested state
+  const client = createTRPCClient<JiiResidentAppRouter>({
+    links: [
+      () =>
+        ({ op }) =>
+          observable((observer) => {
+            const { stateCode } = op.input as { stateCode: string };
+            observer.next({
+              result: { type: "data", data: resourcesByState[stateCode] },
+            });
+            observer.complete();
+          }),
+    ],
+  });
+  const trpcQuerier = createTRPCOptionsProxy({ client, queryClient });
+  vi.mocked(useRootStore).mockReturnValue({
+    apiClient: { trpcQuerier },
+  } as unknown as ReturnType<typeof useRootStore>);
+
+  // A staff user browsed US_NYC's resources first
+  await queryClient.fetchQuery(
+    trpcQuerier.resident.resources.getResources.queryOptions({
+      stateCode: "US_NYC",
+    }),
+  );
+
+  const { result } = renderResourcesHook();
+
+  await waitFor(() =>
+    expect(result.current?.resources).toEqual(resourcesByState["US_MA"]),
+  );
+});
 
 test("returns every resource in the route category without filters", () => {
   expect(namesFor("")).toEqual([

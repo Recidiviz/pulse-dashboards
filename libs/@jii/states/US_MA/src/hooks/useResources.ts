@@ -42,7 +42,9 @@ export function useResources() {
     apiClient: { trpcQuerier },
   } = useRootStore();
   const { data } = useSuspenseQuery({
-    ...trpcQuerier.resident.resources.getResources.queryOptions(),
+    ...trpcQuerier.resident.resources.getResources.queryOptions({
+      stateCode: "US_MA",
+    }),
     staleTime: ONE_HOUR_MS,
   });
 
