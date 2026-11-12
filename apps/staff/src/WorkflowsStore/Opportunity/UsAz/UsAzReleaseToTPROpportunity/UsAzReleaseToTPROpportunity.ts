@@ -72,6 +72,7 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
         ![
           "usAzIncarcerationWithin6MonthsOfAcisTprDate",
           "usAzWithin7DaysOfRecidivizTprDate",
+          "usAzIncarcerationPastAcisTprDate",
         ].includes(criteria),
     );
 
@@ -110,23 +111,19 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
   get requirementsAlmostMet(): OpportunityRequirement[] {
     if (
       this.record.ineligibleCriteria.usAzWithin7DaysOfRecidivizTprDate &&
-      !this.record.eligibleCriteria.usAzIncarcerationWithin6MonthsOfAcisTprDate
+      !this.record.eligibleCriteria
+        .usAzIncarcerationWithin6MonthsOfAcisTprDate &&
+      !this.record.eligibleCriteria.usAzIncarcerationPastAcisTprDate
     ) {
       return super.requirementsAlmostMet;
     }
 
-    const {
-      record: {
-        eligibleCriteria: {
-          usAzIncarcerationWithin6MonthsOfAcisTprDate: acisDate,
-        },
-      },
-      config: {
-        eligibleCriteriaCopy: {
-          usAzIncarcerationWithin6MonthsOfAcisTprDate: acisRaw,
-        },
-      },
-    } = this;
+    const fieldName = this.record.eligibleCriteria
+      .usAzIncarcerationWithin6MonthsOfAcisTprDate
+      ? "usAzIncarcerationWithin6MonthsOfAcisTprDate"
+      : "usAzIncarcerationPastAcisTprDate";
+    const acisDate = this.record.eligibleCriteria[fieldName];
+    const acisRaw = this.config.eligibleCriteriaCopy[fieldName];
 
     const criteria = acisDate as Reason;
     const raw = acisRaw;

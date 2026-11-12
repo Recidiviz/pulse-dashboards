@@ -363,6 +363,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzNoActiveFelonyDetainers",
           text: "No active felony detainers or warrants",
         },
+        {
+          key: "usAzIncarcerationPastAcisTprDate",
+          text: "Past TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
+        },
       ],
       emptyTabCopy: [],
       enabledColumns: [],

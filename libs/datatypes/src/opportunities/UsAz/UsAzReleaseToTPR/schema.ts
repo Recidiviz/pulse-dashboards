@@ -38,6 +38,15 @@ export const usAzReleaseToTPRSchema = usAzReleaseToTransitionProgramSchemaBase
             }),
           })
           .passthrough(),
+      )
+      .or(
+        z
+          .object({
+            usAzIncarcerationPastAcisTprDate: z.object({
+              acisTprDate: dateStringSchema.nullable(),
+            }),
+          })
+          .passthrough(),
       ),
   })
   .or(
