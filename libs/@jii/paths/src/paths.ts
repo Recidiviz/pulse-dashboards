@@ -59,7 +59,13 @@ export const ProgramCatalog = route(
   {},
   {
     InPerson: route(""),
-    OnMyTablet: route("on-my-tablet"),
+    OnMyTablet: route(
+      "on-my-tablet",
+      {},
+      {
+        History: route("history"),
+      },
+    ),
   },
 );
 

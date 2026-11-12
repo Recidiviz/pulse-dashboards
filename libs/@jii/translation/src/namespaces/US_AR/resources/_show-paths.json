@@ -113,7 +113,8 @@
         "totalHours_one": "[US_AR]programs.onMyTablet.history.totalHours_one",
         "totalHours_other": "[US_AR]programs.onMyTablet.history.totalHours_other",
         "extraHoursLink": "[US_AR]programs.onMyTablet.history.extraHoursLink",
-        "explainer": "[US_AR]programs.onMyTablet.history.explainer"
+        "explainer": "[US_AR]programs.onMyTablet.history.explainer",
+        "seeAllLink": "[US_AR]programs.onMyTablet.history.seeAllLink"
       }
     }
   },

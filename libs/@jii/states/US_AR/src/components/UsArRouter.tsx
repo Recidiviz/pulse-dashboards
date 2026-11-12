@@ -25,6 +25,7 @@ import { PageMoreInformationEarnedReleaseCredits } from "../pages/PageMoreInform
 import { PageMoreInformationImportantDates } from "../pages/PageMoreInformationImportantDates";
 import { PROGRAMS_NAV_BAR_HEIGHT } from "./Programs/ProgramsNavBar/ProgramsNavBar.styles";
 import { UsArOnMyTablet } from "./Programs/UsArOnMyTablet";
+import { UsArOnMyTabletHistory } from "./Programs/UsArOnMyTabletHistory/UsArOnMyTabletHistory";
 import { UsArProgramCatalog } from "./Programs/UsArProgramCatalog";
 import { UsArProgramsLayout } from "./Programs/UsArProgramsLayout";
 import { UsArSingleResidentHome } from "./UsArSingleResidentHome";
@@ -60,6 +61,12 @@ export function UsArRouter() {
             path={ProgramCatalog.OnMyTablet.path}
             element={<UsArOnMyTablet />}
           />
+          {residentFlags.usArEdovoHistory && (
+            <Route
+              path={ProgramCatalog.OnMyTablet.History.path}
+              element={<UsArOnMyTabletHistory />}
+            />
+          )}
         </Route>
       ) : (
         <Route path={ProgramCatalog.path} element={<UsArProgramCatalog />} />

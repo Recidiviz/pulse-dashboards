@@ -16,11 +16,14 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { FC, Fragment } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
+import styled from "styled-components";
 
 import {
   ActivityList,
+  GoLink,
   HomepageSectionHeading,
   RowDivider,
   SlateCopy,
@@ -28,10 +31,18 @@ import {
 import { useResidentMetadata } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
+import { spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { EdovoProgressHistoryListPresenter } from "./EdovoProgressHistoryListPresenter";
 import { EdovoProgressHistoryRow } from "./EdovoProgressHistoryRow";
+
+const SeeAllLinkWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: ${rem(spacing.lg)};
+  margin-top: ${rem(spacing.lg)};
+`;
 
 const ManagedComponent: FC<{ presenter: EdovoProgressHistoryListPresenter }> =
   observer(function EdovoProgressHistoryList({ presenter }) {
@@ -60,6 +71,15 @@ const ManagedComponent: FC<{ presenter: EdovoProgressHistoryListPresenter }> =
             </Fragment>
           ))}
         </ActivityList>
+        <SeeAllLinkWrapper>
+          <GoLink
+            to={State.Resident.ProgramCatalog.OnMyTablet.History.buildPath(
+              pathParams,
+            )}
+          >
+            {t(($) => $.programs.onMyTablet.history.seeAllLink)}
+          </GoLink>
+        </SeeAllLinkWrapper>
         <SlateCopy options={{ forceBlock: true }}>
           {`${t(($) => $.programs.onMyTablet.history.explainer)} ${t(
             ($) => $.programs.onMyTablet.history.extraHoursLink,

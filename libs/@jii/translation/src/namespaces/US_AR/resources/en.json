@@ -113,7 +113,8 @@
         "totalHours_one": "{{count}} hr",
         "totalHours_other": "{{count}} hrs",
         "extraHoursLink": "[What happens to extra hours?]({{extraHoursUrl}})",
-        "explainer": "Every 16 hours of Edovo courses you complete and pass earns 1 program unit, up to 1 a month."
+        "explainer": "Every 16 hours of Edovo courses you complete and pass earns 1 program unit, up to 1 a month.",
+        "seeAllLink": "See all months"
       }
     }
   },
