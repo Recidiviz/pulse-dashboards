@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import { FC } from "react";
+import styled from "styled-components";
 
 import { JIIButton } from "~@jii/common-ui";
 import { sendEdovoReferral, useRootStore } from "~@jii/data";
 import { useUsArTranslations } from "~@jii/translation";
-import { Icon } from "~design-system";
+import { Icon, spacing } from "~design-system";
+
+const SpacedButton = styled(JIIButton)`
+  margin-top: ${rem(spacing.lg)};
+`;
 
 export const GoToCoursesButton: FC = () => {
   const { t } = useUsArTranslations();
@@ -34,9 +40,9 @@ export const GoToCoursesButton: FC = () => {
   };
 
   return (
-    <JIIButton kind="primary" onClick={handleGoToCourses}>
+    <SpacedButton kind="primary" onClick={handleGoToCourses}>
       <span>{t(($) => $.programs.onMyTablet.coursesButton)}</span>
       <Icon kind="Open" size={12} />
-    </JIIButton>
+    </SpacedButton>
   );
 };
