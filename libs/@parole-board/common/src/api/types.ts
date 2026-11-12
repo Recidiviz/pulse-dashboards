@@ -21,7 +21,9 @@ import type {
   TRPCBuiltRouter,
 } from "@trpc/server";
 
-import type { CalendarRouter } from "~@modules-server/trpc-types";
+import type { RouterByModule } from "~@modules-server/trpc-types";
+
+type CalendarRouter = RouterByModule["Calendar"];
 
 /**
  * Colorado's Parole Board calendar API, which the Calendar module serves at

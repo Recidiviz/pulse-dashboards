@@ -15,34 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TRPCRouterRecord } from "@trpc/server";
-import { clone } from "lodash-es";
+import {
+  AnyTRPCRootTypes,
+  TRPCBuiltRouter,
+  TRPCRouterRecord,
+} from "@trpc/server";
 
-import { manifest as calendarManifest } from "~@modules/Calendar/router";
-import { manifest as userSettingsManifest } from "~@modules/UserSettings/router";
-import { manifest as usTnReclassificationManifest } from "~@modules/UsTnReclassification/router";
-import { ModuleBackendManifest } from "~@modules-server/trpc-base";
+import { moduleRouter as calendarRouter } from "~@modules/Calendar/router";
+import { moduleRouter as userSettingsRouter } from "~@modules/UserSettings/router";
+import { moduleRouter as usTnReclassificationRouter } from "~@modules/UsTnReclassification/router";
+import { mergeRouters, router } from "~@modules-server/trpc-base";
+import type { ModuleName } from "~module-registry";
 
-export const MANIFEST_REGISTRY = [
-  calendarManifest,
-  userSettingsManifest,
-  usTnReclassificationManifest,
-] satisfies ModuleBackendManifest[];
+type ModuleRouter = TRPCBuiltRouter<AnyTRPCRootTypes, Record<never, never>>;
+type ModuleRouters = Partial<Record<ModuleName, ModuleRouter>>;
 
-export function registerManifests(
+export const MODULE_ROUTERS = {
+  Calendar: calendarRouter,
+  UserSettings: userSettingsRouter,
+  UsTnReclassification: usTnReclassificationRouter,
+} as const satisfies ModuleRouters;
+
+export function registerModuleRouters(
   baseProcedures: TRPCRouterRecord,
-  manifests: ModuleBackendManifest[],
-): TRPCRouterRecord {
-  const procedures: TRPCRouterRecord = clone(baseProcedures);
-
-  for (const { module, router } of manifests) {
-    if (procedures[module]) {
-      throw new Error(
-        `Attempting to mount procedures under existing key: ${module}`,
-      );
-    }
-    procedures[module] = router;
-  }
-
-  return procedures;
+  moduleRouters: ModuleRouters,
+) {
+  return mergeRouters(router(baseProcedures), router(moduleRouters));
 }
+
+export type RouterByModule = typeof MODULE_ROUTERS;

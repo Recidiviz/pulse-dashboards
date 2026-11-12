@@ -15,12 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { ModuleBackendManifest } from "~@modules-server/trpc-base";
-
-import { moduleRouter } from "./router";
-
-export const manifest = {
-  module: "UserSettings",
-  router: moduleRouter,
-  enabledTenants: ["Recidiviz"],
-} satisfies ModuleBackendManifest;
+export { moduleRouter } from "./router";

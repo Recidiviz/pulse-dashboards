@@ -17,91 +17,53 @@
 
 import { baseProcedure, router } from "~@modules-server/trpc-base";
 
-import { registerManifests } from "./manifestRegistry";
+import { registerModuleRouters } from "./manifestRegistry";
 
 const BASE_PROCEDURES = {
   hi: baseProcedure.query(async () => "hello"),
   bye: baseProcedure.query(async () => "goodbye"),
 };
 
-const MANIFESTS = [
-  {
-    module: "coolModule",
-    enabledTenants: ["US_TN" as const],
-    router: router({
-      somePig: baseProcedure.query(async () => "Bah Ram Ewe"),
-    }),
-  },
-  {
-    module: "uncoolModule",
-    enabledTenants: ["Recidiviz" as const],
-    router: router({
-      shouldINap: baseProcedure.query(async () => "yes"),
-    }),
-  },
-];
+const ROUTERS = {
+  UserSettings: router({
+    somePig: baseProcedure.query(async () => "Bah Ram Ewe"),
+  }),
+  Classification: router({
+    shouldINap: baseProcedure.query(async () => "yes"),
+  }),
+};
 
 describe("registerManifests", () => {
   it("adds all supplied manifests to the base set of procedures under the name of the module", () => {
-    const res = registerManifests(BASE_PROCEDURES, MANIFESTS);
+    const res = registerModuleRouters(BASE_PROCEDURES, ROUTERS);
 
     expect(res["hi"]).toBeDefined();
     expect(res["bye"]).toBeDefined();
-    expect(res["coolModule"]).toBeDefined();
-    expect(res["uncoolModule"]).toBeDefined();
+    expect(res["UserSettings"]).toBeDefined();
+    expect(res["Classification"]).toBeDefined();
   });
   it("does not mutate the supplied base procedures", () => {
-    registerManifests(BASE_PROCEDURES, MANIFESTS);
+    registerModuleRouters(BASE_PROCEDURES, ROUTERS);
 
     expect(BASE_PROCEDURES["hi"]).toBeDefined();
     expect(BASE_PROCEDURES["bye"]).toBeDefined();
     // @ts-expect-error We're ensuring the key does not exist
-    expect(BASE_PROCEDURES["coolModule"]).toBeUndefined();
+    expect(BASE_PROCEDURES["UserSettings"]).toBeUndefined();
     // @ts-expect-error We're ensuring the key does not exist
-    expect(BASE_PROCEDURES["uncoolModule"]).toBeUndefined();
+    expect(BASE_PROCEDURES["Classification"]).toBeUndefined();
   });
   it("throws if a module name already exists on the base procedures", () => {
-    const repeatedManifest = [
-      {
-        module: "coolModule",
-        enabledTenants: ["US_TN" as const],
-        router: router({
-          somePig: baseProcedure.query(async () => "Bah Ram Ewe"),
-        }),
-      },
-      {
-        module: "bye",
-        enabledTenants: ["Recidiviz" as const],
-        router: router({
-          shouldINap: baseProcedure.query(async () => "yes"),
-        }),
-      },
-    ];
+    const repeatedRouters = {
+      UserSettings: router({
+        somePig: baseProcedure.query(async () => "Bah Ram Ewe"),
+      }),
+      bye: router({
+        shouldINap: baseProcedure.query(async () => "yes"),
+      }),
+    };
 
     expect(() =>
-      registerManifests(BASE_PROCEDURES, repeatedManifest),
-    ).toThrowError();
-  });
-  it("throws if two manifests try to register the same module name", () => {
-    const doubledManifest = [
-      {
-        module: "extraCoolModule",
-        enabledTenants: ["US_TN" as const],
-        router: router({
-          somePig: baseProcedure.query(async () => "Bah Ram Ewe"),
-        }),
-      },
-      {
-        module: "extraCoolModule",
-        enabledTenants: ["Recidiviz" as const],
-        router: router({
-          shouldINap: baseProcedure.query(async () => "yes"),
-        }),
-      },
-    ];
-
-    expect(() =>
-      registerManifests(BASE_PROCEDURES, doubledManifest),
+      registerModuleRouters(BASE_PROCEDURES, repeatedRouters),
     ).toThrowError();
   });
 });

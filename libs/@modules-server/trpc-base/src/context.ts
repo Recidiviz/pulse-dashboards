@@ -17,15 +17,16 @@
 
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
+import { TenantId } from "~module-registry";
 import { verifyAuth0Token } from "~server-setup-plugin";
 
-import type { Auth0User, AuthUser, Context, StateCode } from "./types";
+import type { Auth0User, AuthUser, Context } from "./types";
 
 export function formatAndVerifyUser(user: Auth0User): AuthUser | undefined {
   const { stateCode: userStateLower, routes = {} } =
     user["https://dashboard.recidiviz.org/app_metadata"];
   const email = user["https://dashboard.recidiviz.org/email_address"];
-  const userState = userStateLower.toUpperCase() as Uppercase<StateCode>;
+  const userState = userStateLower.toUpperCase() as Uppercase<TenantId>;
   const isRecidivizUser = userState === "RECIDIVIZ";
 
   if (!email) return;

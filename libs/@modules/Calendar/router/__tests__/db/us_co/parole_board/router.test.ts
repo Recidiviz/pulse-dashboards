@@ -20,7 +20,7 @@ import { TRPCClientError } from "@trpc/client";
 import { US_CO_PAROLE_BOARD_SETTINGS } from "~@modules/Calendar/rules/us_co/parole_board";
 import { type Auth0User, router } from "~@modules-server/trpc-base";
 
-import { manifest } from "../../../../src";
+import { moduleRouter } from "../../../../src";
 import { initFastifyAndSetUser } from "../../../setup";
 import { coEditor, coViewer, recidivizUser } from "../../../setup/users";
 import { initUsCoClient } from "../../../us_co/parole_board/setup";
@@ -61,12 +61,7 @@ describe("Calendar router", () => {
 
 describe("the Calendar module's manifest", () => {
   // Mounted the way the Modules server mounts it, under the module name.
-  const modulesTestRouter = router({ Calendar: manifest.router });
-
-  it("is the Calendar module for US_CO", () => {
-    expect(manifest.module).toBe("Calendar");
-    expect(manifest.enabledTenants).toEqual(["US_CO"]);
-  });
+  const modulesTestRouter = router({ Calendar: moduleRouter });
 
   // An unmounted path fails with NOT_FOUND, so FORBIDDEN shows the request
   // reached Colorado's editor procedure.

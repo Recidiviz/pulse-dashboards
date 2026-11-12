@@ -15,10 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  type AppRouter,
-  appRouter,
-  type CalendarRouter,
-  type UserSettingsRouter,
-  type UsTnReclassModuleRouter,
-} from "./router";
+export type { RouterByModule } from "./manifestRegistry";
+export { type AppRouter, appRouter } from "./router";

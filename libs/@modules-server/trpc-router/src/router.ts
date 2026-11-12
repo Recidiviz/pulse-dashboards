@@ -17,16 +17,9 @@
 
 import { TRPCRouterRecord } from "@trpc/server";
 
-import { manifest as calendarManifest } from "~@modules/Calendar/router";
-import { manifest as userSettingsManifest } from "~@modules/UserSettings/router";
-import { manifest as usTnReclassificationManifest } from "~@modules/UsTnReclassification/router";
-import {
-  auth0Procedure,
-  baseProcedure,
-  router,
-} from "~@modules-server/trpc-base";
+import { auth0Procedure, baseProcedure } from "~@modules-server/trpc-base";
 
-import { MANIFEST_REGISTRY, registerManifests } from "./manifestRegistry";
+import { MODULE_ROUTERS, registerModuleRouters } from "./manifestRegistry";
 
 const procedures: TRPCRouterRecord = {
   hello: baseProcedure.query(async () => {
@@ -37,13 +30,6 @@ const procedures: TRPCRouterRecord = {
   }),
 };
 
-const mergedProcedures = registerManifests(procedures, MANIFEST_REGISTRY);
+export const appRouter = registerModuleRouters(procedures, MODULE_ROUTERS);
 
-export const appRouter = router(mergedProcedures);
-
-// export type definition of API
 export type AppRouter = typeof appRouter;
-export type UsTnReclassModuleRouter =
-  typeof usTnReclassificationManifest.router;
-export type UserSettingsRouter = typeof userSettingsManifest.router;
-export type CalendarRouter = typeof calendarManifest.router;

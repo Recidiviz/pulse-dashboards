@@ -28,6 +28,7 @@ export const t = initTRPC
   .create({ transformer: superjson });
 
 export const router = t.router;
+export const mergeRouters = t.mergeRouters;
 
 const plugin = procedurePlugin();
 

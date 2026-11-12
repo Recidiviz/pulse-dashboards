@@ -17,19 +17,14 @@
 
 import type { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import type { TRPCBuiltRouter } from "@trpc/server";
+import { TRPCBuiltRouter } from "@trpc/server";
 import {
   createTRPCOptionsProxy,
   type TRPCOptionsProxy,
 } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 
-import type {
-  AppRouter,
-  CalendarRouter,
-  UserSettingsRouter,
-  UsTnReclassModuleRouter,
-} from "~@modules-server/trpc-types";
+import type { AppRouter, RouterByModule } from "~@modules-server/trpc-types";
 
 import { subrouteScopedLink } from "./subrouteScopedLink";
 
@@ -47,15 +42,10 @@ type ModuleRouter = TRPCBuiltRouter<
   Record<never, never> // but the procedures can be anything
 >;
 
-type RouterByModule = {
-  UsTnReclassification: UsTnReclassModuleRouter;
-  Calendar: CalendarRouter;
-  UserSettings: UserSettingsRouter;
-};
+type ModuleWithRouter = keyof RouterByModule;
 
-type ModuleName = keyof RouterByModule;
 type BackendLocation = "local" | "deployed";
-type ModuleTrpcClient<Module extends ModuleName> = TRPCOptionsProxy<
+type ModuleTrpcClient<Module extends ModuleWithRouter> = TRPCOptionsProxy<
   RouterByModule[Module],
   { keyPrefix: true }
 >;
@@ -64,7 +54,7 @@ type ModuleTrpcClient<Module extends ModuleName> = TRPCOptionsProxy<
 // This factory is a singleton per app, so we only need once global instance of these as well
 let SETTINGS: ModuleTrpcSettings;
 const MODULE_CLIENTS: {
-  [Module in ModuleName]?: Partial<
+  [Module in ModuleWithRouter]?: Partial<
     Record<BackendLocation, ModuleTrpcClient<Module>>
   >;
 } = {};
@@ -73,7 +63,7 @@ export function initModuleTrpcClients(settings: ModuleTrpcSettings) {
   SETTINGS = settings;
 }
 
-export function useModuleTrpcQuerier<Module extends ModuleName>(
+export function useModuleTrpcQuerier<Module extends ModuleWithRouter>(
   moduleName: Module,
   useLocalInstance = false,
 ): ModuleTrpcClient<Module> {

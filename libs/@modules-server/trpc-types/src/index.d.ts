@@ -17,9 +17,4 @@
 
 // Just grabbing types as TRPC intended
 // eslint-disable-next-line @nx/enforce-module-boundaries
-export type {
-  AppRouter,
-  CalendarRouter,
-  UserSettingsRouter,
-  UsTnReclassModuleRouter,
-} from "~@modules-server/trpc-router";
+export type { AppRouter, RouterByModule } from "~@modules-server/trpc-router";
