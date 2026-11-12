@@ -62,19 +62,19 @@ export const DesignSystemKinds = () => (
   </Row>
 );
 
-// The "Remove published month" confirmation's footer.
+// The footer of the "Delete [Facility] from [Month Day]?" confirmation.
 export const Destructive = () => (
   <Row>
     <ParoleBoardButton kind="secondary" onClick={noop}>
       Cancel
     </ParoleBoardButton>
     <ParoleBoardButton kind="destructive" onClick={noop}>
-      Remove published month
+      Delete
     </ParoleBoardButton>
   </Row>
 );
 
-// The inline "Delete hearing?" confirmation, in the block shape.
+// The same confirmation inline, in the block shape.
 export const DestructiveBlock = () => (
   <Row>
     <ParoleBoardButton kind="secondary" shape="block" onClick={noop}>
@@ -109,7 +109,7 @@ export const Waiting = () => (
       Publish
     </ParoleBoardButton>
     <ParoleBoardButton kind="destructive" onClick={noop} waiting>
-      Remove published month
+      Delete
     </ParoleBoardButton>
     <ParoleBoardButton kind="link" onClick={noop} waiting>
       Undo

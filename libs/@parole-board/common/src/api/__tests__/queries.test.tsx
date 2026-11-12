@@ -37,6 +37,7 @@ import {
   monthDetail,
   monthListPage,
   monthSummary,
+  publishPreview,
 } from "../../fixtures";
 import { ParoleBoardHostProvider } from "../../host";
 import { SuspenseBoundary } from "../../loading";
@@ -50,11 +51,13 @@ import {
   useAddMonthOptions,
   useCalendarConfig,
   useCurrentPatterns,
+  useFetchMonth,
   useMonth,
   useMonthQueryOptions,
   useMonthsList,
   usePrefetchMonth,
   usePublishPreview,
+  useRemovePublishPreview,
 } from "../queries";
 import type { YearMonthOption } from "../types";
 
@@ -421,5 +424,117 @@ describe("retries", () => {
 
     expect(await screen.findByRole("alert")).toBeInTheDocument();
     expect(publishPreview).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("usePublishPreview", () => {
+  it("holds still on timers and focus, and refetches on an invalidation", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const preview = vi
+        .fn()
+        .mockReturnValueOnce(publishPreview())
+        .mockReturnValue(publishPreview({ revision: 2 }));
+      const { calendarTrpc, wrapper } = setup({
+        "admin.months.publishPreview": preview,
+      });
+      function Revision() {
+        const { data } = usePublishPreview({ monthId: "month-2026-9" });
+        return <p>Revision {data.revision}</p>;
+      }
+      render(<Revision />, { wrapper });
+      expect(await screen.findByText("Revision 1")).toBeInTheDocument();
+
+      await act(() =>
+        vi.advanceTimersByTimeAsync(MONTH_REFETCH_INTERVAL_MS * 2),
+      );
+      await act(async () => {
+        focusManager.setFocused(false);
+        focusManager.setFocused(true);
+      });
+      expect(preview).toHaveBeenCalledOnce();
+
+      await act(() =>
+        calendarTrpc.queryClient.invalidateQueries(
+          calendarTrpc.querier.admin.months.pathFilter(),
+        ),
+      );
+      expect(await screen.findByText("Revision 2")).toBeInTheDocument();
+    } finally {
+      focusManager.setFocused(undefined);
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe("useRemovePublishPreview", () => {
+  it("drops the cached preview, so the next reader fetches it again", async () => {
+    const preview = vi.fn(() => publishPreview());
+    const { calendarTrpc, wrapper } = setup({
+      "admin.months.publishPreview": preview,
+    });
+    const key = calendarTrpc.querier.admin.months.publishPreview.queryKey({
+      monthId: "month-2026-9",
+    });
+    const { result, unmount } = renderHook(
+      () => ({
+        preview: usePublishPreview({ monthId: "month-2026-9" }),
+        remove: useRemovePublishPreview(),
+      }),
+      { wrapper },
+    );
+    await waitFor(() => expect(result.current?.preview.data).toBeDefined());
+    const remove = result.current.remove;
+
+    unmount();
+    remove("month-2026-9");
+
+    expect(calendarTrpc.queryClient.getQueryData(key)).toBeUndefined();
+  });
+});
+
+describe("useFetchMonth", () => {
+  it("reads the month from the server even when the cache holds it, and stores the answer", async () => {
+    const get = vi
+      .fn()
+      .mockReturnValueOnce(monthDetail({ month: 11 }))
+      .mockReturnValue(monthDetail({ month: 11, status: "PUBLISHED" }));
+    const { calendarTrpc, wrapper } = setup({ "admin.months.get": get });
+    const november = { year: 2026, month: 11 };
+    const { result } = renderHook(
+      () => ({ month: useMonth(november), fetchMonth: useFetchMonth() }),
+      { wrapper },
+    );
+    await waitFor(() =>
+      expect(result.current?.month.data?.status).toBe("DRAFT"),
+    );
+
+    const fetched = await act(() => result.current.fetchMonth(november));
+
+    expect(fetched?.status).toBe("PUBLISHED");
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(
+      calendarTrpc.queryClient.getQueryData(
+        calendarTrpc.querier.admin.months.get.queryKey(november),
+      ),
+    ).toMatchObject({ status: "PUBLISHED" });
+  });
+
+  it("reuses a month read since the given time, and reads one older than it again", async () => {
+    const get = vi.fn(() => monthDetail({ month: 11 }));
+    const { wrapper } = setup({ "admin.months.get": get });
+    const november = { year: 2026, month: 11 };
+    const before = Date.now() - 1;
+    const { result } = renderHook(
+      () => ({ month: useMonth(november), fetchMonth: useFetchMonth() }),
+      { wrapper },
+    );
+    await waitFor(() => expect(result.current?.month.data).toBeTruthy());
+
+    await act(() => result.current.fetchMonth(november, before));
+    expect(get).toHaveBeenCalledOnce();
+
+    await act(() => result.current.fetchMonth(november, Date.now() + 1));
+    expect(get).toHaveBeenCalledTimes(2);
   });
 });

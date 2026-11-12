@@ -35,6 +35,8 @@ export const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
  */
 export const MIN_YEAR = 2000;
 export const MAX_YEAR = 5000;
+/** How many months after the current one an editor can add. */
+export const ADD_MONTHS_AHEAD = 12;
 
 /** Parses a "YYYY-MM-DD" date, throwing INVALID_DATE for anything else. */
 export function toPlainDate(value: string): Temporal.PlainDate {

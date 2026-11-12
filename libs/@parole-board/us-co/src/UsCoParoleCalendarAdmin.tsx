@@ -24,6 +24,7 @@ import {
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
 import { AdminRootContent, AdminRootMode } from "./AdminRootContent";
+import { AdminRoutes } from "./AdminRoutes";
 
 function getAdminRootMode(host: ParoleBoardHost): AdminRootMode {
   if (isOfflineMode() || isDemoMode()) return "offline";
@@ -56,7 +57,7 @@ export function UsCoParoleCalendarAdmin({ host }: { host: ParoleBoardHost }) {
   return (
     <ParoleBoardHostProvider host={host}>
       <AdminRootContent mode={mode}>
-        <p>This page is being built.</p>
+        <AdminRoutes />
       </AdminRootContent>
     </ParoleBoardHostProvider>
   );

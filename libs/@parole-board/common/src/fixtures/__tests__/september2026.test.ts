@@ -51,4 +51,17 @@ describe("september2026", () => {
       expect.objectContaining({ date: "2026-09-11", kind: "FULL_BOARD" }),
     ]);
   });
+
+  test("adds FCF and CTCF on Labor Day, in date order, in the holiday variant", () => {
+    const variant = september2026.entriesWithHolidayHearings;
+    const onLaborDay = variant.filter((e) => e.date === "2026-09-07");
+    expect(onLaborDay.map((e) => e.label)).toEqual(["FCF", "CTCF"]);
+    expect(september2026.entries.some((e) => e.date === "2026-09-07")).toBe(
+      false,
+    );
+    expect(variant).toHaveLength(september2026.entries.length + 2);
+    const dates = variant.map((e) => e.date);
+    expect(dates).toEqual([...dates].sort());
+    expect(new Set(variant.map((e) => e.id)).size).toBe(variant.length);
+  });
 });

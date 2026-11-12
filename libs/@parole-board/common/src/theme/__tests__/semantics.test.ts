@@ -87,10 +87,11 @@ describe("semantics", () => {
     expect(semantics.type).toBe(typography);
   });
 
-  test("radius and stroke are rem values", () => {
+  test("radius, stroke and size are rem values", () => {
     for (const value of [
       ...Object.values(semantics.radius),
       ...Object.values(semantics.stroke),
+      ...Object.values(semantics.size),
     ]) {
       expect(value).toMatch(/^\d*\.?\d+rem$/);
     }

@@ -16,6 +16,7 @@
 // =============================================================================
 
 export { CalendarGrid } from "./CalendarGrid";
+export type { ChipsOn } from "./CalendarGridSkeleton";
 export { CalendarGridSkeleton } from "./CalendarGridSkeleton";
 export * from "./dates";
 export type * from "./types";

@@ -45,7 +45,7 @@ export { CalendarRulesError } from "./errors";
 export { getHolidays } from "./holidays/getHolidays";
 export { staticHolidaySource } from "./holidays/staticHolidaySource";
 export type { DateRange, Holiday, HolidaySource } from "./holidays/types";
-export { MAX_YEAR, MIN_YEAR } from "./plainDates";
+export { ADD_MONTHS_AHEAD, MAX_YEAR, MIN_YEAR } from "./plainDates";
 export {
   everyNWeeksDates,
   everyWeekdayDates,

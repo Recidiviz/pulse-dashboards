@@ -60,6 +60,10 @@ export interface CalendarGridProps {
   month: CalendarMonthRef;
   /** Already sorted; each day renders its entries in this order. */
   entries: CalendarGridEntry[];
+  /**
+   * Each is labelled by name in its day. Screen readers also hear when a
+   * holiday has entries on it.
+   */
   holidays?: CalendarHoliday[];
   /** "month" (the default) is the grid; "list" lists only days with entries. */
   view?: "month" | "list";
@@ -67,6 +71,17 @@ export interface CalendarGridProps {
   readOnly?: boolean;
   /** Ids of the selected entries; each gets an outline and aria-pressed. */
   selectedEntryIds?: readonly string[];
+  /**
+   * Ids of entries a move is still saving. Each chip shows a moving band
+   * (a still dashed line with reduced motion) and aria-busy, and ignores
+   * clicks and Enter or Space.
+   */
+  busyEntryIds?: ReadonlySet<string>;
+  /**
+   * "YYYY-MM-DD" days a move is still saving to or from. Chips on them ignore
+   * clicks and Enter or Space until it ends.
+   */
+  busyDates?: ReadonlySet<string>;
   /**
    * Weekdays a chip may be dropped on, from the calendar's allowedWeekdays
    * setting. Defaults to every day. Other days get no drop outline and refuse

@@ -31,6 +31,10 @@ type EntryTargetProps = {
   /** The text the chip shows, which is also the hover title without entry.title. */
   label: string;
   selected: boolean;
+  /** A move is saving the entry: aria-busy, and toggles are ignored. */
+  busy?: boolean;
+  /** Toggles are ignored, as on a day a move is saving. */
+  disabled?: boolean;
   /** Without it, the chip is plain content: not focusable and not pressable. */
   onToggle?: (entryId: string) => void;
   children: ReactNode;
@@ -40,17 +44,28 @@ type EntryTargetProps = {
  * Wraps a chip body with its hover title and, when the chip can be selected,
  * makes it a toggle button: focusable, with aria-pressed, toggled by Enter or
  * Space. FullCalendar's eventClick handles mouse clicks, so this adds no click
- * handler of its own and a click toggles once.
+ * handler of its own and a click toggles once. A busy or disabled chip stays
+ * focusable but says so with aria-disabled, and ignores the keys.
  */
 export function EntryTarget({
   entry,
   label,
   selected,
+  busy = false,
+  disabled = false,
   onToggle,
   children,
 }: EntryTargetProps) {
   const title = entry.title ?? label;
-  if (!onToggle) return <ChipTarget title={title}>{children}</ChipTarget>;
+  const ariaBusy = busy || undefined;
+  if (!onToggle) {
+    return (
+      <ChipTarget title={title} aria-busy={ariaBusy}>
+        {children}
+      </ChipTarget>
+    );
+  }
+  const inert = busy || disabled;
 
   // As a native button does: Enter acts on keydown and Space on keyup, and a
   // held key doesn't repeat the toggle.
@@ -62,11 +77,11 @@ export function EntryTarget({
     }
     if (event.key !== "Enter" || event.repeat) return;
     event.preventDefault();
-    onToggle(entry.id);
+    if (!inert) onToggle(entry.id);
   };
 
   const onKeyUp = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === " ") onToggle(entry.id);
+    if (event.key === " " && !inert) onToggle(entry.id);
   };
 
   return (
@@ -75,6 +90,8 @@ export function EntryTarget({
       tabIndex={0}
       title={title}
       aria-pressed={selected}
+      aria-busy={ariaBusy}
+      aria-disabled={inert || undefined}
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
     >

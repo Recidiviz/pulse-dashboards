@@ -40,6 +40,7 @@ interface ImportMetaEnv {
   readonly VITE_SENTRY_DSN: string;
   readonly VITE_SENTRY_ENV: string;
   readonly VITE_TEST_ENV: string;
+  readonly VITE_US_CO_PUBLIC_CALENDAR_URL: string;
   // add more here
 }
 

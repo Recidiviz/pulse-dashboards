@@ -36,7 +36,12 @@ import listPlugin from "@fullcalendar/react/list";
 import { useMemo, useState } from "react";
 
 import styles from "./CalendarGrid.module.css";
-import { CALENDAR_VARS, HeaderText, HolidayLabel } from "./CalendarGrid.styles";
+import {
+  CALENDAR_VARS,
+  HeaderText,
+  HolidayLabel,
+  VisuallyHidden,
+} from "./CalendarGrid.styles";
 import {
   type CalendarWeekday,
   isInMonth,
@@ -65,7 +70,11 @@ const listDayHeaderContent = ({ text }: ListDayHeaderInnerInfo) => (
 
 type HandlerProps = Pick<
   CalendarGridProps,
-  "onEntryClick" | "onEntriesDrop" | "allowedWeekdays"
+  | "onEntryClick"
+  | "onEntriesDrop"
+  | "allowedWeekdays"
+  | "busyEntryIds"
+  | "busyDates"
 > & {
   month: CalendarMonthRef;
   entries: readonly CalendarGridEntry[];
@@ -91,6 +100,8 @@ export function buildHandlers({
   entries,
   selectedIds,
   allowedWeekdays,
+  busyEntryIds,
+  busyDates,
   onEntryClick,
   onEntriesDrop,
 }: HandlerProps) {
@@ -114,8 +125,11 @@ export function buildHandlers({
   };
 
   // A holiday label is an event too (see CalendarGrid), but not an entry.
+  // A chip a move is saving, or on a day it's saving, ignores the click.
   const eventClick = (info: Pick<EventClickInfo, "event">) => {
     if (info.event.extendedProps?.["holiday"]) return;
+    if (busyEntryIds?.has(info.event.id)) return;
+    if (busyDates?.has(info.event.startStr)) return;
     onEntryClick?.(info.event.id);
   };
 
@@ -136,6 +150,8 @@ export function CalendarGrid({
   view = "month",
   readOnly = true,
   selectedEntryIds,
+  busyEntryIds,
+  busyDates,
   allowedWeekdays,
   timeZone,
   firstDay,
@@ -158,6 +174,31 @@ export function CalendarGrid({
     () => new Set(selectedEntryIds ?? []),
     [selectedEntryIds],
   );
+
+  // The design outlines the selected entry's day. With several selected,
+  // every day holding one is outlined.
+  const selectedDates = useMemo(
+    () =>
+      new Set(
+        entries
+          .filter((entry) => selectedIds.has(entry.id))
+          .map((entry) => entry.date),
+      ),
+    [entries, selectedIds],
+  );
+
+  // Holidays with at least one entry on them, whose labels tell screen
+  // readers so. A cancelled entry isn't a session, so it doesn't count.
+  const holidaysWithEntries = useMemo(() => {
+    const entryDates = new Set(
+      entries.filter((entry) => !entry.cancelled).map((entry) => entry.date),
+    );
+    return new Set(
+      (holidays ?? [])
+        .map((holiday) => holiday.date)
+        .filter((date) => entryDates.has(date)),
+    );
+  }, [entries, holidays]);
 
   // The design puts a day's holiday label below its chips. FullCalendar starts
   // every cell's chips at the same height across a week, so a label in the
@@ -190,6 +231,8 @@ export function CalendarGrid({
     entries,
     selectedIds,
     allowedWeekdays,
+    busyEntryIds,
+    busyDates,
     onEntryClick,
     onEntriesDrop,
   });
@@ -203,6 +246,8 @@ export function CalendarGrid({
     return [
       styles["day"],
       (dow === 0 || dow === 6 || !isInMonth(iso, month)) && styles["dayMuted"],
+      selectedDates.has(iso) && styles["daySelected"],
+      busyDates?.has(iso) && styles["dayPending"],
       drag &&
         iso !== drag.from &&
         canDropOn(iso, month, allowedWeekdays) &&
@@ -226,7 +271,8 @@ export function CalendarGrid({
   // isDraggable comes from FullCalendar, so the class follows its editable
   // setting rather than restating readOnly. The dragged chip fades, and so
   // does every selected chip when the dragged one is selected, since the drop
-  // moves them all. The chip under the pointer doesn't.
+  // moves them all. The chip under the pointer doesn't. A chip a move is
+  // saving shows a moving band until the move ends.
   const eventClass = ({
     event,
     isDraggable,
@@ -241,6 +287,7 @@ export function CalendarGrid({
       styles["entry"],
       isDraggable && styles["entryEditable"],
       faded && styles["entryFaded"],
+      busyEntryIds?.has(event.id) && styles["entryPending"],
     ]
       .filter(Boolean)
       .join(" ");
@@ -254,6 +301,9 @@ export function CalendarGrid({
       return (
         <HolidayLabel>
           {renderHolidayLabel ? renderHolidayLabel(holiday) : holiday.name}
+          {holidaysWithEntries.has(holiday.date) && (
+            <VisuallyHidden>, holiday with sessions scheduled</VisuallyHidden>
+          )}
         </HolidayLabel>
       );
     }
@@ -264,6 +314,8 @@ export function CalendarGrid({
         entry={entry}
         label={label}
         selected={selectedIds.has(entry.id)}
+        busy={busyEntryIds?.has(entry.id) ?? false}
+        disabled={busyDates?.has(entry.date) ?? false}
         onToggle={onEntryClick}
       >
         {renderEntry ? (

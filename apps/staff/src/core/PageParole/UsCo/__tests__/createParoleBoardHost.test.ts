@@ -71,6 +71,16 @@ describe("createParoleBoardHost", () => {
     expect(host.Link).toBe(Link);
   });
 
+  it("gives the calendar the public calendar address from VITE_US_CO_PUBLIC_CALENDAR_URL", () => {
+    vi.stubEnv(
+      "VITE_US_CO_PUBLIC_CALENDAR_URL",
+      "https://public-calendar.test",
+    );
+    const host = createParoleBoardHost({} as RootStore);
+
+    expect(host.publicCalendarUrl).toBe("https://public-calendar.test");
+  });
+
   it("builds the calendar client on the staff QueryClient, with the user's current token and tenant", async () => {
     vi.stubEnv("VITE_MODULE_BACKEND_URL", "https://modules.example.test");
     const fetchSpy = vi

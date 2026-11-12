@@ -152,9 +152,9 @@ export const stroke = {
  * together here rather than in space or type.
  */
 export const tile = {
-  // One-line tiles (meeting types, facilities) are padded 11px by 10px and
+  // One-line tiles (meeting types, facilities) are padded 10px by 10px and
   // two-line tiles (months) 12px by 10px.
-  padding: `${rem(11)} ${rem(10)}`,
+  padding: `${rem(10)} ${rem(10)}`,
   paddingDescribed: `${rem(12)} ${rem(10)}`,
   // Day tiles are 34px by 32px with a 6px gap, which fits 13 days per row in
   // the 524px Add a hearing dialog.
@@ -169,6 +169,21 @@ export const tile = {
   captionSize: rem(9.5),
   captionLineHeight: rem(13),
   captionTracking: "0.08em",
+} as const;
+
+// TODO(CO-935): Waiting on ~design-system to export component size tokens. Replace with the DS export once it lands.
+export const size = {
+  // The DS Button's pill height, which a page action and a row that holds
+  // one keep. The pill's 40px min-height is shorter than what it holds, so
+  // its height is the sum of its parts in Button.styles.tsx: Sans14's line
+  // (14px on the DS's 1.2 UI line height), 12px padding above and below, and
+  // the secondary kind's border top and bottom. That's 42.8px, as measured
+  // in the examples; a primary pill has no border and is 40.8px.
+  control: rem(14 * 1.2 + 2 * 12 + 2 * spacing.xxs),
+  // The month status strip's height, rounded up to a whole pixel from the
+  // tallest strip measured on a desktop-width screen, so the page under the
+  // header keeps its place whichever strip shows.
+  banner: rem(68),
 } as const;
 
 export const space = spacing;

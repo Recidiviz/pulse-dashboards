@@ -87,6 +87,12 @@ function buildEntries(): CalendarGridEntry[] {
 
 const entries = buildEntries();
 
+// Labor Day hearings an editor added by hand: the generator skips holidays,
+// so only a manual add or move puts an entry on one.
+const laborDayHearings = ["FCF", "CTCF"].map((label) =>
+  entry(7, "HEARING", label),
+);
+
 /** September 2026 for CalendarGrid, built from synthetic data. */
 export const september2026 = {
   month: { year: 2026, month: 9 } satisfies CalendarMonthRef,
@@ -101,6 +107,12 @@ export const september2026 = {
   entriesWithCancelledMeeting: entries.map((e) =>
     e.id === "2026-09-11:FULL_BOARD:Full Board" ? { ...e, cancelled: true } : e,
   ),
+  /** The same month with FCF and CTCF on Labor Day. */
+  entriesWithHolidayHearings: [
+    ...entries.filter((e) => e.date < isoDay(7)),
+    ...laborDayHearings,
+    ...entries.filter((e) => e.date > isoDay(7)),
+  ],
   holidays: [
     { date: "2026-09-07", name: "Labor Day" },
   ] satisfies CalendarHoliday[],

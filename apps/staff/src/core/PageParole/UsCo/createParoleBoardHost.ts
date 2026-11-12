@@ -34,7 +34,8 @@ import { createParoleBoardAnalytics } from "./createParoleBoardAnalytics";
  * staff's other tRPC clients, and its requests read the user's token from
  * UserStore and the StateCode header from currentTenantId when they're sent.
  * The calendar's links are the staff Link, which keeps the tenantId in the
- * URL.
+ * URL. View public page opens the public calendar site at the build env value
+ * VITE_US_CO_PUBLIC_CALENDAR_URL, which is set per environment.
  *
  * It imports the Parole Board libraries' code, so only the lazily loaded
  * UsCoParoleCalendarAdminWithHost may import it.
@@ -56,5 +57,6 @@ export function createParoleBoardHost(rootStore: RootStore): ParoleBoardHost {
       captureException(error);
     },
     Link,
+    publicCalendarUrl: import.meta.env.VITE_US_CO_PUBLIC_CALENDAR_URL,
   };
 }

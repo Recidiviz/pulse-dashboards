@@ -92,8 +92,8 @@ export const Dismissible = () => <DismissDemo layout="inline" />;
 
 export const DismissibleStrip = () => <DismissDemo layout="strip" />;
 
-// The DRAFT strip after "Remove Published Month" on the Public Calendar
-// screen.
+// The DRAFT strip after "Edit month" moves a published month back to draft
+// on the Public Calendar screen.
 export const DraftStrip = () => (
   <Callout
     tone="error"

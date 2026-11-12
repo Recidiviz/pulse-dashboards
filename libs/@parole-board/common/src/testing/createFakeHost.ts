@@ -41,6 +41,12 @@ function createFakeAnalytics(): ParoleBoardAnalytics {
 }
 
 /**
+ * The fake host's public calendar address, on the reserved .test domain, so
+ * View public page in tests and examples goes nowhere real.
+ */
+const FAKE_PUBLIC_CALENDAR_URL = "https://public-calendar.test";
+
+/**
  * Builds a ParoleBoardHost for a US_CO tenant with the Parole Board calendar
  * configured. Its calendarTrpc fails every request; pass one from
  * createFakeCalendarTrpc({ procedures }) to answer them. Overrides replace
@@ -66,6 +72,7 @@ export function createFakeHost(
     },
     analyticsStore: createFakeAnalytics(),
     calendarTrpc: createFakeCalendarTrpc(),
+    publicCalendarUrl: FAKE_PUBLIC_CALENDAR_URL,
     ...overrides,
   };
 }

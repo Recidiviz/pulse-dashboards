@@ -17,7 +17,7 @@
 
 import styled from "styled-components";
 
-import { AdminPageSkeleton } from "./AdminPageSkeleton";
+import { AdminPageSkeleton, MonthSectionSkeleton } from "./AdminPageSkeleton";
 
 // A page fills the viewport, so the frame gives the skeleton its height.
 const FullHeight = styled.div`
@@ -28,13 +28,42 @@ const FullHeight = styled.div`
   }
 `;
 
+// The section fills the page below the header, so the frame stands in for
+// the page around it.
+const SectionFrame = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+
 export default {};
 
 // The layout follows the Public Calendar screen in the Calendar Unit
 // Dashboard design; colours, type and spacing follow ~design-system.
+
+/** The host app's fallback while the admin tool's code loads: five weeks. */
 export const Page = () => (
   <FullHeight>
     <AdminPageSkeleton />
   </FullHeight>
 );
 Page.parameters = { layout: "fullscreen" };
+
+/** A first load of August 2026, which spans six weeks. */
+export const PageForMonth = () => (
+  <FullHeight>
+    <AdminPageSkeleton month={{ year: 2026, month: 8 }} />
+  </FullHeight>
+);
+PageForMonth.parameters = { layout: "fullscreen" };
+
+/**
+ * What shows below the header while a month that isn't cached loads, here
+ * February 2026, which spans four weeks.
+ */
+export const MonthSection = () => (
+  <SectionFrame>
+    <MonthSectionSkeleton month={{ year: 2026, month: 2 }} />
+  </SectionFrame>
+);
+MonthSection.parameters = { layout: "fullscreen" };

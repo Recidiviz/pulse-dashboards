@@ -65,4 +65,11 @@ export interface ParoleBoardHost {
    * LinkProps; without it, the links are react-router's own Link.
    */
   Link?: ComponentType<LinkProps & RefAttributes<HTMLAnchorElement>>;
+  /**
+   * The public calendar site's address, an https:// origin, which the admin's
+   * View public page link opens. The staff app sets it per environment from
+   * the build env value VITE_US_CO_PUBLIC_CALENDAR_URL. Without a valid one,
+   * the admin shows no View public page link.
+   */
+  publicCalendarUrl?: string;
 }

@@ -15,11 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { MockInstance } from "vitest";
 
-import { createFakeHost } from "~@parole-board/common/testing";
+import {
+  calendarApiConfig,
+  monthSummariesPage,
+} from "~@parole-board/common/fixtures";
+import {
+  createFakeCalendarTrpc,
+  createFakeHost,
+} from "~@parole-board/common/testing";
 
 import { UsCoParoleCalendarAdmin } from "../UsCoParoleCalendarAdmin";
 
@@ -27,7 +36,10 @@ const OFFLINE_MESSAGE =
   "The Public Calendar needs the calendar server, which doesn't run in offline or demo mode.";
 const NOT_CONFIGURED_MESSAGE =
   "The Public Calendar isn't set up in this environment.";
-const PLACEHOLDER = "This page is being built.";
+
+function LocationDisplay() {
+  return <p data-testid="location">{useLocation().pathname}</p>;
+}
 
 let fetchSpy: MockInstance<typeof fetch>;
 let warnSpy: MockInstance<typeof console.warn>;
@@ -40,6 +52,10 @@ beforeEach(() => {
   warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 });
 
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe("UsCoParoleCalendarAdmin", () => {
   it("shows the offline message in offline mode", async () => {
     vi.stubEnv("VITE_IS_OFFLINE", "true");
@@ -49,7 +65,6 @@ describe("UsCoParoleCalendarAdmin", () => {
     );
 
     expect(screen.getByText(OFFLINE_MESSAGE)).toBeInTheDocument();
-    expect(screen.queryByText(PLACEHOLDER)).not.toBeInTheDocument();
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
   });
@@ -91,14 +106,48 @@ describe("UsCoParoleCalendarAdmin", () => {
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("US_XX"));
   });
 
-  it("shows the placeholder when the calendar is configured", async () => {
+  it("opens on the current month in Denver when the calendar is configured", async () => {
+    // 2026-10-31, 8pm in Denver, when it's already November in UTC.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-01T02:00:00Z"));
+    const host = createFakeHost({
+      calendarTrpc: createFakeCalendarTrpc({
+        procedures: {
+          "admin.config.get": () => calendarApiConfig,
+          "admin.months.list": () => monthSummariesPage,
+          "admin.months.get": () => null,
+        },
+      }),
+    });
+
+    // The host app provides the QueryClient, as the staff app's root does.
     const { container } = render(
-      <UsCoParoleCalendarAdmin host={createFakeHost()} />,
+      <QueryClientProvider client={host.calendarTrpc.queryClient}>
+        <MemoryRouter initialEntries={["/parole/public-calendar"]}>
+          <Routes>
+            <Route
+              path="/parole/public-calendar/*"
+              element={
+                <>
+                  <UsCoParoleCalendarAdmin host={host} />
+                  <LocationDisplay />
+                </>
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
 
-    expect(screen.getByText(PLACEHOLDER)).toBeInTheDocument();
-    expect(screen.queryByText(OFFLINE_MESSAGE)).not.toBeInTheDocument();
-    expect(screen.queryByText(NOT_CONFIGURED_MESSAGE)).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "October 2026" }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("location")).toHaveTextContent(
+      "/parole/public-calendar/2026-10",
+    );
+    expect(
+      screen.getByText("No calendar yet for October 2026."),
+    ).toBeInTheDocument();
     expect(warnSpy).not.toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
   });

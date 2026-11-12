@@ -20,6 +20,7 @@ import type {
   MonthDetail,
   MonthListPage,
   MonthSummary,
+  PublishPreview,
 } from "../api/types";
 
 // Synthetic calendar API responses for tests and examples. Editors are
@@ -99,6 +100,27 @@ export function monthDetail(overrides: Partial<MonthDetail> = {}): MonthDetail {
     ],
     holidays: [],
     counts: { entryDays: 1, entryCount: 1 },
+    ...overrides,
+  };
+}
+
+/**
+ * months.publishPreview for the September 2026 draft (see september2026): 13
+ * hearing days, 37 hearings, never published and untouched since
+ * months.create, with no entry on a holiday.
+ */
+export function publishPreview(
+  overrides: Partial<PublishPreview> = {},
+): PublishPreview {
+  return {
+    monthId: "month-2026-9",
+    year: 2026,
+    month: 9,
+    status: "DRAFT",
+    revision: 1,
+    counts: { entryDays: 13, entryCount: 37 },
+    holidayWarnings: [],
+    latestPublication: null,
     ...overrides,
   };
 }

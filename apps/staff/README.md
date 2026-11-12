@@ -41,6 +41,7 @@ Expected frontend environment variables include:
 - `VITE_FIREBASE_API_KEY` - API Key to access Firebase
 - `VITE_SENTENCING_API_BASE` - base URL of the sentencing backend API server
 - `VITE_PROTOTYPES_API_URL` - base URL of the prototypes backend API server
+- `VITE_US_CO_PUBLIC_CALENDAR_URL` - origin of Colorado's public Parole Board calendar site, which the admin's View public page link opens. Without it, the link is left out.
 
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 

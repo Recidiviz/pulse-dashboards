@@ -141,6 +141,28 @@ export const Editable = () => (
   </Frame>
 );
 
+const SAVING_IDS = new Set([
+  "2026-09-15:HEARING:CCF",
+  "2026-09-15:HEARING:SCF",
+]);
+
+// CCF and SCF dragged from the 15th to the 21st while the move saves: both
+// chips show on the 21st with the moving band, a still dashed line with
+// reduced motion, and chips on both days ignore clicks.
+export const MovePending = () => (
+  <Frame>
+    <CalendarGrid
+      {...base}
+      entries={september2026.entries.map((e) =>
+        SAVING_IDS.has(e.id) ? { ...e, date: "2026-09-21" } : e,
+      )}
+      busyEntryIds={SAVING_IDS}
+      busyDates={new Set(["2026-09-15", "2026-09-21"])}
+      onEntryClick={action("onEntryClick")}
+    />
+  </Frame>
+);
+
 export const CancelledMeeting = () => (
   <Frame>
     <Selectable entries={september2026.entriesWithCancelledMeeting} />
@@ -171,20 +193,25 @@ export const PublicChips = () => (
   </Frame>
 );
 
-export const HolidayFlag = () => (
+// FCF and CTCF on Labor Day, as if an editor added them by hand. The chips
+// have no Holiday badge, and "Labor Day" sits below them.
+export const HolidayWithEntries = () => (
   <Frame>
-    <Selectable
-      entries={[
-        ...september2026.entries,
-        {
-          id: "2026-09-07:HEARING:FCF",
-          date: "2026-09-07",
-          label: "FCF",
-          kind: "HEARING",
-          cancelled: false,
-          flag: "Labor Day",
-        },
-      ]}
+    <Selectable entries={september2026.entriesWithHolidayHearings} />
+  </Frame>
+);
+
+// October 2026 with the longest Colorado holiday name. It fits on one line
+// at this width and wraps within its cell when the cell is narrower, as in
+// the design's generated October draft.
+export const LongHolidayName = () => (
+  <Frame>
+    <CalendarGrid
+      {...base}
+      month={{ year: 2026, month: 10 }}
+      entries={[]}
+      holidays={[{ date: "2026-10-05", name: "Frances Xavier Cabrini Day" }]}
+      ariaLabel="October 2026 calendar"
     />
   </Frame>
 );
@@ -207,15 +234,32 @@ export const EmptyMonth = () => (
   </Frame>
 );
 
-// What the month view's SuspenseBoundary shows while a month loads.
+// The september2026 entries per day, so the skeletons draw the month the
+// examples above show.
+const septemberEntriesPerDay = new Map<string, number>();
+for (const { date } of september2026.entries) {
+  septemberEntriesPerDay.set(date, (septemberEntriesPerDay.get(date) ?? 0) + 1);
+}
+const septemberChipsOn = (isoDate: string) =>
+  septemberEntriesPerDay.get(isoDate) ?? 0;
+
+// What the month view's SuspenseBoundary shows while September 2026 loads.
 export const Loading = () => (
   <Frame>
-    <CalendarGridSkeleton firstDay={september2026.firstDay} />
+    <CalendarGridSkeleton
+      month={september2026.month}
+      firstDay={september2026.firstDay}
+      chipsOn={septemberChipsOn}
+    />
   </Frame>
 );
 
 export const LoadingList = () => (
   <NarrowFrame>
-    <CalendarGridSkeleton view="list" />
+    <CalendarGridSkeleton
+      view="list"
+      month={september2026.month}
+      chipsOn={septemberChipsOn}
+    />
   </NarrowFrame>
 );

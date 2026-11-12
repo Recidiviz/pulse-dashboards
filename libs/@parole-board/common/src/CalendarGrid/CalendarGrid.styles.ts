@@ -41,6 +41,9 @@ export const CHIP_PADDING_X = space.sm;
  */
 export const CHIP_BACKGROUND = surface.badge;
 
+// TODO(CO-935): Waiting on ~design-system to export a semibold (600) weight token. Use it for cancelled chips once it lands.
+const CANCELLED_CHIP_WEIGHT = 600;
+
 /** The left rule of a chip and of the skeleton's chip placeholder. */
 export const thickRule = rem(space.xxs * 2);
 
@@ -54,6 +57,8 @@ export const CALENDAR_VARS = {
   "--pb-cal-bg": surface.bg,
   "--pb-cal-bg-muted": surface.muted,
   "--pb-cal-drop-target": border.action,
+  "--pb-cal-selected": border.action,
+  "--pb-cal-selected-width": thickRule,
   "--pb-cal-hairline": stroke.default,
   // Grid lines on the right and bottom of each cell (see the module).
   "--pb-cal-grid-lines": `inset -${stroke.default} -${stroke.default} 0 ${border.default}`,
@@ -65,6 +70,12 @@ export const CALENDAR_VARS = {
   "--pb-cal-drop-outline-offset": `-${rem(space.xs)}`,
   "--pb-cal-chip-gap": rem(CHIP_GAP),
   "--pb-cal-faded-opacity": "0.4",
+  // The dashed line on a chip a move is saving, with reduced motion.
+  "--pb-cal-pending": border.focus,
+  // That line's width, as thick as the chip's left rule.
+  "--pb-cal-pending-width": thickRule,
+  // The band that sweeps across a chip a move is saving.
+  "--pb-cal-pending-tint": surface.info,
   "--pb-cal-list-day-header-padding": `${rem(space.sm)} 0 ${rem(space.xs)}`,
 } as CSSProperties;
 
@@ -125,6 +136,14 @@ export const ChipTarget = styled.div`
   &[aria-pressed="true"]:focus-visible {
     outline: ${thickRule} solid ${border.action};
   }
+
+  /* A chip a move is saving clips everything outside its edge, so its ring
+     goes just inside it. */
+  &[aria-busy="true"]:focus-visible {
+    box-shadow: none;
+    outline: ${thickRule} solid ${border.focus};
+    outline-offset: -${thickRule};
+  }
 `;
 
 export const Chip = styled.div<{ $cancelled: boolean }>`
@@ -141,6 +160,7 @@ export const Chip = styled.div<{ $cancelled: boolean }>`
   background: ${({ $cancelled }) =>
     $cancelled ? surface.error : CHIP_BACKGROUND};
   color: ${({ $cancelled }) => ($cancelled ? status.error : text.primary)};
+  ${({ $cancelled }) => $cancelled && `font-weight: ${CANCELLED_CHIP_WEIGHT};`}
   white-space: normal;
   /* Labels wrap only at spaces. A word longer than the chip is clipped at
      its edge instead of spilling into the next day. */

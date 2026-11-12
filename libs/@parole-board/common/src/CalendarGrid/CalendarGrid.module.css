@@ -57,6 +57,14 @@
   background: var(--pb-cal-bg-muted);
 }
 
+/* A day holding a selected entry. The outline is an inset shadow over the
+   cell's grid lines, so a drag's dashed outline can still show on it. */
+.daySelected {
+  box-shadow:
+    inset 0 0 0 var(--pb-cal-selected-width) var(--pb-cal-selected),
+    var(--pb-cal-grid-lines);
+}
+
 /* While a chip is dragged, FullCalendar adds a highlight layer as the
    target cell's first child, so padding goes on the cell's named parts.
    Chips are absolutely positioned inside the inner part, so it's inset with
@@ -97,6 +105,61 @@
 .entryFaded {
   visibility: visible;
   opacity: var(--pb-cal-faded-opacity, 1);
+}
+
+/* A day a move is saving to or from. Clicks inside it do nothing until the
+   move ends. */
+.dayPending {
+  pointer-events: none;
+}
+
+/* A chip a move is saving: a tinted band sweeps across it, left to right.
+   Only transform animates, so the compositor runs it. The 1.4s ease-in-out
+   matches the pulse of common's Skeleton. */
+.entryPending {
+  position: relative;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.entryPending::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 50%;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    var(--pb-cal-pending-tint) 30%,
+    var(--pb-cal-pending-tint) 70%,
+    transparent
+  );
+  animation: pendingShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes pendingShimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+/* With reduced motion, a still dashed line along the chip's bottom edge,
+   right of its left rule. */
+@media (prefers-reduced-motion: reduce) {
+  .entryPending::after {
+    inset: auto 0 0 var(--pb-cal-pending-width);
+    width: auto;
+    height: 0;
+    background: none;
+    border-bottom: var(--pb-cal-pending-width) dashed var(--pb-cal-pending);
+    transform: none;
+    animation: none;
+  }
 }
 
 .listDayHeader {

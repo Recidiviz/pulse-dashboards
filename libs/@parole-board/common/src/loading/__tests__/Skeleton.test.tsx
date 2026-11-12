@@ -18,7 +18,7 @@
 import { render, screen } from "@testing-library/react";
 
 import { semantics } from "../../theme";
-import { AdminPageSkeleton } from "../AdminPageSkeleton";
+import { AdminPageSkeleton, MonthSectionSkeleton } from "../AdminPageSkeleton";
 import { Skeleton, SkeletonGroup, SkeletonText } from "../Skeleton";
 
 describe("Skeleton", () => {
@@ -72,6 +72,17 @@ describe("AdminPageSkeleton", () => {
     expect(screen.getAllByRole("status")).toHaveLength(1);
     expect(
       screen.getByRole("status", { name: "Loading the calendar" }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("MonthSectionSkeleton", () => {
+  test("announces one loading status for the month", () => {
+    render(<MonthSectionSkeleton month={{ year: 2026, month: 2 }} />);
+
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+    expect(
+      screen.getByRole("status", { name: "Loading the month" }),
     ).toBeInTheDocument();
   });
 });

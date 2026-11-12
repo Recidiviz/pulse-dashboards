@@ -11,12 +11,16 @@ Import it as `~@parole-board/common`. Test helpers live behind their own alias, 
 - **`src/components/`**: shared UI primitives. Build each one by wrapping or composing `~design-system` parts (or `@recidiviz/design-system`, only for exports `~design-system` lacks). Never edit `libs/design-system` or `apps/staff` to get one. When a screen needs a staff component, such as `StatusMessage`, copy it here and note the copy in the PR.
 - **`src/theme/`**: `semantics`, the colours, type, spacing and radius every Parole Board component uses. The names follow the Figma System v2 groups (text, icon, surface, border, action, status, radius) and every value aliases a `~design-system` token. Components read only `semantics`, never `palette` or a hex or rgb literal; a missing value becomes one new alias there, mapped to the nearest design-system token. Stand-ins for exports the design system lacks carry a `TODO(CO-935)`.
 - **`src/CalendarGrid/`**: `CalendarGrid`, the month grid built on FullCalendar, with its types and date helpers (`toIsoDate`, `isInMonth`, `monthStartIso`, `weekStartsOnToFirstDay`).
-- **`src/loading/`**: `SuspenseBoundary`, the skeleton primitives (`Skeleton`, `SkeletonText`, `SkeletonGroup`) and `AdminPageSkeleton`. The host app imports it as `~@parole-board/common/loading`, so its lazy page's fallback doesn't pull in the rest of the library.
+- **`src/loading/`**: `SuspenseBoundary`, the skeleton primitives (`Skeleton`, `SkeletonText`, `SkeletonGroup`), `AdminPageSkeleton` and `MonthSectionSkeleton`. The host app imports it as `~@parole-board/common/loading`, so its lazy page's fallback doesn't pull in the rest of the library.
 - **`src/testing/`**: `createFakeHost()`, `createFakeCalendarTrpc()` and `renderWithHost()`.
-- **`src/fixtures/`**: all synthetic fixture data (such as `september2026`, `monthDetail()`, `calendarApiConfig` and `calendarApiError()`), plus `queryResult()`, `suspendedQuery()`, `failedQuery()` and `mutationResult()`, which stand in for React Query hooks. Import them as `~@parole-board/common/fixtures`, from tests and example files only.
+- **`src/fixtures/`**: all synthetic fixture data (such as `september2026`, `monthDetail()`, `calendarApiConfig` and `calendarApiError()`), plus `queryResult()`, `loadedQueryResult()`, `pendingQueryResult()`, `suspendedQuery()`, `failedQuery()` and `mutationResult()`, which stand in for React Query hooks. Import them as `~@parole-board/common/fixtures`, from tests and example files only.
 - **`.examples/`**: the examples config every Parole Board library shares (below).
 
 Components fetch data only through the hooks in this library, never with their own clients.
+
+## Forms in dialogs
+
+The calendar's input dialogs keep their field state in `@tanstack/react-form` and render it in `ModalForm`, a `~design-system` Modal around a real `<form>`: Enter submits, the submit button waits while `onSubmit` runs, Escape and the overlay can't close the dialog meanwhile, and a failure shows above the buttons through `editorErrorMessage`. `RadioGridField` and `CheckboxGridField` connect the tile grids to a `form.Field`. A dialog submitted by a button rather than a form uses the same parts on their own: `ModalActionRow`, `ModalError`, `modalCloseProps` and `useRestoreFocusAfterSubmit`.
 
 ## The calendar API
 
@@ -53,7 +57,7 @@ Wrap each part of a screen that loads in a `SuspenseBoundary`, with a skeleton s
 </SuspenseBoundary>
 ```
 
-It shows the skeleton while its children suspend and an error with "Try again" if they throw. Retrying resets the failed queries, so they refetch. Pass `renderError` to show an error in the screen's own words, such as the FORBIDDEN message; it gets the caught error and the retry, and returning `undefined` keeps the default error. Build skeletons from `Skeleton`, `SkeletonText` and `SkeletonGroup`, in the loaded screen's layout and sizes; they stop pulsing when the user prefers reduced motion. Each component that suspends has a `Loading` example (inject `suspendedQuery`) and tests for its skeleton and error.
+Give the part that loads its own boundary, so the rest of the screen stays: the month view shows `AdminPageSkeleton` only on its first load, and when the month changes its header stays while `MonthSectionSkeleton` stands in for the month below it, and only when that month isn't cached. A `SuspenseBoundary` shows the skeleton while its children suspend and an error with "Try again" if they throw. Retrying resets the failed queries, so they refetch. Pass `renderError` to show an error in the screen's own words, such as the FORBIDDEN message; it gets the caught error and the retry, and returning `undefined` keeps the default error. Build skeletons from `Skeleton`, `SkeletonText` and `SkeletonGroup`, in the loaded screen's layout and sizes; they stop pulsing when the user prefers reduced motion. Each component that suspends has a `Loading` example (inject `suspendedQuery`) and tests for its skeleton and error.
 
 ## Isolation rules
 
@@ -88,6 +92,8 @@ const host: ParoleBoardHost = {
     queryClient, // the staff app's singleton
   }),
   reportError: (error) => captureException(error),
+  // The public calendar site's https:// origin, per environment.
+  publicCalendarUrl: import.meta.env.VITE_US_CO_PUBLIC_CALENDAR_URL,
 };
 
 <UsCoParoleCalendarAdmin host={host} />;
@@ -133,7 +139,7 @@ export const Draft = () => <DraftView />;
 export const Loading = () => <LoadingView />;
 ```
 
-For the same hook, the later entry wins, so a story can override a shared default by listing its own after the spread. Render the `withDi` component inside an arrow function rather than exporting it directly, because Storybook reads the forwardRef object `withDi` returns as a story object and fails to render it. Its Babel plugin runs only in this examples build, never in the library builds, Vitest or the staff build, and lint rejects importing `react-magnetic-di` outside example files and `~@parole-board/common/fixtures` outside tests and example files. The plugin only wraps imported values, so inject the hook a component imports. `us-co/src/DiSmoke.examples.tsx` is the minimal working case.
+For the same hook, the later entry wins, so a story can override a shared default by listing its own after the spread. Render the `withDi` component inside an arrow function rather than exporting it directly, because Storybook reads the forwardRef object `withDi` returns as a story object and fails to render it. Its Babel plugin runs only in this examples build, never in the library builds, Vitest or the staff build, and lint rejects importing `react-magnetic-di` outside example files and `~@parole-board/common/fixtures` outside tests and example files. The plugin only wraps imported values, so inject the hook a component imports. It skips `libs/@modules`, because it also wraps type-only imports used as generic arguments, which then fail to import in the browser. `us-co/src/ParoleCalendarAdminView.examples.tsx` injects `useMonth`, the paged `useMonthsList` (with `infiniteQueryResult`) and a fixed clock.
 
 ## How a state adds a Parole Board library
 

@@ -18,13 +18,14 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { useState } from "react";
+import { type CSSProperties, useState } from "react";
 
 import { september2026 } from "~@parole-board/common/fixtures";
 
 import { semantics } from "../../theme";
 import { buildHandlers, CalendarGrid } from "../CalendarGrid";
 import styles from "../CalendarGrid.module.css";
+import { CALENDAR_VARS } from "../CalendarGrid.styles";
 import type { CalendarGridProps } from "../types";
 
 // Marks each Badge with a test id, so a test can tell whether a chip drew one.
@@ -161,15 +162,27 @@ describe("CalendarGrid month view", () => {
     expect(kept).not.toHaveTextContent("cancelled");
   });
 
-  test("draws no badge for a cancelled entry when cancelledTag is text", () => {
+  test("draws no badge for a cancelled entry when cancelledTag is text, only plain red text on a semibold chip", () => {
     renderGrid({
       entries: september2026.entriesWithCancelledMeeting,
       cancelledTag: "text",
     });
     const cancelled = chip("2026-09-11", "Full Board");
-    expect(within(cancelled).getByText("Cancelled")).toBeInTheDocument();
+    const tag = within(cancelled).getByText("Cancelled");
+    expect(tag).toHaveAttribute("aria-hidden", "true");
+    expect(tag).toHaveStyleRule("color", String(semantics.status.error));
+    expect(tag).toHaveStyleRule("text-transform", "uppercase");
+    expect(tag.parentElement).toHaveStyleRule("font-weight", "600");
     expect(cancelled).toHaveTextContent("Full Board, cancelled");
     expect(within(cancelled).queryByTestId("badge")).not.toBeInTheDocument();
+    // Only the cancelled chip says so, not its day.
+    expect(within(dayCell("2026-09-11")).getAllByText("Cancelled")).toEqual([
+      tag,
+    ]);
+    const kept = within(chip("2026-09-04", "Full Board")).getByText(
+      "Full Board",
+    ).parentElement;
+    expect(kept).not.toHaveStyleRule("font-weight", expect.anything());
   });
 
   test("draws the Cancelled badge by default", () => {
@@ -217,6 +230,82 @@ describe("CalendarGrid month view", () => {
     ).toBeInTheDocument();
   });
 
+  describe("a holiday", () => {
+    const { text } = semantics;
+    const laborDay = () => within(dayCell("2026-09-07")).getByText("Labor Day");
+    const dayNumber = (date: string, number: string) =>
+      within(dayCell(date)).getByText(number);
+
+    test("with no entries shows its name in grey", () => {
+      renderGrid();
+      expect(laborDay()).toHaveStyleRule("color", text.secondary);
+      expect(laborDay()).toHaveTextContent(/^Labor Day$/);
+      expect(dayNumber("2026-09-07", "7")).toHaveStyleRule(
+        "color",
+        text.primary,
+      );
+    });
+
+    test("with entries keeps its usual colours and tells screen readers", () => {
+      renderGrid({ entries: september2026.entriesWithHolidayHearings });
+      expect(laborDay()).toHaveStyleRule("color", text.secondary);
+      expect(laborDay()).toHaveTextContent(
+        "Labor Day, holiday with sessions scheduled",
+      );
+      expect(dayNumber("2026-09-07", "7")).toHaveStyleRule(
+        "color",
+        text.primary,
+      );
+    });
+
+    test("tells screen readers it has entries with a custom label", () => {
+      renderGrid({
+        entries: september2026.entriesWithHolidayHearings,
+        renderHolidayLabel: (holiday) => `Holiday: ${holiday.name}`,
+      });
+      expect(
+        within(dayCell("2026-09-07")).getByText("Holiday: Labor Day"),
+      ).toHaveTextContent(
+        "Holiday: Labor Day, holiday with sessions scheduled",
+      );
+    });
+
+    test("with only a cancelled entry gets the plain label", () => {
+      renderGrid({
+        entries: [
+          {
+            id: "2026-09-07:FULL_BOARD:Full Board",
+            date: "2026-09-07",
+            label: "Full Board",
+            kind: "FULL_BOARD",
+            cancelled: true,
+          },
+        ],
+      });
+      expect(laborDay()).toHaveTextContent(/^Labor Day$/);
+    });
+
+    test("drops the screen-reader text when its entries move off it", () => {
+      const { rerender } = renderGrid({
+        entries: september2026.entriesWithHolidayHearings,
+      });
+      expect(laborDay()).toHaveTextContent(
+        "Labor Day, holiday with sessions scheduled",
+      );
+      rerender(<CalendarGrid {...baseProps} />);
+      expect(laborDay()).toHaveTextContent(/^Labor Day$/);
+    });
+
+    test("puts no Holiday badge on the entries on it", () => {
+      renderGrid({ entries: september2026.entriesWithHolidayHearings });
+      expect(chip("2026-09-07", "FCF")).toHaveTextContent(/^FCF$/);
+      expect(chip("2026-09-07", "CTCF")).toHaveTextContent(/^CTCF$/);
+      expect(
+        within(dayCell("2026-09-07")).queryByText(/^holiday$/i),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   test("labels a holiday after the day's entries, or with renderHolidayLabel", () => {
     const flagged = {
       id: "2026-09-07:HEARING:FCF",
@@ -244,6 +333,19 @@ describe("CalendarGrid month view", () => {
     expect(
       within(dayCell("2026-09-07")).getByText("Holiday: Labor Day"),
     ).toBeInTheDocument();
+  });
+
+  test("shows a long holiday name in full, wrapping within its cell", () => {
+    renderGrid({
+      month: { year: 2026, month: 10 },
+      entries: [],
+      holidays: [{ date: "2026-10-05", name: "Frances Xavier Cabrini Day" }],
+    });
+    const label = within(dayCell("2026-10-05")).getByText(
+      "Frances Xavier Cabrini Day",
+    );
+    expect(label).toHaveStyleRule("white-space", "normal");
+    expect(label).toHaveStyleRule("overflow-wrap", "anywhere");
   });
 
   test("doesn't make holiday labels draggable", () => {
@@ -332,6 +434,105 @@ describe("CalendarGrid month view", () => {
     );
   });
 
+  test("outlines the day of each selected entry in border.action", () => {
+    renderGrid({
+      onEntryClick: vi.fn(),
+      selectedEntryIds: ["2026-09-14:HEARING:FCF", "2026-09-24:HEARING:YOS"],
+    });
+    expect(dayCell("2026-09-14")).toHaveClass(styles["daySelected"]);
+    expect(dayCell("2026-09-24")).toHaveClass(styles["daySelected"]);
+    expect(dayCell("2026-09-15")).not.toHaveClass(styles["daySelected"]);
+    expect(CALENDAR_VARS["--pb-cal-selected" as keyof CSSProperties]).toBe(
+      semantics.border.action,
+    );
+  });
+
+  test("outlines no day when nothing is selected", () => {
+    renderGrid({ onEntryClick: vi.fn() });
+    expect(
+      document.querySelector(`.${styles["daySelected"]}`),
+    ).not.toBeInTheDocument();
+  });
+
+  describe("while a move saves", () => {
+    const ccf15 = () => chip("2026-09-15", "CCF");
+    const scf15 = () => chip("2026-09-15", "SCF");
+
+    function renderSaving() {
+      const onEntryClick = vi.fn();
+      renderGrid({
+        onEntryClick,
+        busyEntryIds: new Set(["2026-09-15:HEARING:CCF"]),
+        busyDates: new Set(["2026-09-15", "2026-09-21"]),
+      });
+      return onEntryClick;
+    }
+
+    test("marks the saving chip busy with the moving band, from the semantic layer", () => {
+      renderSaving();
+      expect(ccf15().closest(`.${styles["entryPending"]}`)).not.toBeNull();
+      expect(ccf15()).toHaveAttribute("aria-busy", "true");
+      expect(ccf15()).toHaveAttribute("aria-disabled", "true");
+      expect(scf15().closest(`.${styles["entryPending"]}`)).toBeNull();
+      expect(scf15()).not.toHaveAttribute("aria-busy");
+      expect(fcf14()).not.toHaveAttribute("aria-disabled");
+      expect(
+        CALENDAR_VARS["--pb-cal-pending-tint" as keyof CSSProperties],
+      ).toBe(semantics.surface.info);
+      expect(CALENDAR_VARS["--pb-cal-pending" as keyof CSSProperties]).toBe(
+        semantics.border.focus,
+      );
+    });
+
+    test("rings focus inside the saving chip, which clips anything outside it", () => {
+      renderSaving();
+      expect(ccf15()).toHaveStyleRule(
+        "outline",
+        expect.stringContaining(String(semantics.border.focus)),
+        { modifier: '&[aria-busy="true"]:focus-visible' },
+      );
+    });
+
+    test("marks the move's days, and only those", () => {
+      renderSaving();
+      expect(dayCell("2026-09-15")).toHaveClass(styles["dayPending"]);
+      expect(dayCell("2026-09-21")).toHaveClass(styles["dayPending"]);
+      expect(dayCell("2026-09-14")).not.toHaveClass(styles["dayPending"]);
+    });
+
+    test("ignores clicks on the saving chip and on other chips on its days", async () => {
+      // The module's pointer-events: none doesn't reach jsdom, so this
+      // checks the click handler's own guard.
+      const user = userEvent.setup({ pointerEventsCheck: 0 });
+      const onEntryClick = renderSaving();
+
+      await user.click(ccf15());
+      await user.click(scf15());
+      expect(onEntryClick).not.toHaveBeenCalled();
+
+      await user.click(fcf14());
+      expect(onEntryClick).toHaveBeenCalledExactlyOnceWith(
+        "2026-09-14:HEARING:FCF",
+      );
+    });
+
+    test.each(["{Enter}", " "])(
+      "ignores %s on the saving chip and on other chips on its days",
+      async (key) => {
+        const user = userEvent.setup();
+        const onEntryClick = renderSaving();
+
+        ccf15().focus();
+        await user.keyboard(key);
+        scf15().focus();
+        await user.keyboard(key);
+
+        expect(onEntryClick).not.toHaveBeenCalled();
+        expect(scf15()).toHaveAttribute("aria-disabled", "true");
+      },
+    );
+  });
+
   test("makes chips plain content without onEntryClick", () => {
     renderGrid({ selectedEntryIds: ["2026-09-14:HEARING:FCF"] });
     expect(
@@ -388,6 +589,14 @@ describe("CalendarGrid month view", () => {
 
   test("has no axe violations", async () => {
     const { container } = renderGrid();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  test("has no axe violations with entries on a holiday", async () => {
+    const { container } = renderGrid({
+      entries: september2026.entriesWithHolidayHearings,
+      onEntryClick: vi.fn(),
+    });
     expect(await axe(container)).toHaveNoViolations();
   });
 
@@ -518,6 +727,24 @@ describe("buildHandlers", () => {
       expect(eventAllow({ startStr } as never, null)).toBe(allowed);
     },
   );
+
+  test("ignores a click on a busy chip or on a chip on a busy day", () => {
+    const onEntryClick = vi.fn();
+    const { eventClick } = buildHandlers({
+      month,
+      entries,
+      selectedIds: new Set(),
+      busyEntryIds: new Set([ccf15]),
+      busyDates: new Set(["2026-09-16"]),
+      onEntryClick,
+    });
+    eventClick({ event: fakeEvent(ccf15, "2026-09-21") });
+    eventClick({ event: fakeEvent(ccf16, "2026-09-16") });
+    expect(onEntryClick).not.toHaveBeenCalled();
+
+    eventClick({ event: fakeEvent(fcf14, "2026-09-14") });
+    expect(onEntryClick).toHaveBeenCalledExactlyOnceWith(fcf14);
+  });
 
   test("ignores a click on a holiday label", () => {
     const onEntryClick = vi.fn();

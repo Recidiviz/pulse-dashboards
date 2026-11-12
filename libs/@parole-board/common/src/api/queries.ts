@@ -137,14 +137,72 @@ export function useAddMonthOptions() {
   );
 }
 
-/** Reads what publishing the month would publish, for the publish dialog. */
+/**
+ * Reads what publishing the month would publish, for the publish dialog. The
+ * preview holds still while the editor reviews it: no timer, focus or
+ * staleness refetch. Only a failed publish refetches it, when the server
+ * answers CONFLICT (see usePublishMonth); a successful one doesn't, because a
+ * published month's preview throws PRECONDITION_FAILED. React Query keeps a
+ * Suspense query cached for at least a second after its last reader
+ * unmounts, so the dialog clears it with useRemovePublishPreview when it
+ * closes, and each opening reads it again.
+ */
 export function usePublishPreview({ monthId }: { monthId: string }) {
   const { querier } = useCalendarTrpc();
   return useSuspenseQuery(
     querier.admin.months.publishPreview.queryOptions(
       { monthId },
-      { retry: useCalendarRetry() },
+      {
+        refetchInterval: false,
+        refetchOnWindowFocus: false,
+        staleTime: Infinity,
+        gcTime: 0,
+        retry: useCalendarRetry(),
+      },
     ),
+  );
+}
+
+/**
+ * Returns a function that drops a month's publish preview from the cache.
+ * Call it once nothing reads the preview, such as after the publish dialog
+ * unmounts its body, so the next usePublishPreview fetches it again.
+ */
+export function useRemovePublishPreview() {
+  const { querier } = useCalendarTrpc();
+  const queryClient = useQueryClient();
+  return useCallback(
+    (monthId: string) =>
+      queryClient.removeQueries({
+        queryKey: querier.admin.months.publishPreview.queryKey({ monthId }),
+      }),
+    [querier, queryClient],
+  );
+}
+
+/**
+ * Returns a function that reads one month from the server, and stores the
+ * answer for useMonth. It's for checks that need the server's current state,
+ * such as whether a publish whose response was lost went through. It reads
+ * the server whatever the cache holds, unless since is given: then a month
+ * the cache read from the server at or after since, a time in milliseconds,
+ * counts as current, such as one a failed write has just refetched.
+ */
+export function useFetchMonth() {
+  const { querier } = useCalendarTrpc();
+  const queryClient = useQueryClient();
+  return useCallback(
+    ({ year, month }: YearMonthOption, since?: number) =>
+      queryClient.fetchQuery(
+        querier.admin.months.get.queryOptions(
+          { year, month },
+          {
+            staleTime:
+              since === undefined ? 0 : Math.max(0, Date.now() - since + 1),
+          },
+        ),
+      ),
+    [querier, queryClient],
   );
 }
 

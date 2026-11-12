@@ -79,6 +79,9 @@ export const tileGroupStyles = css<{ $size: TileSize }>`
     min-width: 0;
     padding: ${tile.padding};
     text-align: center;
+    /* The staff app loads Bootstrap Reboot, which gives every label a bottom
+       margin. */
+    margin: 0;
   }
 
   .ds-checkbox__label:has(.pb-tile-caption),

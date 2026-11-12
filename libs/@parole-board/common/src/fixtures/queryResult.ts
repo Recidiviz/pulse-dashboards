@@ -16,8 +16,12 @@
 // =============================================================================
 
 import type {
+  InfiniteData,
+  InfiniteQueryObserverSuccessResult,
+  QueryObserverPendingResult,
   QueryObserverSuccessResult,
   UseMutationResult,
+  UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 import { action } from "storybook/actions";
@@ -49,13 +53,13 @@ function baseQueryFields() {
 const never = <T>() => new Promise<T>(() => undefined);
 
 /**
- * A successful Suspense query result holding data, to inject in place of a
- * data hook: `injectable(useMonth, () =>
- * queryResult(september2026.monthDetail))`.
+ * A successful query result holding data, to inject in place of a hook read
+ * with useQuery rather than Suspense: `injectable(useMonthWithoutSuspense,
+ * () => loadedQueryResult(null))`.
  */
-export function queryResult<TData, TError = Error>(
+export function loadedQueryResult<TData, TError = Error>(
   data: TData,
-): UseSuspenseQueryResult<TData, TError> {
+): QueryObserverSuccessResult<TData, TError> {
   const result: QueryObserverSuccessResult<TData, TError> = {
     ...baseQueryFields(),
     data,
@@ -68,6 +72,102 @@ export function queryResult<TData, TError = Error>(
     status: "success",
     refetch: () => Promise.resolve(result),
     promise: Promise.resolve(data),
+  };
+  return result;
+}
+
+/**
+ * A successful Suspense query result holding data, to inject in place of a
+ * data hook: `injectable(useMonth, () =>
+ * queryResult(september2026.monthDetail))`.
+ */
+export function queryResult<TData, TError = Error>(
+  data: TData,
+): UseSuspenseQueryResult<TData, TError> {
+  return loadedQueryResult(data);
+}
+
+/**
+ * A query result still waiting for its first data, to inject in place of a
+ * hook read with useQuery rather than Suspense: `injectable(
+ * useMonthWithoutSuspense, pendingQueryResult)`, the result before
+ * loadedQueryResult's.
+ */
+export function pendingQueryResult<
+  TData,
+  TError = Error,
+>(): QueryObserverPendingResult<TData, TError> {
+  const result: QueryObserverPendingResult<TData, TError> = {
+    ...baseQueryFields(),
+    isFetched: false,
+    isFetchedAfterMount: false,
+    isFetching: true,
+    isLoading: true,
+    fetchStatus: "fetching",
+    data: undefined,
+    error: null,
+    isError: false,
+    isPending: true,
+    isLoadingError: false,
+    isRefetchError: false,
+    isSuccess: false,
+    status: "pending",
+    refetch: () => Promise.resolve(result),
+    promise: never(),
+  };
+  return result;
+}
+
+/**
+ * A successful Suspense infinite query result holding pages, to inject in
+ * place of a paged data hook: `injectable(useMonthsList, () =>
+ * infiniteQueryResult([monthSummariesPage]))`. fetchNextPage and
+ * fetchPreviousPage log to the Storybook actions panel and load nothing.
+ */
+export function infiniteQueryResult<
+  TPage,
+  TPageParam = unknown,
+  TError = Error,
+>(
+  pages: TPage[],
+  {
+    hasNextPage = false,
+    hasPreviousPage = false,
+  }: { hasNextPage?: boolean; hasPreviousPage?: boolean } = {},
+): UseSuspenseInfiniteQueryResult<InfiniteData<TPage, TPageParam>, TError> {
+  const data: InfiniteData<TPage, TPageParam> = {
+    pages,
+    pageParams: pages.map(() => undefined as TPageParam),
+  };
+  const result: InfiniteQueryObserverSuccessResult<
+    InfiniteData<TPage, TPageParam>,
+    TError
+  > = {
+    ...baseQueryFields(),
+    data,
+    promise: Promise.resolve(data),
+    status: "success",
+    isSuccess: true,
+    isError: false,
+    isPending: false,
+    isLoadingError: false,
+    isRefetchError: false,
+    error: null,
+    hasNextPage,
+    hasPreviousPage,
+    isFetchingNextPage: false,
+    isFetchingPreviousPage: false,
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    fetchNextPage: () => {
+      action("fetchNextPage")();
+      return Promise.resolve(result);
+    },
+    fetchPreviousPage: () => {
+      action("fetchPreviousPage")();
+      return Promise.resolve(result);
+    },
+    refetch: () => Promise.resolve(result),
   };
   return result;
 }

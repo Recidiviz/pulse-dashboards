@@ -19,7 +19,10 @@ import { action } from "storybook/actions";
 
 import {
   failedQuery,
+  infiniteQueryResult,
+  loadedQueryResult,
   mutationResult,
+  pendingQueryResult,
   queryResult,
   suspendedQuery,
 } from "../queryResult";
@@ -40,6 +43,41 @@ describe("query results", () => {
       fetchStatus: "idle",
     });
     await expect(result.refetch()).resolves.toBe(result);
+  });
+
+  test("loadedQueryResult is the same success, typed for useQuery", () => {
+    expect(loadedQueryResult(["2026-09"])).toMatchObject({
+      status: "success",
+      data: ["2026-09"],
+      isPlaceholderData: false,
+    });
+  });
+
+  test("pendingQueryResult is waiting for its first data", () => {
+    expect(pendingQueryResult()).toMatchObject({
+      status: "pending",
+      data: undefined,
+      isPending: true,
+      isSuccess: false,
+      fetchStatus: "fetching",
+    });
+  });
+
+  test("infiniteQueryResult holds the pages and logs page loads", async () => {
+    vi.mocked(action).mockImplementation(() => vi.fn());
+    const result = infiniteQueryResult([["2026-09"], ["2026-11"]], {
+      hasNextPage: true,
+    });
+
+    expect(result).toMatchObject({
+      status: "success",
+      data: { pages: [["2026-09"], ["2026-11"]] },
+      hasNextPage: true,
+      hasPreviousPage: false,
+      isFetchingNextPage: false,
+    });
+    await expect(result.fetchNextPage()).resolves.toBe(result);
+    expect(action).toHaveBeenCalledWith("fetchNextPage");
   });
 
   test("suspendedQuery throws the same never-settling promise every time", () => {

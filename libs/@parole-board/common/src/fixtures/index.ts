@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./addMonthChoices";
 export * from "./calendarApi";
 export * from "./calendarApiError";
+export * from "./monthSummaries";
 export * from "./queryResult";
 export * from "./september2026";
+export * from "./september2026Month";

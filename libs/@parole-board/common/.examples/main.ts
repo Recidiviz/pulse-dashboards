@@ -120,7 +120,15 @@ const config = {
                 "babel-plugin-styled-components",
                 [
                   "react-magnetic-di/babel-plugin",
-                  { enabledEnvs: ["development", "test", "production"] },
+                  {
+                    enabledEnvs: ["development", "test", "production"],
+                    // Examples inject only the Parole Board libraries' hooks.
+                    // The plugin also wraps type-only imports that a function
+                    // uses as a generic argument, such as PatternRule in the
+                    // Calendar rules library, and the browser then fails to
+                    // import a type that doesn't exist at runtime.
+                    exclude: [/\/libs\/@modules\//],
+                  },
                 ],
               ],
             },

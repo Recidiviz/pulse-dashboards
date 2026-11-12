@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import {
+  ADD_MONTHS_AHEAD,
   MAX_YEAR,
   MIN_YEAR,
   patternRulesSchema,
@@ -77,15 +78,15 @@ function noDuplicateMonths(months: { year: number; month: number }[]): boolean {
 }
 
 /**
- * The input of months.create. 13 months at most: the Add month window is the
- * current month and the next 12.
+ * The input of months.create. The Add month window is the current month and
+ * the next ADD_MONTHS_AHEAD, so it holds ADD_MONTHS_AHEAD + 1 months at most.
  */
 export const createMonthsInput = z
   .object({
     months: z
       .array(yearMonth)
       .min(1)
-      .max(13)
+      .max(ADD_MONTHS_AHEAD + 1)
       .refine(noDuplicateMonths, "Pick each month once."),
   })
   .strict();
