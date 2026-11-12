@@ -31,6 +31,7 @@ const TextInputWrapper = styled.div`
 
 const TextArea = styled.textarea`
   ${typography.Sans14}
+  box-sizing: border-box;
   width: 100%;
   padding: ${rem(spacing.sm)};
   border: 1px solid ${palette.slate20};
@@ -66,6 +67,10 @@ const Counter = styled.div`
  * @param rows - How many lines the box shows before the PHI resizes it.
  * @param disabled - Whether the input is disabled, such as while a save is
  *   in flight.
+ * @param id - The text box's id, for a visible label that points at it.
+ * @param placeholder - Shows in the empty box, such as "Enter description".
+ * @param onFocus - Called when the box gains focus.
+ * @param onBlur - Called when the box loses focus.
  */
 export function ReportTextInput({
   value,
@@ -74,6 +79,10 @@ export function ReportTextInput({
   maxLength,
   rows = 2,
   disabled = false,
+  id,
+  placeholder,
+  onFocus,
+  onBlur,
 }: {
   value: string | null;
   onChange: (text: string) => void;
@@ -81,6 +90,10 @@ export function ReportTextInput({
   maxLength: number;
   rows?: number;
   disabled?: boolean;
+  id?: string;
+  placeholder?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }) {
   const counterId = useId();
   const text = value ?? "";
@@ -88,13 +101,17 @@ export function ReportTextInput({
   return (
     <TextInputWrapper>
       <TextArea
+        id={id}
         aria-label={label}
         aria-describedby={counterId}
         value={text}
         maxLength={maxLength}
         rows={rows}
         disabled={disabled}
+        placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       <Counter id={counterId}>
         {text.length}/{maxLength}
