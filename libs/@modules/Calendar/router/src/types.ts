@@ -194,7 +194,7 @@ export interface CalendarConfig<Kind extends string = string> {
      * The weekdays entries may fall on, Sunday first. entries.add and
      * entries.move refuse any other day, and months.create skips them.
      */
-    allowedWeekdays: Weekday[];
+    allowedWeekdays: readonly Weekday[];
     weekNumbering: WeekNumbering;
     holidayRegion: string | null;
     holidayPolicy: HolidayPolicy;

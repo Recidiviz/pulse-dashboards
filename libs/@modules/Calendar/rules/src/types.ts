@@ -99,21 +99,21 @@ export type HolidayPolicy = (typeof HOLIDAY_POLICIES)[number];
  */
 export interface CalendarSettings {
   /** First day of a pattern week, e.g. "SUNDAY". */
-  weekStartsOn: Weekday;
+  readonly weekStartsOn: Weekday;
   /**
    * The weekdays entries may fall on, in WEEKDAYS order. Adding, moving and
    * generating entries skip or refuse every other day.
    */
-  allowedWeekdays: Weekday[];
+  readonly allowedWeekdays: readonly Weekday[];
   /** How weekOfMonth rules count weeks. Has no default. */
-  weekNumbering: WeekNumbering;
+  readonly weekNumbering: WeekNumbering;
   /** IANA time zone that calendar dates are in, e.g. "America/Denver". */
-  timezone: string;
+  readonly timezone: string;
   /** Holiday region, e.g. "US-CO". Null means the calendar shows no holidays. */
-  holidayRegion: string | null;
-  holidayPolicy: HolidayPolicy;
+  readonly holidayRegion: string | null;
+  readonly holidayPolicy: HolidayPolicy;
   /** The staff route permission that editors need, e.g. "publicCalendar". */
-  editorRoute: string;
+  readonly editorRoute: string;
 }
 
 /** The settings that decide which date a weekOfMonth rule resolves to. */

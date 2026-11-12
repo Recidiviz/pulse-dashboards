@@ -99,7 +99,7 @@ export const TEST_RULES: CalendarRules = {
     holidayRegion: null,
     holidayPolicy: "WARN",
     editorRoute: "publicCalendar",
-    allowedWeekdays: [...WEEKDAYS],
+    allowedWeekdays: WEEKDAYS,
   },
   entryTypes: [
     {

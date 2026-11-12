@@ -42,7 +42,7 @@ const CALENDAR_ID = "cal-clinic";
 
 const SETTINGS: CalendarSettings = {
   weekStartsOn: "SUNDAY",
-  allowedWeekdays: [...WEEKDAYS],
+  allowedWeekdays: WEEKDAYS,
   weekNumbering: "FIRST_FULL_WEEK",
   timezone: "America/Denver",
   holidayRegion: "US-CO",
