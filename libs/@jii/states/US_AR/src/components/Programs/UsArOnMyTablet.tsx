@@ -22,13 +22,14 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { BackLink } from "~@jii/common-ui";
-import { useResidentMetadata } from "~@jii/data";
+import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
 
 import { isPaaResident } from "../../isPaaResident";
 import { EdovoProgressCard } from "./EdovoProgressCard/EdovoProgressCard";
+import { EdovoProgressHistoryList } from "./EdovoProgressHistoryList/EdovoProgressHistoryList";
 import { GoToCoursesButton } from "./GoToCoursesButton";
 import { IneligibleCard } from "./IneligibleCard";
 import { PolicyExplainerCard } from "./PolicyExplainerCard";
@@ -42,6 +43,7 @@ export const UsArOnMyTablet: FC = () => {
   const metadata = useResidentMetadata("US_AR");
   const { t } = useUsArTranslations();
   const pathParams = useTypedParams(State.Resident);
+  const { residentFlags } = useSingleResidentContext();
 
   return (
     <>
@@ -59,6 +61,7 @@ export const UsArOnMyTablet: FC = () => {
           <EdovoProgressCard />
           <PolicyExplainerCard />
           <GoToCoursesButton />
+          {residentFlags.usArEdovoHistory && <EdovoProgressHistoryList />}
         </>
       ) : (
         <IneligibleCard />

@@ -105,6 +105,15 @@
           "completed": "[US_AR]programs.onMyTablet.progressBar.banner.completed",
           "completedExtra": "[US_AR]programs.onMyTablet.progressBar.banner.completedExtra"
         }
+      },
+      "history": {
+        "heading": "[US_AR]programs.onMyTablet.history.heading",
+        "monthLabel": "[US_AR]programs.onMyTablet.history.monthLabel",
+        "carriedIn": "[US_AR]programs.onMyTablet.history.carriedIn",
+        "totalHours_one": "[US_AR]programs.onMyTablet.history.totalHours_one",
+        "totalHours_other": "[US_AR]programs.onMyTablet.history.totalHours_other",
+        "extraHoursLink": "[US_AR]programs.onMyTablet.history.extraHoursLink",
+        "explainer": "[US_AR]programs.onMyTablet.history.explainer"
       }
     }
   },
