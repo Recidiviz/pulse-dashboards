@@ -43,8 +43,13 @@ type SectionFields<Section extends ParoleBoardReportSectionKey> = NonNullable<
   SectionInput<Section>["fields"]
 >;
 
+/** One row's saved input in a section, as the report schema parses it. */
+export type ParoleBoardReportRowEntry<
+  Section extends ParoleBoardReportSectionKey,
+> = NonNullable<SectionInput<Section>["rows"]>[string];
+
 type RowFields<Section extends ParoleBoardReportSectionKey> = NonNullable<
-  NonNullable<SectionInput<Section>["rows"]>[string]["fields"]
+  ParoleBoardReportRowEntry<Section>["fields"]
 >;
 
 export type ParoleBoardReportFieldName<

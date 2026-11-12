@@ -101,6 +101,9 @@ let firestoreStore: {
   buildParoleBoardReportsForResidentSubscription: ReturnType<typeof vi.fn>;
   buildParoleBoardReportSubscription: ReturnType<typeof vi.fn>;
   getOrCreateActiveParoleBoardReport: ReturnType<typeof vi.fn>;
+  deleteParoleBoardReportRow: ReturnType<typeof vi.fn>;
+  restoreParoleBoardReportRow: ReturnType<typeof vi.fn>;
+  setParoleBoardReportRowRemoved: ReturnType<typeof vi.fn>;
 };
 let userStore: {
   activeFeatureVariants: Record<string, unknown>;
@@ -140,6 +143,9 @@ beforeEach(() => {
       ({ reportId }: ParoleBoardReportRef) => reportsById[reportId],
     ),
     getOrCreateActiveParoleBoardReport: vi.fn().mockResolvedValue("new_report"),
+    deleteParoleBoardReportRow: vi.fn().mockResolvedValue(undefined),
+    restoreParoleBoardReportRow: vi.fn().mockResolvedValue(undefined),
+    setParoleBoardReportRowRemoved: vi.fn().mockResolvedValue(undefined),
   };
   // A PHI with the report's feature variant on.
   userStore = {
@@ -512,5 +518,108 @@ describe("editReport", () => {
     expect(
       firestoreStore.getOrCreateActiveParoleBoardReport,
     ).not.toHaveBeenCalled();
+  });
+});
+
+describe("removeRow", () => {
+  const REPORT_REF = { recordId: RECORD_ID, reportId: "report_1" };
+  const ADDED_ROW_ID = "phi_1793800000000_a1b2c3d4";
+  const addedRowEntry = {
+    source: "PHI" as const,
+    fields: {
+      notes: {
+        value: "Sentenced, entered custody",
+        updatedBy: "phi@example.com",
+        updatedAt: new Date("2026-11-01T12:00:00Z"),
+      },
+    },
+  };
+
+  async function presenterWithReport() {
+    givenReportsForResident({
+      stateCode: "US_ID",
+      activeReportId: "report_1",
+      latestReport: null,
+    });
+    givenReport("report_1", {
+      ...makeReport("IN_PROGRESS"),
+      sections: { pastActions: { rows: { [ADDED_ROW_ID]: addedRowEntry } } },
+    });
+    const presenter = makePresenter();
+    await presenter.hydrate();
+    return presenter;
+  }
+
+  test("deletes a row the PHI added right away, and undo writes it back as it was", async () => {
+    const presenter = await presenterWithReport();
+
+    const { done, undo } = presenter.removeRow("pastActions", {
+      id: ADDED_ROW_ID,
+      status: "ADDED_BY_PHI",
+      label: null,
+    });
+    await done;
+
+    expect(firestoreStore.deleteParoleBoardReportRow).toHaveBeenCalledWith(
+      REPORT_REF,
+      "pastActions",
+      ADDED_ROW_ID,
+    );
+    expect(firestoreStore.restoreParoleBoardReportRow).not.toHaveBeenCalled();
+
+    await undo();
+
+    expect(firestoreStore.restoreParoleBoardReportRow).toHaveBeenCalledWith(
+      REPORT_REF,
+      "pastActions",
+      ADDED_ROW_ID,
+      addedRowEntry,
+    );
+  });
+
+  test("marks a row still in Atlas as removed, and undo clears the mark", async () => {
+    const presenter = await presenterWithReport();
+    const atlasRow = { id: "1001", source: "ATLAS", atlasLabel: "Robbery" };
+
+    const { done, undo } = presenter.removeRow("offenseInformation", {
+      id: "1001",
+      status: "IN_ATLAS",
+      label: "Robbery",
+    });
+    await done;
+
+    expect(firestoreStore.setParoleBoardReportRowRemoved).toHaveBeenCalledWith(
+      REPORT_REF,
+      "offenseInformation",
+      atlasRow,
+      true,
+    );
+    expect(firestoreStore.deleteParoleBoardReportRow).not.toHaveBeenCalled();
+
+    await undo();
+
+    expect(
+      firestoreStore.setParoleBoardReportRowRemoved,
+    ).toHaveBeenLastCalledWith(
+      REPORT_REF,
+      "offenseInformation",
+      atlasRow,
+      false,
+    );
+  });
+
+  test("writes nothing for a row that has no input left to remove", async () => {
+    const presenter = await presenterWithReport();
+
+    const { done, undo } = presenter.removeRow("pastActions", {
+      id: "phi_already_removed",
+      status: "ADDED_BY_PHI",
+      label: null,
+    });
+    await done;
+    await undo();
+
+    expect(firestoreStore.deleteParoleBoardReportRow).not.toHaveBeenCalled();
+    expect(firestoreStore.restoreParoleBoardReportRow).not.toHaveBeenCalled();
   });
 });

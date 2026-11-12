@@ -355,6 +355,65 @@ describe("FirestoreStore PHI report methods", () => {
       ).toBe("delete-field");
     });
 
+    test("writes a deleted row's input back as it was, keeping each field's editor", async () => {
+      const editedAt = new Date("2026-11-02T15:00:00Z");
+      const entry = {
+        source: "PHI" as const,
+        fields: {
+          notes: {
+            value: "Sentenced, entered custody",
+            updatedBy: "other-phi@example.com",
+            updatedAt: editedAt,
+          },
+        },
+      };
+
+      await store.restoreParoleBoardReportRow(
+        REPORT,
+        "pastActions",
+        "phi_1",
+        entry,
+      );
+
+      expect(updatedFields().fields).toEqual({
+        "sections.pastActions.rows.phi_1": entry,
+        ...PHI_EDIT,
+      });
+    });
+
+    test("marks a row still in Atlas as removed, with its source and label", async () => {
+      await store.setParoleBoardReportRowRemoved(
+        REPORT,
+        "offenseInformation",
+        { id: "1001", source: "ATLAS", atlasLabel: "Robbery" },
+        true,
+      );
+
+      expect(updatedFields().fields).toEqual({
+        "sections.offenseInformation.rows.1001.source": "ATLAS",
+        "sections.offenseInformation.rows.1001.atlasLabel": "Robbery",
+        "sections.offenseInformation.rows.1001.removed": {
+          by: PHI_EMAIL,
+          at: "server-timestamp",
+        },
+        ...PHI_EDIT,
+      });
+    });
+
+    test("clears a row's removed mark and leaves the rest of its input", async () => {
+      await store.setParoleBoardReportRowRemoved(
+        REPORT,
+        "offenseInformation",
+        { id: "1001", source: "ATLAS", atlasLabel: "Robbery" },
+        false,
+      );
+
+      expect(updatedFields().fields).toEqual({
+        "sections.offenseInformation.rows.1001.removed": "delete-field",
+        ...PHI_EDIT,
+      });
+    });
+
     test("skips the write for a Recidiviz user in production", async () => {
       vi.stubEnv("VITE_DEPLOY_ENV", "production");
       store = new FirestoreStore({

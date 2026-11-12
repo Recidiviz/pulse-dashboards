@@ -20,6 +20,7 @@ import { makeAutoObservable, onBecomeUnobserved, runInAction } from "mobx";
 import {
   PAROLE_UNKNOWN_TEXT,
   ParoleBoardReport,
+  ParoleBoardReportSectionKey,
   ParoleBoardReportsForResident,
   ParoleCase,
 } from "~datatypes";
@@ -33,9 +34,13 @@ import {
   isHydrationInProgress,
 } from "~hydration-utils";
 
-import FirestoreStore, { ParoleBoardReportRef } from "../../FirestoreStore";
+import FirestoreStore, {
+  ParoleBoardReportRef,
+  ParoleBoardReportRowEntry,
+} from "../../FirestoreStore";
 import UserStore from "../../RootStore/UserStore";
 import { CollectionDocumentSubscription } from "../../WorkflowsStore/subscriptions";
+import { ResolvedRow } from "../report/resolveSection";
 
 /**
  * How the case profile shows the resident's PHI report. EDIT shows the report
@@ -206,6 +211,69 @@ export class ParoleBoardReportPresenter implements Hydratable {
     // users in production, and then creates no report.
     if (reportId === undefined) return;
     await write({ recordId, reportId });
+  }
+
+  /**
+   * Removes a row from the report in progress. It starts the write right
+   * away, so the removal holds even if the PHI reloads before the undo toast
+   * closes, and returns at once with the write and a function that undoes it.
+   *
+   * - A row the PHI added, or one no longer in Atlas, loses its input, and
+   *   undoing writes the input back as it was.
+   * - A row still in Atlas gets the removed marker, which keeps any input the
+   *   PHI entered on it, and undoing clears the marker.
+   *
+   * Firestore applies one client's writes in order, so an undo started
+   * before the removal finishes still lands after it.
+   *
+   * @param section - The section's key in the report, such as "pastActions".
+   * @param row - The resolved row to remove.
+   * @returns done, which settles when the removal is saved, and undo.
+   */
+  removeRow<Section extends ParoleBoardReportSectionKey>(
+    section: Section,
+    row: Pick<ResolvedRow<unknown>, "id" | "status" | "label">,
+  ): { done: Promise<void>; undo: () => Promise<void> } {
+    if (row.status === "IN_ATLAS") {
+      const reportRow = {
+        id: row.id,
+        source: "ATLAS" as const,
+        ...(row.label !== null && { atlasLabel: row.label }),
+      };
+      const setRemoved = (removed: boolean) =>
+        this.editReport((report) =>
+          this.firestoreStore.setParoleBoardReportRowRemoved(
+            report,
+            section,
+            reportRow,
+            removed,
+          ),
+        );
+      return { done: setRemoved(true), undo: () => setRemoved(false) };
+    }
+
+    const entry = this.report?.sections[section]?.rows?.[row.id] as
+      | ParoleBoardReportRowEntry<Section>
+      | undefined;
+    // Another tab already removed the row, so there is nothing to remove or
+    // to bring back.
+    if (!entry) {
+      return { done: Promise.resolve(), undo: () => Promise.resolve() };
+    }
+    return {
+      done: this.editReport((report) =>
+        this.firestoreStore.deleteParoleBoardReportRow(report, section, row.id),
+      ),
+      undo: () =>
+        this.editReport((report) =>
+          this.firestoreStore.restoreParoleBoardReportRow(
+            report,
+            section,
+            row.id,
+            entry,
+          ),
+        ),
+    };
   }
 
   /**

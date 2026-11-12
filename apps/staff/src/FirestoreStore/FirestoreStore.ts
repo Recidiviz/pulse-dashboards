@@ -105,6 +105,7 @@ import {
   ParoleBoardReportFieldValue,
   ParoleBoardReportRef,
   ParoleBoardReportRow,
+  ParoleBoardReportRowEntry,
   ParoleBoardReportRowFieldName,
   ParoleBoardReportRowFieldValue,
   PersonUpdateType,
@@ -876,7 +877,7 @@ export default class FirestoreStore {
 
   /**
    * Deletes all of the PHI's input for one row. This backs the Remove action
-   * on a row that is no longer in Atlas.
+   * on a row the PHI added and on a row that is no longer in Atlas.
    */
   async deleteParoleBoardReportRow(
     report: ParoleBoardReportRef,
@@ -885,6 +886,63 @@ export default class FirestoreStore {
   ): Promise<void> {
     return this.updateParoleBoardReport(report, [
       [new FieldPath("sections", section, "rows", rowId), deleteField()],
+    ]);
+  }
+
+  /**
+   * Writes a row's input back exactly as it was before
+   * deleteParoleBoardReportRow deleted it, which undoes a Remove. Each field
+   * keeps the editor and time it had.
+   *
+   * @param entry - The row's input as the report held it, which must have no
+   *   undefined values, since Firestore rejects them.
+   */
+  async restoreParoleBoardReportRow<
+    Section extends ParoleBoardReportSectionKey,
+  >(
+    report: ParoleBoardReportRef,
+    section: Section,
+    rowId: string,
+    entry: ParoleBoardReportRowEntry<Section>,
+  ): Promise<void> {
+    return this.updateParoleBoardReport(report, [
+      [new FieldPath("sections", section, "rows", rowId), entry],
+    ]);
+  }
+
+  /**
+   * Marks a row that is still in Atlas as removed from the report, or clears
+   * the mark, which undoes a Remove. Marking also writes the row's source and
+   * label, because the row may have no input yet. The PHI's other input on
+   * the row stays, so undoing brings the row back as it was.
+   */
+  async setParoleBoardReportRowRemoved(
+    report: ParoleBoardReportRef,
+    section: ParoleBoardReportSectionKey,
+    row: ParoleBoardReportRow,
+    removed: boolean,
+  ): Promise<void> {
+    const rowPath = ["sections", section, "rows", row.id];
+    const removedPath = new FieldPath(...rowPath, "removed");
+    if (!removed) {
+      return this.updateParoleBoardReport(report, [
+        [removedPath, deleteField()],
+      ]);
+    }
+    return this.updateParoleBoardReport(report, [
+      [new FieldPath(...rowPath, "source"), row.source],
+      ...(row.atlasLabel === undefined
+        ? []
+        : [
+            [new FieldPath(...rowPath, "atlasLabel"), row.atlasLabel] as [
+              FieldPath,
+              unknown,
+            ],
+          ]),
+      [
+        removedPath,
+        { by: this.paroleBoardReportEditor, at: serverTimestamp() },
+      ],
     ]);
   }
 
