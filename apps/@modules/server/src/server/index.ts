@@ -19,6 +19,8 @@ import { createContext } from "~@modules-server/trpc-base";
 import { appRouter } from "~@modules-server/trpc-router";
 import { buildCommonServer } from "~server-setup-plugin";
 
+import { corsOriginsFromEnv } from "./corsOrigins";
+
 export function buildServer() {
   const domain = process.env["AUTH0_DOMAIN"];
   const audienceEnv = process.env["AUTH0_AUDIENCE"];
@@ -40,6 +42,7 @@ export function buildServer() {
       domain,
       audience: audiences,
     },
+    corsOrigins: corsOriginsFromEnv(),
   });
 
   return server;
