@@ -17,6 +17,8 @@
 
 import { observable } from "mobx";
 
+import { isDemoMode } from "~client-env-utils";
+
 import { UserRecord, UserUpdateRecord } from "../../FirestoreStore";
 import {
   mockLocations,
@@ -27,6 +29,11 @@ import {
 import { SearchStore } from "../SearchStore";
 import { staffNameComparator } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
+
+vi.mock("~client-env-utils", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("~client-env-utils")>()),
+  isDemoMode: vi.fn(),
+}));
 
 let searchStore: SearchStore;
 let workflowsStore: any;
@@ -121,6 +128,23 @@ describe("isTypesenseHomepageEnabled", () => {
     workflowsStore.featureVariants = featureVariants;
 
     expect(searchStore.isTypesenseHomepageEnabled).toBe(expected);
+  });
+});
+
+// TODO(COS-136): remove with the demo-mode check in isTypesenseSearchEnabled.
+describe("in demo mode", () => {
+  beforeEach(() => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+    workflowsStore.featureVariants = {
+      typesenseCaseloadSearch: true,
+      typesenseHomepage: true,
+    };
+  });
+
+  test("turns off Typesense search even with its feature variants", () => {
+    expect(searchStore.isTypesenseSearchEnabled).toBe(false);
+    expect(searchStore.isTypesenseHomepageEnabled).toBe(false);
+    expect(searchStore.searchEngine).toBe("FIRESTORE");
   });
 });
 

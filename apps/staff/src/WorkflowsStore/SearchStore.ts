@@ -19,6 +19,7 @@ import assertNever from "assert-never";
 import { intersection, uniq, uniqBy } from "lodash";
 import { makeAutoObservable, reaction, when } from "mobx";
 
+import { isDemoMode } from "~client-env-utils";
 import { SystemId } from "~datatypes";
 
 import {
@@ -647,7 +648,10 @@ export class SearchStore {
   // inspect a `variant` value — presence of the FV is enough. Read by both
   // this store's availableSearchables and by CaseloadSearchManager to gate
   // its own reactions.
+  //
+  // TODO(COS-136): remove the demo-mode check once the demo collections exist.
   get isTypesenseSearchEnabled(): boolean {
+    if (isDemoMode()) return false;
     return Boolean(this.workflowsStore.featureVariants.typesenseCaseloadSearch);
   }
 

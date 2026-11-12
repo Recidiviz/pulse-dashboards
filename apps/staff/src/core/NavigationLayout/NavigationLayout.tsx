@@ -22,7 +22,7 @@ import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
-import { isOfflineMode } from "~client-env-utils";
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   Button,
   Dropdown,
@@ -749,8 +749,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const { typesensePersonSearch } = useFeatureVariants();
 
     const view = pathname.split("/")[1];
+    // TODO(COS-136): remove the demo-mode check once the demo collections exist.
     const showPersonSearchBar =
-      typesensePersonSearch && SEARCH_BAR_ALLOWED_VIEWS.includes(view);
+      typesensePersonSearch &&
+      !isDemoMode() &&
+      SEARCH_BAR_ALLOWED_VIEWS.includes(view);
     const {
       currentTenantId,
       userStore,
