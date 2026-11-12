@@ -763,6 +763,35 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("updateUsIaEarlyDischargeChargesSentToSupervisor", async () => {
+      await store.updateUsIaEarlyDischargeChargesSentToSupervisor(
+        "test-email",
+        opp,
+        ["C1", "C2"],
+      );
+      const submitted = { by: "test-email", date: "mock-timestamp" };
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          stateCode: "US_ID",
+          charges: {
+            C1: { iconSubmissionStatus: "SUPERVISOR_REVIEW", submitted },
+            C2: { iconSubmissionStatus: "SUPERVISOR_REVIEW", submitted },
+          },
+        },
+        { merge: true },
+      ]);
+    });
+
+    test("updateUsIaEarlyDischargeChargesSentToSupervisor writes nothing for no charges", async () => {
+      await store.updateUsIaEarlyDischargeChargesSentToSupervisor(
+        "test-email",
+        opp,
+        [],
+      );
+      expect(mockSetDoc).not.toHaveBeenCalled();
+    });
+
     test("deleteAdjudicationStatus", async () => {
       await store.deleteAdjudicationStatus(opp);
       expect(mockSetDoc.mock.calls).toContainEqual([

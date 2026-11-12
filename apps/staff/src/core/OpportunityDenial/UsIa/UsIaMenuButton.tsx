@@ -20,7 +20,10 @@ import { observer } from "mobx-react-lite";
 
 import { Dropdown, DropdownMenu } from "~design-system";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import {
   UsIaEarlyDischargeOpportunity,
   UsIaSupervisionLevelDowngradeOpportunity,
@@ -44,6 +47,7 @@ const UsIaMenuButton = observer(function MenuButton({
   deleteSubmitted: () => Promise<void>;
 }) {
   const { workflowsStore } = useRootStore();
+  const { usIaEarlyDischargeV2 } = useFeatureVariants();
   const { setCurrentView } = useOpportunitySidePanel();
   const { buttonLabel = "Update Eligibility", options } =
     opportunity.type === "usIaCompleteSupervisionLevelDowngrade"
@@ -57,6 +61,7 @@ const UsIaMenuButton = observer(function MenuButton({
           setCurrentView,
           markSubmittedAndToast,
           deleteSubmitted,
+          usesSteppedForm: !!usIaEarlyDischargeV2,
         });
   return (
     <Dropdown>

@@ -15,39 +15,79 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+import { useState } from "react";
+
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa";
-import { FormContainer } from "../../FormContainer";
+import {
+  FormContainer,
+  SubmitButton,
+  SubmitButtonText,
+} from "../../FormContainer";
 import { FormChargesStep } from "./FormChargesStep";
 import { FormOrderStep } from "./FormOrderStep";
+import { SubmitForApprovalModal } from "./SubmitForApprovalModal";
 
-export function FormUsIaEarlyDischargeV2({
-  opportunity,
-}: {
-  opportunity: Opportunity;
-}) {
-  if (!(opportunity instanceof UsIaEarlyDischargeOpportunity)) {
-    return null;
-  }
+export const FormUsIaEarlyDischargeV2 = observer(
+  function FormUsIaEarlyDischargeV2({
+    opportunity,
+  }: {
+    opportunity: Opportunity;
+  }) {
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
+    const [emptySelectionAction, setEmptySelectionAction] = useState<
+      "submit" | "print"
+    >();
 
-  const heading =
-    opportunity.person.supervisionType === "PAROLE"
-      ? "Early Discharge from Parole"
-      : "Early Discharge from Probation";
+    if (!(opportunity instanceof UsIaEarlyDischargeOpportunity)) {
+      return null;
+    }
 
-  return (
-    <FormContainer
-      heading={heading}
-      agencyName="IDOC"
-      opportunity={opportunity}
-      hideDownloadButton
-      downloadButtonLabel=""
-      onClickDownload={async () => undefined}
-      menuActions={[{ label: "Print", onClick: () => window.print() }]}
-      printable
-    >
-      <FormChargesStep />
-      <FormOrderStep />
-    </FormContainer>
-  );
-}
+    const { form } = opportunity;
+    const heading =
+      opportunity.person.supervisionType === "PAROLE"
+        ? "Early Discharge from Parole"
+        : "Early Discharge from Probation";
+
+    // Submit and Print stay enabled so officers aren't left stuck on a
+    // disabled button; with no charge selected, Step 1 says what's missing.
+    const handleSubmitClick = () => {
+      if (form?.selectedChargeCount) setShowSubmitModal(true);
+      else setEmptySelectionAction("submit");
+    };
+    const handlePrintClick = () => {
+      if (form?.selectedChargeCount) window.print();
+      else setEmptySelectionAction("print");
+    };
+    const submitButton = form && !opportunity.hasChargesInSupervisorReview && (
+      <SubmitButton onClick={handleSubmitClick}>
+        <SubmitButtonText>Submit for supervisor approval</SubmitButtonText>
+      </SubmitButton>
+    );
+
+    return (
+      <FormContainer
+        heading={heading}
+        agencyName="IDOC"
+        opportunity={opportunity}
+        hideDownloadButton
+        downloadButtonLabel=""
+        onClickDownload={async () => undefined}
+        additionalHeaderButtons={submitButton}
+        menuActions={[{ label: "Print", onClick: handlePrintClick }]}
+        printable
+      >
+        <FormChargesStep emptySelectionAction={emptySelectionAction} />
+        <FormOrderStep />
+        {form && (
+          <SubmitForApprovalModal
+            isOpen={showSubmitModal}
+            onClose={() => setShowSubmitModal(false)}
+            form={form}
+          />
+        )}
+      </FormContainer>
+    );
+  },
+);

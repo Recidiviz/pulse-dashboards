@@ -29,6 +29,7 @@ import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/F
 import { hideWhenPrintingStyle } from "../../../sharedComponents";
 import { SecureSmallDetailsCopy } from "../../../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
+import { ErrorMessage } from "./ErrorMessage";
 import { FormChargeRow } from "./FormChargeRow";
 import {
   SelectedCount,
@@ -63,6 +64,10 @@ const JurisdictionSelectAll = styled(Checkbox)`
   .ds-checkbox__label {
     margin-bottom: 0;
   }
+`;
+
+const StepErrorMessage = styled(ErrorMessage)`
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 const ChargeGroup = styled(CheckboxGroup)`
@@ -149,7 +154,12 @@ const JurisdictionCharges = observer(function JurisdictionCharges({
   );
 });
 
-export const FormChargesStep = observer(function FormChargesStep() {
+export const FormChargesStep = observer(function FormChargesStep({
+  emptySelectionAction,
+}: {
+  /** The last action the PO tried while no charge was selected. */
+  emptySelectionAction?: "submit" | "print";
+}) {
   const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
   const { chargesByJurisdiction } = form.opportunity;
   const showJurisdictionLabels = chargesByJurisdiction.size > 1;
@@ -169,6 +179,11 @@ export const FormChargesStep = observer(function FormChargesStep() {
         Charges under different jurisdictions become separate ICON discharge
         orders.
       </StepHelpText>
+      {emptySelectionAction && form.selectedChargeCount === 0 && (
+        <StepErrorMessage>
+          Select at least one charge to {emptySelectionAction}.
+        </StepErrorMessage>
+      )}
       {[...chargesByJurisdiction].map(([jurisdiction, charges]) => (
         <JurisdictionCharges
           key={jurisdiction}

@@ -30,6 +30,7 @@ import {
   usIaEdAndSldEligibleClientRecord,
   usIaSupervisionLevelDowngradeRecordFixture,
 } from "../../UsIaSupervisionLevelDowngradeOpportunity/__fixtures__";
+import { UsIaEarlyDischargeOpportunityUpdate } from "../types";
 import {
   PUBLIC_SAFETY_KEY,
   UsIaEarlyDischargeOpportunity,
@@ -91,6 +92,21 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       { type: "APPROVAL", ...updateLog, isStale: false },
     ];
     expect(opportunity.clientStatus).toBe("DISCHARGE_FORM_REVIEW");
+  });
+
+  it("puts a client whose charges are with the supervisor in Supervisor Review", () => {
+    opportunity.updatesSubscription.data = {
+      charges: { C1: { iconSubmissionStatus: "SUPERVISOR_REVIEW" } },
+    } as typeof opportunity.updatesSubscription.data;
+    expect(opportunity.clientStatus).toBe("DISCHARGE_FORM_REVIEW");
+  });
+
+  it("shows a client marked ineligible as denied, even with charges in review", () => {
+    opportunity.updatesSubscription.data = {
+      charges: { C1: { iconSubmissionStatus: "SUPERVISOR_REVIEW" } },
+      denial: { reasons: ["reason"] },
+    } as typeof opportunity.updatesSubscription.data;
+    expect(opportunity.clientStatus).toBe("DENIED");
   });
 
   it("returns ACTION_PLAN_REVIEW status for DENIAL with PUBLIC SAFETY reason without supervisor response", () => {
@@ -500,6 +516,94 @@ describe("chargesByJurisdiction", () => {
     ]);
     expect(result.get("MONROE")?.map((c) => c.chargeExternalId)).toEqual([
       "C2",
+    ]);
+  });
+});
+
+describe("charge statuses", () => {
+  let opportunity: UsIaEarlyDischargeOpportunity;
+
+  function withCharges(
+    charges: UsIaEarlyDischargeOpportunityUpdate["charges"],
+  ) {
+    opportunity = Object.create(UsIaEarlyDischargeOpportunity.prototype);
+    opportunity.updatesSubscription = {
+      data: { charges },
+      subscribe: vi.fn(),
+      unsubscribe: vi.fn(),
+      hydrate: vi.fn(),
+      hydrationState: { status: "hydrated" },
+    };
+  }
+
+  it("reads a charge with no status as eligible", () => {
+    withCharges(undefined);
+
+    expect(opportunity.chargeStatus("C1")).toBe("ELIGIBLE");
+  });
+
+  it("reads a charge's status from the charges map", () => {
+    withCharges({ C1: { iconSubmissionStatus: "SUPERVISOR_REVIEW" } });
+
+    expect(opportunity.chargeStatus("C1")).toBe("SUPERVISOR_REVIEW");
+  });
+
+  it("puts the report in review when any charge is with the supervisor", () => {
+    withCharges({
+      C1: { iconSubmissionStatus: "SUCCESS" },
+      C2: { iconSubmissionStatus: "SUPERVISOR_REVIEW" },
+    });
+
+    expect(opportunity.hasChargesInSupervisorReview).toBe(true);
+  });
+
+  it("leaves the report out of review when no charge is with the supervisor", () => {
+    withCharges({ C1: { iconSubmissionStatus: "SUCCESS" } });
+
+    expect(opportunity.hasChargesInSupervisorReview).toBe(false);
+  });
+
+  it("sends each charge to the supervisor as the current user", async () => {
+    withCharges(undefined);
+    const updateUsIaEarlyDischargeChargesSentToSupervisor = vi.fn();
+    opportunity.rootStore = {
+      userStore: { userEmail: "officer@example.com" },
+      firestoreStore: { updateUsIaEarlyDischargeChargesSentToSupervisor },
+    } as unknown as RootStore;
+
+    await opportunity.submitForSupervisorReview(["C1", "C2"]);
+
+    expect(
+      updateUsIaEarlyDischargeChargesSentToSupervisor,
+    ).toHaveBeenCalledWith("officer@example.com", opportunity, ["C1", "C2"]);
+  });
+
+  it("only sends charges that aren't already with the supervisor or ICON", async () => {
+    withCharges({
+      SENT: { iconSubmissionStatus: "IN_PROGRESS" },
+      ACCEPTED: { iconSubmissionStatus: "SUCCESS" },
+      IN_REVIEW: { iconSubmissionStatus: "SUPERVISOR_REVIEW" },
+      SENT_BACK: { iconSubmissionStatus: "REVISIONS_REQUESTED" },
+    });
+    const updateUsIaEarlyDischargeChargesSentToSupervisor = vi.fn();
+    opportunity.rootStore = {
+      userStore: { userEmail: "officer@example.com" },
+      firestoreStore: { updateUsIaEarlyDischargeChargesSentToSupervisor },
+    } as unknown as RootStore;
+
+    await opportunity.submitForSupervisorReview([
+      "SENT",
+      "ACCEPTED",
+      "IN_REVIEW",
+      "SENT_BACK",
+      "NEW",
+    ]);
+
+    expect(
+      updateUsIaEarlyDischargeChargesSentToSupervisor,
+    ).toHaveBeenCalledWith("officer@example.com", opportunity, [
+      "SENT_BACK",
+      "NEW",
     ]);
   });
 });

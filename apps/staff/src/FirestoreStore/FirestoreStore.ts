@@ -81,6 +81,7 @@ import {
   OpportunityTabGroup,
   UsTnExpirationOpportunity,
 } from "../WorkflowsStore";
+import { UsIaEarlyDischargeOpportunityUpdate } from "../WorkflowsStore/Opportunity/UsIa/UsIaEarlyDischargeOpportunity/types";
 import { CollectionDocumentSubscription } from "../WorkflowsStore/subscriptions";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import { collectionNameForCurrentEnv } from "./collectionNames";
@@ -1425,6 +1426,34 @@ export default class FirestoreStore {
         by: userEmail,
         date: serverTimestamp(),
       },
+    });
+  }
+
+  /**
+   * Marks the given charges as sent to the supervisor, leaving other charges'
+   * statuses alone. An empty list indicates no updates to be made and returns
+   * without writing.
+   */
+  async updateUsIaEarlyDischargeChargesSentToSupervisor(
+    userEmail: string,
+    opportunity: Opportunity,
+    chargeExternalIds: string[],
+  ): Promise<void> {
+    // Merging an empty charges map would replace every charge's status.
+    if (chargeExternalIds.length === 0) return;
+    const sentToSupervisor = {
+      iconSubmissionStatus: "SUPERVISOR_REVIEW" as const,
+      submitted: { by: userEmail, date: serverTimestamp() },
+    };
+    const chargesUpdate: PartialWithFieldValue<UsIaEarlyDischargeOpportunityUpdate> =
+      {
+        charges: Object.fromEntries(
+          chargeExternalIds.map((id) => [id, sentToSupervisor]),
+        ),
+      };
+    return this.updateOpportunity(opportunity, {
+      ...chargesUpdate,
+      stateCode: opportunity.person.stateCode,
     });
   }
 

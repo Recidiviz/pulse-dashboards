@@ -44,13 +44,18 @@ import {
 } from "../../types";
 import { RELEVANT_ED_DENIAL_REASONS } from "..";
 import { UsIaSupervisionLevelDowngradeOpportunity } from "../UsIaSupervisionLevelDowngradeOpportunity";
-import { UsIaEarlyDischargeClientStatus } from "./types";
+import {
+  UsIaEarlyDischargeChargeStatus,
+  UsIaEarlyDischargeClientStatus,
+  UsIaEarlyDischargeOpportunityUpdate,
+} from "./types";
 
 export const PUBLIC_SAFETY_KEY = "PUBLIC SAFETY";
 
 export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   Client,
-  UsIaEarlyDischargeRecord["output"]
+  UsIaEarlyDischargeRecord["output"],
+  UsIaEarlyDischargeOpportunityUpdate
 > {
   form?: UsIaEarlyDischargeForm = undefined;
 
@@ -92,6 +97,9 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     if (this.denied) {
       return "DENIED";
     }
+
+    // The V2 form records review per charge instead of in the action history.
+    if (this.hasChargesInSupervisorReview) return "DISCHARGE_FORM_REVIEW";
 
     if (this.isSubmitted) {
       return "SUBMITTED";
@@ -514,6 +522,35 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       return "Temporary Snooze";
     }
     return super.denialViewPrompt;
+  }
+
+  chargeStatus(
+    chargeExternalId: string,
+  ): UsIaEarlyDischargeChargeStatus | "ELIGIBLE" {
+    return (
+      this.updates?.charges?.[chargeExternalId]?.iconSubmissionStatus ??
+      "ELIGIBLE"
+    );
+  }
+
+  get hasChargesInSupervisorReview(): boolean {
+    return Object.values(this.updates?.charges ?? {}).some(
+      ({ iconSubmissionStatus }) =>
+        iconSubmissionStatus === "SUPERVISOR_REVIEW",
+    );
+  }
+
+  async submitForSupervisorReview(chargeExternalIds: string[]): Promise<void> {
+    // A charge already with the supervisor or ICON keeps its status; sending it
+    // again could put it in front of ICON twice.
+    const sendable = chargeExternalIds.filter((id) =>
+      ["ELIGIBLE", "REVISIONS_REQUESTED"].includes(this.chargeStatus(id)),
+    );
+    await this.rootStore.firestoreStore.updateUsIaEarlyDischargeChargesSentToSupervisor(
+      this.currentUserEmail,
+      this,
+      sendable,
+    );
   }
 
   /**

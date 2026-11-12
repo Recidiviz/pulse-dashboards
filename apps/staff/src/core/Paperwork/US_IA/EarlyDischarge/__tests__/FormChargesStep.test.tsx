@@ -46,6 +46,7 @@ function charge(
 function renderStep(
   charges: UsIaEarlyDischargeCharge[],
   deselectedIds: string[] = [],
+  emptySelectionAction?: "submit" | "print",
 ) {
   const chargesByJurisdiction = new Map<string, UsIaEarlyDischargeCharge[]>();
   charges.forEach((charge) =>
@@ -79,7 +80,7 @@ function renderStep(
 
   render(
     <OpportunityFormProvider value={form}>
-      <FormChargesStep />
+      <FormChargesStep emptySelectionAction={emptySelectionAction} />
     </OpportunityFormProvider>,
   );
   return form;
@@ -245,5 +246,39 @@ describe("Select all", () => {
     expect(
       screen.getByRole("region", { name: "Select charges" }),
     ).toHaveStyleRule("display", "none", { media: "print" });
+  });
+});
+
+describe("no-charges error", () => {
+  const polkCharges = [
+    charge("POLK", "FECR001", "THEFT IN THE THIRD DEGREE"),
+    charge("POLK", "FECR002", "BURGLARY IN THE THIRD DEGREE"),
+  ];
+  const NO_CHARGES = "Select at least one charge to submit.";
+
+  it("says to select a charge when Submit is pressed with none selected", () => {
+    renderStep(polkCharges, ["FECR001", "FECR002"], "submit");
+
+    expect(screen.getByRole("alert")).toHaveTextContent(NO_CHARGES);
+  });
+
+  it("says to select a charge to print when Print is pressed with none selected", () => {
+    renderStep(polkCharges, ["FECR001", "FECR002"], "print");
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Select at least one charge to print.",
+    );
+  });
+
+  it("waits for Submit before saying anything", () => {
+    renderStep(polkCharges, ["FECR001", "FECR002"]);
+
+    expect(screen.queryByText(NO_CHARGES)).not.toBeInTheDocument();
+  });
+
+  it("clears once a charge is selected", () => {
+    renderStep(polkCharges, ["FECR002"], "submit");
+
+    expect(screen.queryByText(NO_CHARGES)).not.toBeInTheDocument();
   });
 });

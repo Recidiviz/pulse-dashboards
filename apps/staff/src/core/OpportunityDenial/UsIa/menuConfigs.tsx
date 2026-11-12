@@ -91,11 +91,17 @@ export const getEdButtonConfig = ({
   setCurrentView,
   markSubmittedAndToast,
   deleteSubmitted,
+  usesSteppedForm = false,
 }: {
   opportunity: UsIaEarlyDischargeOpportunity;
   setCurrentView: (view: OPPORTUNITY_SIDE_PANEL_VIEW) => void;
   markSubmittedAndToast: (subcategory?: string) => Promise<void>;
   deleteSubmitted: () => Promise<void>;
+  /**
+   * The stepped form submits from its own header and keeps no action history,
+   * so the menu leaves out V1's submit and approve options.
+   */
+  usesSteppedForm?: boolean;
 }): MenuLabelWithOptions => {
   const { latestAction, clientStatus } = opportunity;
 
@@ -164,11 +170,16 @@ export const getEdButtonConfig = ({
   const menuConfig: EarlyDischargeMenuConfig = {
     ELIGIBLE_NOW: {
       options: [
-        {
-          label: "Submit for Supervisor Approval",
-          onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
-          tooltip: "To confirm all requirements checked",
-        },
+        ...(usesSteppedForm
+          ? []
+          : [
+              {
+                label: "Submit for Supervisor Approval",
+                onClick: () =>
+                  setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
+                tooltip: "To confirm all requirements checked",
+              },
+            ]),
         {
           label: "Mark as Ineligible",
           onClick: () => setCurrentView("MARK_INELIGIBLE"),
@@ -221,11 +232,16 @@ export const getEdButtonConfig = ({
     DISCHARGE_FORM_REVIEW: {
       buttonLabel: "Review",
       options: [
-        {
-          label: "Approve Discharge and Forms",
-          onClick: () => supervisorApprovalAndToast(),
-          tooltip: "To move to 'Ready for Discharge'",
-        },
+        // The stepped form has no action history for this to approve.
+        ...(usesSteppedForm
+          ? []
+          : [
+              {
+                label: "Approve Discharge and Forms",
+                onClick: () => supervisorApprovalAndToast(),
+                tooltip: "To move to 'Ready for Discharge'",
+              },
+            ]),
         {
           label: "Mark as Ineligible",
           onClick: () => setCurrentView("MARK_INELIGIBLE"),

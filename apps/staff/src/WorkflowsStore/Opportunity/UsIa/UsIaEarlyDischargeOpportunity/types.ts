@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityUpdate, UpdateLog } from "../../../../FirestoreStore";
+
 export type UsIaEarlyDischargeClientStatus =
   | "ELIGIBLE_NOW"
   | "ACTION_PLAN_REVIEW"
@@ -30,3 +32,31 @@ export type UsIaSupervisionLevelDowngradeClientStatus =
   | "PENDING_ELIGIBILITY"
   | "DENIED"
   | "SUBMITTED";
+
+/**
+ * Where an Iowa early discharge charge is in the review and ICON flow. The
+ * frontend writes SUPERVISOR_REVIEW and REVISIONS_REQUESTED; the backend
+ * writes the ICON statuses.
+ */
+export type UsIaEarlyDischargeChargeStatus =
+  | "SUPERVISOR_REVIEW"
+  | "REVISIONS_REQUESTED"
+  | "IN_PROGRESS"
+  | "SUCCESS"
+  | "FAILURE";
+
+export type UsIaEarlyDischargeOpportunityUpdate = OpportunityUpdate & {
+  /** Keyed by chargeExternalId. A charge with no entry hasn't been submitted. */
+  charges?: Record<
+    string,
+    {
+      iconSubmissionStatus: UsIaEarlyDischargeChargeStatus;
+      /**
+       * Who sent the charge to their supervisor, and when. Set each time the
+       * PO sends it, including a resubmit after revisions; later statuses
+       * leave it alone.
+       */
+      submitted?: UpdateLog;
+    }
+  >;
+};

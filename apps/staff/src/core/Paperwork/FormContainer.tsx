@@ -142,7 +142,7 @@ const ReviewChainButtons = styled.div<PrintableProps>`
   gap: ${rem(4)};
 `;
 
-const SubmitButtonText = styled.span`
+export const SubmitButtonText = styled.span`
   color: ${palette.marble1};
   ${typography.Sans12};
   line-height: 100%; /* 12px */

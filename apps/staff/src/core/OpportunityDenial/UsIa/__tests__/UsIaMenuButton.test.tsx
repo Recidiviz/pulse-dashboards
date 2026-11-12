@@ -17,7 +17,10 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { useRootStore } from "../../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../../components/StoreProvider";
 import { RootStore } from "../../../../RootStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunitySidePanelProvider } from "../../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
@@ -28,14 +31,17 @@ import {
 import UsIaMenuButton from "../UsIaMenuButton";
 
 vi.mock("../../../../components/StoreProvider", () => ({
+  useFeatureVariants: vi.fn(),
   useRootStore: vi.fn(),
 }));
 const useRootStoreMock = vi.mocked(useRootStore);
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 
 describe("UsIaMenuButton", () => {
   let opportunity: UsIaEarlyDischargeOpportunity;
 
   beforeEach(() => {
+    useFeatureVariantsMock.mockReturnValue({});
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         currentUserEmail: "mock-email",
@@ -107,4 +113,48 @@ describe("UsIaMenuButton", () => {
       expect(labels).toEqual(expectedOptions);
     },
   );
+
+  it("leaves V1's Submit for Supervisor Approval out for users on the stepped form", () => {
+    useFeatureVariantsMock.mockReturnValue({ usIaEarlyDischargeV2: {} });
+    opportunity = {
+      clientStatus: "ELIGIBLE_NOW",
+    } as unknown as UsIaEarlyDischargeOpportunity;
+
+    render(
+      <OpportunitySidePanelProvider>
+        <UsIaMenuButton
+          opportunity={opportunity}
+          markSubmittedAndToast={vi.fn()}
+          deleteSubmitted={vi.fn()}
+        />
+      </OpportunitySidePanelProvider>,
+    );
+    fireEvent.click(screen.getByRole("button"));
+
+    expect(
+      screen.getAllByRole("menuitem").map((node) => node.textContent),
+    ).toEqual(["Mark as Ineligible"]);
+  });
+
+  it("leaves V1's Approve Discharge and Forms out for users on the stepped form", () => {
+    useFeatureVariantsMock.mockReturnValue({ usIaEarlyDischargeV2: {} });
+    opportunity = {
+      clientStatus: "DISCHARGE_FORM_REVIEW",
+    } as unknown as UsIaEarlyDischargeOpportunity;
+
+    render(
+      <OpportunitySidePanelProvider>
+        <UsIaMenuButton
+          opportunity={opportunity}
+          markSubmittedAndToast={vi.fn()}
+          deleteSubmitted={vi.fn()}
+        />
+      </OpportunitySidePanelProvider>,
+    );
+    fireEvent.click(screen.getByRole("button"));
+
+    expect(
+      screen.getAllByRole("menuitem").map((node) => node.textContent),
+    ).toEqual(["Mark as Ineligible"]);
+  });
 });

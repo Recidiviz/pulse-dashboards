@@ -17,28 +17,63 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 
+import { UsIaEarlyDischargeForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { UsIaEarlyDischargeOpportunity } from "../../../../../WorkflowsStore/Opportunity/UsIa";
+import { UsIaEarlyDischargeOpportunityUpdate } from "../../../../../WorkflowsStore/Opportunity/UsIa/UsIaEarlyDischargeOpportunity/types";
 import { FormHeaderProps } from "../../../FormContainer";
 import { FormUsIaEarlyDischargeV2 } from "../FormUsIaEarlyDischargeV2";
 
-vi.mock("../../../FormContainer", () => ({
-  FormContainer: ({ menuActions = [], printable }: FormHeaderProps) => (
+vi.mock("../../../FormContainer", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../FormContainer")>()),
+  FormContainer: ({
+    additionalHeaderButtons,
+    children,
+    menuActions = [],
+    printable,
+  }: FormHeaderProps) => (
     <div data-printable={String(!!printable)}>
+      {additionalHeaderButtons}
       {menuActions.map(({ label, onClick }) => (
         <button key={label} onClick={onClick}>
           {label}
         </button>
       ))}
+      {children}
     </div>
   ),
 }));
-vi.mock("../FormChargesStep", () => ({ FormChargesStep: () => null }));
+vi.mock("../FormChargesStep", () => ({
+  FormChargesStep: ({
+    emptySelectionAction,
+  }: {
+    emptySelectionAction?: string;
+  }) =>
+    emptySelectionAction ? (
+      <p>Charges step: {emptySelectionAction} pressed</p>
+    ) : null,
+}));
 vi.mock("../FormOrderStep", () => ({ FormOrderStep: () => null }));
+vi.mock("../SubmitForApprovalModal", () => ({
+  SubmitForApprovalModal: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div role="dialog" aria-label="Submit for approval" /> : null,
+}));
 
-function renderForm() {
+const SUBMIT = "Submit for supervisor approval";
+
+function renderForm({
+  charges = {},
+  selectedChargeCount = 1,
+}: {
+  charges?: UsIaEarlyDischargeOpportunityUpdate["charges"];
+  selectedChargeCount?: number;
+} = {}) {
   const opportunity = Object.assign(
     Object.create(UsIaEarlyDischargeOpportunity.prototype),
-    { person: { supervisionType: "PROBATION" } },
+    {
+      person: { supervisionType: "PROBATION" },
+      updatesSubscription: { data: { charges } },
+      form: { selectedChargeCount } as UsIaEarlyDischargeForm,
+    },
   ) as UsIaEarlyDischargeOpportunity;
   return render(<FormUsIaEarlyDischargeV2 opportunity={opportunity} />);
 }
@@ -53,9 +88,52 @@ describe("FormUsIaEarlyDischargeV2", () => {
     expect(print).toHaveBeenCalledOnce();
   });
 
+  it("tells the charges step, instead of printing, when no charge is selected", () => {
+    const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
+    renderForm({ selectedChargeCount: 0 });
+
+    fireEvent.click(screen.getByRole("button", { name: "Print" }));
+
+    expect(print).not.toHaveBeenCalled();
+    expect(screen.getByText("Charges step: print pressed")).toBeInTheDocument();
+  });
+
   it("asks the form container to print only the form", () => {
     const { container } = renderForm();
 
     expect(container.querySelector('[data-printable="true"]')).not.toBeNull();
+  });
+
+  it("opens the confirmation from the header's Submit button", () => {
+    renderForm();
+
+    fireEvent.click(screen.getByRole("button", { name: SUBMIT }));
+
+    expect(
+      screen.getByRole("dialog", { name: "Submit for approval" }),
+    ).toBeInTheDocument();
+  });
+
+  it("tells the charges step, instead of opening the confirmation, when no charge is selected", () => {
+    renderForm({ selectedChargeCount: 0 });
+    const submit = screen.getByRole("button", { name: SUBMIT });
+
+    expect(submit).toBeEnabled();
+    fireEvent.click(submit);
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Charges step: submit pressed"),
+    ).toBeInTheDocument();
+  });
+
+  it("drops Submit once the report is with the supervisor", () => {
+    renderForm({
+      charges: { C1: { iconSubmissionStatus: "SUPERVISOR_REVIEW" } },
+    });
+
+    expect(
+      screen.queryByRole("button", { name: SUBMIT }),
+    ).not.toBeInTheDocument();
   });
 });
