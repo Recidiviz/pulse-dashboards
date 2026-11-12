@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenerativeAI, Part } from "@google/generative-ai";
-import { GoogleAIFileManager } from "@google/generative-ai/server";
+import { GoogleGenAI, Part } from "@google/genai";
 import { traceable } from "langsmith/traceable";
 
 import {
-  generateContentWithZodSchema,
-  uploadAudioToGemini,
-} from "~@meetings/tasks/llm/clients/gemini";
+  audioFilePart,
+  generateVertexContentWithZodSchema,
+} from "~@meetings/tasks/llm/clients/vertex-gemini";
 import { EVALUATOR_PROMPTS } from "~@meetings/tasks/llm/evaluators/prompts";
 import {
   EvaluatorInputs,
@@ -34,8 +33,7 @@ import {
 } from "~@meetings/tasks/llm/evaluators/schemas";
 
 async function runTranscriptComparisonInternal(
-  gemini: GoogleGenerativeAI,
-  fileManager: GoogleAIFileManager,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "audioBucket" | "audioPath" | "transcriptsByProvider" | "meetingContext"
@@ -65,17 +63,13 @@ async function runTranscriptComparisonInternal(
     };
   }
 
-  const { uri: audioUri, mimeType: audioMimeType } = await uploadAudioToGemini(
-    fileManager,
+  const audioPart: Part = await audioFilePart(
     inputs.audioBucket,
     inputs.audioPath,
   );
-  const audioPart: Part = {
-    fileData: { mimeType: audioMimeType, fileUri: audioUri },
-  };
 
   if (assemblyAiTranscript && deepgramTranscript) {
-    return generateContentWithZodSchema({
+    return generateVertexContentWithZodSchema({
       client: gemini,
       systemInstruction: EVALUATOR_PROMPTS.TRANSCRIPT_COMPARISON.SYSTEM,
       parts: [
@@ -95,7 +89,7 @@ async function runTranscriptComparisonInternal(
   }
 
   // Single provider: grade the one transcript directly against the audio.
-  const { grade, ...quality } = await generateContentWithZodSchema({
+  const { grade, ...quality } = await generateVertexContentWithZodSchema({
     client: gemini,
     systemInstruction: EVALUATOR_PROMPTS.TRANSCRIPT_QUALITY.SYSTEM,
     parts: [
@@ -121,7 +115,7 @@ async function runTranscriptComparisonInternal(
 }
 
 async function runCaseNoteInternal(
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "caseNote" | "meetingContext"
@@ -129,7 +123,7 @@ async function runCaseNoteInternal(
   timeout?: number,
   tracingEnabled = true,
 ): Promise<TextEvaluatorOutput> {
-  return generateContentWithZodSchema({
+  return generateVertexContentWithZodSchema({
     client: gemini,
     systemInstruction: EVALUATOR_PROMPTS.CASE_NOTE.SYSTEM,
     parts: EVALUATOR_PROMPTS.CASE_NOTE.USER({
@@ -144,7 +138,7 @@ async function runCaseNoteInternal(
 }
 
 async function runActionItemsInternal(
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "actionItems" | "meetingContext"
@@ -152,7 +146,7 @@ async function runActionItemsInternal(
   timeout?: number,
   tracingEnabled = true,
 ): Promise<TextEvaluatorOutput> {
-  return generateContentWithZodSchema({
+  return generateVertexContentWithZodSchema({
     client: gemini,
     systemInstruction: EVALUATOR_PROMPTS.ACTION_ITEMS.SYSTEM,
     parts: EVALUATOR_PROMPTS.ACTION_ITEMS.USER({
@@ -167,7 +161,7 @@ async function runActionItemsInternal(
 }
 
 async function runOverallInternal(
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Pick<
     EvaluatorInputs,
     "bestTranscript" | "caseNote" | "actionItems" | "meetingContext"
@@ -175,7 +169,7 @@ async function runOverallInternal(
   timeout?: number,
   tracingEnabled = true,
 ): Promise<TextEvaluatorOutput> {
-  return generateContentWithZodSchema({
+  return generateVertexContentWithZodSchema({
     client: gemini,
     systemInstruction: EVALUATOR_PROMPTS.OVERALL.SYSTEM,
     parts: EVALUATOR_PROMPTS.OVERALL.USER({
@@ -215,23 +209,16 @@ export const runOverall = traceable(runOverallInternal, {
 
 type Evaluator<
   Internal extends (
-    gemini: GoogleGenerativeAI,
+    gemini: GoogleGenAI,
     inputs: never,
     timeout?: number,
     tracingEnabled?: boolean,
   ) => unknown,
 > = (
-  gemini: GoogleGenerativeAI,
+  gemini: GoogleGenAI,
   inputs: Parameters<Internal>[1],
   timeout?: number,
 ) => ReturnType<Internal>;
-
-type TranscriptComparisonEvaluator = (
-  gemini: GoogleGenerativeAI,
-  fileManager: GoogleAIFileManager,
-  inputs: Parameters<typeof runTranscriptComparisonInternal>[2],
-  timeout?: number,
-) => ReturnType<typeof runTranscriptComparisonInternal>;
 
 /**
  * The evaluators that runAllEvaluators runs. Both tracedEvaluators and
@@ -239,7 +226,7 @@ type TranscriptComparisonEvaluator = (
  * both.
  */
 export type Evaluators = {
-  runTranscriptComparison: TranscriptComparisonEvaluator;
+  runTranscriptComparison: Evaluator<typeof runTranscriptComparisonInternal>;
   runCaseNote: Evaluator<typeof runCaseNoteInternal>;
   runActionItems: Evaluator<typeof runActionItemsInternal>;
   runOverall: Evaluator<typeof runOverallInternal>;
@@ -260,14 +247,8 @@ export const tracedEvaluators: Evaluators = {
  * isTracingEnabledForState is false.
  */
 export const untracedEvaluators: Evaluators = {
-  runTranscriptComparison: (gemini, fileManager, inputs, timeout) =>
-    runTranscriptComparisonInternal(
-      gemini,
-      fileManager,
-      inputs,
-      timeout,
-      false,
-    ),
+  runTranscriptComparison: (gemini, inputs, timeout) =>
+    runTranscriptComparisonInternal(gemini, inputs, timeout, false),
   runCaseNote: (gemini, inputs, timeout) =>
     runCaseNoteInternal(gemini, inputs, timeout, false),
   runActionItems: (gemini, inputs, timeout) =>

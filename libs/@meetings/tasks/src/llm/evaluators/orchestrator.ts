@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { traceable } from "langsmith/traceable";
 
+import { createVertexGeminiClient } from "~@meetings/tasks/llm/clients/vertex-gemini";
 import { getLangsmithTraceId } from "~@meetings/tasks/llm/evaluation-store";
 import {
   tracedEvaluators,
@@ -43,7 +42,7 @@ const evaluateAll = async (
   clients: EvaluatorClients,
   inputs: EvaluatorInputs,
 ): Promise<EvaluatorResult> => {
-  const { gemini, fileManager, timeout } = clients;
+  const { gemini, timeout } = clients;
   const evaluators =
     clients.tracingEnabled === false ? untracedEvaluators : tracedEvaluators;
 
@@ -51,7 +50,6 @@ const evaluateAll = async (
     await Promise.allSettled([
       evaluators.runTranscriptComparison(
         gemini,
-        fileManager,
         {
           audioBucket: inputs.audioBucket,
           audioPath: inputs.audioPath,
@@ -145,19 +143,13 @@ export function runAllEvaluators(
 }
 
 /**
- * Build EvaluatorClients from environment variables for evaluations of
+ * Builds EvaluatorClients that call Gemini on Vertex AI for evaluations of
  * meetings in stateCode.
- * Throws if GOOGLE_API_KEY is not set.
+ * Throws if GOOGLE_CLOUD_PROJECT is not set.
  */
 export function createEvaluatorClients(stateCode: string): EvaluatorClients {
-  const geminiKey = process.env["GOOGLE_API_KEY"];
-  if (!geminiKey) {
-    throw new Error("Missing GOOGLE_API_KEY environment variable");
-  }
-
   return {
-    gemini: new GoogleGenerativeAI(geminiKey),
-    fileManager: new GoogleAIFileManager(geminiKey),
+    gemini: createVertexGeminiClient(),
     timeout: 1800000,
     tracingEnabled: isTracingEnabledForState(stateCode),
   };

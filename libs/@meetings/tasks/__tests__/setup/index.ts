@@ -18,6 +18,7 @@
 import { request } from "node:http";
 
 import { DeepgramClient } from "@deepgram/sdk";
+import { GoogleGenAI } from "@google/genai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { File } from "@google-cloud/storage";
 import { AssemblyAI } from "assemblyai";
@@ -280,5 +281,20 @@ export const mockGemini = mock<GoogleGenerativeAI>({
 vi.mock("@google/generative-ai", () => ({
   GoogleGenerativeAI: vi.fn().mockImplementation(() => {
     return mockGemini;
+  }),
+}));
+
+// Mock Google Gen AI client (Vertex), used by the LLM judges
+export const mockVertexGemini = mock<GoogleGenAI>({
+  models: {
+    generateContent: vi.fn().mockResolvedValue({
+      text: JSON.stringify({ claims: [] }),
+    }),
+  },
+});
+
+vi.mock("@google/genai", () => ({
+  GoogleGenAI: vi.fn().mockImplementation(() => {
+    return mockVertexGemini;
   }),
 }));

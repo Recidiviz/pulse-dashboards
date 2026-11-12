@@ -19,8 +19,8 @@ import type { MockInstance } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { ZodSchema } from "zod";
 
-import type { ZodGenerateContentOptions } from "~@meetings/tasks/llm/clients/gemini";
-import * as geminiClient from "~@meetings/tasks/llm/clients/gemini";
+import type { VertexGenerateContentOptions } from "~@meetings/tasks/llm/clients/vertex-gemini";
+import * as geminiClient from "~@meetings/tasks/llm/clients/vertex-gemini";
 import {
   runActionItems,
   runCaseNote,
@@ -32,7 +32,7 @@ import type {
   TextEvaluatorOutput,
   TranscriptComparisonOutput,
 } from "~@meetings/tasks/llm/evaluators/schemas";
-import { mockGemini } from "~@meetings/tasks/test/setup";
+import { mockVertexGemini as mockGemini } from "~@meetings/tasks/test/setup";
 
 // Make traceable a passthrough so we can call the wrapped agents in tests
 // without a LangSmith client being configured.
@@ -41,20 +41,15 @@ vi.mock("langsmith/traceable", () => ({
 }));
 
 type GenerateSpy = MockInstance<
-  (opts: ZodGenerateContentOptions<ZodSchema>) => Promise<unknown>
+  (opts: VertexGenerateContentOptions<ZodSchema>) => Promise<unknown>
 >;
 
 function spyOnGenerate() {
   return vi.spyOn(
     geminiClient,
-    "generateContentWithZodSchema",
+    "generateVertexContentWithZodSchema",
   ) as unknown as GenerateSpy;
 }
-
-const mockFileManager = {
-  uploadFile: vi.fn(),
-  getFile: vi.fn(),
-} as never;
 
 const GOOD_TEXT_RESULT: TextEvaluatorOutput = {
   rationale: "Accurate and complete.",
@@ -103,9 +98,11 @@ describe("Evaluator Agents", () => {
     ] as const)(
       "should grade a $provider-only transcript against the audio",
       async ({ provider, assemblyAiGrade, deepgramGrade }) => {
-        vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
-          uri: "gs://gemini-files/audio-123",
-          mimeType: "audio/m4a",
+        vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue({
+          fileData: {
+            fileUri: "gs://gemini-files/audio-123",
+            mimeType: "audio/m4a",
+          },
         });
         const generateSpy = spyOnGenerate().mockResolvedValue({
           rationale: "Drops the closing minute.",
@@ -114,17 +111,13 @@ describe("Evaluator Agents", () => {
           inaccuracies: [],
         });
 
-        const result = await runTranscriptComparison(
-          mockGemini,
-          mockFileManager,
-          {
-            audioBucket: "test-bucket",
-            audioPath: "meetings/final.m4a",
-            transcriptsByProvider: { [provider]: "Only transcript." },
-          },
-        );
+        const result = await runTranscriptComparison(mockGemini, {
+          audioBucket: "test-bucket",
+          audioPath: "meetings/final.m4a",
+          transcriptsByProvider: { [provider]: "Only transcript." },
+        });
 
-        expect(geminiClient.uploadAudioToGemini).toHaveBeenCalled();
+        expect(geminiClient.audioFilePart).toHaveBeenCalled();
         const parts = generateSpy.mock.calls[0]?.[0]?.parts as Array<{
           text?: string;
         }>;
@@ -143,21 +136,17 @@ describe("Evaluator Agents", () => {
     test("should return NONE without calling the judge when both transcripts are missing", async () => {
       const generateSpy = spyOnGenerate();
 
-      const result = await runTranscriptComparison(
-        mockGemini,
-        mockFileManager,
-        {
-          audioBucket: "test-bucket",
-          audioPath: "meetings/final.m4a",
-          transcriptsByProvider: {},
-        },
-      );
+      const result = await runTranscriptComparison(mockGemini, {
+        audioBucket: "test-bucket",
+        audioPath: "meetings/final.m4a",
+        transcriptsByProvider: {},
+      });
 
       expect(result.winner).toBe("NONE");
       expect(generateSpy).not.toHaveBeenCalled();
     });
 
-    test("should call uploadAudioToGemini and generateContentWithZodSchema when both transcripts are present", async () => {
+    test("should point the judge at the audio and call Gemini when both transcripts are present", async () => {
       const expectedComparison: TranscriptComparisonOutput = {
         rationale: "AssemblyAI was more accurate.",
         winner: "ASSEMBLYAI",
@@ -165,35 +154,36 @@ describe("Evaluator Agents", () => {
         deepgramGrade: "PARTIAL",
       };
 
-      vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
-        uri: "gs://gemini-files/audio-123",
-        mimeType: "audio/m4a",
+      vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue({
+        fileData: {
+          fileUri: "gs://gemini-files/audio-123",
+          mimeType: "audio/m4a",
+        },
       });
       spyOnGenerate().mockResolvedValue(expectedComparison);
 
-      const result = await runTranscriptComparison(
-        mockGemini,
-        mockFileManager,
-        {
-          audioBucket: baseInputs.audioBucket,
-          audioPath: baseInputs.audioPath,
-          transcriptsByProvider: baseInputs.transcriptsByProvider,
-        },
-      );
+      const result = await runTranscriptComparison(mockGemini, {
+        audioBucket: baseInputs.audioBucket,
+        audioPath: baseInputs.audioPath,
+        transcriptsByProvider: baseInputs.transcriptsByProvider,
+      });
 
-      expect(geminiClient.uploadAudioToGemini).toHaveBeenCalledWith(
-        mockFileManager,
+      expect(geminiClient.audioFilePart).toHaveBeenCalledWith(
         baseInputs.audioBucket,
         baseInputs.audioPath,
       );
-      expect(geminiClient.generateContentWithZodSchema).toHaveBeenCalled();
+      expect(
+        geminiClient.generateVertexContentWithZodSchema,
+      ).toHaveBeenCalled();
       expect(result).toEqual(expectedComparison);
     });
 
-    test("should forward the timeout to generateContentWithZodSchema", async () => {
-      vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
-        uri: "gs://gemini-files/audio-123",
-        mimeType: "audio/m4a",
+    test("should forward the timeout to Gemini", async () => {
+      vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue({
+        fileData: {
+          fileUri: "gs://gemini-files/audio-123",
+          mimeType: "audio/m4a",
+        },
       });
       const generateSpy = spyOnGenerate().mockResolvedValue({
         rationale: "ok",
@@ -204,7 +194,6 @@ describe("Evaluator Agents", () => {
 
       await runTranscriptComparison(
         mockGemini,
-        mockFileManager,
         {
           audioBucket: baseInputs.audioBucket,
           audioPath: baseInputs.audioPath,
@@ -219,9 +208,8 @@ describe("Evaluator Agents", () => {
     });
 
     test("should include both transcript texts in the user prompt parts", async () => {
-      vi.spyOn(geminiClient, "uploadAudioToGemini").mockResolvedValue({
-        uri: "gs://files/audio",
-        mimeType: "audio/mp4",
+      vi.spyOn(geminiClient, "audioFilePart").mockResolvedValue({
+        fileData: { fileUri: "gs://files/audio", mimeType: "audio/mp4" },
       });
       const generateSpy = spyOnGenerate().mockResolvedValue({
         rationale: "ok",
@@ -230,7 +218,7 @@ describe("Evaluator Agents", () => {
         deepgramGrade: "GOOD",
       } satisfies TranscriptComparisonOutput);
 
-      await runTranscriptComparison(mockGemini, mockFileManager, {
+      await runTranscriptComparison(mockGemini, {
         audioBucket: "bucket",
         audioPath: "path.m4a",
         transcriptsByProvider: {
@@ -252,7 +240,7 @@ describe("Evaluator Agents", () => {
   });
 
   describe("runCaseNote", () => {
-    test("should call generateContentWithZodSchema with transcript and case note", async () => {
+    test("should call Gemini with transcript and case note", async () => {
       const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
 
       const result = await runCaseNote(mockGemini, {
@@ -322,7 +310,7 @@ describe("Evaluator Agents", () => {
   });
 
   describe("runActionItems", () => {
-    test("should call generateContentWithZodSchema with JSON-serialized action items", async () => {
+    test("should call Gemini with JSON-serialized action items", async () => {
       const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
 
       await runActionItems(mockGemini, {
@@ -354,7 +342,7 @@ describe("Evaluator Agents", () => {
   });
 
   describe("runOverall", () => {
-    test("should call generateContentWithZodSchema with all output sections", async () => {
+    test("should call Gemini with all output sections", async () => {
       const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
 
       await runOverall(mockGemini, {

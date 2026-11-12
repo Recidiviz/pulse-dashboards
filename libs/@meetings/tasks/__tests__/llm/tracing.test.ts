@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { GoogleGenAI } from "@google/genai";
 import type { GoogleGenerativeAI } from "@google/generative-ai";
-import type { GoogleAIFileManager } from "@google/generative-ai/server";
 import { RunTree } from "langsmith";
 import { wrapOpenAI } from "langsmith/wrappers";
 import {
@@ -52,10 +52,13 @@ const gemini = {
   }),
 } as unknown as GoogleGenerativeAI;
 
-const fileManager = {
-  uploadFile: vi.fn(),
-  getFile: vi.fn(),
-} as unknown as GoogleAIFileManager;
+const vertexGemini = {
+  models: {
+    generateContent: vi
+      .fn()
+      .mockRejectedValue(new Error("Gemini is offline in tests")),
+  },
+} as unknown as GoogleGenAI;
 
 const evaluatorInputs: EvaluatorInputs = {
   audioBucket: "test-bucket",
@@ -158,12 +161,12 @@ describe("LangSmith tracing by state", () => {
 
   test("runAllEvaluators traces nothing at any depth when tracingEnabled is false", async () => {
     await runAllEvaluators(
-      { gemini, fileManager, tracingEnabled: false },
+      { gemini: vertexGemini, tracingEnabled: false },
       evaluatorInputs,
     );
     expect(postRun).not.toHaveBeenCalled();
 
-    await runAllEvaluators({ gemini, fileManager }, evaluatorInputs);
+    await runAllEvaluators({ gemini: vertexGemini }, evaluatorInputs);
     expect(postRun).toHaveBeenCalled();
   });
 });

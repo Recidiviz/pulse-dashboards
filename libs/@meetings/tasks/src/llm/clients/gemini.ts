@@ -16,8 +16,6 @@
 // =============================================================================
 
 import { GoogleGenerativeAI, Part, Schema } from "@google/generative-ai";
-import { FileState, GoogleAIFileManager } from "@google/generative-ai/server";
-import { Storage } from "@google-cloud/storage";
 import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
@@ -130,49 +128,3 @@ export const generateContentWithZodSchema = <T extends ZodSchema>(
   options.tracingEnabled === false
     ? generateContentWithZodSchemaInternal(options)
     : generateContentWithZodSchemaTraced(options);
-
-/**
- * Upload audio from GCS to the Gemini Files API and return the file URI.
- */
-export async function uploadAudioToGemini(
-  fileManager: GoogleAIFileManager,
-  bucketName: string,
-  filePath: string,
-): Promise<{ uri: string; mimeType: string }> {
-  const expectedAudioBucket = process.env["AUDIO_RECORDINGS_BUCKET_NAME"];
-  if (bucketName !== expectedAudioBucket) {
-    throw new Error(
-      `Requested upload from bucket ${bucketName}, expected ${expectedAudioBucket}`,
-    );
-  }
-  const storage = new Storage();
-  const gcsFile = storage.bucket(bucketName).file(filePath);
-
-  const [[audioBuffer], [metadata]] = await Promise.all([
-    gcsFile.download(),
-    gcsFile.getMetadata(),
-  ]);
-
-  const mimeType = metadata.contentType ?? "audio/mpeg";
-
-  const uploadResponse = await fileManager.uploadFile(audioBuffer, {
-    mimeType,
-    displayName: "meeting-audio",
-  });
-
-  let geminiFile = uploadResponse.file;
-  // Poll for processing completed
-  while (geminiFile.state === FileState.PROCESSING) {
-    // eslint-disable-next-line no-await-in-loop
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    // eslint-disable-next-line no-await-in-loop
-    geminiFile = await fileManager.getFile(geminiFile.name);
-  }
-  if (geminiFile.state === FileState.FAILED) {
-    throw new Error(
-      `Gemini file upload failed: ${JSON.stringify(geminiFile.error)}`,
-    );
-  }
-
-  return { uri: geminiFile.uri, mimeType };
-}
