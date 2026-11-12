@@ -14,10 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
-locals {
-  server_image_name = "product-modules-server"
-  # migrations are packaged in the same image
-  migrate_db_image_name = "product-modules-server"
+data "dotenv" "env" {
+  filename = "../../../../../../apps/@modules/server/.env.${var.deploy_environment}"
 }
 
 module "envs" {
@@ -25,6 +23,19 @@ module "envs" {
   secrets_dir = "${path.module}/environments"
   environment = var.deploy_environment
   components  = ["server"]
+}
+
+locals {
+  server_image_name = "product-modules-server"
+  # migrations are packaged in the same image
+  migrate_db_image_name = "product-modules-server"
+  server_env_vars = sensitive(concat([
+    for key, value in data.dotenv.env.entries : {
+      value = value
+      name  = key
+    }],
+    module.envs.env_vars_by_component["server"],
+  ))
 }
 
 module "server" {
@@ -41,7 +52,7 @@ module "server" {
     {
       container_image = "${var.artifact_registry_repo}/${local.server_image_name}:${var.server_container_version}"
 
-      env_vars = module.envs.env_vars_by_component["server"]
+      env_vars = local.server_env_vars
 
       volume_mounts = [{
         name       = "cloudsql"

@@ -27,6 +27,10 @@ terraform {
       source  = "carlpett/sops"
       version = "~> 1.4"
     }
+    dotenv = {
+      source  = "germanbrew/dotenv"
+      version = "1.2.9"
+    }
   }
 }
 

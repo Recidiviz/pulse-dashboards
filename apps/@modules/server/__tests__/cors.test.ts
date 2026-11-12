@@ -19,7 +19,10 @@ import { FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { buildServer } from "../src/server";
-import { corsOriginsFromEnv } from "../src/server/corsOrigins";
+import {
+  corsOriginsFromEnv,
+  LOCALHOST_ORIGIN,
+} from "../src/server/corsOrigins";
 
 const PUBLIC_SITE = "https://calendar.example.org";
 const STAFF_DASHBOARD = "https://dashboard-staging.recidiviz.org";
@@ -106,11 +109,30 @@ describe("Modules CORS on the public calendar route", () => {
 });
 
 describe("corsOriginsFromEnv", () => {
+  beforeEach(() => {
+    vi.stubEnv("DEPLOY_ENV", "development");
+  });
+
   afterEach(() => {
     vi.unstubAllEnvs();
   });
 
+  it("appends localhost in staging", () => {
+    vi.stubEnv("DEPLOY_ENV", "staging");
+    vi.stubEnv("CORS_ORIGINS", STAFF_DASHBOARD);
+
+    expect(corsOriginsFromEnv()).toEqual([STAFF_DASHBOARD, LOCALHOST_ORIGIN]);
+  });
+
+  it("does not append localhost in production", () => {
+    vi.stubEnv("DEPLOY_ENV", "production");
+    vi.stubEnv("CORS_ORIGINS", STAFF_DASHBOARD);
+
+    expect(corsOriginsFromEnv()).toEqual([STAFF_DASHBOARD]);
+  });
+
   it("returns exact origins as trimmed strings", () => {
+    vi.stubEnv("DEPLOY_ENV", "production"); // Don't append localhost
     vi.stubEnv("CORS_ORIGINS", ` ${STAFF_DASHBOARD},, ${PUBLIC_SITE} ,`);
 
     expect(corsOriginsFromEnv()).toEqual([STAFF_DASHBOARD, PUBLIC_SITE]);

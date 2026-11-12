@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const LOCALHOST_ORIGIN = /^https?:\/\/localhost(:\d+)?$/;
+export const LOCALHOST_ORIGIN = /^https?:\/\/localhost(:\d+)?$/;
 
 // Turns one CORS_ORIGINS entry into what @fastify/cors matches against: the
 // origin itself, or an anchored RegExp when it holds a "*" hostname label.
@@ -34,15 +34,20 @@ function originMatcher(entry: string): string | RegExp {
  *
  *   https://dashboard-staging.recidiviz.org,https://recidiviz-dashboard-stag-e1108--*.web.app
  *
- * The callers are the staff dashboard, its preview channels and the public
- * calendar site. An unset or empty variable allows any localhost origin, so a
- * local frontend can talk to a local server and no other site can.
+ * The callers are the staff dashboard, its preview channels, development
+ * instances and the public calendar site.
+ *
+ * Calls from development instances are blocked in production.
  */
 export function corsOriginsFromEnv(): (string | RegExp)[] {
   const entries = (process.env["CORS_ORIGINS"] ?? "")
     .split(",")
     .map((entry) => entry.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .map(originMatcher);
 
-  return entries.length > 0 ? entries.map(originMatcher) : [LOCALHOST_ORIGIN];
+  if (process.env["DEPLOY_ENV"] !== "production")
+    entries.push(LOCALHOST_ORIGIN);
+
+  return entries;
 }
