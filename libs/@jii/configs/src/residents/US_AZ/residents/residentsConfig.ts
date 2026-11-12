@@ -25,9 +25,6 @@ export const usAzResidentsConfig: ResidentsConfig = {
   translation: {
     additionalLanguages: [],
   },
-  enabledResidentFlags: {
-    usAzFslImprovements: parseISO("2026-06-15T05:00:00-07:00"),
-  },
   enabledResidentFacilityFlags: {
     PERRYVILLE: {
       usAzIonReferral: parseISO("2026-09-25T05:00:00-07:00"),
