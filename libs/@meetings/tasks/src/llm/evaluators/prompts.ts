@@ -68,9 +68,12 @@ GRADING SCALE:
   transcript. This covers incorrect information both about whether a violation occurred,
   or that could cause a violation to occur (e.g. an incorrect date that could cause an
   important deadline to be missed). BAD is reserved for the highest-scrutiny categories:
-  violations, criminal activity, conditions of supervision (e.g. completing programming
-  or failing to comply, travel outside certain areas), or an imminent risk to physical
-  safety. An invented fact or misrepresentation is BAD only when it falls in one of
+  violations; criminal activity; conditions of supervision (e.g. completing programming
+  or failing to comply, travel outside certain areas); drug or alcohol test results and
+  admissions of use; court dates and hearings; parole, release, or discharge dates;
+  misconduct reports and program eligibility; or an imminent risk to physical safety.
+  An error does not have to invent a violation to be BAD. An invented fact or
+  misrepresentation is BAD only when it falls in one of
   those categories and could lead to a violation, a related change in criminal justice
   status (like a release date), or safety risk. Errors outside them — e.g. logistics,
   appointment dates or locations, transportation details, which resources to use,
@@ -91,6 +94,46 @@ GRADING SCALE:
   to the client. As long as it's broadly appropriate to the meeting, treat it as fine.
   Issues in a SUCCESS PLAN section should still be noted, but should never be the reason
   for a BAD grade.`.trim();
+
+// Added to the case note, action items and overall judges, before "Base your
+// evaluation on the transcript provided". They make a single wrong high-stakes
+// fact BAD, list mistakes the judges tended to miss in outputs QA rated BAD,
+// and have the judge fact-check the output in its rationale before grading.
+const HIGH_STAKES_INSTRUCTIONS = `HIGH-STAKES FACT CHECK:
+Before grading, find every statement in the output about the topics below. For each one, locate the passage in the transcript (or KNOWN CONTEXT) it comes from and compare them detail by detail: numbers, dates, names, which item is which, and positive versus negative.
+- Conditions of supervision and their exact terms, including numeric thresholds (e.g. a blood alcohol limit, a curfew time, a travel area, a no-contact order).
+- Required programming or treatment: which program or class type, and how many sessions are done or remain. If the output speaks of requirements in general (e.g. "required classes") where the transcript distinguishes kinds (e.g. DV classes and DUI classes), check that the statement is true of each kind.
+- Drug and alcohol test results: which test, its date, and whether it was positive/dirty or negative/clean. Keep the most recent result separate from earlier ones.
+- Court dates, hearings and other legal deadlines, including which court or case each date belongs to.
+- Contact details someone needs in order to comply, such as the email address or phone number required documents must be sent to. Check staff contact details against KNOWN CONTEXT.
+- Compliance claims: if the client claims compliance (e.g. "my last test was clean", "I'm doing my classes") and staff or records in the meeting contradict it, the output must not present the claim as fact or without the contradiction.
+When a speaker corrects an earlier statement, the correction is the fact.
+
+When the output and the transcript disagree on one of these facts, the transcript (and KNOWN CONTEXT) is the record. Do not excuse the disagreement by assuming the transcript is garbled and the output corrected it, and do not substitute a typical or standard value from outside knowledge (for example a common legal blood alcohol limit). Such a mismatch is a factual error, not a minor detail, a transcription artifact, or an acceptable paraphrase, even when the rest of the output is accurate.
+Grade it by its consequence using the scale above: if a caseworker or client acting on the output could miss or breach a condition, misjudge compliance (for example treat a positive test as clean, or a requirement as being met), or miss a court date, it is BAD. Court dates and hearings are legal obligations, not logistics; appointment dates and times with staff or providers remain logistics.
+Only count a mismatch you can support by quoting both the output and the transcript passage it contradicts. If the output is a reasonable reading of the transcript, it is not a mismatch. If the transcript is ambiguous about a high-stakes fact, do not treat the output's version as confirmed: mark it UNCLEAR in the fact check below.
+
+Grade each error by its consequence, not by how accurate the rest of the output is: a single error in one of the BAD categories above makes the grade BAD, even if everything else is excellent.
+
+If leaving something out makes what the output does say wrong (for example, stating a curfew without the later time staff approved), treat it as an inaccuracy, not an omission.
+
+Any factual error about the client's conditions of supervision, required classes or programs, drug or alcohol test results, court or other legal dates, release or discharge dates, or the contact details they need is BAD, however small it seems and however accurate the rest of the output is.
+
+When you are unsure whether an error makes the output PARTIAL or BAD, grade it BAD.
+
+These mistakes are easy to miss, so look for them specifically:
+- two similar things merged or swapped, such as two court dates (a pre-trial and a trial date), two phone lines or check-in systems, two kinds of required class, or test results from different dates;
+- an admission written as a denial, or a denial as an admission;
+- a hypothetical, an example or a question written as a fact about the client;
+- a place, date or time for a required test, hearing or check-in that differs from the transcript, including where the transcript is garbled or cuts out;
+- a numeric limit or condition (such as an alcohol limit or a no-contact rule) written as stricter or looser than the transcript states;
+- the most recent test result described as clean when the transcript says otherwise, or an earlier result given as the latest;
+- an email address or phone number that differs from the transcript.
+Each of these is a factual error in a BAD category.
+
+Before grading, fact-check the output in your rationale. List every concrete factual claim in it, including the high-stakes facts above and each statement about what someone said, did, admitted or agreed to. For each, quote the transcript or KNOWN CONTEXT passage that bears on it and mark it SUPPORTED, CONTRADICTED, NOT FOUND or UNCLEAR. Then grade: a CONTRADICTED claim is an error, graded by its consequence using the scale above; an UNCLEAR or NOT FOUND claim about a high-stakes fact makes the output at least PARTIAL.
+
+For drug and alcohol tests, list each test the transcript mentions with its date and result, and compare the output's account test by test, including which one is the most recent. Where the transcript is garbled, cut off or self-correcting at a high-stakes fact (such as where or when a test must be taken), mark the output's version UNCLEAR unless the transcript clearly supports it.`;
 
 export const EVALUATOR_PROMPTS = {
   TRANSCRIPT_COMPARISON: {
@@ -179,6 +222,8 @@ export const EVALUATOR_PROMPTS = {
         Omissions should be noted, but don't count against the grade unless the entire case note is empty in which case the grade should be PARTIAL.
       4. Hallucination — Does the note contain anything not present in the transcript?
 
+      ${HIGH_STAKES_INSTRUCTIONS}
+
       Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
 
       ADDITIONAL OUTPUTS:
@@ -217,6 +262,8 @@ export const EVALUATOR_PROMPTS = {
       - Assignment — Is each task attributed to the right person? Misattributions should be noted, but assigning to the wrong person doesn't rise to the level of a PARTIAL or BAD grade.
       - Hallucination — Are there tasks listed that were never discussed?
       - Deadlines — A deadline is acceptable if it was explicitly stated or clearly implied by the conversation (a named day, a concrete event, a stated schedule window). Relative references ("Thursday", "tomorrow") may be resolved against the meeting date and time given in KNOWN CONTEXT. Flag deadlines with no basis in the transcript, and note missing deadlines where the conversation clearly implied one.
+
+      ${HIGH_STAKES_INSTRUCTIONS}
 
       Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
 
@@ -258,6 +305,8 @@ export const EVALUATOR_PROMPTS = {
       ${GRADING_SCALE_TEXT}
 
       Consider the outputs as a whole: if any single section contains BAD-level errors that could mislead a caseworker, the overall grade should be BAD. A PARTIAL grade in one area does not automatically make the overall PARTIAL — use your judgment about impact.
+
+      ${HIGH_STAKES_INSTRUCTIONS}
 
       Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
 
