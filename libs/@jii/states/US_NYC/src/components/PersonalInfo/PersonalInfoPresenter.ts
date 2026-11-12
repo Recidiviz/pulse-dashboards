@@ -29,16 +29,48 @@ export type PersonalInfoField = {
   description?: string;
 };
 
+/**
+ * Show/hide state for the section, kept in the component so it lasts only as
+ * long as the page is mounted.
+ */
+export type PersonalInfoHiddenState = {
+  hidden: boolean;
+  setHidden: (hidden: boolean) => void;
+};
+
 export class PersonalInfoPresenter {
   constructor(
     private readonly stateSpecificData: UsNycResidentJiiData,
     private readonly t: UsNycTFunction,
+    private readonly hiddenState: PersonalInfoHiddenState,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
   get heading(): string {
     return this.t(($) => $.personalInformation.general.heading);
+  }
+
+  get hiddenMessage(): string {
+    return this.t(($) => $.personalInformation.general.hiddenMessage);
+  }
+
+  get toggleLabel(): string {
+    return this.hidden
+      ? this.t(($) => $.personalInformation.toggle.showLabel)
+      : this.t(($) => $.personalInformation.toggle.hideLabel);
+  }
+
+  get hidden(): boolean {
+    return this.hiddenState.hidden;
+  }
+
+  get hiddenSubheading(): string {
+    return this.t(($) => $.personalInformation.hiddenSubHeading);
+  }
+
+  setHidden(hidden: boolean) {
+    this.hiddenState.setHidden(hidden);
   }
 
   get commissaryBalance(): string | undefined {

@@ -17,58 +17,115 @@
 
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useState } from "react";
 import styled from "styled-components";
 
-import { Card, CardHeading, CardValue } from "~@jii/common-ui";
+import {
+  Card,
+  CardHeading,
+  CardValue,
+  CopyWrapper,
+  HomepageSectionHeading,
+  SlateCopy,
+} from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { useUsNycTranslations } from "~@jii/translation";
-import { palette, spacing, typography } from "~design-system";
+import { palette, spacing, Toggle, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
+import { HiddenDatesCardOverride } from "../ScheduledCourtDates/HiddenDatesCardOverride";
 import { PersonalInfoPresenter } from "./PersonalInfoPresenter";
 
-const SectionHeading = styled.h2`
-  ${typography.Sans24}
-  color: ${palette.pine1};
-
-  margin: 0 0 ${rem(spacing.md)};
+const FieldCard = styled(Card)`
+  margin: 0;
 `;
 
-const CardDescription = styled.p`
-  ${typography.Sans16}
+const FieldLabel = styled(CardHeading)`
+  display: block;
   color: ${palette.pine1};
 `;
 
-const CardSubHeading = styled.div`
+const CardDescription = styled(CopyWrapper)`
+  display: block;
+  margin-top: ${rem(spacing.lg)};
+
+  & > p:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const CardSubHeading = styled(SlateCopy)`
   ${typography.Sans16}
-  color: ${palette.slate70};
+  display: block;
+  margin-top: ${rem(spacing.sm)};
+`;
+
+const HiddenSubHeading = styled(CopyWrapper)`
+  display: block;
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+const ToggleWrapper = styled.div`
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+const StyledWrapper = styled.div`
+  display: grid;
+  row-gap: ${rem(spacing.md)};
+
+  margin-bottom: ${rem(spacing.lg)};
 `;
 
 const ManagedComponent: React.FC<{ presenter: PersonalInfoPresenter }> =
   observer(function ManagedComponent({ presenter }) {
-    const { fields, heading } = presenter;
+    const {
+      fields,
+      heading,
+      hidden,
+      hiddenMessage,
+      hiddenSubheading,
+      toggleLabel,
+    } = presenter;
 
     if (!fields.length) return null;
 
     return (
-      <section>
-        <SectionHeading>{heading}</SectionHeading>
-        {fields.map(({ id, label, value, subheading, description }) => (
-          <Card key={id}>
-            <CardHeading>{label}</CardHeading>
-            <CardValue>{value}</CardValue>
-            {subheading && <CardSubHeading>{subheading}</CardSubHeading>}
-            {description && <CardDescription>{description}</CardDescription>}
-          </Card>
-        ))}
-      </section>
+      <div>
+        <HomepageSectionHeading>{heading}</HomepageSectionHeading>
+        {hidden && <HiddenSubHeading>{hiddenSubheading}</HiddenSubHeading>}
+        <StyledWrapper>
+          {hidden ? (
+            <HiddenDatesCardOverride>{hiddenMessage}</HiddenDatesCardOverride>
+          ) : (
+            fields.map(({ id, label, value, subheading, description }) => (
+              <FieldCard key={id}>
+                <FieldLabel>{label}</FieldLabel>
+                <CardValue>{value}</CardValue>
+                {subheading && <CardSubHeading>{subheading}</CardSubHeading>}
+                {description && (
+                  <CardDescription>{description}</CardDescription>
+                )}
+              </FieldCard>
+            ))
+          )}
+        </StyledWrapper>
+        <ToggleWrapper>
+          <Toggle
+            checked={!hidden}
+            onChange={(checked) => presenter.setHidden(!checked)}
+          >
+            {toggleLabel}
+          </Toggle>
+        </ToggleWrapper>
+      </div>
     );
   });
 
 function usePresenter() {
   const stateSpecificData = useResidentMetadata("US_NYC");
   const { t } = useUsNycTranslations();
-  return new PersonalInfoPresenter(stateSpecificData, t);
+  const [hidden, setHidden] = useState(true);
+  return new PersonalInfoPresenter(stateSpecificData, t, { hidden, setHidden });
 }
 
 export const PersonalInfo = withPresenterManager({

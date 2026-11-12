@@ -74,6 +74,7 @@
     "toggle": {
       "hideLabel": "Hide my personal information",
       "showLabel": "Show my personal information"
-    }
+    },
+    "hiddenSubHeading": "Your commissary balance and emergency contact are hidden so they don't show on your screen until you choose to see them. Use the switch to show or hide them."
   }
 }
