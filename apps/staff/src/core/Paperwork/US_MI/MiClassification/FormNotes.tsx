@@ -108,7 +108,7 @@ function goodBehaviorNotes(
       return {
         header: noteInfo.secondary,
         rows: toGoodBehaviorRows(
-          note.data.adSegPlacementList ?? [],
+          note.data.adSegPlacementsList ?? [],
           note.data.incidentsList ?? [],
         ),
       };

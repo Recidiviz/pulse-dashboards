@@ -46,7 +46,7 @@ export type adSeg = z.infer<typeof adSeg>;
 export type latestIncidents = z.infer<typeof latestIncidents>;
 
 export const goodBehaviorPastYearNotes = z.object({
-  adSegPlacementList: z.array(adSeg).nullish(),
+  adSegPlacementsList: z.array(adSeg).nullish(),
   incidentsList: latestIncidents.nullish(),
 });
 
@@ -114,7 +114,10 @@ export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
       .passthrough()
       .partial()
       .nullish(),
-    goodBehPastYearNotes: goodBehaviorPastYearNotes.nullable(),
+    goodBehPastYearNotes: goodBehaviorPastYearNotes
+      .passthrough()
+      .partial()
+      .nullable(),
     goodBehPastYearScore: z.coerce.number().nullable(),
     goodBehPastFourMonthScore: z.coerce.number().nullable(),
     goodBehPastFourMonthNotes: goodBehaviorPastFourMonthsNotes.nullable(),
