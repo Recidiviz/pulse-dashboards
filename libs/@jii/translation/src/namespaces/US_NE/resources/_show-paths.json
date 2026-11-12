@@ -612,5 +612,27 @@
       "howDoYouKnowThem": "[US_NE]checkIn.supportSystem.howDoYouKnowThem",
       "placeholder": "[US_NE]checkIn.supportSystem.placeholder"
     }
+  },
+  "successPlan": {
+    "strengths": {
+      "heading": "[US_NE]successPlan.strengths.heading",
+      "description": "[US_NE]successPlan.strengths.description",
+      "empty": {
+        "heading": "[US_NE]successPlan.strengths.empty.heading",
+        "info": "[US_NE]successPlan.strengths.empty.info"
+      }
+    },
+    "skills": {
+      "heading": "[US_NE]successPlan.skills.heading",
+      "description": "[US_NE]successPlan.skills.description",
+      "empty": {
+        "heading": "[US_NE]successPlan.skills.empty.heading",
+        "info": "[US_NE]successPlan.skills.empty.info"
+      }
+    },
+    "disclosure": {
+      "showMore": "[US_NE]successPlan.disclosure.showMore",
+      "showLess": "[US_NE]successPlan.disclosure.showLess"
+    }
   }
 }

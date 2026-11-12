@@ -612,5 +612,27 @@
       "howDoYouKnowThem": "How do you know them?",
       "placeholder": "Tap to add"
     }
+  },
+  "successPlan": {
+    "strengths": {
+      "heading": "My Strengths",
+      "description": "A strength is something that comes naturally to you, like being patient, a hard worker, or a good listener.",
+      "empty": {
+        "heading": "No strengths added yet",
+        "info": "Tell your Case Manager or Reentry Specialist about your strengths so they can add them here."
+      }
+    },
+    "skills": {
+      "heading": "My Skills",
+      "description": "A skill is something you’ve learned or trained for, like a forklift or welding certification, or speaking two languages.",
+      "empty": {
+        "heading": "No skills added yet",
+        "info": "Tell your Case Manager or Reentry Specialist about your skills so they can add them here."
+      }
+    },
+    "disclosure": {
+      "showMore": "Show more",
+      "showLess": "Show less"
+    }
   }
 }

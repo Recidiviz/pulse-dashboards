@@ -15,12 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
+import styled from "styled-components";
 
 import { BackLink } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useCommonTranslations } from "~@jii/translation";
+
+import { UsNeTraitList } from "./UsNeTraitList";
+
+const SuccessPlanPageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(64)};
+`;
 
 export const UsNeSuccessPlanPage = () => {
   const { successPlan } = useResidentMetadata("US_NE");
@@ -32,11 +42,12 @@ export const UsNeSuccessPlanPage = () => {
   }
 
   return (
-    <>
+    <SuccessPlanPageContainer>
       <BackLink to={State.Resident.buildPath(pathParams)}>
         {t(($) => $.backLinks.home)}
       </BackLink>
-      <pre>{JSON.stringify(successPlan, undefined, 2)}</pre>
-    </>
+      <UsNeTraitList kind={"strengths"} traits={successPlan.strengths} />
+      <UsNeTraitList kind={"skills"} traits={successPlan.skills} />
+    </SuccessPlanPageContainer>
   );
 };

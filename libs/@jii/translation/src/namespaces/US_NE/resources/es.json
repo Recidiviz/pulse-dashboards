@@ -105,8 +105,8 @@
         "linkText": "Comenzar Cuestionario"
       },
       "checkInTool": {
-        "title": "Prepárese para su control de los 120 días con su Especialista de Reinserción",
-        "body": "Responda algunas preguntas para ayudar a su Especialista de Reinserción a prepararse para su control de los 120 días.\n\nSu Especialista de Reinserción Social le asignó esto el {{date, formatFullDate}} — le recomendamos completarlo en la próxima semana.",
+        "title": "Prepárese para su sesión de planificación para la reinserción a los 120 días con su Especialista de Reinserción",
+        "body": "Responda algunas preguntas para ayudar a su Especialista de Reinserción a prepararse para su sesión de planificación para la reinserción a los 120 días.\n\nSu Especialista de Reinserción Social le asignó esto el {{date, formatFullDate}} — le recomendamos completarlo en la próxima semana.",
         "linkText": "Comenzar"
       },
       "successPlan": {
@@ -592,7 +592,7 @@
     "completion": {
       "heading": "¡Ya terminaste, {{name}}!",
       "subheading": "Gracias por hacer esto hoy.",
-      "description": "Compartiste tus planes de reinserción para:\n- Tus planes de vivienda\n- Tus planes de transporte\n- Tus finanzas\n- Quién te apoyará\n\nTu Especialista de Reinserción usará lo que tú compartiste en tu junta de los 120 días para crear tu plan de liberación (Release Plan) y tu Success Plan junto contigo.",
+      "description": "Compartió sus planes de reinserción para:\n- Sus planes de vivienda\n- Sus planes de transporte\n- Sus finanzas\n- Quién le apoyará\n\nSu Especialista de Reinserción usará lo que Usted compartió en su sesión de planificación para la reinserción a los 120 días para crear su plan de liberación (Release Plan) y su Success Plan junto con Usted.",
       "close": "Cerrar"
     },
     "questionPage": {
@@ -611,6 +611,28 @@
       "name": "Nombre",
       "howDoYouKnowThem": "¿Cómo las conoces?",
       "placeholder": "Toca para agregar"
+    }
+  },
+  "successPlan": {
+    "strengths": {
+      "heading": "My Strengths",
+      "description": "A strength is something that comes naturally to you, like being patient, a hard worker, or a good listener.",
+      "empty": {
+        "heading": "No strengths added yet",
+        "info": "Tell your Case Manager or Reentry Specialist about your strengths so they can add them here."
+      }
+    },
+    "skills": {
+      "heading": "My Skills",
+      "description": "A skill is something you’ve learned or trained for, like a forklift or welding certification, or speaking two languages.",
+      "empty": {
+        "heading": "No skills added yet",
+        "info": "Tell your Case Manager or Reentry Specialist about your skills so they can add them here."
+      }
+    },
+    "disclosure": {
+      "showMore": "Show more",
+      "showLess": "Show less"
     }
   }
 }
