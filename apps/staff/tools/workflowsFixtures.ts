@@ -86,11 +86,8 @@ import { usNeSupervisionTasksData } from "./fixtures/usNeSupervisionTasks";
 import { usOrEarnedDischargeSentenceReferrals } from "./fixtures/usOrEarnedDischargeSentenceReferrals";
 import { usPaAdminSupervisionReferrals } from "./fixtures/usPaAdminSupervisionReferrals";
 import { usPaSpecialCircumstancesSupervisionReferrals } from "./fixtures/usPaSpecialCircumstancesReferrals";
-import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualReclassificationReviewReferrals";
 import { usTnCompliantReporting2025PolicyReferrals } from "./fixtures/usTnCompliantReporting2025PolicyReferrals";
-import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
-import { usTnInitialClassificationFixture } from "./fixtures/usTnInitialClassificationReferrals";
 import { usTnSuspensionOfDirectSupervisionFixture } from "./fixtures/UsTnSuspensionOfDirectSupervisionReferrals";
 import { usTxAnnualReportStatusReferralsFixture } from "./fixtures/UsTxAnnualReportStatusReferrals";
 import { usTxAnnualReportStatusV2ReferralsFixture } from "./fixtures/UsTxAnnualReportStatusV2Referrals";
@@ -207,12 +204,9 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usPaSpecialCircumstancesSupervisionReferrals,
   usTnCompliantReporting2025PolicyReferrals:
     usTnCompliantReporting2025PolicyReferrals,
-  usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,
   usTnExpirationReferrals: usTnExpirationFixture,
-  usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewFixture,
   usTnSuspensionOfDirectSupervisionReferrals:
     usTnSuspensionOfDirectSupervisionFixture,
-  usTnInitialClassificationReferrals: usTnInitialClassificationFixture,
   usMoOverdueRestrictiveHousingInitialHearingReferrals,
   usMoOverdueRestrictiveHousingReviewHearingReferrals,
   usUtEarlyTerminationReferrals,

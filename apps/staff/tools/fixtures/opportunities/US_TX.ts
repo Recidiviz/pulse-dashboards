@@ -923,7 +923,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [
         {
-          body: "The Withdrawal of Special Condition T tool is in a pilot phase. At the moment, you can see who is potentially eligible for withdrawal of special condition T. After evaluating a client's candidacy, you must still file the actual e-transmittal in OIMS.",
+          body: "The Withdrawal of Special Condition T tool is in a pilot phase. At the moment, you can see who is potentially eligible for withdrawal of special condition T. Clicking on a row will open a sidepanel with the requirements left to check. You can click 'Update Status' to mark their e-transmittal as filed if you have already submitted their e-transmittal OR you can mark the client as ineligible.",
           cta: "Acknowledge & Close",
           id: "757f764b-1710-4300-8f20-d55fbf4d2f91",
           pages: ["caseload"],

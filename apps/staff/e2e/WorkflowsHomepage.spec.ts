@@ -137,6 +137,7 @@ const CASES: HomepageCase[] = [
     tenant: "us_tn",
     externalId: "E2E_TN_OFFICER",
     shape: "DEFAULT - widest type set (14)",
+    searchFor: "Rosalind Ashwood",
   },
   {
     tenant: "us_tx",

@@ -107,7 +107,7 @@ function mockStores(mockWorkflowsStore: any) {
   const rootStore = {
     workflowsStore: mockWorkflowsStore as WorkflowsStore,
     workflowsRootStore: {} as WorkflowsRootStore,
-    currentTenantId: "US_TN",
+    currentTenantId: "US_ID",
     userStore: { user: undefined },
   } as RootStore;
   const configStore = new OpportunityConfigurationStore(rootStore);
@@ -333,9 +333,7 @@ describe("PageWorkflows", () => {
         <div>Opportunity Caseload View</div>,
       );
 
-      renderRouter(
-        `${WORKFLOWS_PATHS.workflows}/usTnCompliantReporting2025Policy`,
-      );
+      renderRouter(`${WORKFLOWS_PATHS.workflows}/LSU`);
 
       expect(screen.getByText("Opportunity Caseload View")).toBeInTheDocument();
     });
@@ -349,9 +347,7 @@ describe("PageWorkflows", () => {
         },
       });
 
-      renderRouter(
-        `${WORKFLOWS_PATHS.workflows}/usTnCompliantReporting2025Policy/101/101`,
-      );
+      renderRouter(`${WORKFLOWS_PATHS.workflows}/LSU/101/101`);
 
       expect(screen.getByText("Opportunity Action Page")).toBeInTheDocument();
     });
@@ -401,14 +397,12 @@ describe("PageWorkflows", () => {
       it("updates activeSystem based on page for SUPERVISION", () => {
         mockStores(baseMockWorkflowsStore);
 
-        renderRouter(
-          `${WORKFLOWS_PATHS.workflows}/usTnCompliantReporting2025Policy`,
-        );
+        renderRouter(`${WORKFLOWS_PATHS.workflows}/LSU`);
 
         expect(
           useRootStore().workflowsRootStore.opportunityConfigurationStore
             .getOpportunityTypeFromUrl,
-        ).toHaveBeenCalledWith("usTnCompliantReporting2025Policy");
+        ).toHaveBeenCalledWith("LSU");
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("SUPERVISION");
@@ -437,7 +431,7 @@ describe("PageWorkflows", () => {
         ).toHaveBeenCalledWith("custodyLevelDowngrade");
         expect(
           useRootStore().workflowsStore.updateSelectedOpportunityType,
-        ).toHaveBeenCalledWith("usTnCustodyLevelDowngrade");
+        ).toHaveBeenCalledWith("usIdCustodyLevelDowngrade");
       });
     });
 

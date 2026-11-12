@@ -17,7 +17,12 @@
 
 import { waitFor } from "@testing-library/react";
 
-import { ClientRecord, fieldToDate, OpportunityType } from "~datatypes";
+import {
+  ClientRecord,
+  fieldToDate,
+  OpportunityType,
+  usTnCompliantReporting2025PolicyFixtures,
+} from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
 import FirestoreStore from "../../../FirestoreStore";
@@ -27,10 +32,7 @@ import { mockIneligibleClient } from "../../__fixtures__";
 import { Client } from "../../Client";
 import { isEligibleOrAlmostEligible } from "../../Opportunity";
 import { OpportunityBase } from "../../Opportunity/OpportunityBase";
-import {
-  UsTnCustodyLevelDowngradeReferralRecordFixture,
-  UsTnExpirationReferralRecordFixture,
-} from "../../Opportunity/UsTn/__fixtures__";
+import { UsTnExpirationReferralRecordFixture } from "../../Opportunity/UsTn/__fixtures__";
 import { JusticeInvolvedPerson } from "../../types";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { WorkflowsFormLayoutPresenter } from "../WorkflowsFormLayoutPresenter";
@@ -44,11 +46,12 @@ let tenantStore: TenantStore;
 
 // test with usTnExpiration, but works for all oppType
 const usTnExpirationType: OpportunityType = "usTnExpiration";
-const usTnCustodyDowngradeType: OpportunityType = "usTnCustodyLevelDowngrade";
+const usTnCompliantReportingType: OpportunityType =
+  "usTnCompliantReporting2025Policy";
 const mockTenantId = "US_TN";
 const usTnClientRecord: ClientRecord = {
   ...mockIneligibleClient,
-  allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+  allEligibleOpportunities: ["usTnCompliantReporting2025Policy"],
   expirationDate: fieldToDate("2022-02-02"),
 };
 
@@ -66,13 +69,13 @@ describe("WorkflowsFormLayoutPresenter", () => {
 
     selectedPerson = new Client(usTnClientRecord, rootStore);
     selectedPerson.opportunityManager.setSelectedOpportunityTypes([
-      usTnCustodyDowngradeType,
+      usTnCompliantReportingType,
       usTnExpirationType,
     ]);
 
     workflowsStore = {
       selectedPerson: selectedPerson,
-      selectedOpportunityType: usTnCustodyDowngradeType,
+      selectedOpportunityType: usTnCompliantReportingType,
       featureVariants: { usTnTEPENotesForAll: {} },
       opportunityConfigurationStore:
         rootStore.workflowsRootStore.opportunityConfigurationStore,
@@ -83,7 +86,7 @@ describe("WorkflowsFormLayoutPresenter", () => {
       "getOpportunitiesForJIIAndOpportunityType",
     ).mockResolvedValue([
       {
-        ...UsTnCustodyLevelDowngradeReferralRecordFixture,
+        ...usTnCompliantReporting2025PolicyFixtures.eligible.input,
       },
     ]);
 
@@ -105,7 +108,7 @@ describe("WorkflowsFormLayoutPresenter", () => {
     beforeEach(() => {
       presenter = new WorkflowsFormLayoutPresenter(
         selectedPerson,
-        usTnCustodyDowngradeType,
+        usTnCompliantReportingType,
         workflowsStore,
         firestoreStore,
         tenantStore,
@@ -113,8 +116,9 @@ describe("WorkflowsFormLayoutPresenter", () => {
     });
 
     it("correctly identifies eligible person", () => {
+      expect(selectedPerson.opportunities).not.toBeUndefined();
       expect(
-        isEligibleOrAlmostEligible(selectedPerson, usTnCustodyDowngradeType),
+        isEligibleOrAlmostEligible(selectedPerson, usTnCompliantReportingType),
       ).toBeTrue();
     });
 
@@ -125,14 +129,14 @@ describe("WorkflowsFormLayoutPresenter", () => {
       });
 
       expect(presenter.selectedOpportunity?.type).toBe(
-        usTnCustodyDowngradeType,
+        usTnCompliantReportingType,
       );
     });
 
     it("calls hydrate on the existing opportunity form", async () => {
       // grab the underlying opportunity & form created during opportunityManager hydration
       const opp = selectedPerson.flattenedOpportunities.find(
-        (o) => o.type === usTnCustodyDowngradeType,
+        (o) => o.type === usTnCompliantReportingType,
       );
 
       // opp & form existence already asserted above; cast with conditional fallback to satisfy lint
