@@ -117,6 +117,7 @@
     }
   },
   "enabledPlugins": {
+    "accessibility-check@recidiviz": true,
     "create-pr@recidiviz": true,
     "review-pr-comments@recidiviz": true,
     "security-rules@recidiviz": true
