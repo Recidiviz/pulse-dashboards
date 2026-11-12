@@ -19,10 +19,11 @@ import { rem } from "polished";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
-import { BackLink } from "~@jii/common-ui";
+import { BackLink, CopyWrapper } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { State } from "~@jii/paths";
-import { useCommonTranslations } from "~@jii/translation";
+import { useCommonTranslations, useUsNeTranslations } from "~@jii/translation";
+import { spacing, typography } from "~design-system";
 
 import { UsNeTraitList } from "./UsNeTraitList";
 
@@ -32,20 +33,35 @@ const SuccessPlanPageContainer = styled.div`
   gap: ${rem(64)};
 `;
 
+const PageHeading = styled.h1`
+  ${typography.Serif34}
+  margin-top: -${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.md)};
+`;
+
 export const UsNeSuccessPlanPage = () => {
   const { successPlan } = useResidentMetadata("US_NE");
   const pathParams = useTypedParams(State.Resident);
-  const { t } = useCommonTranslations();
+  const commonT = useCommonTranslations().t;
+  const { t } = useUsNeTranslations();
 
   if (!successPlan) {
     return null;
   }
 
+  const { title, description } = t(($) => $.successPlan.header, {
+    returnObjects: true,
+  });
+
   return (
     <SuccessPlanPageContainer>
-      <BackLink to={State.Resident.buildPath(pathParams)}>
-        {t(($) => $.backLinks.home)}
-      </BackLink>
+      <header>
+        <BackLink to={State.Resident.buildPath(pathParams)}>
+          {commonT(($) => $.backLinks.home)}
+        </BackLink>
+        <PageHeading>{title}</PageHeading>
+        <CopyWrapper>{description}</CopyWrapper>
+      </header>
       <UsNeTraitList kind={"strengths"} traits={successPlan.strengths} />
       <UsNeTraitList kind={"skills"} traits={successPlan.skills} />
     </SuccessPlanPageContainer>

@@ -633,6 +633,10 @@
     "disclosure": {
       "showMore": "[US_NE]successPlan.disclosure.showMore",
       "showLess": "[US_NE]successPlan.disclosure.showLess"
+    },
+    "header": {
+      "title": "[US_NE]successPlan.header.title",
+      "description": "[US_NE]successPlan.header.description"
     }
   }
 }

@@ -633,6 +633,10 @@
     "disclosure": {
       "showMore": "Show more",
       "showLess": "Show less"
+    },
+    "header": {
+      "title": "Your Success Plan",
+      "description": "Your Case Manager and Reentry Specialist made this plan with you. Check off action steps as you finish them to track your progress, and talk to them when you want to add new goals or steps."
     }
   }
 }
