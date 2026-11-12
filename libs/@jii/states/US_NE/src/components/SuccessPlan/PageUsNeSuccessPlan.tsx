@@ -15,14 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+
+import { BackLink } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
+import { State } from "~@jii/paths";
+import { useCommonTranslations } from "~@jii/translation";
 
 export const UsNeSuccessPlanPage = () => {
   const { successPlan } = useResidentMetadata("US_NE");
+  const pathParams = useTypedParams(State.Resident);
+  const { t } = useCommonTranslations();
 
   if (!successPlan) {
     return null;
   }
 
-  return <pre>{JSON.stringify(successPlan, undefined, 2)}</pre>;
+  return (
+    <>
+      <BackLink to={State.Resident.buildPath(pathParams)}>
+        {t(($) => $.backLinks.home)}
+      </BackLink>
+      <pre>{JSON.stringify(successPlan, undefined, 2)}</pre>
+    </>
+  );
 };

@@ -39,6 +39,7 @@ import {
 
 import { TodoCard } from "./TodoCard";
 import { UsNeCheckInTodo } from "./UsNeCheckInTodo";
+import { UsNeSuccessPlanTodo } from "./UsNeSuccessPlanTodo";
 import { UsNeTodosError } from "./UsNeTodosError";
 import { UsNeTodosLoading } from "./UsNeTodosLoading";
 import { UsNeTodosPresenter } from "./UsNeTodosPresenter";
@@ -53,6 +54,7 @@ const ManagedComponent = observer(function ManagedComponent({
 
   const {
     goodTimeRestorationStatus,
+    shouldShowSuccessPlanTodo,
     shouldShowReentryChecklist,
     shouldShowTodos,
     shouldShowReentryAssessment,
@@ -70,6 +72,7 @@ const ManagedComponent = observer(function ManagedComponent({
 
   return (
     <>
+      {shouldShowSuccessPlanTodo && <UsNeSuccessPlanTodo />}
       {shouldShowCheckInTodo && checkInFormData && (
         <UsNeCheckInTodo
           assignedAt={checkInFormData.createdAt}
@@ -124,10 +127,7 @@ const ManagedComponent = observer(function ManagedComponent({
 
 function usePresenter() {
   const { firebaseAuthClient, userStore, apiClient } = useRootStore();
-  const {
-    resident,
-    residentFlags: { usNeCheckInTool },
-  } = useSingleResidentContext();
+  const { resident, residentFlags } = useSingleResidentContext();
   const stateData = useResidentMetadata("US_NE");
 
   const checkInFormQuery = useSuspenseQuery(
@@ -142,7 +142,7 @@ function usePresenter() {
     firebaseAuthClient,
     userStore,
     checkInFormQuery,
-    !!usNeCheckInTool,
+    residentFlags,
   );
 }
 

@@ -21,7 +21,7 @@ import { differenceInMonths } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
-import { ResidentRecord, UserStore } from "~@jii/data";
+import { ResidentFlags, ResidentRecord, UserStore } from "~@jii/data";
 import {
   usNeGoodTimeRestorationTodosCriterionEnum,
   UsNeResidentJiiData,
@@ -45,7 +45,7 @@ export class UsNeTodosPresenter implements Hydratable {
       CheckInFormResult,
       TRPCClientErrorLike<JiiResidentAppRouter>
     >,
-    private readonly usNeCheckInTool: boolean,
+    private readonly residentFlags: ResidentFlags,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -69,13 +69,14 @@ export class UsNeTodosPresenter implements Hydratable {
       this.shouldShowReentryChecklist ||
       !!this.goodTimeRestorationStatus ||
       this.shouldShowReentryAssessment ||
-      this.shouldShowCheckInTodo
+      this.shouldShowCheckInTodo ||
+      this.shouldShowSuccessPlanTodo
     );
   }
 
   get shouldShowCheckInTodo(): boolean {
     return Boolean(
-      this.usNeCheckInTool &&
+      this.residentFlags.usNeCheckInTool &&
         this.checkInFormData &&
         !this.checkInFormData.completedAt,
     );
@@ -83,6 +84,12 @@ export class UsNeTodosPresenter implements Hydratable {
 
   get checkInFormData() {
     return this.checkInFormQuery.data;
+  }
+
+  get shouldShowSuccessPlanTodo(): boolean {
+    return Boolean(
+      this.residentFlags.usNeSuccessPlan && this.residentMetadata.successPlan,
+    );
   }
 
   /**

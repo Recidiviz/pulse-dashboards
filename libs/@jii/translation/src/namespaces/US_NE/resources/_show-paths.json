@@ -108,6 +108,11 @@
         "title": "[US_NE]home.todos.checkInTool.title",
         "body": "[US_NE]home.todos.checkInTool.body",
         "linkText": "[US_NE]home.todos.checkInTool.linkText"
+      },
+      "successPlan": {
+        "title": "[US_NE]home.todos.successPlan.title",
+        "body": "[US_NE]home.todos.successPlan.body",
+        "linkText": "[US_NE]home.todos.successPlan.linkText"
       }
     },
     "dates": {

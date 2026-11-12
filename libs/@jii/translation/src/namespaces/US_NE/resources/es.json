@@ -108,6 +108,11 @@
         "title": "Prepárese para su control de los 120 días con su Especialista de Reinserción",
         "body": "Responda algunas preguntas para ayudar a su Especialista de Reinserción a prepararse para su control de los 120 días.\n\nSu Especialista de Reinserción Social le asignó esto el {{date, formatFullDate}} — le recomendamos completarlo en la próxima semana.",
         "linkText": "Comenzar"
+      },
+      "successPlan": {
+        "title": "Check In on Your Success Plan Progress",
+        "body": "Change starts with knowing what you want. A Success Plan is what you're going to do to get there. View your Success Plan and work on your goals today.",
+        "linkText": "View Your Plan"
       }
     },
     "dates": {

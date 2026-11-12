@@ -108,6 +108,11 @@
         "title": "Prepare for Your 120-Day Reentry Planning Session",
         "body": "Answer a few questions to help your Reentry Specialist prepare for your 120-Day Reentry Planning Session.\nYour Reentry Specialist assigned this on {{date, formatFullDate}} — we recommend completing it in the next week.",
         "linkText": "Get Started"
+      },
+      "successPlan": {
+        "title": "Check In on Your Success Plan Progress",
+        "body": "Change starts with knowing what you want. A Success Plan is what you're going to do to get there. View your Success Plan and work on your goals today.",
+        "linkText": "View Your Plan"
       }
     },
     "dates": {

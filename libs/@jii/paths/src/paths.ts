@@ -212,6 +212,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsNeCheckInTool,
       UsNeMoreInformation,
       UsNeReentryChecklist,
+      UsNeSuccessPlan,
       ResourceExplorer,
       UsTnMoreInformation,
     },
