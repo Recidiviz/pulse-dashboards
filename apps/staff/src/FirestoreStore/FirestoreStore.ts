@@ -109,6 +109,7 @@ import {
   ParoleBoardReportRowEntry,
   ParoleBoardReportRowFieldName,
   ParoleBoardReportRowFieldValue,
+  ParoleBoardReportRowValues,
   PersonUpdateType,
   SupervisionTaskUpdate,
   UserUpdateRecord,
@@ -831,8 +832,50 @@ export default class FirestoreStore {
     field: Field,
     value: ParoleBoardReportRowFieldValue<Section, Field>,
   ): Promise<void> {
-    const rowPath = ["sections", section, "rows", row.id];
     return this.updateParoleBoardReport(report, [
+      ...this.paroleBoardReportRowUpdates(section, row),
+      [
+        new FieldPath("sections", section, "rows", row.id, "fields", field),
+        this.phiValue(value),
+      ],
+    ]);
+  }
+
+  /**
+   * Saves the PHI's values for several fields on one row in one write, such
+   * as a row the PHI just added, along with the row's source and label. A
+   * null value records that the PHI cleared the field.
+   */
+  async setParoleBoardReportRowValues<
+    Section extends ParoleBoardReportSectionKey,
+  >(
+    report: ParoleBoardReportRef,
+    section: Section,
+    row: ParoleBoardReportRow,
+    values: ParoleBoardReportRowValues<Section>,
+  ): Promise<void> {
+    const fieldUpdates = Object.entries(values)
+      // Firestore rejects undefined, and a field without a value has nothing
+      // to save.
+      .filter(([, value]) => value !== undefined)
+      .map(([field, value]): [FieldPath, unknown] => [
+        new FieldPath("sections", section, "rows", row.id, "fields", field),
+        this.phiValue(value),
+      ]);
+    return this.updateParoleBoardReport(report, [
+      ...this.paroleBoardReportRowUpdates(section, row),
+      ...fieldUpdates,
+    ]);
+  }
+
+  // Every edit to a row also writes its source and label, so the row can
+  // still be named after it drops out of Atlas.
+  private paroleBoardReportRowUpdates(
+    section: ParoleBoardReportSectionKey,
+    row: ParoleBoardReportRow,
+  ): Array<[FieldPath, unknown]> {
+    const rowPath = ["sections", section, "rows", row.id];
+    return [
       [new FieldPath(...rowPath, "source"), row.source],
       ...(row.atlasLabel === undefined
         ? []
@@ -842,8 +885,7 @@ export default class FirestoreStore {
               unknown,
             ],
           ]),
-      [new FieldPath(...rowPath, "fields", field), this.phiValue(value)],
-    ]);
+    ];
   }
 
   /** Reverts a section-level field to its Atlas value by deleting the PHI's. */

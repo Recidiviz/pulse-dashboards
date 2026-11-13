@@ -20,31 +20,20 @@ import { rem } from "polished";
 import { useRef, useState } from "react";
 import styled from "styled-components";
 
-import {
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle,
-  palette,
-} from "~design-system";
+import { Dropdown, DropdownMenuItem, palette } from "~design-system";
 
 import { ParoleBoardReportMode } from "../../../../../ParoleStore/presenters/ParoleBoardReportPresenter";
 import { AUTOSAVE_FAILED_MESSAGE, MISSING_VALUE_TEXT } from "./constants";
+import {
+  ReportDropdownMenu,
+  ReportDropdownToggle,
+} from "./reportFieldControls";
 
 const Field = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: ${rem(spacing.xs)};
-`;
-
-const Toggle = styled(DropdownToggle).attrs({ showCaret: true })`
-  gap: ${rem(spacing.md)};
-  color: ${palette.pine2};
-`;
-
-const Menu = styled(DropdownMenu).attrs({ alignment: "left" })`
-  width: max-content;
 `;
 
 const ReadValue = styled.div`
@@ -124,10 +113,12 @@ export function ReportDropdown<Value extends string>({
   return (
     <Field>
       <Dropdown>
-        <Toggle aria-label={`${label}: ${shownLabel ?? placeholder}`}>
+        <ReportDropdownToggle
+          aria-label={`${label}: ${shownLabel ?? placeholder}`}
+        >
           {shownLabel ?? placeholder}
-        </Toggle>
-        <Menu ariaLabel={label}>
+        </ReportDropdownToggle>
+        <ReportDropdownMenu ariaLabel={label}>
           {options.map((option) => (
             <DropdownMenuItem
               key={option.value}
@@ -136,7 +127,7 @@ export function ReportDropdown<Value extends string>({
               {option.label}
             </DropdownMenuItem>
           ))}
-        </Menu>
+        </ReportDropdownMenu>
       </Dropdown>
       {saveFailed && (
         <ErrorText role="alert">{AUTOSAVE_FAILED_MESSAGE}</ErrorText>

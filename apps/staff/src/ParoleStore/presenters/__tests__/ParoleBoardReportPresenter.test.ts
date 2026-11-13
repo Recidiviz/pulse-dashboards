@@ -105,6 +105,7 @@ let firestoreStore: {
   restoreParoleBoardReportRow: ReturnType<typeof vi.fn>;
   setParoleBoardReportRowRemoved: ReturnType<typeof vi.fn>;
   setParoleBoardReportFieldValue: ReturnType<typeof vi.fn>;
+  setParoleBoardReportRowValues: ReturnType<typeof vi.fn>;
 };
 let userStore: {
   activeFeatureVariants: Record<string, unknown>;
@@ -148,6 +149,7 @@ beforeEach(() => {
     restoreParoleBoardReportRow: vi.fn().mockResolvedValue(undefined),
     setParoleBoardReportRowRemoved: vi.fn().mockResolvedValue(undefined),
     setParoleBoardReportFieldValue: vi.fn().mockResolvedValue(undefined),
+    setParoleBoardReportRowValues: vi.fn().mockResolvedValue(undefined),
   };
   // A PHI with the report's feature variant on.
   userStore = {
@@ -523,6 +525,27 @@ describe("editReport", () => {
       "summary",
       "fourthAmendmentWaiver",
       "YES",
+    );
+  });
+
+  test("setRowValues saves a row's values in one write, creating the report on the first edit", async () => {
+    const presenter = makePresenter();
+    await presenter.hydrate();
+    const row = { id: "phi_1793800000000_a1b2c3d4", source: "PHI" as const };
+
+    await presenter.setRowValues("personalHistory", row, {
+      substance: "Alcohol",
+      ageOfFirstUse: 16,
+    });
+
+    expect(
+      firestoreStore.getOrCreateActiveParoleBoardReport,
+    ).toHaveBeenCalled();
+    expect(firestoreStore.setParoleBoardReportRowValues).toHaveBeenCalledWith(
+      { recordId: RECORD_ID, reportId: "new_report" },
+      "personalHistory",
+      row,
+      { substance: "Alcohol", ageOfFirstUse: 16 },
     );
   });
 

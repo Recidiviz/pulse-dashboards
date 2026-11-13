@@ -38,7 +38,9 @@ import FirestoreStore, {
   ParoleBoardReportFieldName,
   ParoleBoardReportFieldValue,
   ParoleBoardReportRef,
+  ParoleBoardReportRow,
   ParoleBoardReportRowEntry,
+  ParoleBoardReportRowValues,
 } from "../../FirestoreStore";
 import UserStore from "../../RootStore/UserStore";
 import { CollectionDocumentSubscription } from "../../WorkflowsStore/subscriptions";
@@ -301,6 +303,33 @@ export class ParoleBoardReportPresenter implements Hydratable {
         section,
         field,
         value,
+      ),
+    );
+  }
+
+  /**
+   * Saves the PHI's values for some of a row's fields in one write, such as
+   * a row they just added or the fields they changed in the edit modal. A
+   * null value records that the PHI cleared the field. Like every edit, the
+   * first one creates the report.
+   *
+   * @param section - The section's key in the report, such as
+   *   "personalHistory".
+   * @param row - The row's id and source, and its Atlas label for a row from
+   *   Atlas.
+   * @param values - The values to save, keyed by field name.
+   */
+  setRowValues<Section extends ParoleBoardReportSectionKey>(
+    section: Section,
+    row: ParoleBoardReportRow,
+    values: ParoleBoardReportRowValues<Section>,
+  ): Promise<void> {
+    return this.editReport((report) =>
+      this.firestoreStore.setParoleBoardReportRowValues(
+        report,
+        section,
+        row,
+        values,
       ),
     );
   }

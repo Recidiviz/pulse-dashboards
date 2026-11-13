@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useId } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -29,7 +29,7 @@ const TextInputWrapper = styled.div`
   width: 100%;
 `;
 
-const TextArea = styled.textarea`
+const TextArea = styled.textarea<{ $singleLine: boolean }>`
   ${typography.Sans14}
   box-sizing: border-box;
   width: 100%;
@@ -38,6 +38,16 @@ const TextArea = styled.textarea`
   border-radius: ${rem(8)};
   color: ${palette.pine1};
   resize: vertical;
+
+  /* A one-line box is as tall as the report's dropdowns and buttons, so it
+     lines up with them in a row. */
+  ${({ $singleLine }) =>
+    $singleLine &&
+    css`
+      height: ${rem(32)};
+      padding-top: ${rem(6)};
+      padding-bottom: ${rem(6)};
+    `}
 
   &:focus {
     border-color: ${palette.signal.links};
@@ -64,7 +74,9 @@ const Counter = styled.div`
  * @param onChange - Receives the text as the PHI types.
  * @param label - Names the field for screen readers, such as "Notes".
  * @param maxLength - The most characters the field takes.
- * @param rows - How many lines the box shows before the PHI resizes it.
+ * @param rows - How many lines the box shows before the PHI resizes it. A
+ *   one-line box is 32px tall, the height of the report's dropdowns and
+ *   buttons.
  * @param disabled - Whether the input is disabled, such as while a save is
  *   in flight.
  * @param id - The text box's id, for a visible label that points at it.
@@ -107,6 +119,7 @@ export function ReportTextInput({
         value={text}
         maxLength={maxLength}
         rows={rows}
+        $singleLine={rows === 1}
         disabled={disabled}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}

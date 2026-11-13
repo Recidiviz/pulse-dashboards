@@ -316,6 +316,31 @@ describe("FirestoreStore PHI report methods", () => {
       });
     });
 
+    test("saves several of a row's fields in one write, skipping undefined values", async () => {
+      await store.setParoleBoardReportRowValues(
+        REPORT,
+        "personalHistory",
+        { id: "phi_1793800000000_a1b2c3d4", source: "PHI" },
+        {
+          substance: "Alcohol",
+          ageOfFirstUse: 16,
+          lastUse: null,
+          heaviestUse: undefined,
+        },
+      );
+
+      const rowPath =
+        "sections.personalHistory.rows.phi_1793800000000_a1b2c3d4";
+      expect(vi.mocked(updateDoc)).toHaveBeenCalledTimes(1);
+      expect(updatedFields().fields).toEqual({
+        [`${rowPath}.source`]: "PHI",
+        [`${rowPath}.fields.substance`]: { value: "Alcohol", ...PHI_EDIT },
+        [`${rowPath}.fields.ageOfFirstUse`]: { value: 16, ...PHI_EDIT },
+        [`${rowPath}.fields.lastUse`]: { value: null, ...PHI_EDIT },
+        ...PHI_EDIT,
+      });
+    });
+
     test("reverts a section field to Atlas by deleting the PHI's value", async () => {
       await store.revertParoleBoardReportFieldValue(
         REPORT,

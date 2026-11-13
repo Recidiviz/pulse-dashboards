@@ -75,3 +75,16 @@ export type ParoleBoardReportRowFieldValue<
   NonNullable<RowFields<Section>[Field]> extends { value: infer Value }
     ? Value
     : never;
+
+/**
+ * Values for some of a row's fields, keyed by field name, with null for a
+ * field the PHI cleared.
+ */
+export type ParoleBoardReportRowValues<
+  Section extends ParoleBoardReportSectionKey,
+> = {
+  [Field in ParoleBoardReportRowFieldName<Section>]?: ParoleBoardReportRowFieldValue<
+    Section,
+    Field
+  >;
+};

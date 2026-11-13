@@ -139,6 +139,18 @@ const UsIdParoleCaseProfileContents = observer(
               onSave={(field, value) =>
                 presenter.setFieldValue("personalHistory", field, value)
               }
+              // Atlas has no substance use rows, so every row is one the
+              // PHI added.
+              onSaveSubstance={(rowId, changes) =>
+                presenter.setRowValues(
+                  "personalHistory",
+                  { id: rowId, source: "PHI" },
+                  changes,
+                )
+              }
+              onRemoveSubstance={(row) =>
+                presenter.removeRow("personalHistory", row)
+              }
             />
           </SectionAnchor>
         )}

@@ -15,17 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { forwardRef } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-import { Icon, palette } from "~design-system";
+import { Icon } from "~design-system";
 
 import {
   DatePicker,
   MonthYearHeader,
 } from "../../../../../components/DatePicker";
+import {
+  ReportClearButton,
+  reportLinkButtonStyles,
+} from "./reportFieldControls";
 import { parseReportMonth, toReportMonth } from "./reportMonth";
 
 const MonthInputRow = styled.div`
@@ -34,42 +38,9 @@ const MonthInputRow = styled.div`
   gap: ${rem(spacing.xs)};
 `;
 
-const linkButtonStyles = css`
-  ${typography.Sans14}
-  display: inline-flex;
-  align-items: center;
-  gap: ${rem(spacing.xs)};
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: ${palette.pine4};
-  cursor: pointer;
-  white-space: nowrap;
-
-  &:hover:not(:disabled) {
-    color: ${palette.pine3};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${palette.signal.links};
-    outline-offset: 2px;
-    border-radius: ${rem(4)};
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-`;
-
 const MonthButton = styled.button.attrs({ type: "button" })`
-  ${linkButtonStyles}
+  ${reportLinkButtonStyles}
   font-weight: 500;
-`;
-
-const ClearButton = styled.button.attrs({ type: "button" })`
-  ${linkButtonStyles}
-  color: ${palette.slate60};
 `;
 
 // react-datepicker clones customInput with the formatted value and an onClick
@@ -140,12 +111,7 @@ export function ReportMonthInput({
         customInput={<MonthButtonInput label={label} />}
       />
       {value && !disabled && (
-        <ClearButton
-          aria-label={`Clear ${label}`}
-          onClick={() => onChange(null)}
-        >
-          <Icon kind="Close" size={10} color="currentColor" />
-        </ClearButton>
+        <ReportClearButton label={label} onClick={() => onChange(null)} />
       )}
     </MonthInputRow>
   );

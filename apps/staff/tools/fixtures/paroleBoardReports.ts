@@ -90,6 +90,48 @@ export const paroleBoardReportsFixture = {
             updatedAt: EDITED_AT,
           },
         },
+        rows: {
+          phi_1793800000000_a1b2c3d4: {
+            source: "PHI",
+            fields: {
+              substance: {
+                value: "Alcohol",
+                updatedBy: PHI_EMAIL,
+                updatedAt: EDITED_AT,
+              },
+              ageOfFirstUse: {
+                value: 15,
+                updatedBy: PHI_EMAIL,
+                updatedAt: EDITED_AT,
+              },
+              lastUse: {
+                value: "2023-10",
+                updatedBy: PHI_EMAIL,
+                updatedAt: EDITED_AT,
+              },
+              heaviestUse: {
+                value: "Most weekends, for several years",
+                updatedBy: PHI_EMAIL,
+                updatedAt: EDITED_AT,
+              },
+            },
+          },
+          phi_1793800060000_e5f6a7b8: {
+            source: "PHI",
+            fields: {
+              substance: {
+                value: "Methamphetamine",
+                updatedBy: PHI_EMAIL,
+                updatedAt: EDITED_AT,
+              },
+              ageOfFirstUse: {
+                value: 19,
+                updatedBy: PHI_EMAIL,
+                updatedAt: EDITED_AT,
+              },
+            },
+          },
+        },
       },
       communityReentryPlan: {
         fields: {
