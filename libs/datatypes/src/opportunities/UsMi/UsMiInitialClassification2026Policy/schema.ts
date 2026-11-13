@@ -26,12 +26,12 @@ import {
   programCompletionsList,
 } from "../UsMiReviewClassification2026Policy/schema";
 import {
-  ageNotes,
-  felonyConvictionsNotes,
-  incidentNotesSchema,
-  pastAdSegNotes,
+  usMiAgeNotes,
   usMiClassificationFormBaseSchema,
-  vfoNotes,
+  usMiFelonyConvictionsNotes,
+  usMiIncidentNotesSchema,
+  usMiPastAdSegNotes,
+  usMiVfoNotes,
 } from "./utils";
 
 export const prevLevelFiveNotes = z.object({
@@ -56,12 +56,12 @@ export const usMiInitialClassificationSchema = opportunitySchemaBase.extend({
 export type prevLevelFiveNotes = z.infer<typeof prevLevelFiveNotes>;
 
 export type ClassificationNoteData = {
-  age: ageNotes;
-  vfo: vfoNotes;
+  age: usMiAgeNotes;
+  vfo: usMiVfoNotes;
   releases: prevLevelFiveNotes;
-  felony: felonyConvictionsNotes;
-  adSeg: pastAdSegNotes;
-  incidents: incidentNotesSchema;
+  felony: usMiFelonyConvictionsNotes;
+  adSeg: usMiPastAdSegNotes;
+  incidents: usMiIncidentNotesSchema;
   goodBehaviorPastYear: goodBehaviorPastYearNotes;
   goodBehaviorFourMonth: goodBehaviorPastFourMonthsNotes;
   programs: programCompletionsList;

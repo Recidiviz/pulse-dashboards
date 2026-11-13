@@ -16,150 +16,22 @@
 // =============================================================================
 
 import {
-  ClassificationNoteData,
-  getSingleSectionQuestionScore,
-  incidentNotesSchema,
+  calculateUsMiAgeOptionSelection,
+  calculateUsMiReleasedFromLevelFive,
+  calculateUsMiVfoOptionSelection,
+  countUsMiIncidents,
+  deriveMiInitialClassification,
   miFemaleInitialClassificationQuestions,
   miMaleInitialClassificationQuestions,
-  prevLevelFiveNotes,
-  UsMiAssessmentQuestionSpec,
   UsMiAssessmentSectionsSpec,
   UsMiFormInitialInformation,
   UsMiInitialClassification2026DraftData,
+  usMiOverrideSelections,
 } from "~datatypes";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { Resident } from "../../Resident";
 import { FormBase } from "./FormBase";
-
-export const DepartureReasons = [
-  "No override",
-  "Nature of recent misconduct(s) warrants increased security level.",
-  "Behavior indicates that prisoner is not suitable for Level I at this time.",
-  "Overall criminal history warrants security level increase.",
-  "Overall institutional history warrants security level increase.",
-  "Delay further security level reduction to monitor adjustment.",
-  "Prisoner can be managed in reduced security level.",
-  "Parole allows for security level reduction per policy.",
-  "Escape history warrants higher security level.",
-  "Assaultive behavior warrants higher security level.",
-  "History of protection requests warrants higher security level.",
-  "Investigation warrants increased security level.",
-  "Former occupation warrants higher security level.",
-  "Other with CFA approval.",
-];
-
-export const WaiverReason = [
-  "No override",
-  "Access to medical treatment",
-  "Access to programming",
-  "Lack of bedspace",
-  "Facilitate a writ",
-  "Investigation",
-];
-
-export const LevelBreakdowns = [
-  { title: "Level I", range: "0-7.1" },
-  { title: "Level II", range: "7.2-19.2" },
-  { title: "Level IV", range: "19.3-49.2" },
-  { title: "Level V", range: "49.3-60" },
-];
-
-export const SecurityLevel = LevelBreakdowns.map((level) => level.title);
-
-export type OverrideType = {
-  title: string;
-  description: string;
-  reasonsTitle: string;
-  reasons: string[];
-  levelTitle: string;
-  levelSubText: string;
-  levels: string[];
-};
-
-export const overrideQuestions: OverrideType[] = [
-  {
-    title: "Departure override based on resident's behavior",
-    description:
-      "Changes the resident's level based on their own behavior, history, or circumstances.",
-    reasonsTitle: "Departure reason",
-    reasons: DepartureReasons,
-    levelTitle: "True security level",
-    levelSubText:
-      "The level the resident should be classified at after a departure.",
-    levels: SecurityLevel,
-  },
-  {
-    title: "Waiver override for facility operations",
-    description:
-      "Changes the resident's level for reasons unrelated to behavior, like facility, medical, or procedural needs.",
-    reasonsTitle: "Waiver reason",
-    reasons: WaiverReason,
-    levelTitle: "Actual placement level",
-    levelSubText:
-      "Where this resident is actually housed, which can differ from their true security level for reasons unrelated to their behavior (space, medical, programming, etc.).",
-    levels: SecurityLevel,
-  },
-];
-export function getQuestionAgeOptionSelection(
-  question: UsMiAssessmentQuestionSpec,
-  note: number | undefined,
-) {
-  if (note === undefined || question.type !== "SINGLE") return;
-  const re = / |-/;
-
-  for (const [index, value] of question.options.entries()) {
-    const lowerBounds = Number(value.text.split(re)[0]);
-    if (note < lowerBounds) {
-      if (index === 0) return 0;
-      else return index - 1;
-    }
-
-    if (note === lowerBounds) return index;
-  }
-
-  return question.options.length - 1;
-}
-
-function getVfoOptionText(vfoLevelDetail: string | null | undefined) {
-  switch (vfoLevelDetail?.toUpperCase()) {
-    case "LOW":
-      return "Low";
-    case "MEDIUM":
-      return "Medium";
-    case "HIGH":
-      return "High";
-    default:
-      return "None";
-  }
-}
-
-export const MAX_TOTAL_SCORE = 60;
-
-// The female VFO question has no "High" option, so a high score falls back to
-// "None", which carries the same score as "Medium".
-export function getQuestionVfoOptionSelection(
-  question: UsMiAssessmentQuestionSpec,
-  vfoLevelDetail: string | null | undefined,
-) {
-  if (question.type !== "SINGLE") return;
-  const optionTexts = question.options.map((option) => option.text);
-  const index = optionTexts.indexOf(getVfoOptionText(vfoLevelDetail));
-  return index === -1 ? optionTexts.indexOf("None") : index;
-}
-
-export function getReleasedFromLevelFive(note: prevLevelFiveNotes | null) {
-  // if the note is null or undefined or the hadPrevTrueLevel5Release is set to 0
-  // then we want this question to be marked as 'No'
-  if (!note || note === null || note.hadPrevTrueLevel5Release === 0) return 1;
-  return 0;
-}
-
-export function countIncidents(
-  note: incidentNotesSchema | null | undefined,
-): number | undefined {
-  return note?.incidentsList?.length ?? 0;
-}
 
 export function inferredMiClassificationData(
   formInformation: UsMiFormInitialInformation,
@@ -171,36 +43,40 @@ export function inferredMiClassificationData(
       ? miMaleInitialClassificationQuestions
       : miFemaleInitialClassificationQuestions;
 
-  const s1q1Selection = getQuestionAgeOptionSelection(
+  const s1q1Selection = calculateUsMiAgeOptionSelection(
     questionsList[0].questions[0],
     formInformation.ageNotes?.age,
   );
 
-  const s1q2Selection = getQuestionVfoOptionSelection(
+  const s1q2Selection = calculateUsMiVfoOptionSelection(
     questionsList[0].questions[1],
     formInformation.vfoNotes?.vfoLevelDetail,
   );
 
-  const s2q3Selection = getReleasedFromLevelFive(
+  const s2q3Selection = calculateUsMiReleasedFromLevelFive(
     formInformation?.prevLevelFiveNotes,
   );
 
   const s3q5Selection =
     formInformation?.pastAdSegNotes?.numAdSegStartsInPast36Months;
 
-  const s3q7Selection = countIncidents(formInformation.currentViolentIncNotes);
+  const s3q7Selection = countUsMiIncidents(
+    formInformation.currentViolentIncNotes,
+  );
 
-  const s3q8Selection = countIncidents(formInformation.pastViolentIncNotes);
+  const s3q8Selection = countUsMiIncidents(formInformation.pastViolentIncNotes);
 
-  const s3q9Selection = countIncidents(
+  const s3q9Selection = countUsMiIncidents(
     formInformation.currentFightThreatPowIncNotes,
   );
 
-  const s3q10Selection = countIncidents(
+  const s3q10Selection = countUsMiIncidents(
     formInformation.pastFightThreatPowIncNotes,
   );
 
-  const s3q11Selection = countIncidents(formInformation.currentOtherIncNotes);
+  const s3q11Selection = countUsMiIncidents(
+    formInformation.currentOtherIncNotes,
+  );
 
   const s1q1Notes = formInformation.ageNotes;
 
@@ -240,47 +116,6 @@ export function inferredMiClassificationData(
     s3q11Notes,
   };
 }
-
-export function classificationNote<K extends keyof ClassificationNoteData>(
-  kind: K,
-  data: ClassificationNoteData[K] | null | undefined,
-): { kind: K; data: ClassificationNoteData[K] } | null {
-  return data ? { kind, data } : null;
-}
-
-// A bounds of 0 means the question has no maximum.
-export function capToBounds(
-  question: Extract<UsMiAssessmentQuestionSpec, { type: "NUMBER" }>,
-  amount: number,
-): number {
-  return question.bounds > 0 ? Math.min(amount, question.bounds) : amount;
-}
-
-export function getMultiplierScore(
-  question: UsMiAssessmentQuestionSpec,
-  amount: number | undefined,
-): number | undefined {
-  if (amount === undefined || question.type !== "NUMBER") return undefined;
-
-  if (typeof amount !== "number") return undefined;
-  return Number(
-    (question.multiplier * capToBounds(question, amount)).toFixed(2),
-  );
-}
-
-export function getSingleScore(
-  question: UsMiAssessmentQuestionSpec,
-  selection: number | undefined,
-): number | undefined {
-  if (question.type !== "SINGLE" || selection === undefined) return undefined;
-
-  return getSingleSectionQuestionScore(question, selection);
-}
-
-export const OverrideSelections = {
-  override1_1Selection: "override1_2Selection",
-  override2_1Selection: "override2_2Selection",
-};
 
 const InitialKeySelections = [
   "s1q1Selection",
@@ -323,163 +158,6 @@ export function calculateRemaining(
     if (typeof formData[key] !== "number") count += 1;
   });
   return count;
-}
-
-export function deriveMiClassification(
-  formData: Partial<UsMiInitialClassification2026DraftData>,
-  gender: string | undefined,
-) {
-  const {
-    s1q1Selection,
-    s1q2Selection,
-
-    s2q3Selection,
-    s2q4Selection,
-
-    s3q5Selection,
-    s3q6Selection,
-
-    s3q7Selection,
-    s3q8Selection,
-    s3q9Selection,
-    s3q10Selection,
-    s3q11Selection,
-
-    // overrides
-    override1_1Selection,
-    override1_2Selection,
-    override2_1Selection,
-    override2_2Selection,
-  } = formData;
-
-  // section 1
-  const questionsList =
-    gender === "MALE"
-      ? miMaleInitialClassificationQuestions
-      : miFemaleInitialClassificationQuestions;
-
-  const s1q1 = questionsList[0].questions[0];
-  const s1q1Score = getSingleScore(s1q1, s1q1Selection);
-  const s1q2 = questionsList[0].questions[1];
-  const s1q2Score = getSingleScore(s1q2, s1q2Selection);
-
-  let s1SubScore = (s1q1Score || 0) + (s1q2Score || 0);
-  s1SubScore = Number(s1SubScore.toFixed(2));
-
-  // section 2
-
-  const s2q3 = questionsList[1].questions[0];
-  const s2q3Score = getSingleScore(s2q3, s2q3Selection);
-  const s2q4 = questionsList[1].questions[1];
-  const s2q4Score = getSingleScore(s2q4, s2q4Selection);
-
-  let s2SubScore = (s2q3Score || 0) + (s2q4Score || 0);
-  s2SubScore = Number(s2SubScore.toFixed(2));
-
-  // section 3
-
-  const s3q5 = questionsList[2].questions[0];
-  const s3q5Score = getMultiplierScore(s3q5, s3q5Selection);
-
-  const s3q6 = questionsList[2].questions[1];
-  const s3q6Score = getSingleScore(s3q6, s3q6Selection);
-
-  const s3q7 = questionsList[2].questions[2];
-  const s3q7Score = getMultiplierScore(s3q7, s3q7Selection);
-
-  const s3q8 = questionsList[2].questions[3];
-  const s3q8Score = getMultiplierScore(s3q8, s3q8Selection);
-
-  const s3q9 = questionsList[2].questions[4];
-  const s3q9Score = getMultiplierScore(s3q9, s3q9Selection);
-
-  const s3q10 = questionsList[2].questions[5];
-  const s3q10Score = getMultiplierScore(s3q10, s3q10Selection);
-
-  const s3q11 = questionsList[2].questions[6];
-  const s3q11Score = getMultiplierScore(s3q11, s3q11Selection);
-
-  let s3SubScore =
-    (s3q5Score || 0) +
-    (s3q6Score || 0) +
-    (s3q7Score || 0) +
-    (s3q8Score || 0) +
-    (s3q9Score || 0) +
-    (s3q10Score || 0) +
-    (s3q11Score || 0);
-
-  s3SubScore = Number(s3SubScore.toFixed(2));
-
-  const s1q1Notes = classificationNote("age", formData.ageNotes);
-
-  const s1q2Notes = classificationNote("vfo", formData.vfoNotes);
-
-  const s2q3Notes = classificationNote("releases", formData.prevLevelFiveNotes);
-
-  const s2q4Notes = classificationNote(
-    "felony",
-    formData.felonyConvictionsNotes,
-  );
-
-  const s3q5Notes = classificationNote("adSeg", formData.pastAdSegNotes);
-
-  const s3q7Notes = classificationNote(
-    "incidents",
-    formData.currentViolentIncNotes,
-  );
-  const s3q8Notes = classificationNote(
-    "incidents",
-    formData.pastViolentIncNotes,
-  );
-  const s3q9Notes = classificationNote(
-    "incidents",
-    formData.currentFightThreatPowIncNotes,
-  );
-  const s3q10Notes = classificationNote(
-    "incidents",
-    formData.pastFightThreatPowIncNotes,
-  );
-  const s3q11Notes = classificationNote(
-    "incidents",
-    formData.currentOtherIncNotes,
-  );
-
-  const totalScore = Number((s1SubScore + s2SubScore + s3SubScore).toFixed(2));
-
-  return {
-    // section 1
-    s1q1Score,
-    s1q2Score,
-    // section 2
-    s2q3Score,
-    s2q4Score,
-    // section 3
-    s3q5Score,
-    s3q6Score,
-    s3q7Score,
-    s3q8Score,
-    s3q9Score,
-    s3q10Score,
-    s3q11Score,
-    subscores: [s1SubScore, s2SubScore, s3SubScore],
-    totalScore: Math.min(totalScore, MAX_TOTAL_SCORE),
-    s1q1Notes,
-    s1q2Notes,
-    s2q3Notes,
-    s2q4Notes,
-    s3q5Notes,
-    s3q7Notes,
-    s3q8Notes,
-    s3q9Notes,
-    s3q10Notes,
-    s3q11Notes,
-
-    // overrides
-    override1_1Selection,
-    override1_2Selection,
-    override2_1Selection,
-    override2_2Selection,
-  };
 }
 
 export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassification2026DraftData> {
@@ -546,7 +224,10 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
 
   get derivedData() {
     const { person } = this;
-    return deriveMiClassification(this.formData, (person as Resident).gender);
+    return deriveMiInitialClassification(
+      this.formData,
+      (person as Resident).gender,
+    );
   }
 
   get remainingFields() {
@@ -558,6 +239,6 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
   }
 
   get proceedToPreview() {
-    return overridesCompleted(this.formData, OverrideSelections);
+    return overridesCompleted(this.formData, usMiOverrideSelections);
   }
 }

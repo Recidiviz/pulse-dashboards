@@ -19,15 +19,15 @@ import { deleteField } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 
+import {
+  usMiLevelBreakdowns,
+  usMiOverrideQuestions,
+  UsMiOverrideType,
+  usMiSecurityLevels,
+} from "~datatypes";
 import { Button, Icon, palette } from "~design-system";
 
-import {
-  LevelBreakdowns,
-  overrideQuestions,
-  OverrideType,
-  SecurityLevel,
-  UsMiInitialClassificationForm,
-} from "../../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
+import { UsMiInitialClassificationForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { UsMiReviewClassificationForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { FormStages } from "../FormUsMiClassification";
@@ -60,7 +60,7 @@ const OverrideQuestion = observer(function OverrideQuestion({
   override,
   index,
 }: {
-  override: OverrideType;
+  override: UsMiOverrideType;
   index: number;
 }) {
   const overrideKey = `override${index}_1Selection`;
@@ -159,14 +159,14 @@ export const UsMiClassificationOverrides = observer(
     // ranges down to the lower level, and anything above the last range
     // lands in the top level.
     const calculateLevel = () => {
-      const index = LevelBreakdowns.findLastIndex(
+      const index = usMiLevelBreakdowns.findLastIndex(
         (level) => Number(level.range.split("-")[0]) <= totalScore,
       );
       return Math.max(index, 0);
     };
 
     const calculatedLevel = calculateLevel();
-    const totalScoreString = `${totalScore} pts - ${SecurityLevel[calculatedLevel]}`;
+    const totalScoreString = `${totalScore} pts - ${usMiSecurityLevels[calculatedLevel]}`;
     const pointerPosition = (totalScore / 60) * 100;
 
     return (
@@ -184,7 +184,7 @@ export const UsMiClassificationOverrides = observer(
               <LevelColumn>
                 <OverrideText $fontSize={14}>CALCULATED LEVEL</OverrideText>
                 <OverrideText $color={palette.text.primary} $fontSize={26}>
-                  {SecurityLevel[calculatedLevel]}
+                  {usMiSecurityLevels[calculatedLevel]}
                 </OverrideText>
               </LevelColumn>
             </LevelSummary>
@@ -228,7 +228,7 @@ export const UsMiClassificationOverrides = observer(
             </PointerRow>
           </div>
           <PointRange id="point-range">
-            {LevelBreakdowns.map((level, index) => {
+            {usMiLevelBreakdowns.map((level, index) => {
               const width = calculateDividers(60, level.range);
               return (
                 <LevelDividers
@@ -258,7 +258,7 @@ export const UsMiClassificationOverrides = observer(
             Both are optional. Leave “No override” selected to keep the
             calculated level.
           </div>
-          {overrideQuestions.map((override, index) => (
+          {usMiOverrideQuestions.map((override, index) => (
             <OverrideQuestion
               key={override.title}
               index={index + 1}
