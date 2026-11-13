@@ -33,7 +33,9 @@ RUN apk add --no-cache \
 
 RUN pip install redis
 
-RUN curl -o /usr/local/bin/cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.1/cloud-sql-proxy.linux.amd64 && \
+# SHA-256 of the v2.8.1 linux.amd64 release binary; update it whenever the version changes.
+RUN curl -fsSL -o /usr/local/bin/cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.1/cloud-sql-proxy.linux.amd64 && \
+    echo "8c6d76380f4b7005473eb2e13991d6239f90da021cf58d91d062739479e577cf  /usr/local/bin/cloud-sql-proxy" | sha256sum -c - && \
     chmod +x /usr/local/bin/cloud-sql-proxy
 
 RUN mkdir -p /cloudsql && chmod 777 /cloudsql
