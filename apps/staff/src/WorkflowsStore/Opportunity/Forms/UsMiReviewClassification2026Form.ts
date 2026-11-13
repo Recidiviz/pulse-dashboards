@@ -29,6 +29,7 @@ import {
   UsMiFormReviewInformation,
   usMiOverrideSelections,
   UsMiReviewClassification2026DraftData,
+  usMiSecurityLevelsForGender,
 } from "~datatypes";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
@@ -101,7 +102,7 @@ function inferredMiClassificationData(
 
   const s1q1Selection = calculateUsMiAgeOptionSelection(
     questionsList[0].questions[0],
-    formInformation.ageNotes?.age,
+    formInformation.ageNotes,
   );
 
   const s1q2Selection = calculateUsMiVfoOptionSelection(
@@ -330,6 +331,10 @@ export class UsMiReviewClassificationForm extends FormBase<UsMiReviewClassificat
   }
 
   get proceedToPreview() {
-    return overridesCompleted(this.formData, usMiOverrideSelections);
+    return overridesCompleted(
+      this.formData,
+      usMiOverrideSelections,
+      usMiSecurityLevelsForGender((this.person as Resident).gender),
+    );
   }
 }

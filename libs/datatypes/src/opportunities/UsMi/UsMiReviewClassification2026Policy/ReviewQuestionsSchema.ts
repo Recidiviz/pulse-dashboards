@@ -15,7 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiAssessmentSectionsSpec } from "../UsMiInitialClassification2026Policy/InitialQuestionSchema";
+import {
+  UsMiAssessmentQuestionSpec,
+  UsMiAssessmentSectionsSpec,
+} from "../UsMiInitialClassification2026Policy/InitialQuestionSchema";
+
+const miAgeReviewClassificationQuestion = {
+  title: "Age",
+  type: "SINGLE",
+  description: "Auto-filled from date of birth.",
+  options: [
+    { text: "25 or Younger", score: 13.1 },
+    {
+      text: "25 or Younger",
+      subtext:
+        "with 12 months served and no misconducts for assault, homicide, sexual violence, inciting a riot or strike, fighting, threatening behavior, or possession of a weapon in past 12 months",
+      score: 11.2,
+    },
+    { text: "26-30", score: 11.2 },
+    { text: "31-35", score: 10.5 },
+    { text: "36-40", score: 9.1 },
+    { text: "41-49", score: 8.8 },
+    { text: "50 or Older", score: 8.0 },
+  ],
+  note: {
+    header: "Date of Birth",
+    notfound: "No age found",
+  },
+} satisfies UsMiAssessmentQuestionSpec;
 
 export const miBaseReviewClassificationQuestions = [
   {
@@ -252,23 +279,7 @@ export const miBaseReviewClassificationQuestions = [
 const miMaleAgeClassificationQuestions = {
   title: "Background factors",
   questions: [
-    {
-      title: "Age",
-      type: "SINGLE",
-      description: "Auto-filled from date of birth.",
-      options: [
-        { text: "25 or Younger", score: 13.1 },
-        { text: "26-30", score: 11.2 },
-        { text: "31-35", score: 10.5 },
-        { text: "36-40", score: 9.1 },
-        { text: "41-49", score: 8.8 },
-        { text: "50 or Older", score: 8.0 },
-      ],
-      note: {
-        header: "Age",
-        notfound: "No age found",
-      },
-    },
+    miAgeReviewClassificationQuestion,
     {
       title: "VFO score",
       type: "SINGLE",
@@ -296,23 +307,7 @@ export const miMaleReviewClassificationQuestions = [
 const miFemaleAgeClassificationQuestions = {
   title: "Background factors",
   questions: [
-    {
-      title: "Age",
-      type: "SINGLE",
-      description: "Auto-filled from date of birth.",
-      options: [
-        { text: "25 or Younger", score: 13.1 },
-        { text: "26-30", score: 11.2 },
-        { text: "31-35", score: 10.5 },
-        { text: "36-40", score: 9.1 },
-        { text: "41-49", score: 8.8 },
-        { text: "50 or Older", score: 8.0 },
-      ],
-      note: {
-        header: "Age",
-        notfound: "No age found",
-      },
-    },
+    miAgeReviewClassificationQuestion,
     {
       title: "VFO score",
       type: "SINGLE",

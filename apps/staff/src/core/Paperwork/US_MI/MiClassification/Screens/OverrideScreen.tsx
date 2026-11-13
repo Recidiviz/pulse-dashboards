@@ -18,7 +18,11 @@
 import { deleteField } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 
-import { usMiOverrideQuestions, UsMiOverrideType } from "~datatypes";
+import {
+  usMiOverrideQuestions,
+  UsMiOverrideType,
+  usMiSecurityLevelsForGender,
+} from "~datatypes";
 import { Button, palette } from "~design-system";
 
 import { UsMiInitialClassificationForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
@@ -39,9 +43,11 @@ import { SummaryBanner } from "./SummaryBanner";
 const OverrideQuestion = observer(function OverrideQuestion({
   override,
   index,
+  securityLevels,
 }: {
   override: UsMiOverrideType;
   index: number;
+  securityLevels: string[];
 }) {
   const overrideKey = `override${index}_1Selection`;
   const levelKey = `override${index}_2Selection`;
@@ -50,7 +56,12 @@ const OverrideQuestion = observer(function OverrideQuestion({
   const savedOverride = opportunityForm.formData[overrideKey];
   const overrideInput = typeof savedOverride === "number" ? savedOverride : 0;
   const savedLevel = opportunityForm.formData[levelKey];
-  const levelInput = typeof savedLevel === "number" ? savedLevel : 0;
+  // A draft saved against a longer level list can hold a level past the end of
+  // securityLevels; show it as unselected so the user has to choose again.
+  const levelInput =
+    typeof savedLevel === "number" && savedLevel <= securityLevels.length
+      ? savedLevel
+      : 0;
 
   const levelDisabled = overrideInput === 0;
   const required = !levelDisabled && levelInput === 0;
@@ -69,7 +80,7 @@ const OverrideQuestion = observer(function OverrideQuestion({
     opportunityForm.updateDraftData(levelKey, value);
   };
 
-  const levels = ["Select a level...", ...override.levels];
+  const levels = ["Select a level...", ...securityLevels];
 
   return (
     <QuestionBox>
@@ -130,7 +141,9 @@ export const UsMiClassificationOverrides = observer(
       | UsMiInitialClassificationForm
       | UsMiReviewClassificationForm;
 
-    const { proceedToPreview } = form;
+    const { proceedToPreview, person } = form;
+
+    const securityLevels = usMiSecurityLevelsForGender(person.gender);
 
     return (
       <OverrideContainer>
@@ -146,6 +159,7 @@ export const UsMiClassificationOverrides = observer(
               key={override.title}
               index={index + 1}
               override={override}
+              securityLevels={securityLevels}
             />
           ))}
         </div>

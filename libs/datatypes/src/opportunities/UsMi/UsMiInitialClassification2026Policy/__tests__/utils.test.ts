@@ -18,20 +18,37 @@
 import {
   calculateUsMiClassificationLevels,
   calculateUsMiLevelIndex,
+  usMiFemaleLevelBreakdowns,
+  usMiMaleLevelBreakdowns,
 } from "../utils";
 
 describe("calculateUsMiLevelIndex", () => {
   it.each([
     [0, 0],
-    [7.1, 0],
-    [7.2, 1],
-    [19.2, 1],
-    [19.3, 2],
-    [49.3, 3],
+    [7.4, 0],
+    [7.5, 1],
+    [16.8, 1],
+    [16.9, 2],
+    [49.9, 2],
+    [50, 3],
     [60, 3],
     [-2.6, 0],
-  ])("puts a score of %s in level index %s", (score, expected) => {
-    expect(calculateUsMiLevelIndex(score)).toBe(expected);
+  ])("puts a male score of %s in level index %s", (score, expected) => {
+    expect(calculateUsMiLevelIndex(score, usMiMaleLevelBreakdowns)).toBe(
+      expected,
+    );
+  });
+
+  it.each([
+    [7.4, 0],
+    [7.5, 1],
+    [21.6, 1],
+    [21.7, 2],
+    [60, 2],
+  ])("puts a female score of %s in level index %s", (score, expected) => {
+    expect(calculateUsMiLevelIndex(score, usMiFemaleLevelBreakdowns)).toBe(
+      expected,
+    );
   });
 });
 
@@ -41,6 +58,7 @@ describe("calculateUsMiClassificationLevels", () => {
       calculateUsMiClassificationLevels({
         totalScore: 10,
         currentLevel: "Level II",
+        levelBreakdowns: usMiMaleLevelBreakdowns,
       }),
     ).toEqual({
       calculatedLevelIndex: 1,
@@ -57,6 +75,7 @@ describe("calculateUsMiClassificationLevels", () => {
       // Selection 3 is the third level, Level IV
       override1_2Selection: 3,
       currentLevel: "Level II",
+      levelBreakdowns: usMiMaleLevelBreakdowns,
     });
     expect(levels.trueLevel).toBe("Level IV");
     expect(levels.actualLevel).toBe("Level IV");
@@ -69,6 +88,7 @@ describe("calculateUsMiClassificationLevels", () => {
       override1_2Selection: 3,
       override2_2Selection: 1,
       currentLevel: "Level II",
+      levelBreakdowns: usMiMaleLevelBreakdowns,
     });
     expect(levels.trueLevel).toBe("Level IV");
     expect(levels.actualLevel).toBe("Level I");
@@ -80,6 +100,7 @@ describe("calculateUsMiClassificationLevels", () => {
       totalScore: 30,
       override2_2Selection: 2,
       currentLevel: "Level II",
+      levelBreakdowns: usMiMaleLevelBreakdowns,
     });
     expect(levels.actualLevel).toBe("Level II");
     expect(levels.levelChange).toBeUndefined();
@@ -91,6 +112,7 @@ describe("calculateUsMiClassificationLevels", () => {
       override1_2Selection: 0,
       override2_2Selection: 0,
       currentLevel: "Level IV",
+      levelBreakdowns: usMiMaleLevelBreakdowns,
     });
     expect(levels.trueLevel).toBe("Level IV");
     expect(levels.actualLevel).toBe("Level IV");
@@ -102,9 +124,22 @@ describe("calculateUsMiClassificationLevels", () => {
       const levels = calculateUsMiClassificationLevels({
         totalScore: 55,
         currentLevel,
+        levelBreakdowns: usMiMaleLevelBreakdowns,
       });
       expect(levels.actualLevel).toBe("Level V");
       expect(levels.levelChange).toBeUndefined();
     },
   );
+});
+
+describe("calculateUsMiClassificationLevels for female residents", () => {
+  it("tops out at Level IV, since female residents have no Level V", () => {
+    const levels = calculateUsMiClassificationLevels({
+      totalScore: 55,
+      currentLevel: "Level IV",
+      levelBreakdowns: usMiFemaleLevelBreakdowns,
+    });
+    expect(levels.calculatedLevel).toBe("Level IV");
+    expect(levels.levelChange).toBeUndefined();
+  });
 });

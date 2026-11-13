@@ -74,8 +74,8 @@ export const usMiReviewClassificationSchema = opportunitySchemaBase.extend({
     .object({
       usMiCustodyLevelComparedToRecommended2026Policy: z
         .object({
-          custodyLevel: z.string(),
-          recommendedCustodyLevel: z.string(),
+          custodyLevel: z.string().nullable(),
+          recommendedCustodyLevel: z.string().nullable(),
           upcomingEligibilityDate: dateStringSchema,
         })
         .passthrough()

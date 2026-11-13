@@ -27,6 +27,7 @@ import {
   UsMiFormInitialInformation,
   UsMiInitialClassification2026DraftData,
   usMiOverrideSelections,
+  usMiSecurityLevelsForGender,
 } from "~datatypes";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
@@ -45,7 +46,7 @@ export function inferredMiClassificationData(
 
   const s1q1Selection = calculateUsMiAgeOptionSelection(
     questionsList[0].questions[0],
-    formInformation.ageNotes?.age,
+    formInformation.ageNotes,
   );
 
   const s1q2Selection = calculateUsMiVfoOptionSelection(
@@ -131,21 +132,30 @@ const InitialKeySelections = [
   "s3q11Selection",
 ] as const;
 
+/**
+ * Returns whether every override with a reason selected also has a level
+ * selected from securityLevels.
+ *
+ * Level selections are dropdown indexes with the "Select a level..."
+ * placeholder at 0, so valid values run from 1 to securityLevels.length. A
+ * draft saved against a longer level list, such as a female draft that chose
+ * Level V before female residents lost that level, can hold a value past the
+ * end; that override counts as incomplete so the user has to choose again.
+ */
 export function overridesCompleted(
   formData: Partial<UsMiInitialClassification2026DraftData>,
   overrideSelections: { [key: string]: string },
+  securityLevels: string[],
 ) {
-  let allowed = true;
+  return Object.entries(overrideSelections).every(([reasonKey, levelKey]) => {
+    const reason = formData[reasonKey];
+    if (reason === undefined || reason === "") return true;
 
-  for (const [key, value] of Object.entries(overrideSelections)) {
-    const first = formData[key];
-    const second = formData[value];
-    if (first !== undefined && first !== "") {
-      if (second === undefined || second === "" || second === 0)
-        allowed = false;
-    }
-  }
-  return allowed;
+    const level = formData[levelKey];
+    return (
+      typeof level === "number" && level >= 1 && level <= securityLevels.length
+    );
+  });
 }
 
 export function calculateRemaining(
@@ -239,6 +249,10 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
   }
 
   get proceedToPreview() {
-    return overridesCompleted(this.formData, usMiOverrideSelections);
+    return overridesCompleted(
+      this.formData,
+      usMiOverrideSelections,
+      usMiSecurityLevelsForGender((this.person as Resident).gender),
+    );
   }
 }

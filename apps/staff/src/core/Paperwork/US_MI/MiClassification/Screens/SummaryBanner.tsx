@@ -20,7 +20,8 @@ import { observer } from "mobx-react-lite";
 import {
   calculateUsMiClassificationLevels,
   US_MI_MAX_TOTAL_SCORE,
-  usMiLevelBreakdowns,
+  usMiFemaleLevelBreakdowns,
+  usMiMaleLevelBreakdowns,
 } from "~datatypes";
 import { Icon, palette } from "~design-system";
 
@@ -65,7 +66,13 @@ export const SummaryBanner = observer(function SummaryBanner({
     | UsMiInitialClassificationForm
     | UsMiReviewClassificationForm;
 
-  const { derivedData, subsections, displayCustodyLevel, formData } = form;
+  const { derivedData, subsections, displayCustodyLevel, formData, person } =
+    form;
+
+  const levelBreakdowns =
+    person.gender === "MALE"
+      ? usMiMaleLevelBreakdowns
+      : usMiFemaleLevelBreakdowns;
 
   const { totalScore, subscores } = derivedData;
 
@@ -80,6 +87,7 @@ export const SummaryBanner = observer(function SummaryBanner({
     override1_2Selection: formData.override1_2Selection,
     override2_2Selection: formData.override2_2Selection,
     currentLevel: displayCustodyLevel,
+    levelBreakdowns,
   });
   const totalScoreString = `${totalScore} pts - ${calculatedLevel}`;
   const pointerPosition = (totalScore / US_MI_MAX_TOTAL_SCORE) * 100;
@@ -191,7 +199,7 @@ export const SummaryBanner = observer(function SummaryBanner({
           </PointerRow>
         </PointerContainer>
         <PointRange id="point-range">
-          {usMiLevelBreakdowns.map((level, index) => {
+          {levelBreakdowns.map((level, index) => {
             const width = calculateDividers(US_MI_MAX_TOTAL_SCORE, level.range);
             return (
               <LevelDividers

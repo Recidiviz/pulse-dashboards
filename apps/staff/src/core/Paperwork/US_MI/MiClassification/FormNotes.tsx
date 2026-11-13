@@ -43,6 +43,10 @@ export function formatClassificationNote(date: Date | string | null) {
   return "Present";
 }
 
+function dateKey(date: Date | string | null | undefined): string {
+  return date instanceof Date ? date.toISOString() : String(date);
+}
+
 export const NoteRow = observer(function NoteRow({
   event,
   date,
@@ -51,7 +55,7 @@ export const NoteRow = observer(function NoteRow({
   date: Date | string;
 }) {
   return (
-    <NotesRow>
+    <NotesRow className="fs-exclude">
       <div>{event}</div>
       <NoteDate>
         {typeof date === "string" ? date : formatWorkflowsDate(date)}
@@ -167,16 +171,13 @@ export const QuestionNotes = function QuestionNotes({
       <div>
         <NoteHeader>{goodBehavior.header}</NoteHeader>
         <NotesBox>
-          {goodBehavior.rows
-            .slice(0, sliceAmount)
-            .map(({ event, date }, index) => (
-              <NoteRow
-                // eslint-disable-next-line react/no-array-index-key
-                key={`good-behavior-note-${index}`}
-                event={event}
-                date={date}
-              />
-            ))}
+          {goodBehavior.rows.slice(0, sliceAmount).map(({ event, date }) => (
+            <NoteRow
+              key={`good-behavior-note-${event}-${dateKey(date)}`}
+              event={event}
+              date={date}
+            />
+          ))}
           {goodBehavior.rows.length > 4 && (
             <ViewMoreQuestionNotes
               onClick={(e) => {
@@ -202,42 +203,45 @@ export const QuestionNotes = function QuestionNotes({
             date={note.data.assessmentDate}
           />
         )}
-        {note.kind === "age" && <NotesRow>{`Age: ${note.data.age}`}</NotesRow>}
+        {note.kind === "age" && (
+          <NotesRow className="fs-exclude">
+            {`${note.data.birthdate ? formatWorkflowsDate(note.data.birthdate) : "Not Found"} (age: ${note.data.age})`}
+          </NotesRow>
+        )}
         {note.kind === "felony" &&
-          note.data.map((felony, index) => (
+          note.data.map((felony) => (
             <NoteRow
-              // eslint-disable-next-line react/no-array-index-key
-              key={`felony-note-${index}`}
+              key={`felony-note-${felony.description}-${dateKey(felony.imposedDate)}`}
               event={felony.description}
               date={felony.imposedDate}
             />
           ))}
 
         {note.kind === "adSeg" &&
-          note.data.adSegStartsList
-            ?.slice(0, sliceAmount)
-            .map((listItem, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <NotesRow key={`adseg-note-${index}`}>
-                <NoteField>Placement</NoteField>
-                <NoteMisconducts>
-                  {`${formatClassificationNote(listItem.adSegStartDate)} – ${
-                    formatClassificationNote(listItem.adSegEndDateExclusive) ??
-                    "present"
-                  }`}
-                </NoteMisconducts>
-              </NotesRow>
-            ))}
+          note.data.adSegStartsList?.slice(0, sliceAmount).map((listItem) => (
+            <NotesRow
+              key={`adseg-note-${dateKey(listItem.adSegStartDate)}`}
+              className="fs-exclude"
+            >
+              <NoteField>Placement</NoteField>
+              <NoteMisconducts>
+                {`${formatClassificationNote(listItem.adSegStartDate)} – ${
+                  formatClassificationNote(listItem.adSegEndDateExclusive) ??
+                  "present"
+                }`}
+              </NoteMisconducts>
+            </NotesRow>
+          ))}
 
         {note.kind === "releases" && (
           <>
-            <NotesRow>
+            <NotesRow className="fs-exclude">
               <NoteField>{`Most recent release: `}</NoteField>
               <NoteField>
                 {formatClassificationNote(note.data.prevReleaseDate)}
               </NoteField>
             </NotesRow>
-            <NotesRow>
+            <NotesRow className="fs-exclude">
               <NoteField>TRUE security level at release</NoteField>
               <NoteField>
                 {" "}
@@ -250,18 +254,19 @@ export const QuestionNotes = function QuestionNotes({
         )}
 
         {note.kind === "programs" &&
-          note.data.slice(0, sliceAmount).map((program, index) => (
-            <NoteRow
-              // eslint-disable-next-line react/no-array-index-key
-              key={`program-note-${index}`}
-              event={program.programName}
-              date={program.completionDate}
-            />
-          ))}
+          note.data
+            .slice(0, sliceAmount)
+            .map((program) => (
+              <NoteRow
+                key={`program-note-${program.programName}-${dateKey(program.completionDate)}`}
+                event={program.programName}
+                date={program.completionDate}
+              />
+            ))}
         {note.kind === "incidents" &&
           newestIncidentsFirst(note.data.incidentsList ?? [])
             .slice(0, sliceAmount)
-            .map((incident, index) => {
+            .map((incident) => {
               const incidents = incident.infractionTypeRawText.replaceAll(
                 "@@",
                 " & ",
@@ -269,8 +274,7 @@ export const QuestionNotes = function QuestionNotes({
 
               return (
                 <NoteRow
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`incidents-note-${index}`}
+                  key={`incidents-note-${incident.infractionTypeRawText}-${dateKey(incident.incidentDate)}`}
                   event={incidents}
                   date={incident.incidentDate}
                 />

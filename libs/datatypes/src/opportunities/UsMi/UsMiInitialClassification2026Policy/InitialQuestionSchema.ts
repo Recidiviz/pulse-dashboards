@@ -190,26 +190,28 @@ export const miBaseInitialClassificationQuestions = [
   },
 ] satisfies UsMiAssessmentSectionsSpec[];
 
-export const miMaleAgeClassificationQuestions = {
+const miAgeInitialClassificationQuestion = {
+  title: "Age",
+  type: "SINGLE",
+  description: "Auto-filled from date of birth.",
+  options: [
+    { text: "25 or Younger", score: 13.8 },
+    { text: "26-30", score: 9.7 },
+    { text: "31-35", score: 8.3 },
+    { text: "36-40", score: 7.7 },
+    { text: "41-49", score: 6.4 },
+    { text: "50 or Older", score: 6.3 },
+  ],
+  note: {
+    header: "Date of Birth",
+    notfound: "No age found",
+  },
+} satisfies UsMiAssessmentQuestionSpec;
+
+const miMaleAgeClassificationQuestions = {
   title: "Background factors",
   questions: [
-    {
-      title: "Age",
-      type: "SINGLE",
-      description: "Auto-filled from date of birth.",
-      options: [
-        { text: "25 or Younger", score: 13.8 },
-        { text: "26-30", score: 9.7 },
-        { text: "31-35", score: 8.3 },
-        { text: "36-40", score: 7.7 },
-        { text: "41-49", score: 6.4 },
-        { text: "50 or Older", score: 6.3 },
-      ],
-      note: {
-        header: "Age",
-        notfound: "No age found",
-      },
-    },
+    miAgeInitialClassificationQuestion,
     {
       title: "VFO score",
       type: "SINGLE",
@@ -237,23 +239,7 @@ export const miMaleInitialClassificationQuestions = [
 const miFemaleAgeClassificationQuestions = {
   title: "Background factors",
   questions: [
-    {
-      title: "Age",
-      type: "SINGLE",
-      description: "Auto-filled from date of birth.",
-      options: [
-        { text: "25 or Younger", score: 13.8 },
-        { text: "26-30", score: 9.7 },
-        { text: "31-35", score: 8.3 },
-        { text: "36-40", score: 7.7 },
-        { text: "41-49", score: 6.4 },
-        { text: "50 or Older", score: 6.3 },
-      ],
-      note: {
-        header: "Age",
-        notfound: "No age found",
-      },
-    },
+    miAgeInitialClassificationQuestion,
     {
       title: "VFO score",
       type: "SINGLE",

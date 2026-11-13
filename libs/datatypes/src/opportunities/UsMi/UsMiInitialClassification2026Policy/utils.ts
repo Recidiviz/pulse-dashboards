@@ -54,7 +54,11 @@ export const usMiIncidentNotesSchema = z
 export const usMiAgeNotes = z
   .object({
     age: z.coerce.number(),
+    noViolentOrFightThreatenPowIncInLast12Months: z.boolean(),
+    servedAtLeastOneYear: z.boolean(),
+    birthdate: dateStringSchema,
   })
+  .partial()
   .passthrough();
 
 export const usMiVfoNotes = z
@@ -147,23 +151,47 @@ const usMiWaiverReasons = [
   "Investigation",
 ];
 
-export const usMiLevelBreakdowns = [
-  { title: "Level I", range: "0-7.1" },
-  { title: "Level II", range: "7.2-19.2" },
-  { title: "Level IV", range: "19.3-49.2" },
-  { title: "Level V", range: "49.3-60" },
+export type UsMiLevelBreakdown = { title: string; range: string };
+
+export const usMiFemaleLevelBreakdowns: UsMiLevelBreakdown[] = [
+  { title: "Level I", range: "0-7.4" },
+  { title: "Level II", range: "7.5-21.6" },
+  { title: "Level IV", range: "21.7-60.0" },
 ];
 
-export const usMiSecurityLevels = usMiLevelBreakdowns.map(
+export const usMiMaleLevelBreakdowns: UsMiLevelBreakdown[] = [
+  { title: "Level I", range: "0-7.4" },
+  { title: "Level II", range: "7.5-16.8" },
+  { title: "Level IV", range: "16.9-49.9" },
+  { title: "Level V", range: "50-60" },
+];
+
+export const usMiMaleSecurityLevels = usMiMaleLevelBreakdowns.map(
+  (level) => level.title,
+);
+export const usMiFemaleSecurityLevels = usMiFemaleLevelBreakdowns.map(
   (level) => level.title,
 );
 
 /**
- * Returns the index into usMiLevelBreakdowns of the level that totalScore
- * falls in. A score below every range counts as Level I.
+ * Returns the security levels a resident of the given gender can be classified
+ * at.
  */
-export function calculateUsMiLevelIndex(totalScore: number): number {
-  const index = usMiLevelBreakdowns.findLastIndex(
+export function usMiSecurityLevelsForGender(
+  gender: string | undefined,
+): string[] {
+  return gender === "MALE" ? usMiMaleSecurityLevels : usMiFemaleSecurityLevels;
+}
+
+/**
+ * Returns the index of the level in levelBreakdowns that totalScore falls in.
+ * A score below every range counts as Level I.
+ */
+export function calculateUsMiLevelIndex(
+  totalScore: number,
+  levelBreakdowns: UsMiLevelBreakdown[],
+): number {
+  const index = levelBreakdowns.findLastIndex(
     (level) => Number(level.range.split("-")[0]) <= totalScore,
   );
   return Math.max(index, 0);
@@ -173,8 +201,9 @@ export function calculateUsMiLevelIndex(totalScore: number): number {
 // is the "Select a level..." placeholder, so level N is stored as N + 1.
 function levelFromOverrideSelection(
   selection: number | undefined,
+  securityLevels: string[],
 ): string | undefined {
-  return selection ? usMiSecurityLevels[selection - 1] : undefined;
+  return selection ? securityLevels[selection - 1] : undefined;
 }
 
 export type UsMiClassificationLevels = {
@@ -193,29 +222,40 @@ export type UsMiClassificationLevels = {
  * The true level is the departure override's level (override1_2Selection), or
  * the calculated level when there is no departure. The actual level is the
  * waiver override's level (override2_2Selection), or the true level when there
- * is no waiver. levelChange is undefined when currentLevel is not one of
- * usMiSecurityLevels, such as "Unknown", or equals the actual level.
+ * is no waiver. levelChange is undefined when currentLevel is not one of the
+ * levels in levelBreakdowns, such as "Unknown", or equals the actual level.
+ *
+ * levelBreakdowns is the resident's gender-specific list,
+ * usMiMaleLevelBreakdowns or usMiFemaleLevelBreakdowns.
  */
 export function calculateUsMiClassificationLevels({
   totalScore,
   override1_2Selection,
   override2_2Selection,
   currentLevel,
+  levelBreakdowns,
 }: {
   totalScore: number;
   override1_2Selection?: number;
   override2_2Selection?: number;
   currentLevel: string | undefined;
+  levelBreakdowns: UsMiLevelBreakdown[];
 }): UsMiClassificationLevels {
-  const calculatedLevelIndex = calculateUsMiLevelIndex(totalScore);
-  const calculatedLevel = usMiSecurityLevels[calculatedLevelIndex];
+  const securityLevels = levelBreakdowns.map((level) => level.title);
+  const calculatedLevelIndex = calculateUsMiLevelIndex(
+    totalScore,
+    levelBreakdowns,
+  );
+  const calculatedLevel = securityLevels[calculatedLevelIndex];
   const trueLevel =
-    levelFromOverrideSelection(override1_2Selection) ?? calculatedLevel;
+    levelFromOverrideSelection(override1_2Selection, securityLevels) ??
+    calculatedLevel;
   const actualLevel =
-    levelFromOverrideSelection(override2_2Selection) ?? trueLevel;
+    levelFromOverrideSelection(override2_2Selection, securityLevels) ??
+    trueLevel;
 
-  const currentIndex = usMiSecurityLevels.indexOf(currentLevel ?? "");
-  const actualIndex = usMiSecurityLevels.indexOf(actualLevel);
+  const currentIndex = securityLevels.indexOf(currentLevel ?? "");
+  const actualIndex = securityLevels.indexOf(actualLevel);
   let levelChange: UsMiClassificationLevels["levelChange"];
   if (currentIndex !== -1 && actualIndex > currentIndex) {
     levelChange = "INCREASE";
@@ -268,7 +308,6 @@ export type UsMiOverrideType = {
   reasons: string[];
   levelTitle: string;
   levelSubText: string;
-  levels: string[];
 };
 
 export const usMiOverrideQuestions: UsMiOverrideType[] = [
@@ -281,7 +320,6 @@ export const usMiOverrideQuestions: UsMiOverrideType[] = [
     levelTitle: "True security level",
     levelSubText:
       "The level the resident should be classified at after a departure.",
-    levels: usMiSecurityLevels,
   },
   {
     title: "Waiver override for facility operations",
@@ -292,24 +330,44 @@ export const usMiOverrideQuestions: UsMiOverrideType[] = [
     levelTitle: "Actual placement level",
     levelSubText:
       "Where this resident is actually housed, which can differ from their true security level for reasons unrelated to their behavior (space, medical, programming, etc.).",
-    levels: usMiSecurityLevels,
   },
 ];
 export function calculateUsMiAgeOptionSelection(
   question: UsMiAssessmentQuestionSpec,
-  note: number | undefined,
+  note: usMiAgeNotes | null | undefined,
 ) {
-  if (note === undefined || question.type !== "SINGLE") return;
+  const age = note?.age;
+  if (!age || question.type !== "SINGLE") return;
   const re = / |-/;
+
+  // Only the review age question has a second "25 or Younger" option, at index
+  // 1, for residents with qualifying good behavior. In the initial question
+  // index 1 is "26-30", so the behavior flags must not apply there.
+  const hasGoodBehaviorOption =
+    question.options[1]?.text === question.options[0]?.text;
+  const goodBehavior =
+    hasGoodBehaviorOption &&
+    note?.noViolentOrFightThreatenPowIncInLast12Months &&
+    note?.servedAtLeastOneYear;
 
   for (const [index, value] of question.options.entries()) {
     const lowerBounds = Number(value.text.split(re)[0]);
-    if (note < lowerBounds) {
-      if (index === 0) return 0;
-      else return index - 1;
+    if (age < lowerBounds) {
+      if (index === 0) {
+        // if good behavior is true then we want the option
+        // with subtext of good behavior for 25 and younger
+        if (goodBehavior) return 1;
+        // if they are not both true
+        // then we want to return the standard 25 and younger option
+        else return 0;
+      } else return index - 1;
     }
 
-    if (note === lowerBounds) return index;
+    if (age === lowerBounds) {
+      // this is in the instance that 25 or younger is caught
+      if (goodBehavior && index === 0) return 1;
+      return index;
+    }
   }
 
   return question.options.length - 1;
