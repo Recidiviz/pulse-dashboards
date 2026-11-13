@@ -52,6 +52,19 @@ import {
   sarAccessFilter,
 } from "~@sentencing/trpc/routes/staff/staff.helpers";
 
+// Locked SARs are read-only for everyone, internal users included. Edits
+// check this up front (assertSAREditable/assertEditable) for a clear error,
+// and also put it in the write's own `where`, so a SAR locked between the
+// check and the write still isn't changed.
+const UNLOCKED_SAR_WHERE = {
+  lockedAt: null,
+} satisfies Prisma.SentencingAssessmentReportWhereInput;
+
+// What assertEditable needs from a history record: its SAR's lock state.
+const SAR_LOCK_STATE_SELECT = {
+  sentencingAssessmentReport: { select: { lockedAt: true } },
+} as const;
+
 // Any manual create/update/delete of an employment history record means fresh
 // MOCIS imports should no longer overwrite this SAR's employment history —
 // see hasManuallyUpdatedEmploymentHistory on SentencingAssessmentReport.
@@ -60,7 +73,7 @@ function markEmploymentHistoryManuallyUpdated(
   sarId: string,
 ) {
   return prisma.sentencingAssessmentReport.update({
-    where: { id: sarId },
+    where: { id: sarId, ...UNLOCKED_SAR_WHERE },
     data: { hasManuallyUpdatedEmploymentHistory: true },
   });
 }
@@ -113,55 +126,64 @@ function sarNotFoundError() {
   });
 }
 
+// Distinct from the FORBIDDEN no-access error so the frontend can tell the
+// user the report is locked rather than that they lack access.
+function sarLockedError() {
+  return new TRPCError({
+    code: "PRECONDITION_FAILED",
+    message: "This Sentencing Assessment Report is locked and can't be edited",
+  });
+}
+
 // Throws FORBIDDEN unless the given SAR is accessible to staffPseudonymizedId
-// (its assignee or their district/org-wide supervisor). No staffPseudonymizedId
-// means an internal user, who is unrestricted -- same convention as every
-// other SAR route via `sarAccessFilter`. Shared by every mutation that
-// operates directly on a SAR id.
-async function assertSARAccessible(
+// (its assignee or their district/org-wide supervisor), and
+// PRECONDITION_FAILED if it's locked. No staffPseudonymizedId means an
+// internal user, who skips the staff scoping but not the lock. Shared by every
+// mutation that operates directly on a SAR id.
+async function assertSAREditable(
   prisma: PrismaClient,
   sarId: string,
   staffPseudonymizedId: string | undefined,
-): Promise<{ staffId: string | null } | null> {
-  if (!staffPseudonymizedId) return null;
-
-  const accessible = await prisma.sentencingAssessmentReport.findFirst({
+): Promise<{ staffId: string | null }> {
+  const sar = await prisma.sentencingAssessmentReport.findFirst({
     where: {
       id: sarId,
       ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
     },
-    select: { staffId: true },
+    select: { staffId: true, lockedAt: true },
   });
-  if (!accessible) {
+  if (!sar) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "You do not have access to this Sentencing Assessment Report",
+      message:
+        "You do not have access to edit this Sentencing Assessment Report",
     });
   }
-  return accessible;
+  if (sar.lockedAt) throw sarLockedError();
+  return sar;
 }
 
-// Throws FORBIDDEN unless `findRecord` resolves to a record. No
-// staffPseudonymizedId means an internal user, who is unrestricted, so
-// `findRecord` is skipped entirely rather than called. Shared by the history
+// Throws FORBIDDEN unless `findRecord` resolves to a record, and
+// PRECONDITION_FAILED if that record's SAR is locked. Shared by the history
 // CRUD mutations, which each look up their child record (employment/drug/
 // prior-treatment history) scoped to an accessible SAR via its own delegate
 // -- `findRecord` supplies that delegate-specific lookup, this just owns the
-// shared "unrestricted, or not found under this scope" handling.
-async function assertAccessible(
-  findRecord: () => Promise<{ id: string } | null>,
+// shared access and lock handling. The lookup runs for internal users too, so
+// they can't edit a locked SAR's history either.
+async function assertEditable(
+  findRecord: () => Promise<{
+    sentencingAssessmentReport: { lockedAt: Date | null };
+  } | null>,
   label: string,
-  staffPseudonymizedId: string | undefined,
 ): Promise<void> {
-  if (!staffPseudonymizedId) return;
-
-  const accessible = await findRecord();
-  if (!accessible) {
+  const record = await findRecord();
+  if (!record) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: `You do not have access to this ${label}`,
+      message: `You do not have access to edit this ${label}`,
     });
   }
+  if (record.sentencingAssessmentReport.lockedAt) throw sarLockedError();
 }
 
 // Fields only the SAR's assignee may set (an officer signing their own report).
@@ -436,7 +458,7 @@ export const sarRouter = router({
         input: { id, attributes },
         ctx: { prisma, staffPseudonymizedId },
       }) => {
-        const accessibleSAR = await assertSARAccessible(
+        const editableSAR = await assertSAREditable(
           prisma,
           id,
           staffPseudonymizedId,
@@ -501,7 +523,8 @@ export const sarRouter = router({
 
           // Secure signatures - do not let supervisors sign for officers and
           // vice-versa. No staffPseudonymizedId means an internal user, who
-          // is unrestricted -- same convention as assertSARAccessible above.
+          // may sign either -- same staff-scoping exemption as
+          // assertSAREditable above.
           // Skipped entirely (no extra queries) unless the update actually
           // touches a signature field.
           const touchesOfficerFields = touchesAnyField(
@@ -518,7 +541,7 @@ export const sarRouter = router({
             (touchesOfficerFields || touchesSupervisorFields)
           ) {
             const staff = await fetchStaffById(prisma, staffPseudonymizedId);
-            const isDirectReport = staff.externalId === accessibleSAR?.staffId;
+            const isDirectReport = staff.externalId === editableSAR.staffId;
 
             if (touchesOfficerFields && !isDirectReport) {
               throw new TRPCError({
@@ -536,7 +559,7 @@ export const sarRouter = router({
           }
 
           await prisma.sentencingAssessmentReport.update({
-            where: { id },
+            where: { id, ...UNLOCKED_SAR_WHERE },
             data: updateData,
           });
         } catch (e) {
@@ -552,7 +575,7 @@ export const sarRouter = router({
   createEmploymentHistory: baseProcedure
     .input(createEmploymentHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertSARAccessible(prisma, input.sarId, staffPseudonymizedId);
+      await assertSAREditable(prisma, input.sarId, staffPseudonymizedId);
 
       try {
         const { sarId, ...data } = input;
@@ -560,7 +583,9 @@ export const sarRouter = router({
           prisma.employmentHistory.create({
             data: {
               ...data,
-              sentencingAssessmentReportId: sarId,
+              sentencingAssessmentReport: {
+                connect: { id: sarId, ...UNLOCKED_SAR_WHERE },
+              },
             },
           }),
           markEmploymentHistoryManuallyUpdated(prisma, sarId),
@@ -577,7 +602,7 @@ export const sarRouter = router({
   updateEmploymentHistory: baseProcedure
     .input(updateEmploymentHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertAccessible(
+      await assertEditable(
         async () =>
           prisma.employmentHistory.findFirst({
             where: {
@@ -587,16 +612,15 @@ export const sarRouter = router({
                 staffPseudonymizedId,
               ),
             },
-            select: { id: true },
+            select: SAR_LOCK_STATE_SELECT,
           }),
         "employment history record",
-        staffPseudonymizedId,
       );
 
       try {
         const { id, ...data } = input;
         return await prisma.employmentHistory.update({
-          where: { id },
+          where: { id, sentencingAssessmentReport: UNLOCKED_SAR_WHERE },
           data: {
             ...data,
             sentencingAssessmentReport: {
@@ -615,7 +639,7 @@ export const sarRouter = router({
   deleteEmploymentHistory: baseProcedure
     .input(deleteEmploymentHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertAccessible(
+      await assertEditable(
         async () =>
           prisma.employmentHistory.findFirst({
             where: {
@@ -625,10 +649,9 @@ export const sarRouter = router({
                 staffPseudonymizedId,
               ),
             },
-            select: { id: true },
+            select: SAR_LOCK_STATE_SELECT,
           }),
         "employment history record",
-        staffPseudonymizedId,
       );
 
       try {
@@ -636,7 +659,10 @@ export const sarRouter = router({
         // sarId off the deleted row, without a separate lookup query first.
         return await prisma.$transaction(async (tx) => {
           const deleted = await tx.employmentHistory.delete({
-            where: { id: input.id },
+            where: {
+              id: input.id,
+              sentencingAssessmentReport: UNLOCKED_SAR_WHERE,
+            },
           });
           await markEmploymentHistoryManuallyUpdated(
             tx,
@@ -656,14 +682,16 @@ export const sarRouter = router({
   createDrugHistory: baseProcedure
     .input(createDrugHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertSARAccessible(prisma, input.sarId, staffPseudonymizedId);
+      await assertSAREditable(prisma, input.sarId, staffPseudonymizedId);
 
       try {
         const { sarId, ...data } = input;
         return await prisma.drugHistory.create({
           data: {
             ...data,
-            sentencingAssessmentReportId: sarId,
+            sentencingAssessmentReport: {
+              connect: { id: sarId, ...UNLOCKED_SAR_WHERE },
+            },
           },
         });
       } catch (e) {
@@ -677,7 +705,7 @@ export const sarRouter = router({
   updateDrugHistory: baseProcedure
     .input(updateDrugHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertAccessible(
+      await assertEditable(
         async () =>
           prisma.drugHistory.findFirst({
             where: {
@@ -687,16 +715,15 @@ export const sarRouter = router({
                 staffPseudonymizedId,
               ),
             },
-            select: { id: true },
+            select: SAR_LOCK_STATE_SELECT,
           }),
         "substance use history record",
-        staffPseudonymizedId,
       );
 
       try {
         const { id, ...data } = input;
         return await prisma.drugHistory.update({
-          where: { id },
+          where: { id, sentencingAssessmentReport: UNLOCKED_SAR_WHERE },
           data,
         });
       } catch (e) {
@@ -710,7 +737,7 @@ export const sarRouter = router({
   deleteDrugHistory: baseProcedure
     .input(deleteDrugHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertAccessible(
+      await assertEditable(
         async () =>
           prisma.drugHistory.findFirst({
             where: {
@@ -720,15 +747,17 @@ export const sarRouter = router({
                 staffPseudonymizedId,
               ),
             },
-            select: { id: true },
+            select: SAR_LOCK_STATE_SELECT,
           }),
         "substance use history record",
-        staffPseudonymizedId,
       );
 
       try {
         return await prisma.drugHistory.delete({
-          where: { id: input.id },
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: UNLOCKED_SAR_WHERE,
+          },
         });
       } catch (e) {
         handlePrismaError(
@@ -742,14 +771,16 @@ export const sarRouter = router({
   createPriorTreatmentHistory: baseProcedure
     .input(createPriorTreatmentHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertSARAccessible(prisma, input.sarId, staffPseudonymizedId);
+      await assertSAREditable(prisma, input.sarId, staffPseudonymizedId);
 
       try {
         const { sarId, ...data } = input;
         return await prisma.priorTreatmentHistory.create({
           data: {
             ...data,
-            sentencingAssessmentReportId: sarId,
+            sentencingAssessmentReport: {
+              connect: { id: sarId, ...UNLOCKED_SAR_WHERE },
+            },
           },
         });
       } catch (e) {
@@ -763,7 +794,7 @@ export const sarRouter = router({
   updatePriorTreatmentHistory: baseProcedure
     .input(updatePriorTreatmentHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertAccessible(
+      await assertEditable(
         async () =>
           prisma.priorTreatmentHistory.findFirst({
             where: {
@@ -773,16 +804,15 @@ export const sarRouter = router({
                 staffPseudonymizedId,
               ),
             },
-            select: { id: true },
+            select: SAR_LOCK_STATE_SELECT,
           }),
         "prior treatment history record",
-        staffPseudonymizedId,
       );
 
       try {
         const { id, ...data } = input;
         return await prisma.priorTreatmentHistory.update({
-          where: { id },
+          where: { id, sentencingAssessmentReport: UNLOCKED_SAR_WHERE },
           data,
         });
       } catch (e) {
@@ -796,7 +826,7 @@ export const sarRouter = router({
   deletePriorTreatmentHistory: baseProcedure
     .input(deletePriorTreatmentHistorySchema)
     .mutation(async ({ input, ctx: { prisma, staffPseudonymizedId } }) => {
-      await assertAccessible(
+      await assertEditable(
         async () =>
           prisma.priorTreatmentHistory.findFirst({
             where: {
@@ -806,15 +836,17 @@ export const sarRouter = router({
                 staffPseudonymizedId,
               ),
             },
-            select: { id: true },
+            select: SAR_LOCK_STATE_SELECT,
           }),
         "prior treatment history record",
-        staffPseudonymizedId,
       );
 
       try {
         return await prisma.priorTreatmentHistory.delete({
-          where: { id: input.id },
+          where: {
+            id: input.id,
+            sentencingAssessmentReport: UNLOCKED_SAR_WHERE,
+          },
         });
       } catch (e) {
         handlePrismaError(

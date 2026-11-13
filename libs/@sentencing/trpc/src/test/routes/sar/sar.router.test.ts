@@ -38,6 +38,10 @@ import { testPrismaClient } from "~@sentencing/trpc/test/setup";
 import {
   fakeDispositions,
   fakeInsightPrismaInput,
+  fakeLockedSAR,
+  fakeLockedSARDrugHistory,
+  fakeLockedSAREmploymentHistory,
+  fakeLockedSARPriorTreatmentHistory,
   fakeOffense,
   fakeSAR,
   fakeSARClient,
@@ -428,7 +432,9 @@ describe("SAR router", () => {
         staffPseudonymizedId: fakeSARStaff.pseudonymizedId, // ignored -- context id wins
       });
 
-      expect(sars.map((s) => s.id)).toEqual([fakeSAR.id]);
+      expect(sars.map((s) => s.id).sort()).toEqual(
+        [fakeSAR.id, fakeLockedSAR.id].sort(),
+      );
     });
 
     test("falls back to the requested staffPseudonymizedId when the caller has none (impersonation)", async () => {
@@ -437,7 +443,9 @@ describe("SAR router", () => {
         staffPseudonymizedId: fakeStaff.pseudonymizedId,
       });
 
-      expect(sars.map((s) => s.id)).toEqual([fakeSAR.id]);
+      expect(sars.map((s) => s.id).sort()).toEqual(
+        [fakeSAR.id, fakeLockedSAR.id].sort(),
+      );
     });
 
     test("throws FORBIDDEN when neither the caller nor the request resolves a staff identity", async () => {
@@ -853,12 +861,30 @@ describe("SAR router", () => {
         new TRPCError({
           code: "FORBIDDEN",
           message:
-            "You do not have access to this Sentencing Assessment Report",
+            "You do not have access to edit this Sentencing Assessment Report",
         }),
       );
     });
 
-    test("an internal user (no staffPseudonymizedId) can update any SAR, unrestricted", async () => {
+    test("should throw error when user attempts to update a locked SAR", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.updateSAR({
+          id: fakeLockedSAR.id,
+          attributes: {
+            address: "123 Test St",
+          },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) can update any unlocked SAR", async () => {
       const caller = makeCallerForStaff(undefined);
       await caller.sar.updateSAR({
         id: fakeSAR.id,
@@ -870,6 +896,22 @@ describe("SAR router", () => {
           where: { id: fakeSAR.id },
         });
       expect(updatedSAR?.address).toBe("123 Test St");
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot update a locked SAR", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.updateSAR({
+          id: fakeLockedSAR.id,
+          attributes: { address: "123 Test St" },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
     });
 
     // TODO(MO-13066): Drop isReportTypeLocked from this setup, and rename the
@@ -947,6 +989,112 @@ describe("SAR router", () => {
         employerName: "New Employer",
         verifiedByReportAuthor: false,
       });
+    });
+
+    test("should throw when user attempts to create an employment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.createEmploymentHistory({
+          sarId: fakeLockedSAR.id,
+          employerName: "Old Employer",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to delete an employment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.deleteEmploymentHistory({
+          id: fakeLockedSAREmploymentHistory.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to update an employment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.updateEmploymentHistory({
+          id: fakeLockedSAREmploymentHistory.id,
+          employerName: "foobar",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot update an employment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.updateEmploymentHistory({
+          id: fakeLockedSAREmploymentHistory.id,
+          employerName: "foobar",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot create an employment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.createEmploymentHistory({
+          sarId: fakeLockedSAR.id,
+          employerName: "foobar",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot delete an employment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.deleteEmploymentHistory({
+          id: fakeLockedSAREmploymentHistory.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) can create an employment history record on an unlocked report", async () => {
+      await makeCallerForStaff(undefined).sar.createEmploymentHistory({
+        sarId: fakeSAR.id,
+        employerName: "Acme Corp",
+      });
+
+      const histories = await testPrismaClient.employmentHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+      expect(histories).toHaveLength(1);
     });
 
     test("should delete an employment history record", async () => {
@@ -1072,6 +1220,224 @@ describe("SAR router", () => {
     });
   });
 
+  describe("substance use history on a locked report", () => {
+    test("an internal user (no staffPseudonymizedId) cannot create a substance use history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.createDrugHistory({
+          sarId: fakeLockedSAR.id,
+          substance: SubstanceType.Marijuana,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot delete a substance use history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.deleteDrugHistory({ id: fakeLockedSARDrugHistory.id }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to create a substance use history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.createDrugHistory({
+          sarId: fakeLockedSAR.id,
+          substance: SubstanceType.Marijuana,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to update a substance use history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.updateDrugHistory({
+          id: fakeLockedSARDrugHistory.id,
+          substance: SubstanceType.Marijuana,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to delete a substance use history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.deleteDrugHistory({ id: fakeLockedSARDrugHistory.id }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot update a substance use history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.updateDrugHistory({
+          id: fakeLockedSARDrugHistory.id,
+          substance: SubstanceType.Marijuana,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("leaves the locked report's substance use history record unchanged after a rejected update", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.updateDrugHistory({
+          id: fakeLockedSARDrugHistory.id,
+          substance: SubstanceType.Marijuana,
+        }),
+      ).rejects.toThrowError();
+
+      const record = await testPrismaClient.drugHistory.findUnique({
+        where: { id: fakeLockedSARDrugHistory.id },
+      });
+      expect(record).toMatchObject(fakeLockedSARDrugHistory);
+    });
+  });
+
+  describe("prior treatment history on a locked report", () => {
+    test("an internal user (no staffPseudonymizedId) cannot create a prior treatment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.createPriorTreatmentHistory({
+          sarId: fakeLockedSAR.id,
+          programName: "New Program",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot delete a prior treatment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.deletePriorTreatmentHistory({
+          id: fakeLockedSARPriorTreatmentHistory.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to create a prior treatment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.createPriorTreatmentHistory({
+          sarId: fakeLockedSAR.id,
+          programName: "New Program",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to update a prior treatment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.updatePriorTreatmentHistory({
+          id: fakeLockedSARPriorTreatmentHistory.id,
+          programName: "New Program",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("should throw when user attempts to delete a prior treatment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.deletePriorTreatmentHistory({
+          id: fakeLockedSARPriorTreatmentHistory.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("an internal user (no staffPseudonymizedId) cannot update a prior treatment history record on a locked report", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.updatePriorTreatmentHistory({
+          id: fakeLockedSARPriorTreatmentHistory.id,
+          programName: "New Program",
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "This Sentencing Assessment Report is locked and can't be edited",
+        }),
+      );
+    });
+
+    test("leaves the locked report's prior treatment history record unchanged after a rejected update", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await expect(() =>
+        caller.sar.updatePriorTreatmentHistory({
+          id: fakeLockedSARPriorTreatmentHistory.id,
+          programName: "New Program",
+        }),
+      ).rejects.toThrowError();
+
+      const record = await testPrismaClient.priorTreatmentHistory.findUnique({
+        where: { id: fakeLockedSARPriorTreatmentHistory.id },
+      });
+      expect(record).toMatchObject(fakeLockedSARPriorTreatmentHistory);
+    });
+  });
+
   describe("getSARsByClient", () => {
     test("returns the assigned SAR for the given clientExternalId", async () => {
       const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
@@ -1080,8 +1446,8 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0]).toEqual({
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)).toEqual({
         id: fakeSAR.id,
         externalId: fakeSAR.externalId,
         status: fakeSAR.status,
@@ -1096,8 +1462,8 @@ describe("SAR router", () => {
     test("returns multiple rows when the client has several assigned SARs to the caller", async () => {
       await testPrismaClient.sentencingAssessmentReport.create({
         data: {
-          externalId: "sar-ext-2",
-          id: "sar-2",
+          externalId: "sar-ext-3",
+          id: "sar-3",
           reportType: SARReportType.SAR,
           status: CaseStatus.Complete,
           client: { connect: { externalId: fakeSARClient.externalId } },
@@ -1110,9 +1476,9 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(2);
+      expect(sars).toHaveLength(3);
       expect(sars.map((s) => s.id).sort()).toEqual(
-        [fakeSAR.id, "sar-2"].sort(),
+        [fakeSAR.id, fakeLockedSAR.id, "sar-3"].sort(),
       );
     });
 
@@ -1159,9 +1525,9 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(2);
+      expect(sars).toHaveLength(3);
       expect(sars.map((s) => s.id).sort()).toEqual(
-        [fakeSAR.id, "sar-other-staff"].sort(),
+        [fakeSAR.id, fakeLockedSAR.id, "sar-other-staff"].sort(),
       );
       expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
         true,
@@ -1177,10 +1543,12 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(false);
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        false,
+      );
       // staff is still returned -- only the FE link is gated on currentUserHasAccess.
-      expect(sars[0].staff).toEqual({
+      expect(sars.find((s) => s.id === fakeSAR.id)?.staff).toEqual({
         pseudonymizedId: fakeStaff.pseudonymizedId,
       });
     });
@@ -1225,8 +1593,10 @@ describe("SAR router", () => {
           clientExternalId: fakeSARClient.externalId,
         });
 
-        expect(sars).toHaveLength(1);
-        expect(sars[0].currentUserHasAccess).toBe(true);
+        expect(sars).toHaveLength(2);
+        expect(
+          sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess,
+        ).toBe(true);
       });
 
       test("a district supervisor cannot sign for their direct report", async () => {
@@ -1317,6 +1687,30 @@ describe("SAR router", () => {
         expect(updated.supervisorTitle).toBe("Supervisor");
         expect(updated.supervisorSignature).toBe("John Doe");
       });
+
+      test("the assignee's district supervisor cannot sign a locked report", async () => {
+        await expect(() =>
+          makeCallerForStaff(districtSupervisorPseudoId).sar.updateSAR({
+            id: fakeLockedSAR.id,
+            attributes: {
+              supervisorTitle: "Supervisor",
+              supervisorSignature: "John Doe",
+            },
+          }),
+        ).rejects.toThrowError(
+          new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message:
+              "This Sentencing Assessment Report is locked and can't be edited",
+          }),
+        );
+
+        const locked =
+          await testPrismaClient.sentencingAssessmentReport.findUniqueOrThrow({
+            where: { id: fakeLockedSAR.id },
+          });
+        expect(locked.supervisorSignature).toBeNull();
+      });
     });
 
     test("an org-wide supervisor can access any in-progress SAR regardless of district", async () => {
@@ -1330,8 +1724,10 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(true);
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        true,
+      );
     });
 
     test("a SAR archived in OPII is accessible to any PO regardless of assignment", async () => {
@@ -1345,8 +1741,10 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(true);
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        true,
+      );
     });
 
     test("the assignee has no access to an in-progress SAR without SAR product access, even though they're the assignee", async () => {
@@ -1357,8 +1755,10 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(false);
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        false,
+      );
     });
 
     test("a SAR archived in OPII remains accessible to the assignee even without SAR product access", async () => {
@@ -1372,8 +1772,10 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(true);
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        true,
+      );
     });
 
     test("an internal user (no staffPseudonymizedId) sees every SAR for the client, but no link to an in-progress one they have no real relationship to", async () => {
@@ -1399,9 +1801,9 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(2);
+      expect(sars).toHaveLength(3);
       expect(sars.map((s) => s.id).sort()).toEqual(
-        [fakeSAR.id, "sar-other-staff"].sort(),
+        [fakeSAR.id, fakeLockedSAR.id, "sar-other-staff"].sort(),
       );
       expect(sars.every((s) => !s.currentUserHasAccess)).toBe(true);
     });
@@ -1417,8 +1819,10 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(true);
+      expect(sars).toHaveLength(2);
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        true,
+      );
     });
 
     test("output rows expose only the documented fields", async () => {
@@ -1427,7 +1831,7 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
+      expect(sars).toHaveLength(2);
       const row = sars[0];
       expect(Object.keys(row).sort()).toEqual(
         [

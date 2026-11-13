@@ -327,6 +327,53 @@ describe("saveORASData", () => {
   });
 });
 
+describe("signing", () => {
+  beforeEach(() => {
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+  });
+
+  async function hydrateWithCompletionDate(completionDate: Date | null) {
+    // A fresh copy, since signing mutates SARData in place.
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      completionDate,
+    });
+    await presenter.hydrate();
+  }
+
+  it.each(["signOfficer", "signSupervisor"] as const)(
+    "%s saves the signature on an unlocked report",
+    async (method) => {
+      await hydrateWithCompletionDate(null);
+      expect(presenter.isLocked).toBe(false);
+
+      await presenter[method]("Jane Doe", "Some Title");
+
+      expect(sentencingStore.apiClient.updateSARDetails).toHaveBeenCalledTimes(
+        1,
+      );
+    },
+  );
+
+  it.each([
+    ["signOfficer", "officerSignatureData"],
+    ["signSupervisor", "supervisorSignatureData"],
+  ] as const)(
+    "%s does nothing on a locked report",
+    async (method, signatureData) => {
+      await hydrateWithCompletionDate(new Date("2026-02-01"));
+      expect(presenter.isLocked).toBe(true);
+
+      await presenter[method]("Jane Doe", "Some Title");
+
+      expect(sentencingStore.apiClient.updateSARDetails).not.toHaveBeenCalled();
+      expect(presenter[signatureData].signature).toBeNull();
+    },
+  );
+});
+
 describe("defendant declined to participate", () => {
   describe("SARSections", () => {
     it("includes all sections when defendant has not declined", async () => {

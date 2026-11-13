@@ -557,7 +557,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   async signOfficer(signature: string, title: string): Promise<void> {
     const sarData = this.SARData;
-    if (!sarData) return;
+    if (!sarData || this.isLocked) return;
 
     const now = new Date();
     const prev = {
@@ -600,7 +600,7 @@ export class SARDetailsPresenter implements Hydratable {
 
   async signSupervisor(signature: string, title: string): Promise<void> {
     const sarData = this.SARData;
-    if (!sarData) return;
+    if (!sarData || this.isLocked) return;
 
     const now = new Date();
     const prev = {

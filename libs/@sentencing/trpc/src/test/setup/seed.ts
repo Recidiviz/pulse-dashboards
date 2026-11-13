@@ -30,6 +30,7 @@ import {
   ReportType,
   SARReportType,
   StateCode,
+  SubstanceType,
   SubstanceUseDiagnosis,
   TreatmentProgramCategory,
 } from "~@sentencing/prisma/client";
@@ -323,6 +324,41 @@ export const fakeSAR = {
   priorTreatmentHistorySummary: faker.lorem.paragraph(),
 };
 
+export const fakeLockedSAR = {
+  externalId: "sar-ext-2",
+  id: "sar-2",
+  reportType: SARReportType.SAR,
+  status: CaseStatus.InProgress,
+  requestingJudgeName: faker.person.fullName(),
+  dateRequested: faker.date.recent(),
+  dueDate: faker.date.future(),
+  division: "0003",
+  address: faker.location.streetAddress(),
+  lockedAt: faker.date.past(),
+};
+
+export const fakeLockedSAREmploymentHistory = {
+  id: "locked-sar-employment-1",
+  employerName: faker.company.name(),
+  startDate: faker.date.past({ years: 5 }),
+  endDate: faker.date.past({ years: 1 }),
+  verifiedByReportAuthor: true,
+};
+
+export const fakeLockedSARDrugHistory = {
+  id: "locked-sar-drug-1",
+  substance: SubstanceType.Alcohol,
+  ageOfRegularUse: 18,
+  admitsToCurrentUse: false,
+};
+
+export const fakeLockedSARPriorTreatmentHistory = {
+  id: "locked-sar-prior-treatment-1",
+  programName: faker.company.name(),
+  yearCompleted: 2020,
+  verifiedByReportAuthor: true,
+};
+
 export const fakeRecidivismSeries = createFakeRecidivismSeries();
 
 export const fakeDispositions = [
@@ -457,6 +493,30 @@ export async function seed(prismaClient: PrismaClient) {
         connect: {
           externalId: fakeStaff.externalId,
         },
+      },
+    },
+  });
+  await prismaClient.sentencingAssessmentReport.create({
+    data: {
+      ...fakeLockedSAR,
+      client: {
+        connect: {
+          externalId: fakeSARClient.externalId,
+        },
+      },
+      staff: {
+        connect: {
+          externalId: fakeStaff.externalId,
+        },
+      },
+      employmentHistories: {
+        create: fakeLockedSAREmploymentHistory,
+      },
+      drugHistories: {
+        create: fakeLockedSARDrugHistory,
+      },
+      priorTreatmentHistories: {
+        create: fakeLockedSARPriorTreatmentHistory,
       },
     },
   });

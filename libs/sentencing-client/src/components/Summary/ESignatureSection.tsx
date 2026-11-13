@@ -131,6 +131,12 @@ export const ESignatureSection: React.FC<ESignatureSectionProps> = observer(
   function ESignatureSection({ presenter, isReportComplete }) {
     const { officerSignatureData, supervisorSignatureData } = presenter;
 
+    // Signatures are part of the downloaded report, so a locked report can't
+    // be signed or re-signed until it's unlocked.
+    const canSignAsOfficer =
+      presenter.SARIsAssignedToCurrentUser && !presenter.isLocked;
+    const canSignAsSupervisor = presenter.isSupervisor && !presenter.isLocked;
+
     // Track only the "user explicitly clicked Edit" override — the base
     // edit-vs-signed display is derived live from MobX observables so it
     // always reflects the current state rather than a stale mount-time snapshot.
@@ -183,12 +189,12 @@ export const ESignatureSection: React.FC<ESignatureSectionProps> = observer(
                 signature={officerSignatureData.signature}
                 title={officerSignatureData.title}
                 lastSignedAt={officerSignatureData.lastSignedAt}
-                canCompleteSection={presenter.SARIsAssignedToCurrentUser}
+                canCompleteSection={canSignAsOfficer}
                 onEdit={() => setIsOfficerEditForced(true)}
               />
             ) : (
               <SignatureForm
-                canCompleteSection={presenter.SARIsAssignedToCurrentUser}
+                canCompleteSection={canSignAsOfficer}
                 initialSignature={officerSignatureData.signature ?? ""}
                 initialTitle={
                   officerSignatureData.title ?? OFFICER_DEFAULT_TITLE
@@ -207,12 +213,12 @@ export const ESignatureSection: React.FC<ESignatureSectionProps> = observer(
                 signature={supervisorSignatureData.signature}
                 title={supervisorSignatureData.title}
                 lastSignedAt={supervisorSignatureData.lastSignedAt}
-                canCompleteSection={presenter.isSupervisor}
+                canCompleteSection={canSignAsSupervisor}
                 onEdit={() => setIsSupervisorEditForced(true)}
               />
             ) : (
               <SignatureForm
-                canCompleteSection={presenter.isSupervisor}
+                canCompleteSection={canSignAsSupervisor}
                 initialSignature={supervisorSignatureData.signature ?? ""}
                 initialTitle={
                   supervisorSignatureData.title ?? SUPERVISOR_DEFAULT_TITLE
@@ -224,7 +230,7 @@ export const ESignatureSection: React.FC<ESignatureSectionProps> = observer(
             )}
           </Styled.SignatureFormWrapper>
         </Styled.FormsRow>
-        {!isReportComplete && (
+        {!isReportComplete && !presenter.isLocked && (
           <Styled.HelperText>
             Report cannot be signed until all required fields are completed.
           </Styled.HelperText>
