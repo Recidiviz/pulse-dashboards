@@ -468,6 +468,9 @@ model NotetakingPipelineRun {
   // (SENTRY_RELEASE); release is null in previews and local runs
   pipelineVersion String?
   release         String?
+  // Model experiment and variant the run was assigned to; null when the agency had no experiment
+  experimentId    String?
+  variant         String?
 
   status NotetakingPipelineStatus
 

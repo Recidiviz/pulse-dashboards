@@ -19,9 +19,11 @@
  * Specialist Core - AI Agents
  *
  * Implements the three-agent architecture:
- * - Extraction Agent (GPT-5): Extracts action items and status changes
- * - Writer Agent (GPT-5): Drafts case notes and staff feedback
- * - Auditor Agent (Gemini-2.5-Flash): Finds verbatim citations for verification
+ * - Extraction Agent (OpenAI): Extracts action items and status changes
+ * - Writer Agent (OpenAI): Drafts case notes and staff feedback
+ * - Auditor Agent (Gemini): Finds verbatim citations for verification
+ *
+ * Each agent uses the model set for its step in AgencyConfig.models.
  */
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -261,6 +263,7 @@ export class SpecialistCore {
           },
           { role: "user", content: userMessage },
         ],
+        model: agency.models.extraction,
         onCall,
       });
 
@@ -318,6 +321,7 @@ export class SpecialistCore {
           },
           { role: "user", content: userMessage },
         ],
+        model: agency.models.drafting,
         onCall,
       });
       // Additional outputs aren't stored separately, so fold each one onto

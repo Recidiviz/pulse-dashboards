@@ -62,6 +62,7 @@ type ZodChatCompletionOptions<T extends ZodSchema> = {
   client: OpenAI;
   messages: Array<ChatCompletionMessageParam>;
   schema: T;
+  model: string;
   /** Called once the provider responds, before the response is parsed. */
   onCall?: (call: LlmCallMeta) => void;
 };
@@ -70,11 +71,12 @@ export async function completeChatWithZodSchema<T extends ZodSchema>({
   client,
   messages,
   schema,
+  model,
   onCall,
 }: ZodChatCompletionOptions<T>): Promise<T["_output"]> {
   const startedAt = Date.now();
   const completion = await client.chat.completions.create({
-    model: "gpt-5-mini",
+    model,
     messages,
     response_format: zodToOpenAIStructuredOutputSchema(schema, {
       strict: true,

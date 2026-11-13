@@ -103,6 +103,11 @@ describe("ProductionPipeline", () => {
     labelStudioReviewPercent: 100,
     llmajTriageMinGrade: "BAD",
     labelStudioAlwaysReviewPartial: true,
+    models: {
+      extraction: "gpt-5-mini",
+      drafting: "gpt-5-mini",
+    },
+    modelExperiment: null,
   };
 
   const mockTranscript: TranscriptInput = {
@@ -591,6 +596,8 @@ describe("ProductionPipeline", () => {
           configVersion: "US_XX@v1-base@v1",
           pipelineVersion: PIPELINE_VERSION,
           release: null,
+          experimentId: null,
+          variant: null,
         });
 
       createAgentExecutionSpy = vi
@@ -622,46 +629,60 @@ describe("ProductionPipeline", () => {
           configVersion: "US_XX@v1-base@v1",
           pipelineVersion: PIPELINE_VERSION,
           release: null,
+          experimentId: null,
+          variant: null,
         });
     });
 
-    test("should create pipeline run on successful execution", async () => {
-      const mockExtraction: ExtractionOutput = {
-        actionItems: [],
-        entities: [],
-      };
+    // US_CO runs untraced, through a separate branch in run()
+    test.each(["US_NE", "US_CO"] as const)(
+      "should create pipeline run on successful execution in %s",
+      async (stateCode) => {
+        const mockExtraction: ExtractionOutput = {
+          actionItems: [],
+          entities: [],
+        };
 
-      const mockDrafting: DraftingOutput = {
-        caseNote: "Case note content. ".repeat(50),
-        staffFeedback: EMPTY_STAFF_FEEDBACK,
-      };
+        const mockDrafting: DraftingOutput = {
+          caseNote: "Case note content. ".repeat(50),
+          staffFeedback: EMPTY_STAFF_FEEDBACK,
+        };
 
-      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
-        mockExtraction,
-      );
-      vi.spyOn(SpecialistCore.prototype, "runDrafting").mockResolvedValue(
-        mockDrafting,
-      );
-      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
-        mockExtraction,
-      );
+        vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+          mockExtraction,
+        );
+        vi.spyOn(SpecialistCore.prototype, "runDrafting").mockResolvedValue(
+          mockDrafting,
+        );
+        vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+          mockExtraction,
+        );
 
-      vi.stubEnv("SENTRY_RELEASE", "3f9c2a1b7d04");
-      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
-      await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
-      vi.unstubAllEnvs();
+        vi.stubEnv("SENTRY_RELEASE", "3f9c2a1b7d04");
+        const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+        await pipeline.run(
+          mockAgency,
+          { ...mockClient, stateCode },
+          mockTranscript,
+          "meeting-456",
+          { experimentId: "luna-rollout", variant: "luna" },
+        );
+        vi.unstubAllEnvs();
 
-      // Verify pipeline run was created
-      expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
-      expect(createPipelineRunSpy).toHaveBeenCalledWith(mockPrisma, {
-        meetingId: "meeting-456",
-        personPseudonymizedId: "PSEUDO_123",
-        configVersion: "US_XX@v1-base@v1",
-        pipelineVersion: PIPELINE_VERSION,
-        release: "3f9c2a1b7d04",
-        status: "IN_PROGRESS",
-      });
-    });
+        // Verify pipeline run was created
+        expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
+        expect(createPipelineRunSpy).toHaveBeenCalledWith(mockPrisma, {
+          meetingId: "meeting-456",
+          personPseudonymizedId: "PSEUDO_123",
+          configVersion: "US_XX@v1-base@v1",
+          pipelineVersion: PIPELINE_VERSION,
+          release: "3f9c2a1b7d04",
+          experimentId: "luna-rollout",
+          variant: "luna",
+          status: "IN_PROGRESS",
+        });
+      },
+    );
 
     test("should store all agent executions on successful run", async () => {
       const mockExtraction: ExtractionOutput = {

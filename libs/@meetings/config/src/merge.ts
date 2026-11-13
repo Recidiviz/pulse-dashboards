@@ -55,6 +55,7 @@ export function mergeWithBase(
     // AgencyConfig, this can be merged with the base outputs.
     additionalOutputs: agency.additionalOutputs ?? [],
     labels: { ...base.labels, ...(agency.labels ?? {}) },
+    models: { ...base.models, ...agency.models },
     // Strip additional* fields — not part of resolved AgencyConfig
     additionalKeywords: undefined,
     additionalGlossary: undefined,

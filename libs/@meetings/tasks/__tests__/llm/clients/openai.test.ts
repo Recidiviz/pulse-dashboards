@@ -125,6 +125,7 @@ describe("OpenAI Client", () => {
       const onCall = vi.fn();
       const result = await completeChatWithZodSchema({
         client: mockOpenAI,
+        model: "gpt-5-mini",
         messages,
         schema,
         onCall,
@@ -139,6 +140,7 @@ describe("OpenAI Client", () => {
       });
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
         expect.objectContaining({
+          model: "gpt-5-mini",
           messages,
         }),
       );
@@ -168,6 +170,7 @@ describe("OpenAI Client", () => {
 
       await completeChatWithZodSchema({
         client: mockOpenAI,
+        model: "gpt-5-mini",
         messages: [{ role: "user", content: "Test" }],
         schema,
       });
@@ -231,6 +234,7 @@ describe("OpenAI Client", () => {
 
       await completeChatWithZodSchema({
         client: mockOpenAI,
+        model: "gpt-5-mini",
         messages: [{ role: "user", content: "Test" }],
         schema: ExtractionOutputSchema,
       });
@@ -264,6 +268,7 @@ describe("OpenAI Client", () => {
       await expect(
         completeChatWithZodSchema({
           client: mockOpenAI,
+          model: "gpt-5-mini",
           messages: [{ role: "user", content: "Test" }],
           schema,
         }),
@@ -295,6 +300,7 @@ describe("OpenAI Client", () => {
       await expect(
         completeChatWithZodSchema({
           client: mockOpenAI,
+          model: "gpt-5-mini",
           messages: [{ role: "user", content: "Test" }],
           schema,
         }),
@@ -338,6 +344,7 @@ describe("OpenAI Client", () => {
 
       const result = await completeChatWithZodSchema({
         client: mockOpenAI,
+        model: "gpt-5-mini",
         messages: [
           { role: "system", content: "Extract from transcript" },
           { role: "user", content: "Transcript text here" },
@@ -373,6 +380,7 @@ describe("OpenAI Client", () => {
       await expect(
         completeChatWithZodSchema({
           client: mockOpenAI,
+          model: "gpt-5-mini",
           messages: [{ role: "user", content: "Test" }],
           schema,
           onCall,

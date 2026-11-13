@@ -113,6 +113,46 @@ export const LabelsSchema = z
     "Labels/copy for common terms used in UI. Defaults are set in the base config.",
   );
 
+// The OpenAI models the extraction and drafting steps can call. Verification always runs on the
+// Gemini client's default model.
+const OpenAIModelSchema = z.enum(["gpt-5-mini", "gpt-6-luna"]);
+
+const ModelsSchema = z.object({
+  extraction: OpenAIModelSchema.default("gpt-5-mini"),
+  drafting: OpenAIModelSchema.default("gpt-5-mini"),
+});
+
+export const StepModelsSchema = ModelsSchema.partial()
+  .strict()
+  .describe(
+    "Model for each pipeline step. Steps left unset fall back to the base config, then to the pipeline default.",
+  );
+
+export const ModelExperimentSchema = z
+  .object({
+    id: z
+      .string()
+      .regex(/^[a-z0-9-]+$/)
+      .describe(
+        "Recorded on each run and seeds the assignment hash, so changing it reshuffles staff",
+      ),
+    treatmentPercent: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .describe(
+        "Percent of staff whose runs use these models; raising it keeps everyone already in the treatment",
+      ),
+    models: StepModelsSchema.describe(
+      "Models the treatment uses; steps left unset use the configured models",
+    ),
+  })
+  .strict()
+  .describe(
+    "Moves a percentage of staff onto different models. Set to null in a state config to opt out of the base experiment.",
+  );
+
 /**
  * The least severe LLMAJ section grade that sends a meeting to LLMAJ triage.
  * Sections the judge graded this grade or worse are flagged for review, and a
@@ -233,6 +273,12 @@ export const AgencyConfigFileSchema = z
       .describe(
         "Patches specific fields of existing outputs by id, without replacing them",
       ),
+    models: StepModelsSchema.optional().describe(
+      "Merged on top of base models per step. These are also the control models of an inherited experiment, so changing them changes its control group",
+    ),
+    modelExperiment: ModelExperimentSchema.nullable()
+      .optional()
+      .describe("Replaces the base experiment; null opts out of it"),
   })
   .describe(
     "Use plain fields (`glossary`, `keywords`, etc.) to fully replace the base values. Use `additional*` variants to extend the base instead — mergeWithBase applies them on top before validation",
@@ -280,6 +326,8 @@ export const AgencyConfigSchema = z.object({
   outputs: z.array(OutputSpecSchema).default([]),
   additionalOutputs: z.array(OutputSpecSchema).default([]),
   aliases: AliasesSchema.optional(),
+  models: ModelsSchema.default({}),
+  modelExperiment: ModelExperimentSchema.nullable().default(null),
 });
 
 export type AgencyConfigFile = z.infer<typeof AgencyConfigFileSchema>;

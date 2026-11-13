@@ -17,7 +17,7 @@
 
 import { SyncPrerecordedResponse } from "@deepgram/sdk";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
-import { captureException, getTraceData } from "@sentry/node";
+import { captureException, getCurrentScope, getTraceData } from "@sentry/node";
 import { Transcript } from "assemblyai";
 
 import {
@@ -32,6 +32,7 @@ import {
   transcribeAudioWithDeepgram,
 } from "~@meetings/tasks";
 import {
+  assignModels,
   ProductionPipeline,
   SpecialistCore,
   TranscriptInput,
@@ -553,16 +554,25 @@ export async function handleNotetakingProcessing(
     throw new Error(`No agency config found for state code: ${stateCode}`);
   }
 
+  const { agency: assignedAgencyConfig, ...experiment } = assignModels(
+    agencyConfig,
+    meeting.staffEmail,
+  );
+  if (experiment.variant) {
+    getCurrentScope().setTag("modelVariant", experiment.variant);
+  }
+
   // Run the LLM pipeline
   const pipeline = new ProductionPipeline(
     prisma,
     SpecialistCore.factory(meetingPerson.stateCode),
   );
   const result = await pipeline.run(
-    agencyConfig,
+    assignedAgencyConfig,
     meetingPerson,
     transcriptInput,
     meetingId,
+    experiment,
   );
 
   // Return the full result with metadata

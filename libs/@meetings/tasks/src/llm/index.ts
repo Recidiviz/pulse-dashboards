@@ -24,6 +24,7 @@
 // Core modules
 export * from "~@meetings/tasks/llm/agents";
 export * from "~@meetings/tasks/llm/guards";
+export * from "~@meetings/tasks/llm/modelAssignment";
 export * from "~@meetings/tasks/llm/orchestrator";
 export * from "~@meetings/tasks/llm/prompts";
 export * from "~@meetings/tasks/llm/schemas";

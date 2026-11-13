@@ -44,6 +44,7 @@ import {
   extractionGuard,
   transcriptGuard,
 } from "~@meetings/tasks/llm/guards";
+import type { ExperimentAssignment } from "~@meetings/tasks/llm/modelAssignment";
 import { PIPELINE_VERSION } from "~@meetings/tasks/llm/prompts";
 import {
   DraftingOutputSchema,
@@ -72,17 +73,19 @@ export class ProductionPipeline {
   }
 
   /**
-   * Main pipeline execution with structured logging
+   * Main pipeline execution with structured logging. Pass the agency and experiment from
+   * assignModels to record which model experiment variant the run used.
    */
   async run(
     agency: AgencyConfig,
     person: Person,
     transcript: TranscriptInput,
     meetingId: string,
+    experiment: ExperimentAssignment = {},
   ): Promise<PipelineOutput> {
     return isTracingEnabledForState(person.stateCode)
-      ? this.runTraced(agency, person, transcript, meetingId)
-      : this.runPipeline(agency, person, transcript, meetingId);
+      ? this.runTraced(agency, person, transcript, meetingId, experiment)
+      : this.runPipeline(agency, person, transcript, meetingId, experiment);
   }
 
   /**
@@ -93,6 +96,7 @@ export class ProductionPipeline {
     person: Person,
     transcript: TranscriptInput,
     meetingId: string,
+    { experimentId, variant }: ExperimentAssignment,
   ): Promise<PipelineOutput> => {
     const configVersion = generateConfigKey(agency);
     // Git SHA of the deployed server image; unset in previews and local runs
@@ -102,6 +106,7 @@ export class ProductionPipeline {
       state_code: person.stateCode,
       config_version: configVersion,
       pipeline_version: PIPELINE_VERSION,
+      model_variant: variant,
     });
     const runTree = getCurrentRunTree(true);
     if (runTree) {
@@ -110,6 +115,8 @@ export class ProductionPipeline {
         config_version: configVersion,
         pipeline_version: PIPELINE_VERSION,
         release,
+        experiment_id: experimentId,
+        model_variant: variant,
       };
     }
 
@@ -126,6 +133,8 @@ export class ProductionPipeline {
       configVersion,
       pipelineVersion: PIPELINE_VERSION,
       release,
+      experimentId,
+      variant,
     });
 
     try {

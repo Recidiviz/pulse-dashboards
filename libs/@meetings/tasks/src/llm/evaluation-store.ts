@@ -67,6 +67,8 @@ export interface CreatePipelineRunParams {
   configVersion?: string;
   pipelineVersion?: string;
   release?: string;
+  experimentId?: string;
+  variant?: string;
 }
 
 export interface CreateAgentExecutionParams {
@@ -163,6 +165,8 @@ export async function createPipelineRun(
       configVersion: params.configVersion,
       pipelineVersion: params.pipelineVersion,
       release: params.release,
+      experimentId: params.experimentId,
+      variant: params.variant,
     },
   });
 }

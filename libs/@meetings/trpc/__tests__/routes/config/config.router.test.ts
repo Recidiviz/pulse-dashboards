@@ -48,6 +48,11 @@ const FAKE_AGENCY_CONFIG = {
   labelStudioReviewPercent: 100,
   llmajTriageMinGrade: "BAD",
   labelStudioAlwaysReviewPartial: false,
+  models: {
+    extraction: "gpt-5-mini",
+    drafting: "gpt-5-mini",
+  },
+  modelExperiment: null,
 };
 
 describe("config router", () => {

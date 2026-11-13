@@ -90,4 +90,9 @@ export const EVAL_AGENCY: AgencyConfig = {
   labelStudioReviewPercent: 100,
   llmajTriageMinGrade: "BAD",
   labelStudioAlwaysReviewPartial: true,
+  models: {
+    extraction: "gpt-5-mini",
+    drafting: "gpt-5-mini",
+  },
+  modelExperiment: null,
 };

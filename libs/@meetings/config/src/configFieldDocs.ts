@@ -22,7 +22,9 @@ import {
   LabelsSchema,
   MeetingTypeConfigEntrySchema,
   MeetingTypeSchema,
+  ModelExperimentSchema,
   OutputSpecSchema,
+  StepModelsSchema,
 } from "~@meetings/config/types";
 
 export type ConfigFieldDoc = {
@@ -50,6 +52,8 @@ const NAMED_SCHEMAS: NamedSchema[] = [
   { name: "OutputSpec", schema: OutputSpecSchema },
   { name: "Labels", schema: LabelsSchema },
   { name: "Aliases", schema: AliasesSchema },
+  { name: "StepModels", schema: StepModelsSchema },
+  { name: "ModelExperiment", schema: ModelExperimentSchema },
 ];
 
 function findSchemaName(schema: z.ZodTypeAny): string | undefined {
@@ -95,6 +99,9 @@ function describeType(schema: z.ZodTypeAny): TypeDescription {
   }
   if (inner instanceof z.ZodBoolean) {
     return { label: "boolean" };
+  }
+  if (inner instanceof z.ZodEnum) {
+    return { label: (inner.options as string[]).join(" | ") };
   }
   return { label: "value" };
 }

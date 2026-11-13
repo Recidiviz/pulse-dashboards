@@ -113,6 +113,11 @@ describe("SpecialistCore", () => {
     labelStudioReviewPercent: 100,
     llmajTriageMinGrade: "BAD",
     labelStudioAlwaysReviewPartial: true,
+    models: {
+      extraction: "gpt-5-mini",
+      drafting: "gpt-5-mini",
+    },
+    modelExperiment: null,
   };
 
   beforeEach(() => {
@@ -227,15 +232,15 @@ describe("SpecialistCore", () => {
         ],
       } as never);
 
-      const result = await core.runExtraction(
-        mockTranscript,
-        mockClient,
-        mockAgency,
-      );
+      const result = await core.runExtraction(mockTranscript, mockClient, {
+        ...mockAgency,
+        models: { ...mockAgency.models, extraction: "gpt-6-luna" },
+      });
 
       expect(result).toEqual(mockExtraction);
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
         expect.objectContaining({
+          model: "gpt-6-luna",
           messages: expect.arrayContaining([
             expect.objectContaining({ role: "system" }),
             expect.objectContaining({ role: "user" }),
@@ -643,12 +648,17 @@ describe("SpecialistCore", () => {
       const result = await core.runDrafting(
         mockTranscript,
         mockExtraction,
-        mockAgency,
+        {
+          ...mockAgency,
+          models: { ...mockAgency.models, drafting: "gpt-6-luna" },
+        },
         mockClient,
       );
 
       expect(result).toEqual(mockDrafting);
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalled();
+      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+        expect.objectContaining({ model: "gpt-6-luna" }),
+      );
     });
 
     test("should pass the writer user variables into the user message", async () => {

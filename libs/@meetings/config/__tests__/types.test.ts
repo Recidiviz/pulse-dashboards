@@ -20,6 +20,35 @@ import { describe, expect, test } from "vitest";
 import { AgencyConfigFileSchema } from "~@meetings/config/types";
 
 describe("AgencyConfigFileSchema", () => {
+  describe("modelExperiment validation", () => {
+    const parse = (modelExperiment: unknown) =>
+      AgencyConfigFileSchema.safeParse({
+        name: "Test",
+        stateCode: "US_XX",
+        modelExperiment,
+      }).success;
+
+    test("rejects percents over 100, models a step can't use, and misspelled steps", () => {
+      expect(
+        parse({ id: "luna-rollout", treatmentPercent: 101, models: {} }),
+      ).toBe(false);
+      expect(
+        parse({
+          id: "luna-rollout",
+          treatmentPercent: 50,
+          models: { drafting: "gemini-3.8-flash" },
+        }),
+      ).toBe(false);
+      expect(
+        parse({
+          id: "luna-rollout",
+          treatmentPercent: 50,
+          models: { drafing: "gpt-6-luna" },
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe("TTL minimum validation", () => {
     test.each(["audioTTLDays", "transcriptTTLDays"] as const)(
       "%s rejects values below 7",

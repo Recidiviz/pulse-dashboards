@@ -348,4 +348,34 @@ describe("mergeWithBase", () => {
     );
     expect(AgencyConfigSchema.parse(merged).staffFeedbackEnabled).toBe(false);
   });
+
+  test("agency models override base models per step, and unset steps use the default", () => {
+    const merged = mergeWithBase(
+      { ...BASE, models: { extraction: "gpt-6-luna" } },
+      { ...AGENCY, models: { drafting: "gpt-6-luna" } },
+    );
+    expect(AgencyConfigSchema.parse(merged).models).toEqual({
+      extraction: "gpt-6-luna",
+      drafting: "gpt-6-luna",
+    });
+  });
+
+  test("agency inherits the base modelExperiment unless it sets null", () => {
+    const base: Parameters<typeof mergeWithBase>[0] = {
+      ...BASE,
+      modelExperiment: {
+        id: "luna-rollout",
+        treatmentPercent: 50,
+        models: { drafting: "gpt-6-luna" },
+      },
+    };
+    expect(
+      AgencyConfigSchema.parse(mergeWithBase(base, AGENCY)).modelExperiment?.id,
+    ).toBe("luna-rollout");
+    expect(
+      AgencyConfigSchema.parse(
+        mergeWithBase(base, { ...AGENCY, modelExperiment: null }),
+      ).modelExperiment,
+    ).toBeNull();
+  });
 });

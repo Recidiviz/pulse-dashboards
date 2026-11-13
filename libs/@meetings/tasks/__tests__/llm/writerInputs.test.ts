@@ -109,6 +109,11 @@ describe("buildWriterUserVariables", () => {
     labelStudioReviewPercent: 100,
     llmajTriageMinGrade: "BAD",
     labelStudioAlwaysReviewPartial: true,
+    models: {
+      extraction: "gpt-5-mini",
+      drafting: "gpt-5-mini",
+    },
+    modelExperiment: null,
   };
 
   const mockFacts: WriterFacts = {
