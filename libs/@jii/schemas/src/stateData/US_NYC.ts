@@ -59,6 +59,28 @@ export const usNycCourtCodeEnum = z.enum([
   "VTCB",
 ]);
 
+export const usNycFacilityCodeEnum = z.enum([
+  "AMKC",
+  "BEDF",
+  "BHPW",
+  "BKDC",
+  "EHPW",
+  "EMTC",
+  "GMDC",
+  "GRVC",
+  "IMS",
+  "MDC",
+  "NIC",
+  "OBCC",
+  "OTXB",
+  "RESH",
+  "RMSC",
+  "RNDC",
+  "UNFA",
+  "VCBC",
+  "WF",
+]);
+
 const usNycEmergencyContactFullNameSchema = z.object({
   givenNames: z.string().nullable(),
   middleNames: z.string().nullable(),
@@ -86,7 +108,7 @@ export const usNycLegalStatusEnum = z.enum(["Pre-sentence", "Sentenced"]);
 export const usNycStateDataSchema = z.object({
   stateCode: z.literal("US_NYC"),
   lastUpdatedDate: nullishAsUndefined(dateStringSchema),
-  housingFacility: z.string().nullable(),
+  housingFacility: usNycFacilityCodeEnum.nullable().catch(null),
   // TODO(OBT-56128) Change commissaryBalance from numeric to float
   commissaryBalance: z.coerce.number().nullable(),
   emergencyContactFullName: usNycEmergencyContactFullNameSchema.nullable(),

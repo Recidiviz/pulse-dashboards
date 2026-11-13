@@ -113,5 +113,26 @@
       "showLabel": "Show my personal information"
     },
     "hiddenSubHeading": "Your commissary balance and emergency contact are hidden so they don't show on your screen until you choose to see them. Use the switch to show or hide them."
+  },
+  "housingFacilities": {
+    "AMKC": "Anna M. Kross Center",
+    "BEDF": "Bedford Hills Correctional Facility",
+    "BHPW": "Bellevue Hospital Prison Ward",
+    "BKDC": "Brooklyn Detention Complex",
+    "EHPW": "Elmhurst Hospital Prison Ward",
+    "EMTC": "Eric M. Taylor Center",
+    "GMDC": "George Motchan Detention Center",
+    "GRVC": "George R. Vierno Center",
+    "IMS": "Individualized Monitoring System",
+    "MDC": "Manhattan Detention Complex",
+    "NIC": "North Infirmary Command",
+    "OBCC": "Otis Bantum Correctional Center",
+    "OTXB": "Outposted Therapeutic Housing Unit at Bellevue",
+    "RESH": "Rose M. Singer Enhanced Supervised Housing",
+    "RMSC": "Rose M. Singer Center",
+    "RNDC": "Robert N. Davoren Complex",
+    "UNFA": "Unknown Facility",
+    "VCBC": "Vernon C. Bain Center",
+    "WF": "West Facility"
   }
 }

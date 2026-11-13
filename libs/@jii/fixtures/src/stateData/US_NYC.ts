@@ -22,7 +22,7 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
   {
     stateCode: "US_NYC",
     lastUpdatedDate: relativeFixtureDate(),
-    housingFacility: "Demo Detention Center",
+    housingFacility: "IMS",
     commissaryBalance: 42.5,
     emergencyContactFullName: {
       givenNames: "Sam",
@@ -56,7 +56,7 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
   {
     stateCode: "US_NYC",
     lastUpdatedDate: relativeFixtureDate(),
-    housingFacility: "Demo Detention Center",
+    housingFacility: "AMKC",
     commissaryBalance: 0,
     emergencyContactFullName: {
       givenNames: "Taylor",
@@ -77,7 +77,7 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
   {
     stateCode: "US_NYC",
     lastUpdatedDate: relativeFixtureDate(),
-    housingFacility: "Demo Detention Center",
+    housingFacility: "RESH",
     commissaryBalance: 15.25,
     emergencyContactFullName: null,
     emergencyContactAddress: null,
@@ -89,7 +89,7 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
   {
     stateCode: "US_NYC",
     lastUpdatedDate: relativeFixtureDate(),
-    housingFacility: "Demo Detention Center",
+    housingFacility: "WF",
     commissaryBalance: 0,
     emergencyContactFullName: {
       givenNames: "Casey",
@@ -110,7 +110,7 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
   {
     stateCode: "US_NYC",
     lastUpdatedDate: relativeFixtureDate(),
-    housingFacility: "Demo Detention Center",
+    housingFacility: "UNFA",
     commissaryBalance: 27.75,
     emergencyContactFullName: {
       givenNames: "Riley",

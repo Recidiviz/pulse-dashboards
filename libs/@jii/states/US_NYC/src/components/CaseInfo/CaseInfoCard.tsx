@@ -25,6 +25,7 @@ import {
   TwoColumnCardWrapper,
 } from "~@jii/common-ui";
 import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
+import { useUsNycTranslations } from "~@jii/translation";
 import { palette, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -116,7 +117,9 @@ const ManagedComponent: React.FC<{ presenter: CaseInfoPresenter }> = observer(
 function usePresenter() {
   const { resident } = useSingleResidentContext();
   const stateSpecificData = useResidentMetadata("US_NYC");
-  return new CaseInfoPresenter(resident, stateSpecificData);
+  const { t } = useUsNycTranslations();
+
+  return new CaseInfoPresenter(resident, stateSpecificData, t);
 }
 
 export const CaseInfo = withPresenterManager({

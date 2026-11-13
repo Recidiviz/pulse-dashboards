@@ -19,6 +19,7 @@ import { makeAutoObservable } from "mobx";
 
 import { firstNameLastName, ResidentRecord } from "~@jii/data";
 import type { UsNycResidentJiiData } from "~@jii/schemas";
+import type { UsNycTFunction } from "~@jii/translation";
 
 import type { CaseInfoData } from "./CaseInfoCard";
 
@@ -36,6 +37,7 @@ export class CaseInfoPresenter {
   constructor(
     private readonly resident: ResidentRecord,
     private readonly stateSpecificData: UsNycResidentJiiData,
+    private readonly t: UsNycTFunction,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
@@ -55,9 +57,10 @@ export class CaseInfoPresenter {
   }
 
   get housingFacility(): string {
-    return (
-      this.stateSpecificData.housingFacility ?? COPY.unknownHousingFacility
-    );
+    const housingFacilityCode = this.stateSpecificData.housingFacility;
+    return housingFacilityCode
+      ? this.t(($) => $.housingFacilities[housingFacilityCode])
+      : COPY.unknownHousingFacility;
   }
 
   get cardHeading(): string {
