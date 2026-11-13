@@ -22,6 +22,7 @@ import styled from "styled-components";
 
 import { september2026 } from "~@parole-board/common/fixtures";
 
+import { publicChipLabel } from "../PublicCalendarView/PublicCalendarView";
 import { semantics } from "../theme";
 import { CalendarGrid } from "./CalendarGrid";
 import { CalendarGridSkeleton } from "./CalendarGridSkeleton";
@@ -185,9 +186,7 @@ export const PublicChips = () => (
     <CalendarGrid
       {...base}
       entries={shortLabelEntries}
-      formatLabel={(entry) =>
-        entry.kind === "BUSINESS_MEETING" ? "Business Meeting" : entry.label
-      }
+      formatLabel={publicChipLabel}
       cancelledTag="text"
     />
   </Frame>

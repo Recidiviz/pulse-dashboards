@@ -19,6 +19,7 @@ export * from "./addMonthChoices";
 export * from "./calendarApi";
 export * from "./calendarApiError";
 export * from "./monthSummaries";
+export * from "./publicMonths";
 export * from "./queryResult";
 export * from "./september2026";
 export * from "./september2026Month";

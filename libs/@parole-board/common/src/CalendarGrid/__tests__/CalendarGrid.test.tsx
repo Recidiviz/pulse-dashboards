@@ -28,20 +28,6 @@ import styles from "../CalendarGrid.module.css";
 import { CALENDAR_VARS } from "../CalendarGrid.styles";
 import type { CalendarGridProps } from "../types";
 
-// Marks each Badge with a test id, so a test can tell whether a chip drew one.
-vi.mock("../../components/Badge", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("../../components/Badge")>();
-  return {
-    ...actual,
-    Badge: (props: Parameters<typeof actual.Badge>[0]) => (
-      <span data-testid="badge">
-        <actual.Badge {...props} />
-      </span>
-    ),
-  };
-});
-
 const baseProps: CalendarGridProps = {
   month: september2026.month,
   entries: september2026.entries,
@@ -174,7 +160,8 @@ describe("CalendarGrid month view", () => {
     expect(tag).toHaveStyleRule("text-transform", "uppercase");
     expect(tag.parentElement).toHaveStyleRule("font-weight", "600");
     expect(cancelled).toHaveTextContent("Full Board, cancelled");
-    expect(within(cancelled).queryByTestId("badge")).not.toBeInTheDocument();
+    // A badge is a filled pill; the text tag has no fill of its own.
+    expect(getComputedStyle(tag).backgroundColor).toBe("rgba(0, 0, 0, 0)");
     // Only the cancelled chip says so, not its day.
     expect(within(dayCell("2026-09-11")).getAllByText("Cancelled")).toEqual([
       tag,
@@ -187,10 +174,8 @@ describe("CalendarGrid month view", () => {
 
   test("draws the Cancelled badge by default", () => {
     renderGrid({ entries: september2026.entriesWithCancelledMeeting });
-    const cancelled = chip("2026-09-11", "Full Board");
-    expect(within(cancelled).getByTestId("badge")).toHaveTextContent(
-      "Cancelled",
-    );
+    const tag = within(chip("2026-09-11", "Full Board")).getByText("Cancelled");
+    expect(getComputedStyle(tag).backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
   });
 
   test("formatLabel changes only the chip's text", () => {

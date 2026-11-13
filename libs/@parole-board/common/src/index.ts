@@ -20,4 +20,5 @@ export * from "./CalendarGrid";
 export * from "./components";
 export * from "./host";
 export * from "./loading";
+export * from "./PublicCalendarView";
 export * from "./theme";

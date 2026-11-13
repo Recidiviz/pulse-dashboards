@@ -1,0 +1,19 @@
+{
+  "name": "@parole-board/us-co-public-calendar",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@parole-board/us-co-public-calendar/src",
+  "projectType": "application",
+  "tags": ["scope:client", "domain:parole-board"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
