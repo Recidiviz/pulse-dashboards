@@ -33,4 +33,8 @@ export class EdovoProgressHistoryListPresenter {
   get recentMonths(): UsArEdovoCreditActivity[] {
     return this.sortedMonths.slice(0, 3);
   }
+
+  get showAllMonthsLink(): boolean {
+    return this.sortedMonths.length > 3;
+  }
 }

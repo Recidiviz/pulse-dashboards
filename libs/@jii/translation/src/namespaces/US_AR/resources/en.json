@@ -110,8 +110,8 @@
         "heading": "Course hours history",
         "monthLabel": "{{date, formatMonthYear}}",
         "carriedIn": "Includes {{count}} carried in",
-        "totalHours_one": "{{count}} hr",
-        "totalHours_other": "{{count}} hrs",
+        "totalHours_one": "{{count, withSign}} hr",
+        "totalHours_other": "{{count, withSign}} hrs",
         "extraHoursLink": "[What happens to extra hours?]({{extraHoursUrl}})",
         "explainer": "Every 16 hours of Edovo courses you complete and pass earns 1 program unit, up to 1 a month.",
         "seeAllLink": "See all months"

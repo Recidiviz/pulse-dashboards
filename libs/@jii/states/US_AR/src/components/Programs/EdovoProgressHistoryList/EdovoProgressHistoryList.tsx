@@ -46,7 +46,7 @@ const SeeAllLinkWrapper = styled.div`
 
 const ManagedComponent: FC<{ presenter: EdovoProgressHistoryListPresenter }> =
   observer(function EdovoProgressHistoryList({ presenter }) {
-    const { recentMonths } = presenter;
+    const { recentMonths, showAllMonthsLink } = presenter;
     const { t } = useUsArTranslations();
     const pathParams = useTypedParams(State.Resident);
 
@@ -71,15 +71,17 @@ const ManagedComponent: FC<{ presenter: EdovoProgressHistoryListPresenter }> =
             </Fragment>
           ))}
         </ActivityList>
-        <SeeAllLinkWrapper>
-          <GoLink
-            to={State.Resident.ProgramCatalog.OnMyTablet.History.buildPath(
-              pathParams,
-            )}
-          >
-            {t(($) => $.programs.onMyTablet.history.seeAllLink)}
-          </GoLink>
-        </SeeAllLinkWrapper>
+        {showAllMonthsLink && (
+          <SeeAllLinkWrapper>
+            <GoLink
+              to={State.Resident.ProgramCatalog.OnMyTablet.History.buildPath(
+                pathParams,
+              )}
+            >
+              {t(($) => $.programs.onMyTablet.history.seeAllLink)}
+            </GoLink>
+          </SeeAllLinkWrapper>
+        )}
         <SlateCopy options={{ forceBlock: true }}>
           {`${t(($) => $.programs.onMyTablet.history.explainer)} ${t(
             ($) => $.programs.onMyTablet.history.extraHoursLink,
