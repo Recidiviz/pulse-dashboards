@@ -21,6 +21,44 @@ import { dateStringSchema, nullishAsUndefined } from "~datatypes";
 
 export const usNycBoroughCodeEnum = z.enum(["X", "I", "K", "Q", "R", "N"]);
 
+export const usNycCourtCodeEnum = z.enum([
+  "CIFM",
+  "CKS1",
+  "CKS2",
+  "CKS9",
+  "CNC1",
+  "CNC2",
+  "CNC3",
+  "CQQ1",
+  "CRT1",
+  "CXE1",
+  "CXE2",
+  "FKA3",
+  "FNL7",
+  "FQP3",
+  "FRR1",
+  "FXE2",
+  "I-RMSC",
+  "N-MDC",
+  "RIJC",
+  "SKA3",
+  "SKA9",
+  "SKJ3",
+  "SKS9",
+  "SNC1",
+  "SNC2",
+  "SNC7",
+  "SNC9",
+  "SQC3",
+  "SQK1",
+  "SQQ1",
+  "SQS2",
+  "SRR1",
+  "SXG1",
+  "TRANS",
+  "VTCB",
+]);
+
 const usNycEmergencyContactFullNameSchema = z.object({
   givenNames: z.string().nullable(),
   middleNames: z.string().nullable(),
@@ -38,7 +76,7 @@ const usNycPreSentenceDocketsSchema = z.object({
   docketNumber: z.string().nullable(),
   nextCourtDate: dateStringSchema.nullable(),
   // TODO(OBT-56217) Replace with court address
-  nextCourtLocation: z.string().nullable(),
+  nextCourtLocation: usNycCourtCodeEnum.nullable().catch(null),
   // An unrecognized borough code parses as null rather than failing the whole record.
   nextCourtBorough: usNycBoroughCodeEnum.nullable().catch(null),
 });

@@ -55,7 +55,7 @@ describe("ScheduledCourtDatesPresenter", () => {
           {
             docketNumber: null,
             nextCourtDate: new Date(2026, 11, 1),
-            nextCourtLocation: "Demo Criminal Court",
+            nextCourtLocation: "SNC2",
             nextCourtBorough: null,
           },
           {
@@ -92,7 +92,7 @@ describe("ScheduledCourtDatesPresenter", () => {
         {
           id: "unknown-docket-0",
           label: "Scheduled court date for docket: Unknown Docket Number",
-          description: "At Demo Criminal Court.",
+          description: "At Manhattan Supreme Court - Female Area.",
         },
         {
           id: "CR-000102-26NY",

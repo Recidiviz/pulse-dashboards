@@ -74,6 +74,7 @@ export class ScheduledCourtDatesPresenter {
   get dateIdOverride(): DateLabels {
     return this.stateSpecificData.preSentenceDockets.map((docket, i) => {
       const context = descriptionContext(docket);
+      const courtCode = docket.nextCourtLocation;
       const boroughCode = docket.nextCourtBorough;
       return {
         id: docketDateId(docket, i),
@@ -85,7 +86,9 @@ export class ScheduledCourtDatesPresenter {
         description: context
           ? this.t(($) => $.scheduledCourtDates.nextCourtDateDescription, {
               context,
-              location: docket.nextCourtLocation,
+              location: courtCode
+                ? this.t(($) => $.scheduledCourtDates.courtName[courtCode])
+                : undefined,
               borough: boroughCode
                 ? this.t(($) => $.scheduledCourtDates.borough[boroughCode])
                 : undefined,

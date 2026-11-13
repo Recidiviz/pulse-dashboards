@@ -40,8 +40,8 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
       {
         docketNumber: "CR-000101-26NY",
         nextCourtDate: relativeFixtureDate({ weeks: 2 }),
-        nextCourtLocation: "Demo Criminal Court",
-        nextCourtBorough: "N",
+        nextCourtLocation: "FKA3",
+        nextCourtBorough: "K",
       },
       {
         docketNumber: "CR-000102-26NY",
@@ -128,8 +128,8 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
       {
         docketNumber: "CR-000105-26NY",
         nextCourtDate: relativeFixtureDate({ weeks: 3 }),
-        nextCourtLocation: "Demo Criminal Court",
-        nextCourtBorough: "K",
+        nextCourtLocation: "SQC3",
+        nextCourtBorough: "Q",
       },
     ],
     sentencedDate: relativeFixtureDate({ months: -2 }),
