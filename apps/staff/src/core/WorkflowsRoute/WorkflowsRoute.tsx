@@ -88,6 +88,16 @@ const RouteSync = observer(function RouteSync({
         const opportunityType =
           page && opportunityConfigurationStore.getOpportunityTypeFromUrl(page);
 
+        // The nav hides disabled opportunities, but an old bookmark or shared link would still load one.
+        if (
+          opportunityType &&
+          !opportunityConfigurationStore.opportunities[opportunityType]
+            .isEnabled
+        ) {
+          setRedirectPath(workflowsUrl(homepage));
+          return;
+        }
+
         /* 1. Update activeSystem and selectedOpportunityType */
         if (opportunityType) {
           workflowsStore.updateActiveSystem(

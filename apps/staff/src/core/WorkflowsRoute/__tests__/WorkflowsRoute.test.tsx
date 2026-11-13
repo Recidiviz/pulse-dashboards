@@ -102,9 +102,14 @@ type MockWorkflowsStore = {
 function setupRootStoreMock({
   flagOn,
   workflowsSupportedSystems = ["SUPERVISION", "INCARCERATION"],
+  opportunities = {},
 }: {
   flagOn: boolean;
   workflowsSupportedSystems?: string[];
+  opportunities?: Record<
+    string,
+    { urlSection: string; systemType: string; isEnabled: boolean }
+  >;
 }): { workflowsStore: MockWorkflowsStore } {
   // Plain objects (not MobX `observable`) — the autorun re-runs because the
   // wrapping useEffect re-runs on each `loc` change, not because of MobX
@@ -135,8 +140,11 @@ function setupRootStoreMock({
     currentTenantId: "US_MO",
     workflowsRootStore: {
       opportunityConfigurationStore: {
-        opportunities: {},
-        getOpportunityTypeFromUrl: () => undefined,
+        opportunities,
+        getOpportunityTypeFromUrl: (url: string) =>
+          Object.entries(opportunities).find(
+            ([, config]) => config.urlSection === url,
+          )?.[0],
       },
     },
   });
@@ -148,11 +156,86 @@ function renderRoute(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/workflows/*" element={<WorkflowsRoute />} />
+        <Route path="/workflows/*" element={<WorkflowsRoute />}>
+          <Route path="home" element={<div>homepage</div>} />
+          <Route path="*" element={<div>workflows page</div>} />
+        </Route>
       </Routes>
     </MemoryRouter>,
   );
 }
+
+describe("WorkflowsRoute opportunity gating", () => {
+  const opportunities = {
+    usTnAnnualReclassification: {
+      urlSection: "annualReclassification",
+      systemType: "INCARCERATION",
+      isEnabled: false,
+    },
+    usTnAnnualReclassification2026PolicyV2: {
+      urlSection: "annualReclassification2026PolicyV2",
+      systemType: "INCARCERATION",
+      isEnabled: true,
+    },
+  };
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("redirects a link to a disabled opportunity to the homepage", () => {
+    const { workflowsStore } = setupRootStoreMock({
+      flagOn: false,
+      opportunities,
+    });
+
+    const { getByText } = renderRoute("/workflows/annualReclassification");
+
+    expect(getByText("homepage")).toBeInTheDocument();
+    expect(
+      workflowsStore.updateSelectedOpportunityType,
+    ).not.toHaveBeenCalledWith("usTnAnnualReclassification");
+    expect(workflowsStore.updateActiveSystem).not.toHaveBeenCalledWith(
+      "INCARCERATION",
+    );
+  });
+
+  it("redirects a link to a person in a disabled opportunity to the homepage", () => {
+    const { workflowsStore } = setupRootStoreMock({
+      flagOn: false,
+      opportunities,
+    });
+
+    const { getByText } = renderRoute(
+      "/workflows/annualReclassification/person123/opportunity456",
+    );
+
+    expect(getByText("homepage")).toBeInTheDocument();
+    expect(workflowsStore.updateSelectedPerson).not.toHaveBeenCalledWith(
+      "person123",
+    );
+    expect(workflowsStore.updateActiveSystem).not.toHaveBeenCalledWith(
+      "INCARCERATION",
+    );
+    expect(workflowsStore.updateSelectedOpportunity).not.toHaveBeenCalled();
+  });
+
+  it("loads an enabled opportunity", () => {
+    const { workflowsStore } = setupRootStoreMock({
+      flagOn: false,
+      opportunities,
+    });
+
+    const { getByText } = renderRoute(
+      "/workflows/annualReclassification2026PolicyV2",
+    );
+
+    expect(getByText("workflows page")).toBeInTheDocument();
+    expect(workflowsStore.updateSelectedOpportunityType).toHaveBeenCalledWith(
+      "usTnAnnualReclassification2026PolicyV2",
+    );
+  });
+});
 
 describe("WorkflowsRoute activeSystem sync", () => {
   afterEach(() => {
