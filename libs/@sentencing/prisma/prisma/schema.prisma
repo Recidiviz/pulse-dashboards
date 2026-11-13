@@ -72,6 +72,23 @@ enum Gender {
   EXTERNAL_UNKNOWN
 }
 
+enum SAREventType {
+  Opened
+  ReportEdited
+  ReportCompleted
+  Signed
+  Downloaded
+  Unlocked
+  DataUpdatedORAS
+  DataUpdatedMOCIS
+  DataUpdatedInsights
+}
+
+enum SAREventStaffRole {
+  Officer
+  Supervisor
+}
+
 model Staff {
   externalId      String    @id
   pseudonymizedId String    @unique
@@ -80,8 +97,8 @@ model Staff {
 
   hasLoggedIn Boolean @default(false)
 
-  email         String?
-  cases         Case[]
+  email                       String?
+  cases                       Case[]
   sentencingAssessmentReports SentencingAssessmentReport[]
   supervisorId    String?
   supervisor      Staff?  @relation("StaffSupervisor", fields: [supervisorId], references: [externalId], onDelete: SetNull, onUpdate: Cascade)
@@ -92,8 +109,8 @@ model Staff {
   officeAddress     String?
   officePhoneNumber String?
 
-  district      District? @relation(fields: [districtId], references: [id])
-  districtId    String?
+  district   District?  @relation(fields: [districtId], references: [id])
+  districtId String?
 
   @@index([supervisorId])
 }
@@ -633,6 +650,8 @@ model SentencingAssessmentReport {
   staff    Staff?  @relation(fields: [staffId], references: [externalId])
   staffId  String?
 
+  events SAREvent[]
+
   // Basic case information
   requestingJudgeName String?   // Judge who requested the report
   dateRequested       DateTime? // When the report was requested
@@ -731,6 +750,26 @@ model SentencingAssessmentReport {
   supervisorLastSignedAt DateTime?
 
   @@index([staffId])
+}
+
+model SAREvent {
+  id         String       @id @default(cuid())
+  type       SAREventType
+  // When the event happened. For DataUpdatedORAS, the date the ORAS data
+  // changed, which can be earlier than when the row was written.
+  occurredAt DateTime     @default(now())
+
+  // Copied from Staff when the event is written, so the log keeps the name
+  // and role the person had at the time. All three are null for events the
+  // system triggers, such as a data sync from MOCIS/ORAS or a re-run of Insights.
+  staffId   String?
+  staffName String?
+  staffRole SAREventStaffRole?
+
+  sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
+  sentencingAssessmentReportId String
+
+  @@index([sentencingAssessmentReportId, occurredAt])
 }
 
 // Point-in-time copy of the insight shown on a SAR. A report with no row has
@@ -847,7 +886,7 @@ model PriorTreatmentHistory {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   sentencingAssessmentReport   SentencingAssessmentReport @relation(fields: [sentencingAssessmentReportId], references: [id], onDelete: Cascade)
   sentencingAssessmentReportId String
 
