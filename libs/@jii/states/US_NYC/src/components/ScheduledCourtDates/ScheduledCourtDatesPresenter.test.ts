@@ -55,18 +55,21 @@ describe("ScheduledCourtDatesPresenter", () => {
           {
             docketNumber: null,
             nextCourtDate: new Date(2026, 11, 1),
+            nextCourtTime: "9:00 AM",
             nextCourtLocation: "SNC2",
             nextCourtBorough: null,
           },
           {
             docketNumber: "CR-000102-26NY",
             nextCourtDate: new Date(2026, 11, 8),
+            nextCourtTime: "3:00 PM",
             nextCourtLocation: null,
             nextCourtBorough: null,
           },
           {
             docketNumber: null,
             nextCourtDate: new Date(2026, 11, 15),
+            nextCourtTime: null,
             nextCourtLocation: null,
             nextCourtBorough: "K",
           },

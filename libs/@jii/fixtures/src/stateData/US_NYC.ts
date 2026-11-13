@@ -40,12 +40,14 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
       {
         docketNumber: "CR-000101-26NY",
         nextCourtDate: relativeFixtureDate({ weeks: 2 }),
+        nextCourtTime: "9:00 AM",
         nextCourtLocation: "FKA3",
         nextCourtBorough: "K",
       },
       {
         docketNumber: "CR-000102-26NY",
         nextCourtDate: null,
+        nextCourtTime: null,
         nextCourtLocation: null,
         nextCourtBorough: null,
       },
@@ -128,6 +130,7 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
       {
         docketNumber: "CR-000105-26NY",
         nextCourtDate: relativeFixtureDate({ weeks: 3 }),
+        nextCourtTime: "3:00 PM",
         nextCourtLocation: "SQC3",
         nextCourtBorough: "Q",
       },

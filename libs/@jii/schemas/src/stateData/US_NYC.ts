@@ -97,6 +97,7 @@ const usNycEmergencyContactAddressSchema = z.object({
 const usNycPreSentenceDocketsSchema = z.object({
   docketNumber: z.string().nullable(),
   nextCourtDate: dateStringSchema.nullable(),
+  nextCourtTime: z.string().nullable(),
   // TODO(OBT-56217) Replace with court address
   nextCourtLocation: usNycCourtCodeEnum.nullable().catch(null),
   // An unrecognized borough code parses as null rather than failing the whole record.
