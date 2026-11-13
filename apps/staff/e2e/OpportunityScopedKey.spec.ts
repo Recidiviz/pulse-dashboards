@@ -283,50 +283,39 @@ test.describe("when client and a resident had the same ids", () => {
     expect(await allOpportunitiesOfPerson()).toHaveLength(1);
   });
 
-  // FIXME: the backfill and the offline seed merge scope from clients and then
-  // residents, and the residents match overwrites system, officerId and
-  // locationId. This opportunity is indexed as INCARCERATION at BLEDSOE_CC.
-  test.fixme(
-    "indexes a supervision opportunity under SUPERVISION",
-    async () => {
-      const all = await allOpportunitiesOfPerson();
+  test("indexes a supervision opportunity under SUPERVISION", async () => {
+    const all = await allOpportunitiesOfPerson();
 
-      const { keys } = await mintPersonKeys(api, {
-        stateCode: TENANT,
-        system: "ALL",
-        offlineUser: RECIDIVIZ,
-      });
-      const supervision = await searchWithFilter(
-        keys,
-        "opportunities",
-        `${PERSON_FILTER} && system:=\`SUPERVISION\``,
-      );
+    const { keys } = await mintPersonKeys(api, {
+      stateCode: TENANT,
+      system: "ALL",
+      offlineUser: RECIDIVIZ,
+    });
+    const supervision = await searchWithFilter(
+      keys,
+      "opportunities",
+      `${PERSON_FILTER} && system:=\`SUPERVISION\``,
+    );
 
-      expect(supervision.sort()).toEqual(all);
-    },
-  );
+    expect(supervision.sort()).toEqual(all);
+  });
 
-  // FIXME: same cause as above. The supervising officer's supervision-only key
-  // cannot reach the opportunity, because it is indexed under the other system.
-  test.fixme(
-    "reaches the supervising officer's supervision-only key",
-    async () => {
-      const all = await allOpportunitiesOfPerson();
+  test("reaches the supervising officer's supervision-only key", async () => {
+    const all = await allOpportunitiesOfPerson();
 
-      const { keys } = await mintPersonKeys(api, {
-        stateCode: TENANT,
-        system: "SUPERVISION",
-        offlineUser: TN_OFFICER,
-      });
-      const reached = await searchWithFilter(
-        keys,
-        "opportunities",
-        PERSON_FILTER,
-      );
+    const { keys } = await mintPersonKeys(api, {
+      stateCode: TENANT,
+      system: "SUPERVISION",
+      offlineUser: TN_OFFICER,
+    });
+    const reached = await searchWithFilter(
+      keys,
+      "opportunities",
+      PERSON_FILTER,
+    );
 
-      expect(reached.sort()).toEqual(all);
-    },
-  );
+    expect(reached.sort()).toEqual(all);
+  });
 });
 
 test.describe("the child collection", () => {

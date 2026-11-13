@@ -76,12 +76,14 @@ export const usTnSupervisionLevelDowngradeReferrals =
         isEligible: true,
         isAlmostEligible: false,
       },
-      // A supervision opportunity for a person who is also a TN resident.
+      // A supervision opportunity for a person who is also a TN resident. The
+      // scope is the client's supervising officer and district, never the
+      // resident's facility.
       {
         stateCode: "US_TN",
         externalId: "E2E_TN_BOTH",
-        officerId: "E2E_TN_FACILITY_OFFICER",
-        locationId: "BLEDSOE_CC",
+        officerId: "E2E_TN_OFFICER",
+        locationId: "E2E DISTRICT 1",
         eligibleCriteria: {
           supervisionLevelHigherThanAssessmentLevel: {
             assessmentLevel: "MODERATE",

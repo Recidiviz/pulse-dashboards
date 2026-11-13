@@ -235,22 +235,51 @@ export function projectOpportunityUpdate(
 }
 
 /**
- * Person id -> the system their opportunities belong to.
+ * Person id -> every system with a person document under that id.
+ *
+ * A set, because clients and residents share an id space: one external id can
+ * be a client and a resident at the same time.
  */
 async function loadPersonSystems(
   db: Firestore,
-): Promise<Map<string, DocumentSystem>> {
-  const byId = new Map<string, DocumentSystem>();
+): Promise<Map<string, Set<DocumentSystem>>> {
+  const byId = new Map<string, Set<DocumentSystem>>();
 
   for (const [collection, system] of [
     ["clients", "SUPERVISION"],
     ["residents", "INCARCERATION"],
   ] as const) {
     const snapshot = await db.collection(collection).get();
-    for (const doc of snapshot.docs) byId.set(doc.id, system);
+    for (const doc of snapshot.docs) {
+      const systems = byId.get(doc.id) ?? new Set<DocumentSystem>();
+      systems.add(system);
+      byId.set(doc.id, systems);
+    }
   }
 
   return byId;
+}
+
+/**
+ * Returns the system of one opportunity source, or undefined when it cannot
+ * tell.
+ *
+ * Production takes the system from the source's opportunity configuration,
+ * which this library cannot read. The seed uses the system of the source's
+ * people who are in only one person collection, so a person who is both a
+ * client and a resident does not decide it. Undefined when those people
+ * disagree or there are none.
+ */
+export function sourceSystem(
+  personIds: Iterable<string>,
+  personSystems: ReadonlyMap<string, ReadonlySet<DocumentSystem>>,
+): DocumentSystem | undefined {
+  const found = new Set<DocumentSystem>();
+  for (const id of personIds) {
+    const systems = personSystems.get(id);
+    if (systems?.size === 1) found.add([...systems][0]);
+  }
+  return found.size === 1 ? [...found][0] : undefined;
 }
 
 function copyIfPresent(
@@ -279,6 +308,17 @@ export async function importOpportunities(
 
   for (const source of sources) {
     const snapshot = await db.collection(source).get();
+    const system = sourceSystem(
+      snapshot.docs.flatMap((doc) => {
+        const personId = composeDocIdFromFields(
+          doc.data() as FirestoreDoc,
+          ["stateCode", "externalId"],
+          ["stateCode"],
+        );
+        return personId ? [personId] : [];
+      }),
+      personSystems,
+    );
     for (const doc of snapshot.docs) {
       const data = doc.data() as FirestoreDoc;
       const id = composeDocIdFromFields(
@@ -300,7 +340,6 @@ export async function importOpportunities(
       }
       if (!id || !personId) continue;
 
-      const system = personSystems.get(personId);
       docs.push({
         stateCode: data["stateCode"],
         opportunityType: data["opportunityType"],
@@ -321,10 +360,11 @@ export async function importOpportunities(
         ]),
         ...deriveOpportunityFields(data),
         sourceCollection: source,
-        // Only the reference whose collection holds this person: the other
-        // would claim a join edge that does not exist.
-        ...(system === "SUPERVISION" ? { clientDocId: personId } : {}),
-        ...(system === "INCARCERATION" ? { residentDocId: personId } : {}),
+        // Both references, as backfill-fn writes them. The one whose
+        // collection does not hold this person dangles, and join filters
+        // exclude a dangling reference.
+        clientDocId: personId,
+        residentDocId: personId,
         ...(system ? { system } : {}),
         id,
       });
