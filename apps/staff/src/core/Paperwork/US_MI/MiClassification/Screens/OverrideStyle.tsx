@@ -18,7 +18,9 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { Icon, palette } from "~design-system";
+
+import { FullWidthHr } from "../Styles";
 
 export const OverrideContainer = styled.div`
   width: 100%;
@@ -26,11 +28,13 @@ export const OverrideContainer = styled.div`
   margin-top: 90px;
 `;
 
-export const TopBanner = styled.div`
-  border: 1px dotted ${palette.slate70};
-  background: ${palette.slate05};
+export const TopBanner = styled.div<{ $final?: boolean }>`
+  border: ${({ $final }) =>
+    $final
+      ? `1px solid ${palette.text.primary}`
+      : ` 1px dotted ${palette.slate70}`};
+  background: ${({ $final }) => ($final ? palette.white : palette.slate05)};
   border-radius: 10px;
-  padding: 10px;
 `;
 
 export const BannerRow = styled.div`
@@ -51,6 +55,7 @@ export const PointsBySection = styled.div`
   flex-grow: 2;
   justify-content: space-between;
   flex-direction: column;
+  margin: 10px;
 `;
 
 export const LevelSummary = styled.div`
@@ -74,6 +79,7 @@ export const TotalRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  font-weight: 600;
 `;
 
 export const SectionDivider = styled.hr`
@@ -92,6 +98,14 @@ export const PointRange = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+
+  & > :first-child {
+    border-radius: 8px 0 0 8px;
+  }
+
+  & > :last-child {
+    border-radius: 0 8px 8px 0;
+  }
 `;
 
 export const LevelDividers = styled.div<{
@@ -114,7 +128,7 @@ export const OverridesTitle = styled.div`
   margin: 5px 0;
 `;
 
-export const OverrideText = styled.div<{
+export const ClassificationText = styled.div<{
   $color?: string;
   $fontSize?: number;
   $padding?: string;
@@ -137,4 +151,67 @@ export const OverrideSelect = styled.select`
   padding: 12px;
   border-radius: 8px;
   color: ${palette.slate90};
+`;
+
+export const OverrideDivider = styled(FullWidthHr)`
+  color: ${palette.slate70};
+`;
+
+export const BannerContent = styled.div`
+  margin: 10px;
+`;
+
+export const FinalBannerHeader = styled.div`
+  width: 100%;
+  color: ${palette.white};
+  background: ${palette.text.primary};
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px 8px 0 0;
+`;
+
+export const FinalBannerHeaderLabel = styled.span`
+  margin-left: 5px;
+`;
+
+export const FinalLevelGrid = styled.div`
+  width: 50%;
+  margin: 10px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+`;
+
+export const FinalLevelCell = styled.div<{
+  $value?: boolean;
+  $placement?: boolean;
+}>`
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  ${({ $value, $placement }) =>
+    ($value || $placement) &&
+    `color: ${palette.text.primary}; font-weight: 600;`}
+  ${({ $placement }) =>
+    $placement
+      ? "margin-top: 5px;"
+      : `border-bottom: 1px solid ${palette.slate30};`}
+  ${({ $value, $placement }) =>
+    $value && $placement && `font-size: ${rem(20)};`}
+`;
+
+export const LevelChange = styled.div`
+  font-weight: 400;
+  font-size: ${rem(14)};
+`;
+
+export const UpChevron = styled(Icon)`
+  transform: rotate(180deg);
+`;
+
+export const InlineArrow = styled(Icon)`
+  display: inline;
+`;
+
+export const PointerContainer = styled.div`
+  width: 100%;
+  color: ${palette.pine1};
 `;

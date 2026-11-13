@@ -26,6 +26,7 @@ import { UsMiReviewClassificationForm } from "../../../../WorkflowsStore/Opportu
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { ClassificationQuestion } from "./MultipleChoiceQuestion";
 import { UsMiClassificationOverrides } from "./Screens/OverrideScreen";
+import { UsMiClassificationPreviewScreen } from "./Screens/PreviewScreen";
 import {
   ClassificationForm,
   CurrentLevelLabel,
@@ -194,6 +195,9 @@ export const FormUsMiClassification = observer(
         )}
         {stage === "OVERRIDE" && (
           <UsMiClassificationOverrides onChangeNavigation={changePage} />
+        )}
+        {stage === "PREVIEW" && (
+          <UsMiClassificationPreviewScreen onChangeNavigation={changePage} />
         )}
       </>
     );

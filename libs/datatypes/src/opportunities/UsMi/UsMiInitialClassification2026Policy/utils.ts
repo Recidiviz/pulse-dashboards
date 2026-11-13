@@ -17,14 +17,8 @@
 
 import { z } from "zod";
 
-import {
-  ClassificationNoteData,
-  getSingleSectionQuestionScore,
-  prevLevelFiveNotes,
-  UsMiInitialClassification2026DraftData,
-} from "~datatypes";
-
 import { dateStringSchema } from "../../../utils/zod";
+import { getSingleSectionQuestionScore } from "../../UsTn/reclassificationScoreUtils";
 import {
   miFemaleReviewClassificationQuestions,
   miMaleReviewClassificationQuestions,
@@ -35,6 +29,11 @@ import {
   miMaleInitialClassificationQuestions,
   UsMiAssessmentQuestionSpec,
 } from "./InitialQuestionSchema";
+import type {
+  ClassificationNoteData,
+  prevLevelFiveNotes,
+  UsMiInitialClassification2026DraftData,
+} from "./schema";
 
 export const usMiIncidentNotesSchema = z
   .object({
@@ -159,6 +158,80 @@ export const usMiSecurityLevels = usMiLevelBreakdowns.map(
   (level) => level.title,
 );
 
+/**
+ * Returns the index into usMiLevelBreakdowns of the level that totalScore
+ * falls in. A score below every range counts as Level I.
+ */
+export function calculateUsMiLevelIndex(totalScore: number): number {
+  const index = usMiLevelBreakdowns.findLastIndex(
+    (level) => Number(level.range.split("-")[0]) <= totalScore,
+  );
+  return Math.max(index, 0);
+}
+
+// Override level selections are dropdown indexes, and index 0 of that dropdown
+// is the "Select a level..." placeholder, so level N is stored as N + 1.
+function levelFromOverrideSelection(
+  selection: number | undefined,
+): string | undefined {
+  return selection ? usMiSecurityLevels[selection - 1] : undefined;
+}
+
+export type UsMiClassificationLevels = {
+  calculatedLevelIndex: number;
+  calculatedLevel: string;
+  trueLevel: string;
+  actualLevel: string;
+  levelChange: "INCREASE" | "DECREASE" | undefined;
+};
+
+/**
+ * Returns the calculated, true, and actual security levels for a
+ * classification form, and whether the actual level moves the resident up or
+ * down from currentLevel.
+ *
+ * The true level is the departure override's level (override1_2Selection), or
+ * the calculated level when there is no departure. The actual level is the
+ * waiver override's level (override2_2Selection), or the true level when there
+ * is no waiver. levelChange is undefined when currentLevel is not one of
+ * usMiSecurityLevels, such as "Unknown", or equals the actual level.
+ */
+export function calculateUsMiClassificationLevels({
+  totalScore,
+  override1_2Selection,
+  override2_2Selection,
+  currentLevel,
+}: {
+  totalScore: number;
+  override1_2Selection?: number;
+  override2_2Selection?: number;
+  currentLevel: string | undefined;
+}): UsMiClassificationLevels {
+  const calculatedLevelIndex = calculateUsMiLevelIndex(totalScore);
+  const calculatedLevel = usMiSecurityLevels[calculatedLevelIndex];
+  const trueLevel =
+    levelFromOverrideSelection(override1_2Selection) ?? calculatedLevel;
+  const actualLevel =
+    levelFromOverrideSelection(override2_2Selection) ?? trueLevel;
+
+  const currentIndex = usMiSecurityLevels.indexOf(currentLevel ?? "");
+  const actualIndex = usMiSecurityLevels.indexOf(actualLevel);
+  let levelChange: UsMiClassificationLevels["levelChange"];
+  if (currentIndex !== -1 && actualIndex > currentIndex) {
+    levelChange = "INCREASE";
+  } else if (currentIndex !== -1 && actualIndex < currentIndex) {
+    levelChange = "DECREASE";
+  }
+
+  return {
+    calculatedLevelIndex,
+    calculatedLevel,
+    trueLevel,
+    actualLevel,
+    levelChange,
+  };
+}
+
 // A bounds of 0 means the question has no maximum.
 function capToBounds(
   question: Extract<UsMiAssessmentQuestionSpec, { type: "NUMBER" }>,
@@ -255,7 +328,7 @@ function getVfoOptionText(vfoLevelDetail: string | null | undefined) {
   }
 }
 
-const US_MI_MAX_TOTAL_SCORE = 60;
+export const US_MI_MAX_TOTAL_SCORE = 60;
 
 // The female VFO question has no "High" option, so a high score falls back to
 // "None", which carries the same score as "Medium".

@@ -17,15 +17,9 @@
 
 import { deleteField } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 
-import {
-  usMiLevelBreakdowns,
-  usMiOverrideQuestions,
-  UsMiOverrideType,
-  usMiSecurityLevels,
-} from "~datatypes";
-import { Button, Icon, palette } from "~design-system";
+import { usMiOverrideQuestions, UsMiOverrideType } from "~datatypes";
+import { Button, palette } from "~design-system";
 
 import { UsMiInitialClassificationForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { UsMiReviewClassificationForm } from "../../../../../WorkflowsStore/Opportunity/Forms/UsMiReviewClassification2026Form";
@@ -33,28 +27,14 @@ import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { FormStages } from "../FormUsMiClassification";
 import { FormFooter, QuestionBox, QuestionStatusBadge } from "../Styles";
 import {
-  BannerRow,
-  LevelColumn,
-  LevelDividers,
-  LevelSummary,
+  ClassificationText,
   OverrideContainer,
+  OverrideDivider,
   OverrideSelect,
   OverridesTitle,
-  OverrideText,
-  PointerRow,
-  PointRange,
-  PointsBySection,
-  SectionDivider,
-  SectionRow,
   SubHeader,
-  TopBanner,
-  TotalRow,
 } from "./OverrideStyle";
-
-function calculateDividers(total: number, range: string): number {
-  const minMax = range.split("-");
-  return ((Number(minMax[1]) - Number(minMax[0])) / total) * 100;
-}
+import { SummaryBanner } from "./SummaryBanner";
 
 const OverrideQuestion = observer(function OverrideQuestion({
   override,
@@ -93,15 +73,15 @@ const OverrideQuestion = observer(function OverrideQuestion({
 
   return (
     <QuestionBox>
-      <OverrideText $color={palette.text.primary}>
+      <ClassificationText $color={palette.text.primary}>
         {override.title}
-      </OverrideText>
-      <OverrideText $padding="5px 0" $fontSize={15}>
+      </ClassificationText>
+      <ClassificationText $padding="5px 0" $fontSize={15}>
         {override.description}
-      </OverrideText>
-      <OverrideText $color={palette.text.primary} $padding="5px 0">
+      </ClassificationText>
+      <ClassificationText $color={palette.text.primary} $padding="5px 0">
         {override.reasonsTitle}
-      </OverrideText>
+      </ClassificationText>
       <OverrideSelect
         value={override.reasons[overrideInput]}
         onChange={(e) => updateOverride(e.target.selectedIndex)}
@@ -110,18 +90,18 @@ const OverrideQuestion = observer(function OverrideQuestion({
           <option key={option}>{option}</option>
         ))}
       </OverrideSelect>
-      <hr style={{ width: "100%", color: palette.slate70 }} />
+      <OverrideDivider />
       <SubHeader id="sub-header">
-        <OverrideText $color={palette.text.primary}>
+        <ClassificationText $color={palette.text.primary}>
           {override.levelTitle}
-        </OverrideText>
+        </ClassificationText>
         {required && (
           <QuestionStatusBadge $status="REQUIRED">REQUIRED</QuestionStatusBadge>
         )}
       </SubHeader>
-      <OverrideText $padding="5px 0" $fontSize={15}>
+      <ClassificationText $padding="5px 0" $fontSize={15}>
         {override.levelSubText}
-      </OverrideText>
+      </ClassificationText>
       <OverrideSelect
         disabled={levelDisabled}
         value={levels[levelInput]}
@@ -132,9 +112,9 @@ const OverrideQuestion = observer(function OverrideQuestion({
         ))}
       </OverrideSelect>
       {levelDisabled && (
-        <OverrideText as="span" $padding="5px 0">
+        <ClassificationText as="span" $padding="5px 0">
           Available once a {override.reasonsTitle.toLowerCase()} is selected.
-        </OverrideText>
+        </ClassificationText>
       )}
     </QuestionBox>
   );
@@ -150,114 +130,17 @@ export const UsMiClassificationOverrides = observer(
       | UsMiInitialClassificationForm
       | UsMiReviewClassificationForm;
 
-    const { derivedData, subsections, displayCustodyLevel, proceedToPreview } =
-      form;
-
-    const { totalScore, subscores } = derivedData;
-
-    // Checking only the lower bound rounds a score that falls between two
-    // ranges down to the lower level, and anything above the last range
-    // lands in the top level.
-    const calculateLevel = () => {
-      const index = usMiLevelBreakdowns.findLastIndex(
-        (level) => Number(level.range.split("-")[0]) <= totalScore,
-      );
-      return Math.max(index, 0);
-    };
-
-    const calculatedLevel = calculateLevel();
-    const totalScoreString = `${totalScore} pts - ${usMiSecurityLevels[calculatedLevel]}`;
-    const pointerPosition = (totalScore / 60) * 100;
+    const { proceedToPreview } = form;
 
     return (
       <OverrideContainer>
-        <TopBanner id="top-banner">
-          <BannerRow>
-            <LevelSummary>
-              <LevelColumn>
-                <OverrideText $fontSize={14}>CURRENT LEVEL</OverrideText>
-                <OverrideText $color={palette.text.primary} $fontSize={22}>
-                  {displayCustodyLevel}
-                </OverrideText>
-              </LevelColumn>
-              <Icon kind="Arrow" size={14} style={{ display: "inline" }} />
-              <LevelColumn>
-                <OverrideText $fontSize={14}>CALCULATED LEVEL</OverrideText>
-                <OverrideText $color={palette.text.primary} $fontSize={26}>
-                  {usMiSecurityLevels[calculatedLevel]}
-                </OverrideText>
-              </LevelColumn>
-            </LevelSummary>
-            <PointsBySection id="points-by-section">
-              <OverrideText $fontSize={13} $fontWeight={600}>
-                POINTS BY SECTION
-              </OverrideText>
-              {subsections.map((subsection, index) => {
-                return (
-                  <SectionRow key={subsection}>
-                    <OverrideText $fontSize={14}>{subsection}</OverrideText>
-                    <div>{subscores[index]}</div>
-                  </SectionRow>
-                );
-              })}
-              <SectionDivider />
-              <TotalRow>
-                <OverrideText $color={palette.text.primary} $fontWeight={600}>
-                  Total Points
-                </OverrideText>
-                <div>{totalScore}</div>
-              </TotalRow>
-            </PointsBySection>
-          </BannerRow>
-          <SectionDivider />
-          <div>Point ranges</div>
-          <div style={{ width: "100%" }}>
-            <PointerRow
-              $width={Math.min(
-                pointerPosition + totalScoreString.length / 2,
-                100,
-              )}
-            >
-              {totalScoreString}
-            </PointerRow>
-            <PointerRow
-              id="pointer-hover"
-              $width={Math.min(pointerPosition, 100)}
-            >
-              |
-            </PointerRow>
-          </div>
-          <PointRange id="point-range">
-            {usMiLevelBreakdowns.map((level, index) => {
-              const width = calculateDividers(60, level.range);
-              return (
-                <LevelDividers
-                  key={level.title}
-                  $width={width}
-                  $current={calculatedLevel === index}
-                >
-                  <div>{level.title}</div>
-                  <OverrideText
-                    $color={
-                      calculatedLevel !== index
-                        ? palette.slate80
-                        : palette.marble5
-                    }
-                    $fontSize={14}
-                  >
-                    {level.range}
-                  </OverrideText>
-                </LevelDividers>
-              );
-            })}
-          </PointRange>
-        </TopBanner>
+        <SummaryBanner />
         <div>
           <OverridesTitle>Overrides</OverridesTitle>
-          <div style={{ fontSize: rem(15), marginBottom: "5px" }}>
+          <ClassificationText $fontSize={15} $padding="0 0 5px">
             Both are optional. Leave “No override” selected to keep the
             calculated level.
-          </div>
+          </ClassificationText>
           {usMiOverrideQuestions.map((override, index) => (
             <OverrideQuestion
               key={override.title}
@@ -274,7 +157,12 @@ export const UsMiClassificationOverrides = observer(
           >
             Back
           </Button>
-          <Button type="button" kind="primary" disabled={!proceedToPreview}>
+          <Button
+            type="button"
+            kind="primary"
+            disabled={!proceedToPreview}
+            onClick={() => onChangeNavigation("PREVIEW")}
+          >
             Continue to Summary
           </Button>
         </FormFooter>

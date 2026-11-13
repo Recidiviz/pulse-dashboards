@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SingleSectionAssessmentQuestionSpec } from "~datatypes";
+import type { SingleSectionAssessmentQuestionSpec } from "../../UsTn/reclassificationScoreUtils";
 
 export type UsMiAssessmentQuestionNote = {
   header: string;
