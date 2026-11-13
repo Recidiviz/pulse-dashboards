@@ -31,10 +31,14 @@ import {
 import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleBoardReportPresenter } from "../../../ParoleStore/presenters/ParoleBoardReportPresenter";
 import { resolveCommunityReentryPlan } from "../../../ParoleStore/report/communityReentryPlan";
+import { resolvePersonalHistory } from "../../../ParoleStore/report/personalHistory";
 import { resolveSummary } from "../../../ParoleStore/report/summary";
 import ModelHydrator from "../../ModelHydrator";
 import type { ParoleConfig } from "../../models/types";
-import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
+import {
+  CaseProfileSidebar,
+  ParoleSectionNavItem,
+} from "../components/CaseProfileSidebar";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
 import { UsIdCommunityReentryPlanSection } from "../components/US_ID/UsIdCommunityReentryPlanSection";
@@ -42,34 +46,39 @@ import { UsIdHearingHistorySection } from "../components/US_ID/UsIdHearingHistor
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
 import { UsIdParoleSidebar } from "../components/US_ID/UsIdParoleSidebar";
+import { UsIdPersonalHistorySection } from "../components/US_ID/UsIdPersonalHistorySection";
 import { UsIdSummarySection } from "../components/US_ID/UsIdSummarySection";
 import { ParoleCaseProfileLayout } from "../ParoleCaseProfile/ParoleCaseProfileLayout";
 
 /**
  * Quick-nav entries, in the order the sections render below. Every id here
- * must also appear on a SectionAnchor, or the entry scrolls nowhere.
+ * must also appear on a SectionAnchor, or the entry scrolls nowhere. Entries
+ * marked reportOnly are the PHI report's sections, which show only while the
+ * profile shows the report.
  */
-const SECTION_NAV = [
-  { id: PAROLE_SECTION_IDS.offenseHistory, label: "Offense Information" },
-  {
-    id: PAROLE_SECTION_IDS.institutionalHistory,
-    label: "Institutional History",
-  },
-  {
-    id: PAROLE_SECTION_IDS.hearingHistory,
-    label: "Hearing History",
-  },
-];
-
-// Entries for the PHI report's sections, which follow the sections above and
-// show only while the profile shows the report.
-const REPORT_SECTION_NAV = [
-  {
-    id: PAROLE_SECTION_IDS.communityReentryPlan,
-    label: "Community Reentry Plan",
-  },
-  { id: PAROLE_SECTION_IDS.summary, label: "Summary" },
-];
+const SECTION_NAV: ReadonlyArray<ParoleSectionNavItem & { reportOnly?: true }> =
+  [
+    { id: PAROLE_SECTION_IDS.offenseHistory, label: "Offense Information" },
+    {
+      id: PAROLE_SECTION_IDS.institutionalHistory,
+      label: "Institutional History",
+    },
+    {
+      id: PAROLE_SECTION_IDS.personalHistory,
+      label: "Personal History",
+      reportOnly: true,
+    },
+    {
+      id: PAROLE_SECTION_IDS.hearingHistory,
+      label: "Hearing History",
+    },
+    {
+      id: PAROLE_SECTION_IDS.communityReentryPlan,
+      label: "Community Reentry Plan",
+      reportOnly: true,
+    },
+    { id: PAROLE_SECTION_IDS.summary, label: "Summary", reportOnly: true },
+  ];
 
 type UsIdParoleCaseProfileProps = {
   caseDetail: ParoleCase;
@@ -91,9 +100,7 @@ const UsIdParoleCaseProfileContents = observer(
     presenter,
   }: UsIdParoleCaseProfileProps & { presenter: ParoleBoardReportPresenter }) {
     const { mode } = presenter;
-    const sections = mode
-      ? [...SECTION_NAV, ...REPORT_SECTION_NAV]
-      : SECTION_NAV;
+    const sections = SECTION_NAV.filter((entry) => mode || !entry.reportOnly);
 
     return (
       <ParoleCaseProfileLayout
@@ -121,6 +128,20 @@ const UsIdParoleCaseProfileContents = observer(
             config={config}
           />
         </SectionAnchor>
+
+        {mode && (
+          <SectionAnchor id={PAROLE_SECTION_IDS.personalHistory}>
+            <UsIdPersonalHistorySection
+              mode={mode}
+              history={resolvePersonalHistory(
+                presenter.report?.sections.personalHistory,
+              )}
+              onSave={(field, value) =>
+                presenter.setFieldValue("personalHistory", field, value)
+              }
+            />
+          </SectionAnchor>
+        )}
 
         <SectionAnchor id={PAROLE_SECTION_IDS.hearingHistory}>
           <UsIdHearingHistorySection

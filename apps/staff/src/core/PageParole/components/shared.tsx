@@ -360,6 +360,7 @@ export const PAROLE_SECTION_IDS = {
   programParticipation: "parole-section-program-participation",
   conductHistory: "parole-section-conduct-history",
   institutionalHistory: "parole-section-institutional-history",
+  personalHistory: "parole-section-personal-history",
   hearingHistory: "parole-section-hearing-history",
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 
@@ -153,5 +153,83 @@ describe("UsIdParoleCaseProfile without hearing history", () => {
     expect(
       screen.getByText("No hearing history on record"),
     ).toBeInTheDocument();
+  });
+});
+
+describe("UsIdParoleCaseProfile with the PHI report", () => {
+  // The report's sections sit among today's sections, so the nav has to
+  // place each entry where its section renders.
+  const REPORT_NAV_LABELS = [
+    "Offense Information",
+    "Institutional History",
+    "Personal History",
+    "Hearing History",
+    "Community Reentry Plan",
+    "Summary",
+  ];
+
+  // Records the element each nav entry scrolls to. jsdom doesn't implement
+  // scrollIntoView.
+  let scrolledTo: Element[];
+
+  // A PHI with the report's feature variant on, for a resident with no report
+  // yet, so the profile shows an empty report to edit.
+  beforeEach(() => {
+    scrolledTo = [];
+    Element.prototype.scrollIntoView = function scrollIntoView(this: Element) {
+      scrolledTo.push(this);
+    };
+    const reportsForResident = {
+      hydrationState: { status: "hydrated" },
+      data: undefined,
+      hydrate: vi.fn(),
+      unsubscribe: vi.fn(),
+    };
+    vi.mocked(StoreProvider.useRootStore).mockReturnValue({
+      firestoreStore: {
+        buildParoleBoardReportsForResidentSubscription: () =>
+          reportsForResident,
+      },
+      userStore: {
+        activeFeatureVariants: { usIdParoleBoardReports: {} },
+        canEditParoleBoardReports: true,
+      },
+    } as unknown as RootStore);
+  });
+
+  afterAll(() => {
+    Reflect.deleteProperty(Element.prototype, "scrollIntoView");
+  });
+
+  it("lists the report's sections in the nav in the order they render", async () => {
+    render(
+      <MemoryRouter>
+        <UsIdParoleCaseProfile
+          caseDetail={{
+            ...CASE,
+            recordId: "us_id_000001",
+            hearingDate: "2026-12-01",
+          }}
+          config={US_ID_CONFIG.paroleConfig}
+        />
+      </MemoryRouter>,
+    );
+    await screen.findByRole("button", { name: "Personal History" });
+
+    const follows = (earlier: Element, later: Element) =>
+      !!(
+        earlier.compareDocumentPosition(later) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
+    const navButtons = REPORT_NAV_LABELS.map((label) =>
+      screen.getByRole("button", { name: label }),
+    );
+    navButtons.forEach((button) => fireEvent.click(button));
+
+    expect(scrolledTo).toHaveLength(REPORT_NAV_LABELS.length);
+    navButtons.slice(1).forEach((button, i) => {
+      expect(follows(navButtons[i], button)).toBe(true);
+      expect(follows(scrolledTo[i], scrolledTo[i + 1])).toBe(true);
+    });
   });
 });

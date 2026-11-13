@@ -66,6 +66,31 @@ export const paroleBoardReportsFixture = {
           victim: { value: "YES", updatedBy: PHI_EMAIL, updatedAt: EDITED_AT },
         },
       },
+      personalHistory: {
+        fields: {
+          socialHistory: {
+            value:
+              "Grew up in a small farming town, the second of four children. " +
+              "The family moved twice before the resident finished middle " +
+              "school.",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+          education: {
+            value:
+              "Left high school in the 11th grade and earned a GED while " +
+              "incarcerated.",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+          residentComments: {
+            value:
+              "Says they want to keep going to group meetings after release.",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+        },
+      },
       communityReentryPlan: {
         fields: {
           housing: {
