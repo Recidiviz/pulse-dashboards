@@ -42,6 +42,7 @@ function mockFetch(
     status,
     json: async () => body,
     text: async () => text,
+    arrayBuffer: async () => body,
   });
   vi.stubGlobal("fetch", fn);
   return fn;
@@ -85,6 +86,7 @@ describe("getOrganizations", () => {
         tags: ["Organizations", "Women"],
         primaryContactMethod: "PHONE",
         primaryContactValue: "212-555-0100",
+        hasFactSheet: false,
       },
     ]);
   });
@@ -230,6 +232,7 @@ describe("getOrganization", () => {
       tags: ["Civil", "Legal"],
       primaryContactMethod: "ADDRESS",
       primaryContactValue: "199 Water St, New York, NY 10038",
+      hasFactSheet: false,
       addresses: [
         {
           id: 101,
@@ -480,6 +483,80 @@ describe("US_MA housing attributes", () => {
 
     expect(result.county).toBeUndefined();
     expect(result.categoryAttributes).toBeUndefined();
+  });
+});
+
+describe("fact sheets", () => {
+  const organizationWithFactSheet = {
+    id: 1,
+    name: "Test Org",
+    attributes: {
+      categorizations: [],
+      tags: [],
+      fact_sheet_key: "ma-worcester-sample-residence",
+    },
+  };
+
+  test("sets hasFactSheet when the organization has a fact sheet key", async () => {
+    mockFetch([organizationWithFactSheet]);
+
+    const [result] = await resourceApiClient.getOrganizations("US_MA");
+
+    expect(result.hasFactSheet).toBe(true);
+  });
+
+  test("leaves hasFactSheet false when the organization has no fact sheet key", async () => {
+    mockFetch([
+      {
+        id: 1,
+        name: "Test Org",
+        attributes: { categorizations: [], tags: [] },
+      },
+    ]);
+
+    const [result] = await resourceApiClient.getOrganizations("US_MA");
+
+    expect(result.hasFactSheet).toBe(false);
+  });
+
+  test("does not pass the fact sheet key through", async () => {
+    mockFetch([organizationWithFactSheet]);
+
+    const [result] = await resourceApiClient.getOrganizations("US_MA");
+
+    expect(result).not.toHaveProperty("factSheetKey");
+  });
+});
+
+describe("getFactSheet", () => {
+  test("GETs the organization's fact sheet with the API key and returns it base64-encoded", async () => {
+    const pdfBytes = new TextEncoder().encode("%PDF-1.7");
+    const fetchMock = mockFetch(pdfBytes.buffer);
+
+    const result = await resourceApiClient.getFactSheet(42);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${BASE_URL}/api/v1/organizations/42/fact-sheet`,
+      { headers: { "X-API-Key": API_KEY } },
+    );
+    expect(Buffer.from(result, "base64").toString()).toBe("%PDF-1.7");
+  });
+
+  test("throws NOT_FOUND when the API has no fact sheet", async () => {
+    mockFetch(null, false, { status: 404 });
+
+    await expect(resourceApiClient.getFactSheet(42)).rejects.toMatchObject({
+      code: "NOT_FOUND",
+    });
+  });
+
+  test("throws INTERNAL_SERVER_ERROR with the upstream status on any other failure", async () => {
+    mockFetch(null, false, { status: 502, text: "storage failure" });
+
+    await expect(resourceApiClient.getFactSheet(42)).rejects.toMatchObject({
+      code: "INTERNAL_SERVER_ERROR",
+      cause: expect.objectContaining({ message: "502 — storage failure" }),
+    });
   });
 });
 

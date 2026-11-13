@@ -70,6 +70,7 @@ export function makeResourceDetail(
     description: options.description,
     categories: options.categories ?? [],
     tags: options.tags ?? [],
+    hasFactSheet: false,
     addresses: options.addresses ?? [],
     phoneNumbers: options.phoneNumbers ?? [],
     websites: options.websites ?? [],
@@ -90,5 +91,6 @@ export function makeResource(
     tags,
     primaryContactMethod: undefined,
     primaryContactValue: undefined,
+    hasFactSheet: false,
   };
 }

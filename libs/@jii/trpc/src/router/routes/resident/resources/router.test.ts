@@ -25,6 +25,7 @@ vi.mock("./resourceApiClient", () => ({
   resourceApiClient: {
     getOrganizations: vi.fn(),
     getOrganization: vi.fn(),
+    getFactSheet: vi.fn(),
   },
 }));
 
@@ -62,6 +63,27 @@ describe("getResource", () => {
     await caller.resources.getResource({ organizationId: 42 });
 
     expect(resourceApiClient.getOrganization).toHaveBeenCalledWith(42);
+  });
+});
+
+describe("getFactSheet", () => {
+  test("passes organizationId to resourceApiClient for a US_MA resident", async () => {
+    mockCtx.stateCode = "US_MA";
+    vi.mocked(resourceApiClient.getFactSheet).mockResolvedValue("JVBERi0=");
+
+    const result = await caller.resources.getFactSheet({ organizationId: 42 });
+
+    expect(resourceApiClient.getFactSheet).toHaveBeenCalledWith(42);
+    expect(result).toBe("JVBERi0=");
+  });
+
+  test("rejects a resident from another state without calling the API", async () => {
+    mockCtx.stateCode = "US_NYC";
+
+    await expect(
+      caller.resources.getFactSheet({ organizationId: 42 }),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(resourceApiClient.getFactSheet).not.toHaveBeenCalled();
   });
 });
 

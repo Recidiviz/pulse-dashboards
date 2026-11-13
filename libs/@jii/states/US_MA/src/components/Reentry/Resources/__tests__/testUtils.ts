@@ -75,6 +75,7 @@ export function makeResource(
     name: `Resource ${organizationId}`,
     categories: [{ category: "Housing", subcategory: "Sober house" }],
     tags: [],
+    hasFactSheet: false,
     ...overrides,
   };
 }

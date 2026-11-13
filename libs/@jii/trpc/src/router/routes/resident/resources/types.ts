@@ -55,6 +55,7 @@ const organizationBaseSchema = z.object({
     tags: z.array(z.string()),
     county: nullishAsUndefined(z.string()),
     categoryAttributes: categoryAttributesSchema,
+    factSheetKey: nullishAsUndefined(z.string()),
   }),
   primaryContactMethod: nullishAsUndefined(z.string()),
   primaryContactValue: nullishAsUndefined(z.string()),
@@ -95,13 +96,15 @@ function organizationTransform<
   T extends z.infer<typeof organizationBaseSchema>,
 >({
   id,
-  attributes: { categorizations, tags, ...otherAttributes },
+  attributes: { categorizations, tags, factSheetKey, ...otherAttributes },
   ...rest
 }: T) {
   return {
     organizationId: id,
     ...rest,
     ...otherAttributes,
+    // The frontend only needs to know a fact sheet exists, not its storage key
+    hasFactSheet: !!factSheetKey,
     categories: categorizations.map(({ section, subsection }) => ({
       category: sanitizeString(section),
       subcategory: sanitizeString(subsection),

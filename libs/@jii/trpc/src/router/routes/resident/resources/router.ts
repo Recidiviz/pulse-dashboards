@@ -23,6 +23,7 @@ import { stateCodes } from "~@jii/configs";
 import { segment } from "../../../../analytics/segment";
 import { firebaseAuthedResidentProcedure } from "../../../../procedures/firebaseAuthedResidentProcedure";
 import { router } from "../../../../procedures/init";
+import { usMaProcedure } from "../../state/US_MA/usMaProcedure";
 import { resourceApiClient } from "./resourceApiClient";
 
 export const resourcesRouter = router({
@@ -45,6 +46,11 @@ export const resourcesRouter = router({
     .query(({ input }) =>
       resourceApiClient.getOrganization(input.organizationId),
     ),
+
+  // For now, fact sheets are MADOC content, so only US_MA residents can read them
+  getFactSheet: usMaProcedure
+    .input(z.object({ organizationId: z.number() }))
+    .query(({ input }) => resourceApiClient.getFactSheet(input.organizationId)),
 
   logSearchQueryAnonymously: firebaseAuthedResidentProcedure
     .input(

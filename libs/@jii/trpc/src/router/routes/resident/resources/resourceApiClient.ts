@@ -33,7 +33,7 @@ const RESOURCES_CONFIG: Record<string, { origin: string }> = {
   US_MA: { origin: "CURATED" },
 };
 
-async function request(path: string, body: unknown): Promise<unknown> {
+function getApiConfig() {
   const baseUrl = process.env["RESOURCE_API_BASE_URL"];
   const apiKey = process.env["RESOURCE_API_KEY"];
 
@@ -44,6 +44,21 @@ async function request(path: string, body: unknown): Promise<unknown> {
     });
   }
 
+  return { baseUrl, apiKey };
+}
+
+async function requestFailedError(res: Response) {
+  const responseBody = await res.text();
+  return new TRPCError({
+    code: "INTERNAL_SERVER_ERROR",
+    message: "Resource API request failed",
+    cause: new Error(`${res.status} — ${responseBody.slice(0, 5000)}`),
+  });
+}
+
+async function request(path: string, body: unknown): Promise<unknown> {
+  const { baseUrl, apiKey } = getApiConfig();
+
   const res = await fetch(`${baseUrl}${path}`, {
     method: "POST",
     headers: { "X-API-Key": apiKey, "Content-Type": "application/json" },
@@ -51,15 +66,32 @@ async function request(path: string, body: unknown): Promise<unknown> {
   });
 
   if (!res.ok) {
-    const responseBody = await res.text();
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Resource API request failed",
-      cause: new Error(`${res.status} — ${responseBody.slice(0, 5000)}`),
-    });
+    throw await requestFailedError(res);
   }
 
   return res.json();
+}
+
+/** Returns the organization's fact sheet PDF, base64-encoded to fit in JSON. */
+async function fetchFactSheet(organizationId: number): Promise<string> {
+  const { baseUrl, apiKey } = getApiConfig();
+
+  const res = await fetch(
+    `${baseUrl}/api/v1/organizations/${organizationId}/fact-sheet`,
+    { headers: { "X-API-Key": apiKey } },
+  );
+
+  if (res.status === 404) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Fact sheet not found",
+    });
+  }
+  if (!res.ok) {
+    throw await requestFailedError(res);
+  }
+
+  return Buffer.from(await res.arrayBuffer()).toString("base64");
 }
 
 async function fetchOrganizations(
@@ -116,4 +148,5 @@ export const resourceApiClient = {
     return fetcher();
   },
   getOrganization: fetchOrganization,
+  getFactSheet: fetchFactSheet,
 };
