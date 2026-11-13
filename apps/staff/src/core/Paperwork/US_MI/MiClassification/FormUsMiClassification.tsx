@@ -99,7 +99,7 @@ export const FormUsMiClassification = observer(
       <>
         <StickyHeader $headerVisible={headerVisible}>
           <div>
-            <FormTitle>{formTitle}</FormTitle>
+            <FormTitle>{formTitle} Classification</FormTitle>
             <SubHeading $headerVisible={headerVisible}>
               Auto-filled fields are pulled from COMS. Review each and complete
               required fields.

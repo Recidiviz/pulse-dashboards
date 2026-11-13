@@ -268,7 +268,7 @@ export class UsMiReviewClassificationForm extends FormBase<UsMiReviewClassificat
   }
 
   get formTitle() {
-    return "Review Classification";
+    return "Review";
   }
 
   get remainingFields() {

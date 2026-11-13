@@ -202,7 +202,7 @@ export class UsMiInitialClassificationForm extends FormBase<UsMiInitialClassific
   }
 
   get formTitle() {
-    return "Initial Classification";
+    return "Initial";
   }
 
   get subsections() {

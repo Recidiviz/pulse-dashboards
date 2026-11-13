@@ -122,6 +122,7 @@ export type FeatureVariant =
   | "usMiRestrictiveHousingV2"
   | "usMiRestrictiveHousingV2Ineligible"
   | "usMiClassification"
+  | "usMiCanFinalizeClassification"
   | "usMiDisplayClassificationTable"
 
   //// Missouri
@@ -313,6 +314,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiRestrictiveHousingV2: {},
   usMiRestrictiveHousingV2Ineligible: {},
   usMiClassification: {},
+  usMiCanFinalizeClassification: {},
   usMiDisplayClassificationTable: {},
   usNcCrrApprovalFlow: {},
   usNcCrrApprover: {},
@@ -402,6 +404,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMiCustodyLevelDowngrade: {},
         usMiRestrictiveHousingV2Ineligible: { activeTenants: ["US_MI"] },
         usMiClassification: {},
+        usMiCanFinalizeClassification: {},
         usMiDisplayClassificationTable: undefined,
         usMiFacilitySearch: {},
         usMiRestrictiveHousingV2: {},

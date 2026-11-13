@@ -16,3 +16,4 @@
 // =============================================================================
 
 export * from "./Stepper";
+export { StepDot } from "./Stepper.styles";

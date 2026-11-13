@@ -35,6 +35,7 @@ export const TopBanner = styled.div<{ $final?: boolean }>`
       : ` 1px dotted ${palette.slate70}`};
   background: ${({ $final }) => ($final ? palette.white : palette.slate05)};
   border-radius: 10px;
+  margin-top: 10px;
 `;
 
 export const BannerRow = styled.div`

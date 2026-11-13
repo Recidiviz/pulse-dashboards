@@ -731,6 +731,10 @@ export default class AnalyticsStore {
     this.track("frontend.opportunity_marked_submitted", metadata);
   }
 
+  trackOpportunityMarkedCompleted(metadata: OpportunityTrackingMetadata): void {
+    this.track("frontend.opportunity_marked_completed", metadata);
+  }
+
   trackOpportunityUnsubmitted(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.opportunity_unsubmitted", metadata);
   }
