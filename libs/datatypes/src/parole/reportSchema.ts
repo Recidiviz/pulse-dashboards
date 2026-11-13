@@ -148,6 +148,27 @@ export const pastActionsInputSchema = reportSectionInputSchema(
 );
 export type PastActionsInput = z.infer<typeof pastActionsInputSchema>;
 
+/**
+ * Community Reentry Plan: the PHI's notes on the resident's plan for release,
+ * one box for each part of the plan. The PHI writes all five, and the section
+ * has no rows.
+ */
+export const communityReentryPlanInputSchema = reportSectionInputSchema(
+  {
+    // The inputs limit each box to 1,000 or 1,500 characters. The schema
+    // doesn't, for the same reason as Past Actions' notes.
+    housing: phiValueSchema(z.string()).optional(),
+    employment: phiValueSchema(z.string()).optional(),
+    aftercare: phiValueSchema(z.string()).optional(),
+    transportation: phiValueSchema(z.string()).optional(),
+    supportNetwork: phiValueSchema(z.string()).optional(),
+  },
+  {},
+);
+export type CommunityReentryPlanInput = z.infer<
+  typeof communityReentryPlanInputSchema
+>;
+
 // The PHI's answer under the Summary's statement that the Idaho Code 20-1007
 // 4th Amendment Waiver was read and reviewed during the interview.
 export const PAROLE_REPORT_FOURTH_AMENDMENT_WAIVER = z.enum([
@@ -232,6 +253,7 @@ export const paroleBoardReportSchema = z.object({
     .object({
       offenseInformation: offenseInformationInputSchema.optional(),
       pastActions: pastActionsInputSchema.optional(),
+      communityReentryPlan: communityReentryPlanInputSchema.optional(),
       summary: summaryInputSchema.optional(),
     })
     .default({}),

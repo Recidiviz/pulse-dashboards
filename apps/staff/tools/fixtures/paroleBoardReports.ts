@@ -66,6 +66,25 @@ export const paroleBoardReportsFixture = {
           victim: { value: "YES", updatedBy: PHI_EMAIL, updatedAt: EDITED_AT },
         },
       },
+      communityReentryPlan: {
+        fields: {
+          housing: {
+            value:
+              "Plans to live with a sibling in town. The sibling confirmed " +
+              "the room is available, and no one else in the home is on " +
+              "supervision.",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+          employment: {
+            value:
+              "Has an offer to return to a former job at a warehouse, " +
+              "starting the week after release.",
+            updatedBy: PHI_EMAIL,
+            updatedAt: EDITED_AT,
+          },
+        },
+      },
       summary: {
         fields: {
           summary: {

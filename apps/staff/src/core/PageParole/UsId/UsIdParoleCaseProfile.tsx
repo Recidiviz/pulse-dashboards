@@ -30,12 +30,14 @@ import {
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleBoardReportPresenter } from "../../../ParoleStore/presenters/ParoleBoardReportPresenter";
+import { resolveCommunityReentryPlan } from "../../../ParoleStore/report/communityReentryPlan";
 import { resolveSummary } from "../../../ParoleStore/report/summary";
 import ModelHydrator from "../../ModelHydrator";
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
+import { UsIdCommunityReentryPlanSection } from "../components/US_ID/UsIdCommunityReentryPlanSection";
 import { UsIdHearingHistorySection } from "../components/US_ID/UsIdHearingHistorySection";
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
@@ -62,6 +64,10 @@ const SECTION_NAV = [
 // Entries for the PHI report's sections, which follow the sections above and
 // show only while the profile shows the report.
 const REPORT_SECTION_NAV = [
+  {
+    id: PAROLE_SECTION_IDS.communityReentryPlan,
+    label: "Community Reentry Plan",
+  },
   { id: PAROLE_SECTION_IDS.summary, label: "Summary" },
 ];
 
@@ -121,6 +127,20 @@ const UsIdParoleCaseProfileContents = observer(
             hearingHistory={caseDetail.hearingHistory ?? []}
           />
         </SectionAnchor>
+
+        {mode && (
+          <SectionAnchor id={PAROLE_SECTION_IDS.communityReentryPlan}>
+            <UsIdCommunityReentryPlanSection
+              mode={mode}
+              plan={resolveCommunityReentryPlan(
+                presenter.report?.sections.communityReentryPlan,
+              )}
+              onSave={(field, value) =>
+                presenter.setFieldValue("communityReentryPlan", field, value)
+              }
+            />
+          </SectionAnchor>
+        )}
 
         {mode && (
           <SectionAnchor id={PAROLE_SECTION_IDS.summary}>

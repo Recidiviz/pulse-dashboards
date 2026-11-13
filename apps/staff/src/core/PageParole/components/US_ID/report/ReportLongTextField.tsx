@@ -36,6 +36,9 @@ const Field = styled.div`
 
 const Label = styled.label<{ $hidden?: boolean }>`
   ${typography.Sans16}
+  /* Bootstrap's reboot gives every label a bottom margin, which would add to
+     the field's gap. */
+  margin-bottom: 0;
   color: ${palette.slate70};
   ${({ $hidden }) => $hidden && hideVisually()}
 `;

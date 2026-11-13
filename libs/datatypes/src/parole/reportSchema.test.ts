@@ -214,6 +214,27 @@ describe("paroleBoardReportSchema", () => {
     ).toBe(true);
   });
 
+  it("parses a report with a Community Reentry Plan", () => {
+    const report = paroleBoardReportSchema.parse({
+      ...baseReport,
+      sections: {
+        communityReentryPlan: {
+          fields: {
+            housing: phiEdit("Plans to live with a sibling after release."),
+            supportNetwork: phiEdit(null),
+          },
+        },
+      },
+    });
+
+    expect(report.sections.communityReentryPlan?.fields?.housing?.value).toBe(
+      "Plans to live with a sibling after release.",
+    );
+    expect(
+      report.sections.communityReentryPlan?.fields?.supportNetwork?.value,
+    ).toBeNull();
+  });
+
   it("parses a report with a Summary and the 4th Amendment Waiver answer", () => {
     const report = paroleBoardReportSchema.parse({
       ...baseReport,
