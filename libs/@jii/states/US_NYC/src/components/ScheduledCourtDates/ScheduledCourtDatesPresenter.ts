@@ -26,19 +26,21 @@ type Docket = UsNycResidentJiiData["preSentenceDockets"][number];
 /**
  * Returns the i18next context that selects which nextCourtDateDescription
  * variant describes this docket, or undefined when the docket has a date but
- * no location or borough, in which case the card shows no description.
+ * no location or borough, in which case the card shows no description even if
+ * the docket has a court time.
  */
-// TODO(OBT-56202) Add time once we have this ingested
 // TODO(OBT-56217) Replace with court address
 function descriptionContext({
   nextCourtDate,
+  nextCourtTime,
   nextCourtLocation,
   nextCourtBorough,
 }: Docket) {
   if (!nextCourtDate) return "noDate";
-  if (nextCourtLocation && nextCourtBorough) return "locationAndBorough";
-  if (nextCourtLocation) return "location";
-  if (nextCourtBorough) return "borough";
+  if (nextCourtLocation && nextCourtBorough)
+    return nextCourtTime ? "timeLocationAndBorough" : "locationAndBorough";
+  if (nextCourtLocation) return nextCourtTime ? "timeLocation" : "location";
+  if (nextCourtBorough) return nextCourtTime ? "timeBorough" : "borough";
   return undefined;
 }
 
@@ -92,6 +94,7 @@ export class ScheduledCourtDatesPresenter {
               borough: boroughCode
                 ? this.t(($) => $.scheduledCourtDates.borough[boroughCode])
                 : undefined,
+              time: docket.nextCourtTime,
             })
           : undefined,
       };

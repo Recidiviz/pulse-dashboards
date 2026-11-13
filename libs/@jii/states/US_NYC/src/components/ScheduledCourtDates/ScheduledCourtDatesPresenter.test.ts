@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
+
 import type { UsNycResidentJiiData } from "~@jii/schemas";
 import { createI18nInstance, type UsNycTFunction } from "~@jii/translation";
 
@@ -95,7 +97,7 @@ describe("ScheduledCourtDatesPresenter", () => {
         {
           id: "unknown-docket-0",
           label: "Scheduled court date for docket: Unknown Docket Number",
-          description: "At Manhattan Supreme Court - Female Area.",
+          description: "9:00 AM at Manhattan Supreme Court - Female Area.",
         },
         {
           id: "CR-000102-26NY",
@@ -108,6 +110,46 @@ describe("ScheduledCourtDatesPresenter", () => {
           description: "In Brooklyn.",
         },
       ]);
+    });
+  });
+
+  describe("court times", () => {
+    function describeDocket(
+      nextCourtDate: Date,
+      nextCourtTime: Docket["nextCourtTime"],
+      location: Docket["nextCourtLocation"],
+    ) {
+      const presenter = new ScheduledCourtDatesPresenter(
+        makeData([
+          {
+            docketNumber: "CR-000103-26NY",
+            nextCourtDate,
+            nextCourtTime,
+            nextCourtLocation: location,
+            nextCourtBorough: "K",
+          },
+        ]),
+        t,
+      );
+      return presenter.dateIdOverride[0].description;
+    }
+
+    it("shows the exported time", () => {
+      expect(describeDocket(parseISO("2026-12-01"), "9:00 AM", "SKA3")).toBe(
+        "9:00 AM at Brooklyn Supreme Court - Adams / 3rd Floor, in Brooklyn.",
+      );
+    });
+
+    it("leaves out a null time", () => {
+      expect(
+        describeDocket(parseISO("2026-12-01T00:00:00"), null, "SKA3"),
+      ).toBe("At Brooklyn Supreme Court - Adams / 3rd Floor, in Brooklyn.");
+    });
+
+    it("shows only the borough with a time when there is no location", () => {
+      expect(
+        describeDocket(parseISO("2026-12-01T13:00:00"), "1:00 PM", null),
+      ).toBe("1:00 PM in Brooklyn.");
     });
   });
 });

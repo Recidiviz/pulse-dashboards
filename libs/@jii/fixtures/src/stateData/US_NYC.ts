@@ -134,6 +134,13 @@ export const usNycResidentJiiDataFixtures: RawUsNycResidentJiiData[] = [
         nextCourtLocation: "SQC3",
         nextCourtBorough: "Q",
       },
+      {
+        docketNumber: "CR-000105-27NY",
+        nextCourtDate: relativeFixtureDate({ weeks: 2 }),
+        nextCourtTime: null,
+        nextCourtLocation: "RMSC",
+        nextCourtBorough: "I",
+      },
     ],
     sentencedDate: relativeFixtureDate({ months: -2 }),
     projectedDischargeDate: relativeFixtureDate({ months: 4 }),

@@ -88,6 +88,9 @@
       "TRANS": "Transit",
       "VTCB": "Bellevue Hospital Prison Ward"
     },
+    "nextCourtDateDescription_timeLocationAndBorough": "{{time}} at {{location}}, in {{borough}}.",
+    "nextCourtDateDescription_timeLocation": "{{time}} at {{location}}.",
+    "nextCourtDateDescription_timeBorough": "{{time}} in {{borough}}.",
     "hiddenSubHeading": "Docket information is hidden so they don't show on your screen until you choose to see them. Use the switch to show or hide them.",
     "visibleSubHeading": "Court dates can move. Always confirm with your attorney or counselor.",
     "unknownDocketNumber": "Unknown Docket Number"
