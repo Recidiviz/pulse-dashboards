@@ -149,6 +149,35 @@ export const pastActionsInputSchema = reportSectionInputSchema(
 export type PastActionsInput = z.infer<typeof pastActionsInputSchema>;
 
 /**
+ * Personal History: the PHI's notes on the resident's background, one box for
+ * each part of it, and the resident's substance use, one row per substance.
+ * The PHI writes every box and adds every row, because Atlas has no current
+ * source for any of them.
+ */
+export const personalHistoryInputSchema = reportSectionInputSchema(
+  {
+    // The inputs limit each box to between 500 and 2,500 characters. The
+    // schema doesn't, for the same reason as Past Actions' notes.
+    socialHistory: phiValueSchema(z.string()).optional(),
+    relationships: phiValueSchema(z.string()).optional(),
+    education: phiValueSchema(z.string()).optional(),
+    occupation: phiValueSchema(z.string()).optional(),
+    military: phiValueSchema(z.string()).optional(),
+    // The resident's comments, which follow the substance use rows.
+    residentComments: phiValueSchema(z.string()).optional(),
+  },
+  {
+    substance: phiValueSchema(z.string()).optional(),
+    // The input offers ages 1 to 100. The schema takes any whole number, so
+    // an age outside that range can't make the report fail to parse.
+    ageOfFirstUse: phiValueSchema(z.number().int()).optional(),
+    lastUse: phiValueSchema(monthSchema).optional(),
+    heaviestUse: phiValueSchema(z.string()).optional(),
+  },
+);
+export type PersonalHistoryInput = z.infer<typeof personalHistoryInputSchema>;
+
+/**
  * Community Reentry Plan: the PHI's notes on the resident's plan for release,
  * one box for each part of the plan. The PHI writes all five, and the section
  * has no rows.
@@ -253,6 +282,7 @@ export const paroleBoardReportSchema = z.object({
     .object({
       offenseInformation: offenseInformationInputSchema.optional(),
       pastActions: pastActionsInputSchema.optional(),
+      personalHistory: personalHistoryInputSchema.optional(),
       communityReentryPlan: communityReentryPlanInputSchema.optional(),
       summary: summaryInputSchema.optional(),
     })

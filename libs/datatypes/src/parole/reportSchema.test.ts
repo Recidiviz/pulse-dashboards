@@ -214,6 +214,74 @@ describe("paroleBoardReportSchema", () => {
     ).toBe(true);
   });
 
+  it("parses a report with Personal History boxes and substance rows", () => {
+    const rowId = "phi_1793800000000_a1b2c3d4";
+    const report = paroleBoardReportSchema.parse({
+      ...baseReport,
+      sections: {
+        personalHistory: {
+          fields: {
+            socialHistory: phiEdit("Raised by an aunt in a small town."),
+            military: phiEdit(null),
+            residentComments: phiEdit("Says they haven't used since 2023."),
+          },
+          rows: {
+            [rowId]: {
+              source: "PHI",
+              fields: {
+                substance: phiEdit("Alcohol"),
+                ageOfFirstUse: phiEdit(16),
+                lastUse: phiEdit("2023-10"),
+                heaviestUse: phiEdit("Daily, for about two years"),
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const { fields, rows } = report.sections.personalHistory ?? {};
+    expect(fields?.socialHistory?.value).toBe(
+      "Raised by an aunt in a small town.",
+    );
+    expect(fields?.military?.value).toBeNull();
+    expect(rows?.[rowId].fields?.ageOfFirstUse?.value).toBe(16);
+    expect(rows?.[rowId].fields?.lastUse?.value).toBe("2023-10");
+  });
+
+  it.each([
+    ["text", "16"],
+    ["a fraction", 16.5],
+  ])("rejects an age of first use given as %s", (_, age) => {
+    expect(
+      paroleBoardReportSchema.safeParse({
+        ...baseReport,
+        sections: {
+          personalHistory: {
+            rows: {
+              phi_1: { source: "PHI", fields: { ageOfFirstUse: phiEdit(age) } },
+            },
+          },
+        },
+      }).success,
+    ).toBe(false);
+  });
+
+  it("parses an age of first use outside the input's 1 to 100, so one odd age can't break the report", () => {
+    expect(
+      paroleBoardReportSchema.safeParse({
+        ...baseReport,
+        sections: {
+          personalHistory: {
+            rows: {
+              phi_1: { source: "PHI", fields: { ageOfFirstUse: phiEdit(0) } },
+            },
+          },
+        },
+      }).success,
+    ).toBe(true);
+  });
+
   it("parses a report with a Community Reentry Plan", () => {
     const report = paroleBoardReportSchema.parse({
       ...baseReport,
