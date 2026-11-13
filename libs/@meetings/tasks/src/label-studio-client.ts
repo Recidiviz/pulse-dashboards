@@ -67,6 +67,11 @@ export interface LabelStudioTask {
    * listing omits it.
    */
   total_annotations?: number;
+  /**
+   * How many annotations on the task a rater skipped. Like total_annotations,
+   * only present when the task was listed with withAnnotationCounts.
+   */
+  cancelled_annotations?: number;
 }
 
 function requireEnv(name: string): string {

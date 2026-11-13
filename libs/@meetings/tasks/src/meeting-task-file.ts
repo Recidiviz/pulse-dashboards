@@ -53,3 +53,18 @@ export async function writeMeetingTaskFile(
   await file.save(taskJson, { contentType: "application/json" });
   return `gs://${meeting.recordingsGCSBucket}/${outputPath}`;
 }
+
+/**
+ * Returns whether {recordingsFolderPath}/{fileName} exists in the meeting's
+ * recordings bucket, where writeMeetingTaskFile writes it outside local mode.
+ */
+export async function meetingTaskFileExists(
+  meeting: { recordingsGCSBucket: string; recordingsFolderPath: string },
+  fileName: string,
+): Promise<boolean> {
+  const [exists] = await new Storage()
+    .bucket(meeting.recordingsGCSBucket)
+    .file(`${meeting.recordingsFolderPath}/${fileName}`)
+    .exists();
+  return exists;
+}
