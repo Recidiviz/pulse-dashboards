@@ -38,6 +38,7 @@ import type {
 import type { Person } from "~@meetings/prisma/types";
 import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
+import type { LlmCallMeta } from "~@meetings/tasks/llm/evaluation-store";
 import { PROMPTS } from "~@meetings/tasks/llm/prompts";
 import {
   DraftingOutput,
@@ -130,6 +131,12 @@ function buildDraftingOutputSchema(
   >;
 }
 
+export type AgentCallOptions = {
+  onCall?: (call: LlmCallMeta) => void;
+  /** Called when an agent that recovers from its own failures (verification) fails. */
+  onError?: (error: unknown) => void;
+};
+
 export class SpecialistCore {
   private openai: OpenAI;
   private gemini: GoogleGenerativeAI;
@@ -202,6 +209,7 @@ export class SpecialistCore {
     transcript: TranscriptInput,
     person: Person,
     agency: AgencyConfig,
+    { onCall }: AgentCallOptions = {},
   ): Promise<ExtractionOutput> {
     const agentLogger = createLogger("meetings.llm.agents.extraction", {
       person_id: person.pseudonymizedId,
@@ -253,6 +261,7 @@ export class SpecialistCore {
           },
           { role: "user", content: userMessage },
         ],
+        onCall,
       });
 
       agentLogger.info("Extraction agent completed", {
@@ -279,6 +288,7 @@ export class SpecialistCore {
     facts: ExtractionOutput,
     agency: AgencyConfig,
     person: Person,
+    { onCall }: AgentCallOptions = {},
   ): Promise<DraftingOutput> {
     const agentLogger = createLogger("meetings.llm.agents.drafting", {
       person_id: person.pseudonymizedId,
@@ -308,6 +318,7 @@ export class SpecialistCore {
           },
           { role: "user", content: userMessage },
         ],
+        onCall,
       });
       // Additional outputs aren't stored separately, so fold each one onto
       // caseNote so it shows up wherever caseNote already renders.
@@ -344,6 +355,7 @@ export class SpecialistCore {
     transcript: TranscriptInput,
     facts: ExtractionOutput,
     person: Person,
+    { onCall, onError }: AgentCallOptions = {},
   ): Promise<VerificationOutput> {
     const agentLogger = createLogger("meetings.llm.agents.verification", {
       person_id: person.pseudonymizedId,
@@ -378,6 +390,7 @@ export class SpecialistCore {
         parts: userMessage,
         schema: VerificationPayloadSchema,
         tracingEnabled: this.tracingEnabled,
+        onCall,
       });
 
       // Re-attach evidence
@@ -406,6 +419,7 @@ export class SpecialistCore {
           error_stack: e instanceof Error ? e.stack : undefined,
         },
       );
+      onError?.(e);
       return facts;
     }
   }

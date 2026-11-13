@@ -32,6 +32,7 @@ import { Client } from "~@meetings/prisma/client";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import * as evaluationStore from "~@meetings/tasks/llm/evaluation-store";
 import { ProductionPipeline } from "~@meetings/tasks/llm/orchestrator";
+import { PIPELINE_VERSION } from "~@meetings/tasks/llm/prompts";
 import {
   DraftingOutput,
   ExtractionOutput,
@@ -588,6 +589,8 @@ describe("ProductionPipeline", () => {
           status: "SUCCESS",
           errorDetails: null,
           configVersion: "US_XX@v1-base@v1",
+          pipelineVersion: PIPELINE_VERSION,
+          release: null,
         });
 
       createAgentExecutionSpy = vi
@@ -600,6 +603,10 @@ describe("ProductionPipeline", () => {
           attemptNumber: 1,
           outputData: {},
           validationResult: {},
+          model: null,
+          inputTokens: null,
+          outputTokens: null,
+          latencyMs: null,
         });
 
       updatePipelineRunStatusSpy = vi
@@ -613,6 +620,8 @@ describe("ProductionPipeline", () => {
           status: "FAILURE",
           errorDetails: null,
           configVersion: "US_XX@v1-base@v1",
+          pipelineVersion: PIPELINE_VERSION,
+          release: null,
         });
     });
 
@@ -637,8 +646,10 @@ describe("ProductionPipeline", () => {
         mockExtraction,
       );
 
+      vi.stubEnv("SENTRY_RELEASE", "3f9c2a1b7d04");
       const pipeline = new ProductionPipeline(mockPrisma, mockCore);
       await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
+      vi.unstubAllEnvs();
 
       // Verify pipeline run was created
       expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
@@ -646,6 +657,8 @@ describe("ProductionPipeline", () => {
         meetingId: "meeting-456",
         personPseudonymizedId: "PSEUDO_123",
         configVersion: "US_XX@v1-base@v1",
+        pipelineVersion: PIPELINE_VERSION,
+        release: "3f9c2a1b7d04",
         status: "IN_PROGRESS",
       });
     });
@@ -669,14 +682,31 @@ describe("ProductionPipeline", () => {
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
-      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
-        mockExtraction,
+      const extractionCall = {
+        model: "gpt-5-mini-2025-08-07",
+        inputTokens: 1200,
+        outputTokens: 300,
+        latencyMs: 4500,
+      };
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockImplementation(
+        async (_transcript, _person, _agency, options) => {
+          options?.onCall?.(extractionCall);
+          return mockExtraction;
+        },
       );
-      vi.spyOn(SpecialistCore.prototype, "runDrafting").mockResolvedValue(
-        mockDrafting,
+      const draftingCall = { ...extractionCall, latencyMs: 9000 };
+      vi.spyOn(SpecialistCore.prototype, "runDrafting").mockImplementation(
+        async (_t, _f, _a, _p, options) => {
+          options?.onCall?.(draftingCall);
+          return mockDrafting;
+        },
       );
-      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
-        mockExtraction,
+      const verificationCall = { ...extractionCall, model: "gemini-2.5-flash" };
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockImplementation(
+        async (_t, facts, _p, options) => {
+          options?.onCall?.(verificationCall);
+          return facts;
+        },
       );
 
       const pipeline = new ProductionPipeline(mockPrisma, mockCore);
@@ -690,6 +720,7 @@ describe("ProductionPipeline", () => {
         agentType: "EXTRACTION",
         outputData: mockExtraction,
         validationResult: expect.objectContaining({ valid: true }),
+        call: extractionCall,
       });
 
       expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(2, mockPrisma, {
@@ -698,6 +729,7 @@ describe("ProductionPipeline", () => {
         attemptNumber: 1,
         outputData: mockDrafting,
         validationResult: expect.objectContaining({ valid: true }),
+        call: draftingCall,
       });
 
       expect(createAgentExecutionSpy).toHaveBeenNthCalledWith(3, mockPrisma, {
@@ -705,7 +737,67 @@ describe("ProductionPipeline", () => {
         agentType: "VERIFICATION",
         outputData: mockExtraction,
         validationResult: { valid: true },
+        call: verificationCall,
       });
+    });
+
+    test("should record calls whose output failed, as invalid executions", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [
+          {
+            assignee: "Client",
+            task: "Bring pay stubs",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
+        ],
+        entities: [],
+      };
+      const goodDrafting: DraftingOutput = {
+        caseNote: "Sufficient content for validation. ".repeat(50),
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
+      };
+      const draftingCall = {
+        model: "gpt-5-mini-2025-08-07",
+        inputTokens: 2800,
+        outputTokens: 2000,
+        latencyMs: 15000,
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      vi.spyOn(SpecialistCore.prototype, "runDrafting")
+        .mockImplementationOnce(async (_t, _f, _a, _p, options) => {
+          options?.onCall?.(draftingCall);
+          throw new Error("Unexpected token in JSON");
+        })
+        .mockResolvedValueOnce(goodDrafting);
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockImplementation(
+        async (_t, facts, _p, options) => {
+          options?.onError?.(new Error("Gemini timeout"));
+          return facts;
+        },
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      await pipeline.run(mockAgency, mockClient, mockTranscript, "meeting-456");
+
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "DRAFTING",
+        attemptNumber: 1,
+        validationResult: { valid: false, message: "Unexpected token in JSON" },
+        call: draftingCall,
+      });
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(
+        mockPrisma,
+        expect.objectContaining({
+          agentType: "VERIFICATION",
+          validationResult: { valid: false, message: "Gemini timeout" },
+        }),
+      );
     });
 
     test("should store all drafting attempts with correct attempt numbers", async () => {
@@ -812,6 +904,12 @@ describe("ProductionPipeline", () => {
 
       // Verify pipeline run was created
       expect(createPipelineRunSpy).toHaveBeenCalledTimes(1);
+      expect(createAgentExecutionSpy).toHaveBeenCalledWith(mockPrisma, {
+        pipelineRunId: "pipeline-run-123",
+        agentType: "EXTRACTION",
+        validationResult: { valid: false, message: "Extraction API error" },
+        call: undefined,
+      });
 
       // Verify status was updated to FAILURE
       expect(updatePipelineRunStatusSpy).toHaveBeenCalledTimes(1);

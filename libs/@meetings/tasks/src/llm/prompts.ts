@@ -223,3 +223,9 @@ export const PROMPTS = {
                           <%= transcript %>`),
   },
 } as const;
+
+// Bump when a change in code alters what the models are asked or how their answers are used: a
+// prompt, an output schema, the variables fed into a prompt, or the order of pipeline steps.
+// Agency config changes are tracked separately by configVersion. CI fails a PR that changes
+// prompts.ts, schemas.ts, or writerInputs.ts without bumping it.
+export const PIPELINE_VERSION = "1";

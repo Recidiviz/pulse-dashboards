@@ -57,6 +57,7 @@ import {
   findUploadedRecording,
   labelStudioMeetingInclude,
   type LlmajGradedOutputs,
+  PIPELINE_VERSION,
 } from "~@meetings/tasks";
 import { TranscriptValidationError } from "~@meetings/tasks/errors";
 import {
@@ -560,6 +561,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
       return withScope(async (scope) => {
         scope.setTag("meetingId", meetingId);
         scope.setTag("stateCode", stateCode);
+        scope.setTag("pipelineVersion", PIPELINE_VERSION);
 
         const prisma = getPrismaClientForStateCode(stateCode);
 

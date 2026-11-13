@@ -141,6 +141,11 @@ describe("Gemini Client", () => {
       const mockGenerateContent = vi.fn().mockResolvedValue({
         response: {
           text: () => JSON.stringify(mockResponse),
+          usageMetadata: {
+            promptTokenCount: 900,
+            candidatesTokenCount: 120,
+            totalTokenCount: 1300,
+          },
         },
       });
 
@@ -148,14 +153,22 @@ describe("Gemini Client", () => {
         generateContent: mockGenerateContent,
       } as never);
 
+      const onCall = vi.fn();
       const result = await generateContentWithZodSchema({
         client: mockGemini,
         systemInstruction: "You are a verification assistant",
         parts: "Verify these claims",
         schema,
+        onCall,
       });
 
       expect(result).toEqual(mockResponse);
+      expect(onCall).toHaveBeenCalledWith({
+        model: "gemini-2.5-flash",
+        inputTokens: 900,
+        outputTokens: 400,
+        latencyMs: expect.any(Number),
+      });
       expect(mockGemini.getGenerativeModel).toHaveBeenCalledWith(
         expect.objectContaining({
           systemInstruction: "You are a verification assistant",
@@ -371,6 +384,7 @@ describe("Gemini Client", () => {
       vi.mocked(mockGemini.getGenerativeModel).mockReturnValue({
         generateContent: mockGenerateContent,
       } as never);
+      const onCall = vi.fn();
 
       await expect(
         generateContentWithZodSchema({
@@ -378,8 +392,11 @@ describe("Gemini Client", () => {
           systemInstruction: "Test",
           parts: "Test",
           schema,
+          onCall,
         }),
       ).rejects.toThrow();
+      // The call is still recorded when its output can't be parsed
+      expect(onCall).toHaveBeenCalledOnce();
     });
 
     test("should set response mime type to application/json", async () => {

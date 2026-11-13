@@ -464,6 +464,10 @@ model NotetakingPipelineRun {
   personPseudonymizedId String
 
   configVersion String?
+  // PIPELINE_VERSION from the tasks lib, and the git SHA of the deployed server image
+  // (SENTRY_RELEASE); release is null in previews and local runs
+  pipelineVersion String?
+  release         String?
 
   status NotetakingPipelineStatus
 
@@ -484,6 +488,13 @@ model NotetakingAgentExecution {
 
   agentType     NotetakingAgentType
   attemptNumber Int                 @default(1)
+
+  // Model version the provider reports serving (e.g. "gpt-5-mini-2025-08-07"), else the requested
+  // model; null if the provider never responded
+  model        String?
+  inputTokens  Int?
+  outputTokens Int?
+  latencyMs    Int?
 
   /// [AgentOutput]
   outputData Json

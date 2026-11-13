@@ -22,6 +22,8 @@ import { ResponseFormatJSONSchema } from "openai/resources/shared";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
+import type { LlmCallMeta } from "~@meetings/tasks/llm/evaluation-store";
+
 type StructuredOutputSchemaOptions = {
   strict: boolean;
   name: string;
@@ -60,13 +62,17 @@ type ZodChatCompletionOptions<T extends ZodSchema> = {
   client: OpenAI;
   messages: Array<ChatCompletionMessageParam>;
   schema: T;
+  /** Called once the provider responds, before the response is parsed. */
+  onCall?: (call: LlmCallMeta) => void;
 };
 
 export async function completeChatWithZodSchema<T extends ZodSchema>({
   client,
   messages,
   schema,
+  onCall,
 }: ZodChatCompletionOptions<T>): Promise<T["_output"]> {
+  const startedAt = Date.now();
   const completion = await client.chat.completions.create({
     model: "gpt-5-mini",
     messages,
@@ -74,6 +80,12 @@ export async function completeChatWithZodSchema<T extends ZodSchema>({
       strict: true,
       name: "extraction",
     }),
+  });
+  onCall?.({
+    model: completion.model,
+    inputTokens: completion.usage?.prompt_tokens,
+    outputTokens: completion.usage?.completion_tokens,
+    latencyMs: Date.now() - startedAt,
   });
 
   const content = completion.choices[0]?.message?.content;

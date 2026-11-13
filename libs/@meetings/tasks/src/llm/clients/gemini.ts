@@ -20,6 +20,8 @@ import { traceable } from "langsmith/traceable";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
+import type { LlmCallMeta } from "~@meetings/tasks/llm/evaluation-store";
+
 /**
  * Recursively removes fields that Gemini's API doesn't support
  */
@@ -80,6 +82,8 @@ export type ZodGenerateContentOptions<T extends ZodSchema> = {
   timeout?: number;
   /** Set to false to skip the LangSmith trace for this call. Defaults to true. */
   tracingEnabled?: boolean;
+  /** Called once the provider responds, before the response is parsed. */
+  onCall?: (call: LlmCallMeta) => void;
 };
 
 /**
@@ -93,6 +97,7 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   schema,
   modelName = "gemini-2.5-flash",
   timeout,
+  onCall,
 }: ZodGenerateContentOptions<T>): Promise<T["_output"]> => {
   const model = client.getGenerativeModel(
     {
@@ -111,7 +116,16 @@ const generateContentWithZodSchemaInternal = async <T extends ZodSchema>({
   const contents =
     typeof parts === "string" ? parts : { contents: [{ role: "user", parts }] };
 
+  const startedAt = Date.now();
   const result = await model.generateContent(contents);
+  const usage = result.response.usageMetadata;
+  onCall?.({
+    model: modelName,
+    inputTokens: usage?.promptTokenCount,
+    // The total includes thinking tokens, which candidatesTokenCount leaves out
+    outputTokens: usage && usage.totalTokenCount - usage.promptTokenCount,
+    latencyMs: Date.now() - startedAt,
+  });
   const content = result.response.text();
 
   return schema.parse(JSON.parse(content));

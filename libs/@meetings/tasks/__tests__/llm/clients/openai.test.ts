@@ -114,6 +114,7 @@ describe("OpenAI Client", () => {
             finish_reason: "stop",
           },
         ],
+        usage: { prompt_tokens: 120, completion_tokens: 30 },
       } as never);
 
       const messages = [
@@ -121,13 +122,21 @@ describe("OpenAI Client", () => {
         { role: "user" as const, content: "Extract action items" },
       ];
 
+      const onCall = vi.fn();
       const result = await completeChatWithZodSchema({
         client: mockOpenAI,
         messages,
         schema,
+        onCall,
       });
 
       expect(result).toEqual(mockResponse);
+      expect(onCall).toHaveBeenCalledWith({
+        model: "gpt-5",
+        inputTokens: 120,
+        outputTokens: 30,
+        latencyMs: expect.any(Number),
+      });
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
         expect.objectContaining({
           messages,
@@ -359,14 +368,18 @@ describe("OpenAI Client", () => {
       } as never);
 
       const schema = z.object({ test: z.string() });
+      const onCall = vi.fn();
 
       await expect(
         completeChatWithZodSchema({
           client: mockOpenAI,
           messages: [{ role: "user", content: "Test" }],
           schema,
+          onCall,
         }),
       ).rejects.toThrow();
+      // The call is still recorded when its output can't be parsed
+      expect(onCall).toHaveBeenCalledOnce();
     });
   });
 });

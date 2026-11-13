@@ -24,7 +24,7 @@
  * 3. Verification Agent → finds citations for extracted claims
  */
 
-import { traceable } from "langsmith/traceable";
+import { getCurrentRunTree, traceable } from "langsmith/traceable";
 
 import { type AgencyConfig, generateConfigKey } from "~@meetings/config";
 import type { PrismaClient } from "~@meetings/prisma/client";
@@ -34,6 +34,7 @@ import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import {
   createAgentExecution,
   createPipelineRun,
+  type LlmCallMeta,
   sanitizeForPostgres,
   serializeError,
   updatePipelineRunStatus,
@@ -43,8 +44,10 @@ import {
   extractionGuard,
   transcriptGuard,
 } from "~@meetings/tasks/llm/guards";
+import { PIPELINE_VERSION } from "~@meetings/tasks/llm/prompts";
 import {
   DraftingOutputSchema,
+  ExtractionOutput,
   ExtractionOutputSchema,
   PipelineOutput,
   TranscriptInput,
@@ -91,10 +94,24 @@ export class ProductionPipeline {
     transcript: TranscriptInput,
     meetingId: string,
   ): Promise<PipelineOutput> => {
+    const configVersion = generateConfigKey(agency);
+    // Git SHA of the deployed server image; unset in previews and local runs
+    const release = process.env["SENTRY_RELEASE"];
     const logger = createLogger("meetings.llm.orchestrator", {
       person_id: person.pseudonymizedId,
       state_code: person.stateCode,
+      config_version: configVersion,
+      pipeline_version: PIPELINE_VERSION,
     });
+    const runTree = getCurrentRunTree(true);
+    if (runTree) {
+      runTree.metadata = {
+        state_code: person.stateCode,
+        config_version: configVersion,
+        pipeline_version: PIPELINE_VERSION,
+        release,
+      };
+    }
 
     logger.info("Starting pipeline", {
       transcript_length: transcript.rawText.length,
@@ -106,7 +123,9 @@ export class ProductionPipeline {
       meetingId,
       personPseudonymizedId: person.pseudonymizedId,
       status: "IN_PROGRESS", // Will update on error
-      configVersion: generateConfigKey(agency),
+      configVersion,
+      pipelineVersion: PIPELINE_VERSION,
+      release,
     });
 
     try {
@@ -129,7 +148,26 @@ export class ProductionPipeline {
       }
 
       // STEP 1: EXTRACTION AGENT
-      const facts = await this.core.runExtraction(transcript, person, agency);
+      let extractionCall: LlmCallMeta | undefined;
+      let facts: ExtractionOutput;
+      try {
+        facts = await this.core.runExtraction(transcript, person, agency, {
+          onCall: (call) => (extractionCall = call),
+        });
+      } catch (e) {
+        // Record the failed call so it counts in per-model comparisons; call is unset if the
+        // provider never responded
+        await createAgentExecution(this.prisma, {
+          pipelineRunId: pipelineRun.id,
+          agentType: "EXTRACTION",
+          validationResult: {
+            valid: false,
+            message: e instanceof Error ? e.message : String(e),
+          },
+          call: extractionCall,
+        });
+        throw e;
+      }
 
       const extractionResult = extractionGuard(ExtractionOutputSchema, facts);
       if (!extractionResult.valid) {
@@ -145,6 +183,7 @@ export class ProductionPipeline {
         agentType: "EXTRACTION",
         outputData: facts,
         validationResult: extractionResult,
+        call: extractionCall,
       });
 
       if (facts.actionItems.length === 0) {
@@ -164,6 +203,7 @@ export class ProductionPipeline {
         });
 
         let draft: Awaited<ReturnType<typeof this.core.runDrafting>>;
+        let draftingCall: LlmCallMeta | undefined;
         try {
           // eslint-disable-next-line no-await-in-loop
           draft = await this.core.runDrafting(
@@ -171,11 +211,23 @@ export class ProductionPipeline {
             facts,
             agency,
             person,
+            { onCall: (call) => (draftingCall = call) },
           );
         } catch (e) {
           logger.warning("Drafting agent call failed", {
             attempt: attempt + 1,
             error: e instanceof Error ? e.message : String(e),
+          });
+          // eslint-disable-next-line no-await-in-loop
+          await createAgentExecution(this.prisma, {
+            pipelineRunId: pipelineRun.id,
+            agentType: "DRAFTING",
+            attemptNumber: attempt + 1,
+            validationResult: {
+              valid: false,
+              message: e instanceof Error ? e.message : String(e),
+            },
+            call: draftingCall,
           });
 
           if (attempt === this.maxDraftingAttempts - 1) {
@@ -194,6 +246,7 @@ export class ProductionPipeline {
           attemptNumber: attempt + 1,
           outputData: draft,
           validationResult: draftingResult,
+          call: draftingCall,
         });
 
         if (draftingResult.valid || attempt == this.maxDraftingAttempts - 1) {
@@ -212,18 +265,35 @@ export class ProductionPipeline {
       }
 
       // STEP 3: VERIFICATION AGENT
+      let verificationCall: LlmCallMeta | undefined;
+      let verificationError: unknown;
       const verification = await this.core.runVerification(
         transcript,
         facts,
         person,
+        {
+          onCall: (call) => (verificationCall = call),
+          onError: (e) => (verificationError = e),
+        },
       );
 
-      // Store verification execution
+      // Store verification execution. It has no guard, so it's invalid only when the call failed
+      // and the facts went through without evidence.
       await createAgentExecution(this.prisma, {
         pipelineRunId: pipelineRun.id,
         agentType: "VERIFICATION",
         outputData: verification,
-        validationResult: { valid: true }, // Verification has no guard
+        validationResult:
+          verificationError === undefined
+            ? { valid: true }
+            : {
+                valid: false,
+                message:
+                  verificationError instanceof Error
+                    ? verificationError.message
+                    : String(verificationError),
+              },
+        call: verificationCall,
       });
 
       logger.info("Pipeline completed successfully");

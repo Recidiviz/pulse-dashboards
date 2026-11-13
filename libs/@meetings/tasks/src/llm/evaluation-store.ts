@@ -51,24 +51,36 @@ export interface ErrorDetails {
   validationErrorType?: ValidationError;
 }
 
+/** What one LLM call cost and which model actually served it. */
+export interface LlmCallMeta {
+  model: string;
+  inputTokens?: number;
+  outputTokens?: number;
+  latencyMs: number;
+}
+
 export interface CreatePipelineRunParams {
   meetingId: string;
   personPseudonymizedId: string;
   status: NotetakingPipelineStatus;
   errorDetails?: ErrorDetails;
   configVersion?: string;
+  pipelineVersion?: string;
+  release?: string;
 }
 
 export interface CreateAgentExecutionParams {
   pipelineRunId: string;
   agentType: NotetakingAgentType;
   attemptNumber?: number;
-  outputData:
+  /** Omitted when the call failed before producing usable output. */
+  outputData?:
     | ExtractionOutput
     | DraftingOutput
     | VerificationOutput
     | StaffFeedbackOutput;
   validationResult: ValidationResult;
+  call?: LlmCallMeta;
 }
 
 // ==========================================
@@ -149,6 +161,8 @@ export async function createPipelineRun(
       status: params.status,
       errorDetails: params.errorDetails,
       configVersion: params.configVersion,
+      pipelineVersion: params.pipelineVersion,
+      release: params.release,
     },
   });
 }
@@ -183,8 +197,13 @@ export async function createAgentExecution(
       pipelineRunId: params.pipelineRunId,
       agentType: params.agentType,
       attemptNumber: params.attemptNumber ?? 1,
-      outputData: sanitizeForPostgres(params.outputData),
-      validationResult: params.validationResult,
+      outputData: sanitizeForPostgres(params.outputData ?? {}),
+      // Failure messages can quote raw model output
+      validationResult: sanitizeForPostgres(params.validationResult),
+      model: params.call?.model,
+      inputTokens: params.call?.inputTokens,
+      outputTokens: params.call?.outputTokens,
+      latencyMs: params.call?.latencyMs,
     },
   });
 }

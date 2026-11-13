@@ -980,14 +980,17 @@ describe("SpecialistCore", () => {
         generateContent: mockGenerateContent,
       } as never);
 
+      const onError = vi.fn();
       const result = await core.runVerification(
         mockTranscript,
         mockExtraction,
         mockClient,
+        { onError },
       );
 
       // Should return original extraction without evidence
       expect(result).toEqual(mockExtraction);
+      expect(onError).toHaveBeenCalledWith(new Error("API error"));
     });
 
     test("should format claims list with IDs", async () => {
