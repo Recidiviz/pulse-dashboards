@@ -26,6 +26,41 @@ export const TOMIS_COMMENT_MAX_CHARS = 1600;
 const TOMIS_MAX_LINE_LENGTH = 70;
 const TOMIS_MAX_LINES_PER_PAGE = 10;
 
+// TOMIS can reject non-ASCII characters. Keep in sync with
+// _TOMIS_ASCII_REPLACEMENTS in recidiviz-data us_tn_contact_note.py.
+const TOMIS_ASCII_REPLACEMENTS: Record<string, string> = {
+  "\u2022": "-", // bullet
+  "\u25cf": "-", // black circle
+  "\u25aa": "-", // small black square
+  "\u2013": "-", // en dash
+  "\u2014": "-", // em dash
+  "\u2018": "'",
+  "\u2019": "'",
+  "\u201c": '"',
+  "\u201d": '"',
+  "\u00a0": " ", // non-breaking space
+};
+const TOMIS_ASCII_REPLACEMENT_PATTERN = new RegExp(
+  `[${Object.keys(TOMIS_ASCII_REPLACEMENTS).join("")}]`,
+  "g",
+);
+// eslint-disable-next-line no-control-regex
+const NON_ASCII_PATTERN = /[^\x00-\x7f]/g;
+
+/**
+ * Returns text with common punctuation mapped to ASCII, accents stripped from
+ * letters, and any other non-ASCII character removed.
+ */
+export function toTomisAscii(text: string): string {
+  return text
+    .replace(
+      TOMIS_ASCII_REPLACEMENT_PATTERN,
+      (char) => TOMIS_ASCII_REPLACEMENTS[char],
+    )
+    .normalize("NFD")
+    .replace(NON_ASCII_PATTERN, "");
+}
+
 /**
  * Chunks a comment string into paginated contact note format expected by
  * the TOMIS InsertContactNote API: { 1: ["line1", ...], 2: ["line1", ...] }
@@ -36,7 +71,10 @@ const TOMIS_MAX_LINES_PER_PAGE = 10;
 export function chunkCommentToContactNote(
   comment: string,
 ): Record<number, string[]> {
-  const wrapped = charLimitedNote(comment, TOMIS_MAX_LINE_LENGTH);
+  const wrapped = charLimitedNote(
+    toTomisAscii(comment).trim(),
+    TOMIS_MAX_LINE_LENGTH,
+  );
   const pages = paginatedTEPENoteByLine(wrapped, TOMIS_MAX_LINES_PER_PAGE);
   return Object.fromEntries(pages.map((page, i) => [i + 1, page]));
 }

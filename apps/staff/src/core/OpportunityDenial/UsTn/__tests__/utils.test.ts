@@ -21,6 +21,7 @@ import {
   chunkCommentToContactNote,
   contactNoteFirestoreDocId,
   generateContactNoteId,
+  toTomisAscii,
 } from "../utils";
 
 describe("chunkCommentToContactNote", () => {
@@ -53,6 +54,42 @@ describe("chunkCommentToContactNote", () => {
     expect(result[1].length).toBeLessThanOrEqual(10);
   });
 
+  it("reduces bullets, dashes, and curly quotes to ASCII on every page", () => {
+    const comment = [
+      "Reviewed eligibility for compliant reporting:",
+      "\u2022\tFines paid in full",
+      "\u2022\tNo sanctions in the past year",
+      "\u2022\tEmployment verified",
+      "\u2022\tDrug screens negative",
+      "\u2022\tAddress verified",
+      "\u2022\tNo new charges",
+      "\u2022\tSpecial conditions met",
+      "\u2022\tSupervision fees current",
+      "\u2022\tTreatment completed",
+      "\u2022 Client\u2019s \u201cplan\u201d \u2013 noted at Caf\u00e9",
+    ].join("\n");
+
+    expect(chunkCommentToContactNote(comment)).toEqual({
+      1: [
+        "Reviewed eligibility for compliant reporting:",
+        "-\tFines paid in full",
+        "-\tNo sanctions in the past year",
+        "-\tEmployment verified",
+        "-\tDrug screens negative",
+        "-\tAddress verified",
+        "-\tNo new charges",
+        "-\tSpecial conditions met",
+        "-\tSupervision fees current",
+        "-\tTreatment completed",
+      ],
+      2: ['- Client\'s "plan" - noted at Cafe'],
+    });
+  });
+
+  it("trims whitespace left behind by a removed leading emoji", () => {
+    expect(chunkCommentToContactNote("\u{1F44D} ok")).toEqual({ 1: ["ok"] });
+  });
+
   it("handles 1600 char comments correctly", () => {
     const maxComment = "word ".repeat(320).trim(); // ~1600 chars
     const result = chunkCommentToContactNote(maxComment);
@@ -65,6 +102,20 @@ describe("chunkCommentToContactNote", () => {
     for (const page of Object.values(result)) {
       expect(page.length).toBeLessThanOrEqual(10);
     }
+  });
+});
+
+describe("toTomisAscii", () => {
+  it("leaves ASCII text unchanged", () => {
+    expect(toTomisAscii("Paid fines on 10/01; see case #4521.\tDone")).toBe(
+      "Paid fines on 10/01; see case #4521.\tDone",
+    );
+  });
+
+  it("removes non-ASCII characters it has no replacement for", () => {
+    expect(
+      toTomisAscii("Met at office \u2705 next visit in 30 days\u2026"),
+    ).toBe("Met at office  next visit in 30 days");
   });
 });
 

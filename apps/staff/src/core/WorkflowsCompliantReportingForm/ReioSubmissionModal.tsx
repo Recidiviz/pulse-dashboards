@@ -45,6 +45,7 @@ import {
   generateContactNoteId,
   TOMIS_COMMENT_MAX_CHARS,
   TOMIS_COMMENT_MIN_CHARS,
+  toTomisAscii,
 } from "../OpportunityDenial/UsTn/utils";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
@@ -161,7 +162,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
   }, [isOpen]);
 
   const isCommentValid =
-    comment.trim().length >= TOMIS_COMMENT_MIN_CHARS &&
+    toTomisAscii(comment).trim().length >= TOMIS_COMMENT_MIN_CHARS &&
     comment.length <= TOMIS_COMMENT_MAX_CHARS;
 
   const handleClose = () => {

@@ -55,6 +55,7 @@ import {
   generateContactNoteId,
   TOMIS_COMMENT_MAX_CHARS,
   TOMIS_COMMENT_MIN_CHARS,
+  toTomisAscii,
 } from "./utils";
 
 const CenteredContainer = styled.div`
@@ -157,7 +158,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
   );
 
   const isCommentValid =
-    comment.trim().length >= TOMIS_COMMENT_MIN_CHARS &&
+    toTomisAscii(comment).trim().length >= TOMIS_COMMENT_MIN_CHARS &&
     comment.length <= TOMIS_COMMENT_MAX_CHARS;
 
   const onSubmitButtonClick = async () => {
