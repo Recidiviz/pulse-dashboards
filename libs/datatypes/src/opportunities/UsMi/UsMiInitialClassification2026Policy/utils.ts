@@ -125,7 +125,7 @@ export type usMiPastAdSegNotes = z.infer<typeof usMiPastAdSegNotes>;
 
 // utils
 
-const usMiDepartureReasons = [
+export const usMiDepartureReasons = [
   "No override",
   "Nature of recent misconduct(s) warrants increased security level.",
   "Behavior indicates that prisoner is not suitable for Level I at this time.",
@@ -142,7 +142,7 @@ const usMiDepartureReasons = [
   "Other with CFA approval.",
 ];
 
-const usMiWaiverReasons = [
+export const usMiWaiverReasons = [
   "No override",
   "Access to medical treatment",
   "Access to programming",

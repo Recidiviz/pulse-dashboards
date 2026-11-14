@@ -17,7 +17,7 @@
 
 import { rem, rgba } from "polished";
 import { Form } from "react-bootstrap";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -424,6 +424,26 @@ export const NoteField = styled.div`
   display: flex;
   flex-direction: row;
   padding-left: 5px;
+`;
+
+// Doubles the class (&&) so these rules outrank the note styles above.
+export const NotesContainer = styled.div<{ $preview?: boolean }>`
+  ${({ $preview }) =>
+    $preview &&
+    css`
+      &&,
+      && * {
+        color: black;
+      }
+
+      && ${NotesRow} {
+        justify-content: flex-start;
+      }
+
+      && ${NotesBox}, && ${NoNoteFound} {
+        border-left: 2px solid black;
+      }
+    `}
 `;
 
 export const LeftFooter = styled.div`

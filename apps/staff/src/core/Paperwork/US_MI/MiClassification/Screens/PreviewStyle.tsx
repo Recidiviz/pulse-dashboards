@@ -20,7 +20,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { SectionHeading } from "../Styles";
+import { FlexColumn, FullWidthHr, SectionHeading } from "../Styles";
 
 export const CenteredSpaceBetweenRow = styled(SectionHeading)`
   align-items: center;
@@ -105,4 +105,101 @@ export const BlackHr = styled.hr`
 
 export const CardHr = styled(BlackHr)`
   margin: 5px 0;
+`;
+
+export const PageHr = styled(FullWidthHr)`
+  border: 1px solid black;
+`;
+
+export const PreviewFormSection = styled(FlexColumn)`
+  align-items: center;
+  width: 100%;
+`;
+
+export const PageTitle = styled.div`
+  font-size: ${rem(16)};
+  font-weight: 600;
+`;
+
+export const BoldValue = styled.div`
+  font-weight: 600;
+`;
+
+export const InfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+`;
+
+export const TableCell = styled.div`
+  border: 1px solid black;
+  padding: 5px;
+`;
+
+export const LevelSection = styled.div`
+  margin: 5px;
+`;
+
+export const LevelFlow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  margin: 5px;
+`;
+
+export const LevelStep = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 33%;
+`;
+
+export const FullWidth = styled.div`
+  width: 100%;
+`;
+
+export const PointRanges = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 5px 0;
+`;
+
+export const PointRangeItem = styled.div`
+  padding: 0 5px;
+`;
+
+export const QuestionRow = styled.div`
+  display: grid;
+  grid-template-columns: 2% 78% 10% 10%;
+  margin: 0 5px;
+`;
+
+export const QuestionNotesIndent = styled.div`
+  margin: 0 10px;
+`;
+
+export const SubtotalRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  font-weight: 600;
+`;
+
+export const SignatureRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+`;
+
+export const SignatureBlock = styled(FlexColumn)`
+  align-items: center;
+  width: 100%;
+`;
+
+export const SignatureLine = styled(BlackHr)`
+  width: 95%;
+  margin: 30px auto 2px;
 `;

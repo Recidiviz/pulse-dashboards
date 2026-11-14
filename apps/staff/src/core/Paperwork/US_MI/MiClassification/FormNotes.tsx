@@ -33,6 +33,7 @@ import {
   NoteHeader,
   NoteMisconducts,
   NotesBox,
+  NotesContainer,
   NotesRow,
   ViewMoreQuestionNotes,
 } from "./Styles";
@@ -126,9 +127,12 @@ type NoteRowData = { event: string; date: Date | string };
 export const QuestionNotes = function QuestionNotes({
   note,
   noteInfo,
+  preview = false,
 }: {
   note?: ClassificationNote | null;
   noteInfo?: UsMiAssessmentQuestionNote;
+  // The preview screen omits the note headers and renders the notes in black.
+  preview?: boolean;
 }) {
   const [showMore, updateShowMore] = useState(false);
 
@@ -143,10 +147,10 @@ export const QuestionNotes = function QuestionNotes({
     (note.kind === "adSeg" && note.data.numAdSegStartsInPast36Months === 0)
   )
     return (
-      <div>
-        <NoteHeader>{noteInfo?.header}</NoteHeader>
+      <NotesContainer $preview={preview}>
+        {!preview && <NoteHeader>{noteInfo?.header}</NoteHeader>}
         <NoNoteFound>{noteInfo?.notfound}</NoNoteFound>
-      </div>
+      </NotesContainer>
     );
 
   const listLength =
@@ -159,17 +163,17 @@ export const QuestionNotes = function QuestionNotes({
 
   if (goodBehavior?.rows.length === 0) {
     return (
-      <div>
-        <NoteHeader>{goodBehavior.header}</NoteHeader>
+      <NotesContainer $preview={preview}>
+        {!preview && <NoteHeader>{goodBehavior.header}</NoteHeader>}
         <NoNoteFound>{noteInfo.notfound}</NoNoteFound>
-      </div>
+      </NotesContainer>
     );
   }
 
   if (goodBehavior) {
     return (
-      <div>
-        <NoteHeader>{goodBehavior.header}</NoteHeader>
+      <NotesContainer $preview={preview}>
+        {!preview && <NoteHeader>{goodBehavior.header}</NoteHeader>}
         <NotesBox>
           {goodBehavior.rows.slice(0, sliceAmount).map(({ event, date }) => (
             <NoteRow
@@ -189,13 +193,13 @@ export const QuestionNotes = function QuestionNotes({
             </ViewMoreQuestionNotes>
           )}
         </NotesBox>
-      </div>
+      </NotesContainer>
     );
   }
 
   return (
-    <div>
-      <NoteHeader>{noteInfo?.header}</NoteHeader>
+    <NotesContainer $preview={preview}>
+      {!preview && <NoteHeader>{noteInfo?.header}</NoteHeader>}
       <NotesBox>
         {note.kind === "vfo" && (
           <NoteRow
@@ -292,6 +296,6 @@ export const QuestionNotes = function QuestionNotes({
           {showMore ? "Show Fewer" : "Show More"}
         </ViewMoreQuestionNotes>
       )}
-    </div>
+    </NotesContainer>
   );
 };
