@@ -54,6 +54,10 @@ export function useIntercom() {
       email,
       name,
       userId: segmentId,
+      // Mirrors the web client: marks the contact as a Meetings user so
+      // Intercom audiences can target them without a page-URL rule, which
+      // mobile has no way to satisfy.
+      customAttributes: { uses_meetings: true },
     }).catch((error) => {
       Sentry.captureException(error);
     });

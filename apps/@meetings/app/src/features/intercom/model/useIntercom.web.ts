@@ -32,6 +32,11 @@ export function useIntercom() {
       email,
       user_id: segmentId,
       user_hash: intercomId,
+      // Marks the contact as a Meetings user so Intercom audiences can target
+      // them directly. Without a person-level attribute the only options are a
+      // hand-maintained tag or a page-URL rule, and neither works on mobile,
+      // where there is no URL.
+      uses_meetings: true,
     });
   }, [name, email, segmentId, intercomId]);
 
