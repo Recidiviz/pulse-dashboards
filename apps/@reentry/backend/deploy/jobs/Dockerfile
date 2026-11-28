@@ -13,7 +13,7 @@
 # The upgrade it guarded against -- musl 1.2.6, ffmpeg 8.1.3, libpq 18 -- is
 # already what the backend image runs in every environment against the same
 # Cloud SQL instances, so the jobs are not the first to take it.
-FROM python:3.12-alpine3.24@sha256:e6dae589c1c05976188fd3bd019afd091445fc533ed2ea29001beddc7368a9c8
+FROM python:3.15-alpine3.24@sha256:0f9552bb28711333da16915ec146f5e6bb44a7fdac9ced15dc17c2e0206346dd
 
 ENV PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
